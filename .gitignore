@@ -1,0 +1,4 @@
+.vagrant/
+*.log
+*.swp
+.Rproj.user
