@@ -25,9 +25,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # replace /packageName with the R package name, 
     # then inside Rstudio create a new package in folder, 
     # move these around so that Rproj file is in /packageName
+    #  Add group permissions for uid & gid so git doesn't get screwy
     #
     config.vm.synced_folder ".", "/vagrant", disabled: true
-    config.vm.synced_folder ".", "/dremeR"
-
+    config.vm.synced_folder ".", "/dremeR", 
+      group : "vagrant", mount_options: ["uid=1001", "gid=50"]
 
 end
