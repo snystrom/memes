@@ -15,7 +15,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Port forwarding
     # RStudio
     # Tunnel to localhost:8989 to avoid conflict with local RStudio server instance
-    config.vm.network "forwarded_port", guest: 8787, host: 8989
+    config.vm.network "forwarded_port", guest: 8787, host: 8888
 
     config.vm.hostname = "vagrant-dev-box"
 
