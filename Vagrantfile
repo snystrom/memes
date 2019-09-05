@@ -26,8 +26,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # then inside Rstudio create a new package in folder, 
     # move these around so that Rproj file is in /packageName
     #
-    #config.vm.synced_folder ".", "/vagrant", disabled: true
-    #config.vm.synced_folder ".", "/packageName"
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+    config.vm.synced_folder ".", "/dremeR"
 
 
 end
