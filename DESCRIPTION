@@ -1,11 +1,33 @@
 Package: dremeR
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
+Title: An R Interface to the MEME Suite
+Version: 0.0.0.9000
 Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
+Maintainer: Spencer Nystrom <snystrom@email.unc.edu>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+Imports:
+    Biostrings,
+    dplyr,
+    ggseqlogo,
+    glue,
+    motifStack,
+    purrr,
+    PWMEnrich,
+    readr,
+    R.utils,
+    seqPattern,
+    stringr,
+    TFBSTools,
+    tibble,
+    tidyr,
+    universalmotif,
+    xml2
+Suggests:
+    BSgenome.Dmelanogaster.UCSC.dm3,
+    cowplot,
+    gridExtra
+    
