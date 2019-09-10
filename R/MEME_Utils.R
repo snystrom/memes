@@ -1,12 +1,49 @@
 
-runDreme <- function(input, control, evalue = 0.05, n_motifs = 10, sec = 18000,
+#' Run DREME from fasta files
+#'
+#' @param input
+#' @param control
+#' @param evalue
+#' @param n_motifs
+#' @param sec
+#' @param outdir
+#' @param meme_path
+#' @param mink
+#' @param maxk
+#' @param ngen number of regular expressions to generalize
+#' @param alph one of c("dna", "rna", "protein") or a file path to custom alphabet file. Note: "protein" is not recommended by DREME authors.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+runDreme <- function(input, control, evalue = 0.05, n_motifs = 10, sec = 18000, alph = c("dna", "rna", "protein"),
+                     ngen = 100,
                      outdir = paste0(dirname(input), "/", basename(tools::file_path_sans_ext(input)),  "_vs_", basename(tools::file_path_sans_ext(control))),
                      meme_path = Sys.getenv("MEME_DIR"),
                      mink = 3,
                      maxk = 8){
+  # TODO: warn if alph = "protein" | double check MEME documentation for valid inputs
+  # # NOTE: currently does not support custom alphabet file
+  # NOTE: control if shuffle will not currently use dreme shuffling algorithm. add this functionality.
+
+  if (file.exists(alph)) {
+    alph <- glue::glue("-alph {alph}")
+  } else {
+    alph <- tolower(alph)
+    assertthat::assert_that(alph %in% c("dna", "rna", "protein"),
+                            msg = glue::glue("alph must be one of 'dna', 'rna', 'protein', or a path to custom alphabet."))
+
+    if (alph == "protein") warning("Setting `alph` to `protein` is not recommended by DREME authors")
+
+    alph <- glue::glue("-{alph}")
+
+  }
+
   # Requires setting Sys.setenv(MEME_DIR = "path/to/meme")
-  dreme_command <- glue::glue("{meme_path}/bin/dreme-py3 -dna -oc {outdir} \\
-                              -dna -p {input} -n {control} -t {sec} \\
+  dreme_command <- glue::glue("{meme_path}/bin/dreme-py3 {alph} -oc {outdir} \\
+                              -g {ngen} \\
+                              -p {input} -n {control} -t {sec} \\
                               -e {evalue} -m {n_motifs} \\
                               -mink {mink} -maxk {maxk}")
 
@@ -22,6 +59,20 @@ runDreme <- function(input, control, evalue = 0.05, n_motifs = 10, sec = 18000,
   return(dreme_out)
 }
 
+#' Title
+#'
+#' @param input
+#' @param database
+#' @param min_overlap
+#' @param dist
+#' @param thresh
+#' @param outdir
+#' @param meme_path
+#'
+#' @return
+#' @export
+#'
+#' @examples
 runTomTom <- function(input, database = Sys.getenv("TOMTOM_DB"), min_overlap = 5, dist = "pearson", thresh = 10.0,
                       outdir = paste0(dirname(input), "/tomtom"),
                       meme_path = Sys.getenv("MEME_DIR")){
@@ -43,6 +94,23 @@ runTomTom <- function(input, database = Sys.getenv("TOMTOM_DB"), min_overlap = 5
   return(tomtom_out)
 }
 
+#' Title
+#'
+#' @param input
+#' @param control
+#' @param outdir
+#' @param scoring
+#' @param method
+#' @param bgformat
+#' @param pvalue_threshold
+#' @param verbose
+#' @param database
+#' @param meme_path
+#'
+#' @return
+#' @export
+#'
+#' @examples
 runAme <- function(input, control = "shuffle",
                    outdir = paste0(dirname(input), "/", basename(input), "_vs_", basename(control), "/ame"),
                    #inc = "\\*",
@@ -83,6 +151,18 @@ runAme <- function(input, control = "shuffle",
   return(ame_out)
 }
 
+#' Title
+#'
+#' @param motifs
+#' @param genome
+#' @param background
+#' @param thresh
+#' @param meme_path
+#'
+#' @return
+#' @export
+#'
+#' @examples
 runFimoGenome <- function(motifs, genome, background, thresh = 0.01,
                    meme_path = Sys.getenv("MEME_DIR")){
 
@@ -119,8 +199,15 @@ runFimoGenome <- function(motifs, genome, background, thresh = 0.01,
 }
 
 
-# parsing DREME output
+#' Title
+#'
+#' @param xml
+#'
+#' @return
+#'
+#' @examples
 attrs_to_df <- function(xml) {
+  # parsing DREME output
   # converts xml attributes to dataframe
   # where each column is an attribute
   xml2::xml_attrs(xml) %>%
@@ -488,10 +575,12 @@ motifAnalysis <- function(input, control, database = Sys.getenv("TOMTOM_DB"), ev
   # Takes path to fasta file as input.
 
   # TODO: Take list input for tomtom params & dreme params
-
   if(control == "shuffle") {
     print("Using shuffled input as background")
     shuffle_fa <- shuffle_fasta_seq(input)
+    # TODO: use shuffle algorithm that preserves dinucleotide frequency:
+    # https://stackoverflow.com/questions/26497583/split-a-string-every-5-characters
+    # gsub("(.{2})", "\\1 ", sequence)
 
     shuffle_fa_path <- glue::glue("{input}.shuffle")
     Biostrings::writeXStringSet(shuffle_fa, filepath = shuffle_fa_path, format = "fasta")
