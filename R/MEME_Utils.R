@@ -41,7 +41,7 @@ runDreme <- function(input, control, evalue = 0.05, n_motifs = 10, sec = 18000, 
   }
 
   # Requires setting Sys.setenv(MEME_DIR = "path/to/meme")
-  dreme_command <- glue::glue("{meme_path}/bin/dreme-py3 {alph} -oc {outdir} \\
+  dreme_command <- glue::glue("{meme_path}/bin/dreme {alph} -oc {outdir} \\
                               -g {ngen} \\
                               -p {input} -n {control} -t {sec} \\
                               -e {evalue} -m {n_motifs} \\
@@ -89,7 +89,7 @@ runTomTom <- function(input, database = Sys.getenv("TOMTOM_DB"), min_overlap = 5
   tomtom_out <- list(
     html = paste0(outdir, "/tomtom.html"),
     xml = paste0(outdir, "/tomtom.xml"),
-    txt = paste0(outdir, "/tomtom.txt"))
+    txt = paste0(outdir, "/tomtom.tsv"))
 
   return(tomtom_out)
 }
@@ -516,7 +516,7 @@ dremeStats <- function(dreme_xml, tomtom_txt){
       if(is.null(df)) { return("None") } # in case no tomtom match
 
       df %>%
-        dplyr::filter(row_number(p_value) == 1) %>% # return first match w/ lowest p-value
+        dplyr::filter(dplyr::row_number(p_value) == 1) %>% # return first match w/ lowest p-value
         .$target_id
 
     })) %>%
@@ -582,7 +582,7 @@ motifAnalysis <- function(input, control, database = Sys.getenv("TOMTOM_DB"), ev
     # https://stackoverflow.com/questions/26497583/split-a-string-every-5-characters
     # gsub("(.{2})", "\\1 ", sequence)
 
-    shuffle_fa_path <- glue::glue("{input}.shuffle")
+    shuffle_fa_path <- glue::glue("{input}.shuffle") %>% as.character
     Biostrings::writeXStringSet(shuffle_fa, filepath = shuffle_fa_path, format = "fasta")
     control <- shuffle_fa_path
     }
