@@ -1,0 +1,82 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+do <- universalmotif::read_meme(here::here("inst/extdata/dreme_example/dreme.txt"))
+path <- here::here("inst/extdata/dreme_example/m01_DREME-1_DGCARC.meme")
+m1 <- universalmotif::read_meme(path)
+universalmotif::view_motifs(m1)
+universalmotif::view_motifs(universalmotif::motif_rc(m1))
+ggseqlogo::ggseqlogo(m1@motif)
+```
+```{r}
+library(processx)
+run("/nas/longleaf/home/snystrom/meme/bin/dreme", "-h")
+```
+```{r}
+```
+
+
+```{r}
+getDots <- function(...){
+  dots <- eval(substitute(list(...)))
+  return(dots)
+}
+```
+```{r}
+(dots <- getDots(n_motifs = 4, t = 200, evalue_thresh = 40))
+
+dotsToArgs <- function(dots, flag_lookup = NULL){
+  if (!is.null(flag_lookup)) {
+    names(dots)[names(dots) %in% names(flag_lookup)] <- flag_lookup[names(dots)[names(dots) %in% names(flag_lookup)]]
+  }
+  
+  # collapse to named vector
+  named_dots <- purrr::map_chr(dots, as.character)
+  
+  # concatenate to vector of flag calls
+  args <- purrr::map2_chr(names(nd), nd, ~{paste0("-", .x, " ", .y)})
+  
+  return(args)
+}
+
+dotsToArgs(dots, dict)
+```
+```{r}
+# lookup table of expanded function args to flags
+dict <- c("n_motifs" = "m", "evalue_thresh" = "e")
+# rename expanded args to their correct flags
+names(dots)[names(dots) %in% names(dict)] <- dict[names(dots)[names(dots) %in% names(dict)]]
+dots
+
+# collapse to named vector
+nd <- purrr::map_chr(dots, as.character)
+
+# concatenate to vector of flag calls
+args <- purrr::map2_chr(names(nd), nd, ~{paste0("-", .x, " ", .y)})
+
+fapath <- here::here("inst/extdata/fasta_ex/fa1.fa") %>% 
+  paste0("-p ", .)
+
+system2("/nas/longleaf/home/snystrom/meme/bin/dreme", c(fapath, args))
+#run("/nas/longleaf/home/snystrom/meme/bin/dreme", "-h")
+#run("/nas/longleaf/home/snystrom/meme/bin/dreme", fapath)
+#run("/nas/longleaf/home/snystrom/meme/bin/dreme", "-m 1")
+```
+
+
+```{r}
+testRun <- function(...){
+  dots <- getDots
+  #run("/nas/longleaf/home/snystrom/meme/bin/dreme", ...)
+}
+
+
+```
+
+```{r}
+out <- testRun(m = 1, t = 600)
+```
+

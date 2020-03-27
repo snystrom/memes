@@ -1,0 +1,55 @@
+<dreme version="5.1.1" release="Wed Jan 29 15:00:42 2020 -0800">
+  <model>
+    <command_line>dreme -p /pine/scr/s/n/snystrom/dremeR/inst/extdata/fasta_ex/fa1.fa -m 4 -t 200 -e 40</command_line>
+    <positives name="fa1" count="1" file="/pine/scr/s/n/snystrom/dremeR/inst/extdata/fasta_ex/fa1.fa" last_mod_date="Tue Mar 24 11:56:51 EDT 2020" />
+    <negatives name="shuffled positive sequences" count="1" from="shuffled"/>
+    <alphabet name="DNA" like="dna">
+      <letter id="A" symbol="A" complement="T" name="Adenine" colour="CC0000"/>
+      <letter id="C" symbol="C" complement="G" name="Cytosine" colour="0000CC"/>
+      <letter id="G" symbol="G" complement="C" name="Guanine" colour="FFB300"/>
+      <letter id="T" symbol="T" aliases="U" complement="A" name="Thymine" colour="008000"/>
+      <letter id="N" symbol="N" aliases="X." equals="ACGT" name="Any base"/>
+      <letter id="V" symbol="V" equals="ACG" name="Not T"/>
+      <letter id="H" symbol="H" equals="ACT" name="Not G"/>
+      <letter id="D" symbol="D" equals="AGT" name="Not C"/>
+      <letter id="B" symbol="B" equals="CGT" name="Not A"/>
+      <letter id="M" symbol="M" equals="AC" name="Amino"/>
+      <letter id="R" symbol="R" equals="AG" name="Purine"/>
+      <letter id="W" symbol="W" equals="AT" name="Weak"/>
+      <letter id="S" symbol="S" equals="CG" name="Strong"/>
+      <letter id="Y" symbol="Y" equals="CT" name="Pyrimidine"/>
+      <letter id="K" symbol="K" equals="GT" name="Keto"/>
+    </alphabet>
+    <strands>both</strands>
+    <background A="0.667" C="0.007" G="0.007" T="0.319" from="dataset"/>
+    <stop evalue="40" count="4" time="200"/>
+    <ngen>100</ngen>
+    <add_pv_thresh>0.01</add_pv_thresh>
+    <seed>1</seed>
+    <host>c0913.ll.unc.edu</host>
+    <when>Tue Mar 24 15:32:33 EDT 2020</when>
+  </model>
+  <motifs>
+    <motif id="m01" alt="DREME-1" seq="AAA" length="3" nsites="5" p="1" n="1" pvalue="1.0e+000" evalue="3.9e+001" unerased_evalue="3.9e+001">
+      <pos A="1.000000" C="0.000000" G="0.000000" T="0.000000"/>
+      <pos A="1.000000" C="0.000000" G="0.000000" T="0.000000"/>
+      <pos A="1.000000" C="0.000000" G="0.000000" T="0.000000"/>
+    </motif>
+    <motif id="m02" alt="DREME-2" seq="AATAATAA" length="8" nsites="10" p="1" n="0" pvalue="5.0e-001" evalue="9.0e+000" unerased_evalue="1.8e+001">
+      <pos A="1.000000" C="0.000000" G="0.000000" T="0.000000"/>
+      <pos A="1.000000" C="0.000000" G="0.000000" T="0.000000"/>
+      <pos A="0.000000" C="0.000000" G="0.000000" T="1.000000"/>
+      <pos A="1.000000" C="0.000000" G="0.000000" T="0.000000"/>
+      <pos A="1.000000" C="0.000000" G="0.000000" T="0.000000"/>
+      <pos A="0.000000" C="0.000000" G="0.000000" T="1.000000"/>
+      <pos A="1.000000" C="0.000000" G="0.000000" T="0.000000"/>
+      <pos A="1.000000" C="0.000000" G="0.000000" T="0.000000"/>
+    </motif>
+    <motif id="m03" alt="DREME-3" seq="AAT" length="3" nsites="10" p="1" n="1" pvalue="1.0e+000" evalue="1.2e+001" unerased_evalue="1.2e+001">
+      <pos A="1.000000" C="0.000000" G="0.000000" T="0.000000"/>
+      <pos A="1.000000" C="0.000000" G="0.000000" T="0.000000"/>
+      <pos A="0.000000" C="0.000000" G="0.000000" T="1.000000"/>
+    </motif>
+  </motifs>
+  <run_time cpu="0.06" real="0.06" stop="evalue"/>
+</dreme>
