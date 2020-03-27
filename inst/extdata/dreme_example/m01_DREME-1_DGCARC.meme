@@ -1,0 +1,20 @@
+MEME version 5.1.1
+
+ALPHABET= ACGT
+
+strands: + -
+
+Background letter frequencies (from DREME):
+A 0.267 C 0.232 G 0.234 T 0.267
+
+MOTIF DGCARC
+
+letter-probability matrix: alength= 4 w= 6 nsites= 1977 E= 3.0e-066
+  0.424886  	0.000000  	0.307031  	0.268083
+  0.000000  	0.000000  	1.000000  	0.000000
+  0.000000  	1.000000  	0.000000  	0.000000
+  1.000000  	0.000000  	0.000000  	0.000000
+  0.465857  	0.000000  	0.534143  	0.000000
+  0.000000  	1.000000  	0.000000  	0.000000
+
+

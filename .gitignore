@@ -6,3 +6,4 @@
 *.sif
 nystlib/
 rstudio-server.job.*
+runSingularity.sh
