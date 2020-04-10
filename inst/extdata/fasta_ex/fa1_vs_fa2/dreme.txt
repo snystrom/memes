@@ -1,0 +1,36 @@
+# DREME 5.1.1
+#     command: dreme -p inst/extdata/fasta_ex/fa1.fa -n inst/extdata/fasta_ex/fa2.fa -oc inst/extdata/fasta_ex/fa1_vs_fa2
+#   positives: 1 from inst/extdata/fasta_ex/fa1.fa (Fri Mar 27 09:45:01 EDT 2020)
+#   negatives: 1 from inst/extdata/fasta_ex/fa2.fa (Fri Mar 27 09:45:01 EDT 2020)
+#        host: c1138.ll.unc.edu
+#        when: Thu Apr 09 15:05:08 EDT 2020
+
+MEME version 5.1.1
+
+ALPHABET "DNA" DNA-LIKE
+A "Adenine" CC0000 ~ T "Thymine" 008000
+C "Cytosine" 0000CC ~ G "Guanine" FFB300
+N "Any base" = ACGT
+X = ACGT
+. = ACGT
+V "Not T" = ACG
+H "Not G" = ACT
+D "Not C" = AGT
+B "Not A" = CGT
+M "Amino" = AC
+R "Purine" = AG
+W "Weak" = AT
+S "Strong" = CG
+Y "Pyrimidine" = CT
+K "Keto" = GT
+U = T
+END ALPHABET
+
+strands: + -
+
+Background letter frequencies (from dataset):
+A 0.007 C 0.007 G 0.667 T 0.319
+
+
+# Stopping reason: E-value threshold exceeded
+#    Running time: 0.03 seconds

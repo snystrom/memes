@@ -371,7 +371,6 @@ write_dreme_motifs <- function(dreme_xml_path, outdir = gsub(basename(dreme_xml_
                 row.names = FALSE, col.names = FALSE)
 
     # add trailing newline: very important for parsing to some programs (*sigh*)
-    # worst file format ever
     write("\n", file = outfile, append = T)
     return(outfile)
   })

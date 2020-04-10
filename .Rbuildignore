@@ -1,3 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
+R/old/
+nystlib/*
+test/*
