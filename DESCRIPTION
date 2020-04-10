@@ -5,29 +5,22 @@ Version: 0.0.0.9000
 Authors@R: person("Spencer", "Nystrom", email = "snystrom@email.unc.edu", role = c("aut", "cre", "cph"))
 Description: Provides functions for performing motif analysis in R using the MEME suite as a backend.
     Functions & outputs are designed for easy integration into tidy workflows for rapid iteration and delayed evaluation using futures if desired.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
-    Biostrings,
-    dotargs,
     dplyr,
-    ggseqlogo,
-    glue,
-    motifStack,
+    dotargs,
+    magrittr,
+    processx,
     purrr,
-    PWMEnrich,
-    readr,
     R.utils,
-    seqPattern,
-    stringr,
-    TFBSTools,
-    tibble,
-    tidyr,
     universalmotif,
     xml2
 Suggests:
-    BSgenome.Dmelanogaster.UCSC.dm3,
     cowplot,
     gridExtra,
     testthat (>= 2.1.0)
+RoxygenNote: 7.0.2
+Remotes: 
+    snystrom/dotargs

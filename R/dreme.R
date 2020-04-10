@@ -2,12 +2,12 @@
 #'
 #' @param input path to fasta file of target regions
 #' @param control either path to fasta file of background regions, or "shuffle"
-#'   to use dreme's built-in dinucleotide shuffle feature. optionally s = <any
-#'   number> can be passed to `...` to use as random seed during shuffling. If
+#'   to use dreme's built-in dinucleotide shuffle feature. optionally s = \<any
+#'   number\> can be passed to `...` to use as random seed during shuffling. If
 #'   no seed is passed, dreme will use 1 as random seed, so results will be
 #'   reproducible if rerunning.
 #' @param outdir path to output directory of dreme files. Default: location of
-#'   input fasta in dir named "<input>_vs_<control>"
+#'   input fasta in dir named "\<input\>_vs_\<control\>"
 #' @param meme_path optional, path to "meme/bin/" on your local machine.
 #'   runDreme will search 3 places in order for meme if this flag is unset:
 #'    1. the environment variable "MEME_PATH" (set in .Renviron)
@@ -36,7 +36,11 @@
 #' @return list with two slots:
 #'  - info: data.frame with statistics for each discovered motif
 #'  - motifs: named list of universalmotif::PCM format motifs
+#'
+#' @importFrom magrittr %>%
+#'
 #' @export
+#'
 #' @md
 #'
 #' @examples
@@ -56,10 +60,10 @@ runDreme <- function(input, control, outdir = outdir_name(input, control), meme_
 
   out <- processx::run(command, flags, spinner = T)
 
-  dreme_out <- expected_outputs(c("txt", "html", "xml"), "dreme", outdir = outdir)
+  dreme_out <- dotargs::expected_outputs(c("txt", "html", "xml"), "dreme", outdir = outdir)
 
   dreme_out %>%
-    check_files_exist()
+    dotargs::check_files_exist()
 
   dreme_results <- parseDreme(dreme_out$xml)
 
@@ -76,7 +80,9 @@ runDreme <- function(input, control, outdir = outdir_name(input, control), meme_
 #'
 #' @return vector of flags for system2 or processx
 #'
+#' @importFrom magrittr %>%
 #' @examples
+#'
 #' @noRd
 prepareDremeFlags <- function(input, control, outdir, ...){
   argDict <- c(nmotifs = "m",
@@ -88,7 +94,7 @@ prepareDremeFlags <- function(input, control, outdir, ...){
                outdir = "oc",
                ngen = "g")
 
-  flags <- getAllArgs() %>%
+  flags <- dotargs::getAllArgs() %>%
     dotargs::argsToFlags(argDict) %>%
     dotargs::drop_flags(c("n" = "shuffle")) %>%
     dotargs::crystallize_flags()
@@ -140,7 +146,10 @@ parseDreme <- function(xml){
 #'  - pos_frac/neg_frac: fraction of positive or negative sites with a match
 #'
 #' @examples
-#' @md
+#'
+#' @importFrom magrittr %>%
+#' @importFrom magrittr %<>%
+#'
 #' @noRd
 dreme_motif_stats <- function(dreme_xml_path) {
   # Extract metadata about number of matches for each motif, etc.
@@ -150,19 +159,19 @@ dreme_motif_stats <- function(dreme_xml_path) {
 
   # Get information about # of positive & # negative regions
   pos_info <- xml2::xml_children(dreme_xml)[1] %>%
-    xml2::xml_find_all(., "//positives") %>%
+    xml2::xml_find_all("//positives") %>%
     attrs_to_df() %>%
     dplyr::mutate(count = as.numeric(as.character(count)))
 
   neg_info <- xml2::xml_children(dreme_xml)[1] %>%
-    xml2::xml_find_all(., "//negatives") %>%
+    xml2::xml_find_all("//negatives") %>%
     attrs_to_df() %>%
     dplyr::mutate(count = as.numeric(as.character(count)))
 
   # Extract statistics & motif counts for each dreme motif
   motif_stats <- xml2::xml_children(dreme_xml)[2] %>%
     xml2::xml_children() %>%
-    attrs_to_df(.)
+    attrs_to_df()
   dbl_cols <- grep("[^id|alt|seq]", names(motif_stats), value = T)
   motif_stats %<>%
     dplyr::mutate_if(is.factor, as.character) %>%
@@ -171,12 +180,12 @@ dreme_motif_stats <- function(dreme_xml_path) {
   # append info about positive / negative regions
   # compute some useful statistics
   motif_stats_final <- motif_stats %>%
-    dplyr::rename(positive_hits = p,
-                  negative_hits = n) %>%
-    dplyr::mutate(positive_total = pos_info$count,
-                  negative_total = neg_info$count,
-                  pos_frac = positive_hits/positive_total,
-                  neg_frac = negative_hits/negative_total)
+    dplyr::rename("positive_hits" = p,
+                  "negative_hits" = n) %>%
+    dplyr::mutate("positive_total" = pos_info$count,
+                  "negative_total" = neg_info$count,
+                  "pos_frac" = positive_hits/positive_total,
+                  "neg_frac" = negative_hits/negative_total)
 
   return(motif_stats_final)
 }
@@ -189,7 +198,10 @@ dreme_motif_stats <- function(dreme_xml_path) {
 #' @return named vector of letter frequencies, suitable as input to `bkg` in
 #'   universalmotif::create_motif
 #'
+#' @importFrom magrittr %>%
+#'
 #' @examples
+#'
 #' @noRd
 dreme_get_background_freq <- function(dreme_run_info){
   background_entry <- xml2::xml_find_all(dreme_run_info, "//background")
@@ -213,7 +225,10 @@ dreme_get_background_freq <- function(dreme_run_info){
 #' @return list of PCM output in Universalmotif format. Appended with metadata
 #'   from DREME output.
 #'
+#' @importFrom magrittr %>%
+#'
 #' @examples
+#'
 #' @noRd
 dreme_to_pfm <- function(dreme_xml_path){
   dreme_xml <- xml2::read_xml(dreme_xml_path)
@@ -256,6 +271,8 @@ dreme_to_pfm <- function(dreme_xml_path){
 #' @return position probability matrix
 #'
 #' @examples
+#'
+#' @noRd
 get_probability_matrix <- function(motif_xml_entry){
   # takes a <motif></motif> XML entry to return the probability matrix
   # WARNING: matrix is a character matrix (NOT NUMERIC)

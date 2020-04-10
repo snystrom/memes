@@ -6,6 +6,7 @@
 #' @return valid path to meme/bin or meme utility
 #'
 #' @examples
+#'
 #' @noRd
 handle_meme_path <- function(path = NULL, util = NULL){
   f <- dotargs::build_path_handler(environment_var = "MEME_PATH",
@@ -24,6 +25,7 @@ handle_meme_path <- function(path = NULL, util = NULL){
 #' @return
 #'
 #' @examples
+#'
 #' @noRd
 attrs_to_df <- function(xml, ...) {
   # parsing DREME output
