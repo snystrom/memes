@@ -32,11 +32,13 @@ runTomTom <- function(input, database = NULL,
 }
 
 prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
-  #TODO:
-  # lookup table converting arguments with - to _ so
+  # lookup table converts arguments with - to _ so
   # user doesn't have to escape flags
-  argsDict = c("min_overlap" = "min-overlap",
-               "outdir" = "oc")
+  argsDict = c("outdir" = "oc",
+               "min_overlap" = "min-overlap",
+               "motif_pseudo" = "motif-pseudo",
+               "no_ssc" = "no-ssc",
+               "incomplete_scores" = "incomplete-scores")
 
   flags <- dotargs::getAllArgs() %>%
     dotargs::argsToFlags(argsDict) %>%
