@@ -33,9 +33,8 @@
 #'  - seed = random seed if using "shuffle" as control
 #'  - ngen = number of REs to generalize
 #'
-#' @return list with two slots:
-#'  - info: data.frame with statistics for each discovered motif
-#'  - motifs: named list of universalmotif::PCM format motifs
+#' @return data.frame with statistics for each discovered motif. The `motifs`
+#'   column contains a universalmotif object representation in PCM format of each DREME motif.
 #'
 #' @importFrom magrittr %>%
 #'
@@ -108,9 +107,7 @@ prepareDremeFlags <- function(input, control, outdir, ...){
 #'
 #' @param xml path to dreme_out/dreme.xml
 #'
-#' @return list with two slots:
-#'  - info: data.frame with statistics for each discovered motif
-#'  - motifs: named list of universalmotif::PCM format motifs
+#' @return data.frame with `motifs` column containing universalmotif object representation of each DREME motif.
 #'
 #' @examples
 #' parseDreme("dreme_out/dreme.xml")
@@ -120,8 +117,8 @@ parseDreme <- function(xml){
 
   pfms <- dreme_to_pfm(xml)
 
-  return(list(motifs = pfms,
-              info = dreme_stats))
+  dreme_stats$motifs <- pfms
+  return(dreme_stats)
 }
 
 #' Return statistics of DREME results
@@ -155,7 +152,6 @@ dreme_motif_stats <- function(dreme_xml_path) {
   # Extract metadata about number of matches for each motif, etc.
 
   dreme_xml <- xml2::read_xml(dreme_xml_path)
-  dreme_attrs <- attrs_to_df(dreme_xml)
 
   # Get information about # of positive & # negative regions
   pos_info <- xml2::xml_children(dreme_xml)[1] %>%
@@ -185,7 +181,10 @@ dreme_motif_stats <- function(dreme_xml_path) {
     dplyr::mutate("positive_total" = pos_info$count,
                   "negative_total" = neg_info$count,
                   "pos_frac" = positive_hits/positive_total,
-                  "neg_frac" = negative_hits/negative_total)
+                  "neg_frac" = negative_hits/negative_total) %>%
+    dplyr::mutate(rank = gsub("^m", "", id) %>% as.integer(),
+                  id = paste0(id, "_", seq)) %>%
+    dplyr::select(rank, dplyr::everything())
 
   return(motif_stats_final)
 }
@@ -249,8 +248,8 @@ dreme_to_pfm <- function(dreme_xml_path){
   pfmList <- purrr::map2(motif_stats_list, motifs_matrix, ~{
     universalmotif::create_motif(.y,
                                  type = "PCM",
-                                 name = .x$alt,
-                                 altname = .x$seq,
+                                 name = .x$seq,
+                                 altname = .x$alt,
                                  bkg = background_freq,
                                  pval = .x$pvalue,
                                  nsites = .x$nsites,

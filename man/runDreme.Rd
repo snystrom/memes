@@ -41,11 +41,8 @@ install of dreme -h, or visit the dreme documentation
 \href{http://meme-suite.org/doc/dreme.html?man_type=web}{website}.}
 }
 \value{
-list with two slots:
-\itemize{
-\item info: data.frame with statistics for each discovered motif
-\item motifs: named list of universalmotif::PCM format motifs
-}
+data.frame with statistics for each discovered motif. The \code{motifs}
+column contains a universalmotif object representation in PCM format of each DREME motif.
 }
 \description{
 Denovo motif discovery of target regions
