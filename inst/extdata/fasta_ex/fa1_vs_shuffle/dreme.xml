@@ -26,8 +26,8 @@
     <ngen>100</ngen>
     <add_pv_thresh>0.01</add_pv_thresh>
     <seed>1</seed>
-    <host>c0804.ll.unc.edu</host>
-    <when>Fri Apr 10 09:48:08 EDT 2020</when>
+    <host>c0820.ll.unc.edu</host>
+    <when>Mon Apr 13 16:36:23 EDT 2020</when>
   </model>
   <motifs>
     <motif id="m01" alt="DREME-1" seq="AAA" length="3" nsites="5" p="1" n="1" pvalue="1.0e+000" evalue="3.9e+001" unerased_evalue="3.9e+001">
@@ -51,5 +51,5 @@
       <pos A="0.000000" C="0.000000" G="0.000000" T="1.000000"/>
     </motif>
   </motifs>
-  <run_time cpu="0.05" real="0.06" stop="evalue"/>
+  <run_time cpu="0.05" real="0.05" stop="evalue"/>
 </dreme>
