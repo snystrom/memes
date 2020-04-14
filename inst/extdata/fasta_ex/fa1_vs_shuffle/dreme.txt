@@ -2,8 +2,8 @@
 #     command: dreme -p inst/extdata/fasta_ex/fa1.fa -oc inst/extdata/fasta_ex/fa1_vs_shuffle -e 39
 #   positives: 1 from inst/extdata/fasta_ex/fa1.fa (Fri Mar 27 09:45:01 EDT 2020)
 #   negatives: 1 from shuffled positives
-#        host: c0820.ll.unc.edu
-#        when: Mon Apr 13 16:36:23 EDT 2020
+#        host: c0920.ll.unc.edu
+#        when: Tue Apr 14 12:35:27 EDT 2020
 
 MEME version 5.1.1
 
@@ -71,4 +71,4 @@ letter-probability matrix: alength= 4 w= 3 nsites= 10 E= 1.2e+001
 
 
 # Stopping reason: E-value threshold exceeded
-#    Running time: 0.05 seconds
+#    Running time: 0.06 seconds
