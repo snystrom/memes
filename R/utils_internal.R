@@ -34,5 +34,5 @@ attrs_to_df <- function(xml, ...) {
   xml2::xml_attrs(xml) %>%
     data.frame() %>%
     t() %>%
-    data.frame(., row.names = NULL, ...)
+    data.frame(row.names = NULL, ...)
 }
