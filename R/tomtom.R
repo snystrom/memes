@@ -71,9 +71,9 @@ runTomTom <- function(input, database = NULL,
   tomtom_out %>%
     dotargs::check_files_exist()
 
-  parseTomTom(tomtom_out$xml)
+  tomtom_results <- parseTomTom(tomtom_out$xml)
 
-  return(tomtom_out)
+  return(tomtom_results)
 }
 
 #' Generate flags for TomTom commandline
