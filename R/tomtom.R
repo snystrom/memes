@@ -57,6 +57,14 @@ runTomTom <- function(input, database = NULL,
   # use TOMTOM server default values which differ from commandline defaults
   # TODO: email TOMTOM maintainers to ask if this is really a better default?
 
+  # save dreme results & join w/ tomtom results at end.
+  # type validation happens below
+  if (class(input) == "data.frame") {
+    dreme_results <- input
+    nest_output <- TRUE
+  }
+  input <- tomtom_input(input)
+
   command <- handle_meme_path(path = meme_path, util = "tomtom")
 
   database <- handle_tomtom_database_path(path = database)
@@ -64,7 +72,9 @@ runTomTom <- function(input, database = NULL,
   flags <- prepareTomTomFlags(outdir = outdir, thresh = thresh, min_overlap = min_overlap, dist = dist, evalue = evalue, ...)
   flags <- c(flags, input, database)
 
-  processx::run(command, flags, spinner = T)
+  ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
+
+  process_check_error(ps_out)
 
   tomtom_out <- dotargs::expected_outputs(c("tsv", "xml", "html"), "tomtom", outdir = outdir)
 
@@ -73,8 +83,17 @@ runTomTom <- function(input, database = NULL,
 
   tomtom_results <- parseTomTom(tomtom_out$xml)
 
+  if (nest_output){
+
+    nest_tomtom <- nest_tomtom_results(tomtom_results)
+
+    merge_res <- dplyr::left_join(dreme_results, nest_tomtom, by = c("id", "alt"))
+    return(merge_res)
+  }
+
   return(tomtom_results)
 }
+
 
 #' Generate flags for TomTom commandline
 #'
@@ -128,7 +147,7 @@ prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
 get_tomtom_query_data <- function(tomtom_xml_data){
   xml2::xml_find_all(tomtom_xml_data, "//queries") %>%
     xml2::xml_children() %>%
-    attrs_to_df() %>%
+    attrs_to_df(stringsAsFactors = FALSE) %>%
     dplyr::mutate(query_idx = (1:nrow(.) - 1)) %>%
     dplyr::rename("db_idx" = "db")
 }
@@ -137,7 +156,7 @@ get_tomtom_query_data <- function(tomtom_xml_data){
 #'
 #' @param tomtom_xml_data result from xml2::read_xml(tomtom_xml_path)
 #'
-#' @return data.frame of match data
+#' @return data.frame of match data or NULL if no matches found
 #'
 #' @examples
 #'
@@ -147,6 +166,8 @@ get_tomtom_query_data <- function(tomtom_xml_data){
 get_tomtom_match_data <- function(tomtom_xml_data){
   matches <- xml2::xml_find_all(tomtom_xml_data, "//matches") %>%
     xml2::xml_children()
+
+  if (length(matches) == 0){return(NULL)}
 
   match_df <- purrr::map(matches, xml2::xml_children) %>%
     purrr::set_names(xml2::xml_attr(matches, "idx")) %>%
@@ -246,10 +267,12 @@ get_tomtom_target_data <- function(tomtom_xml_data){
 #'     - match_strand: whether the motif was found on input strand (+) or as reverse-complement (-)
 #'     - db_name: database source of matched motif
 #'     - match_motif: universalmotif object containing the PWM that was matched
+#'     Returns NULL if not matches detected
 #'
 #' @export
 #'
 #' @importFrom magrittr %>%
+#' @importFrom magrittr %<>%
 #'
 #' @examples
 #' \dontrun{
@@ -263,7 +286,11 @@ parseTomTom <- function(tomtom_xml_path){
     dplyr::select("query_idx", "id", "alt")
 
   match_data <- tt_xml %>%
-    get_tomtom_match_data() %>%
+    get_tomtom_match_data()
+
+  if (is.null(match_data)) {return(NULL)}
+
+  match_data %<>%
     dplyr::rename_at(c("offset", "pvalue", "evalue", "qvalue", "strand"), ~{paste0("match_", .x)}) %>%
     dplyr::select(-"rc")
 
@@ -282,4 +309,30 @@ parseTomTom <- function(tomtom_xml_path){
 
   return(tomtom_results)
 
+}
+
+#' Nest tomtom results & show only best match, store all others in `tomtom` list column
+#'
+#' @param tomtom_results
+#'
+#' @return data.frame with columns w/ all data for "best" match (defined by top
+#'   hit, lowest pvalue). All other matches are nested into 'tomtom' column.
+#'   Which is list of data.frames for each match too the given id.
+#'
+#' @examples
+#' @noRd
+nest_tomtom_results <- function(tomtom_results){
+  tomtom_results %>%
+    dplyr::group_by(id, alt) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(best_match_info = purrr::map(data, ~{
+      .x %>%
+        dplyr::filter(match_evalue == min(match_evalue)) %>%
+        head(1) %>%
+        dplyr::rename_all(~{paste0("best_", .x)})
+    })) %>%
+    tidyr::unnest(best_match_info) %>%
+    dplyr::rename("tomtom" = "data") %>%
+    dplyr::mutate(tomtom = purrr::map(tomtom, data.frame)) %>%
+    dplyr::select("id", "alt", dplyr::contains("best_"), dplyr::everything())
 }

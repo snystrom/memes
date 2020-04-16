@@ -1,19 +1,38 @@
 #' Denovo motif discovery of target regions
 #'
-#' @param input path to fasta file of target regions
-#' @param control either path to fasta file of background regions, or "shuffle"
-#'   to use dreme's built-in dinucleotide shuffle feature. optionally s = \<any
-#'   number\> can be passed to `...` to use as random seed during shuffling. If
-#'   no seed is passed, dreme will use 1 as random seed, so results will be
-#'   reproducible if rerunning.
-#' @param outdir path to output directory of dreme files. Default: location of
-#'   input fasta in dir named "\<input\>_vs_\<control\>"
+#' @param input regions to scan for motifs. Can be any of:
+#'   - path to fasta file
+#'   - DNAStringSet object (can be generated from GRanges using get_sequence)
+#'   - *NOTE:* If you want to retain the raw dreme output files, you must use a
+#'   path to fasta file as input, or specify an "outdir"
+#' @param control regions to use as background for motif search. Can be any of:
+#'   - path to fasta file
+#'   - DNAStringSet object (can be generated from GRanges using get_sequence)
+#'   - "shuffle" to use dreme's built-in dinucleotide shuffle feature.
+#'   Optionally can also pass `s = <any number>` to `...` to use as the random
+#'   seed during shuffling. If no seed is passed, dreme will use 1 as the random
+#'   seed, so results will be reproducible if rerunning. **NOTE:** beware
+#'   system-specific differences. As of v5, dreme will compile using the default
+#'   python installation on a system (either python2.7 or python3). The random
+#'   number generator changed between python2.7 and python3, so results will not
+#'   be reproducible between systems using python2.7 vs 3.
+#' @param outdir path to output directory of dreme files, or "auto" to autogenerate path. Default: location of
+#'   input fasta in dir named "\<input\>_vs_\<control\>". If input is
+#'   DNAstringset, will be temporary path. This means that if you want to save
+#'   the raw output files, you must use fasta files as input or use an
+#'   informative (and unique) outdir name. dremeR will **not check** if it
+#'   overwrites files in a directory. Directories will be recursively created if needed.
 #' @param meme_path optional, path to "meme/bin/" on your local machine.
 #'   runDreme will search 3 places in order for meme if this flag is unset:
 #'    1. the environment variable "MEME_PATH" (set in .Renviron)
 #'    2. the option "meme_bin" (set with options(meme_bin = "path/to/meme/bin"))
 #'    3. "~/meme/bin/" as the default location
 #'    - If the user sets meme_path in the function call, this value will always be used
+#'
+#' @param silent whether to suppress printing dreme stdout as a message when
+#'   finishing with no errors. Can be useful for troubleshooting in situations
+#'   where no motifs are discovered, but command completes successfully.
+#'   (default: TRUE)
 #'
 #' @param ... dreme flags can be passed as R function arguments to use
 #'   non-default behavior. For a full list of valid arguments, run your local
@@ -34,7 +53,8 @@
 #'  - ngen = number of REs to generalize
 #'
 #' @return data.frame with statistics for each discovered motif. The `motifs`
-#'   column contains a universalmotif object representation in PCM format of each DREME motif.
+#'   column contains a universalmotif object representation in PCM format of
+#'   each DREME motif. If no motifs are discovered, returns NULL.
 #'
 #' @importFrom magrittr %>%
 #'
@@ -50,14 +70,25 @@
 #' # Runs searching for max 2 motifs, e-value cutoff = 0.1, explicitly using the DNA alphabet
 #' runDreme("input.fa", "shuffle", m = 2, e = 0.1, dna = T)
 #' }
-runDreme <- function(input, control, outdir = outdir_name(input, control), meme_path = NULL, ...){
-  # TODO: check input & control is path or GRanges, pass fasta paths to prepareDremeFlags
+runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...){
+
+  # Handle multiple input types by multiple dispatch
+  # input & control will be coerced to file paths
+  input <- dreme_input(input)
+  control <- dreme_input(control)
+
+  if (outdir == "auto") {outdir <- outdir_name(input, control)}
 
   flags <- prepareDremeFlags(input = input, control = control, outdir = outdir, ...)
 
   command <- handle_meme_path(path = meme_path, util = "dreme")
+  ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
 
-  out <- processx::run(command, flags, spinner = T)
+  print_dreme_stdout(ps_out, silent = silent)
+
+  n_motifs <- dreme_nmotifs_found(ps_out)
+
+  if (n_motifs == 0) {return(NULL)}
 
   dreme_out <- dotargs::expected_outputs(c("txt", "html", "xml"), "dreme", outdir = outdir)
 
@@ -171,15 +202,17 @@ dreme_motif_stats <- function(dreme_xml_path) {
   dbl_cols <- grep("[^id|alt|seq]", names(motif_stats), value = T)
   motif_stats %<>%
     dplyr::mutate_if(is.factor, as.character) %>%
-    dplyr::mutate_at(dbl_cols, as.numeric)
+    dplyr::mutate_at(dbl_cols, as.numeric) %>%
+    dplyr::mutate_at(c("length", "nsites",
+                       "p", "n"), as.integer)
 
   # append info about positive / negative regions
   # compute some useful statistics
   motif_stats_final <- motif_stats %>%
-    dplyr::rename("positive_hits" = p,
-                  "negative_hits" = n) %>%
-    dplyr::mutate("positive_total" = pos_info$count,
-                  "negative_total" = neg_info$count,
+    dplyr::rename("positive_hits" = "p",
+                  "negative_hits" = "n") %>%
+    dplyr::mutate("positive_total" = pos_info$count %>% as.integer,
+                  "negative_total" = neg_info$count %>% as.integer,
                   "pos_frac" = positive_hits/positive_total,
                   "neg_frac" = negative_hits/negative_total) %>%
     dplyr::mutate(rank = gsub("^m", "", id) %>% as.integer(),
@@ -248,7 +281,7 @@ dreme_to_pfm <- function(dreme_xml_path){
   pfmList <- purrr::map2(motif_stats_list, motifs_matrix, ~{
     universalmotif::create_motif(.y,
                                  type = "PCM",
-                                 name = .x$seq,
+                                 name = .x$id,
                                  altname = .x$alt,
                                  bkg = background_freq,
                                  pval = .x$pvalue,
@@ -278,7 +311,7 @@ get_probability_matrix <- function(motif_xml_entry){
   # need to do the lapply(matrix, function(x)
   # as.character(x) %>% as.numeric()) %>% bind_cols(.)
   # trick for numeric matrix
-  motif_attr <- attrs_to_df(motif_xml_entry)
+  motif_attr <- attrs_to_df(motif_xml_entry, stringsAsFactors = F)
 
   nsites <- motif_attr$length %>%
      as.character() %>%
@@ -298,4 +331,65 @@ get_probability_matrix <- function(motif_xml_entry){
   return(freq_matrix)
 }
 
+#' Return line reporting number of motifs passing cutoff in DREME stdout
+#'
+#' @param stdout stdout from processx
+#'
+#' @return
+#'
+#' @examples
+#' @noRd
+dreme_nmotifs_line <- function(stdout){
+  lines <- strsplit(stdout, "\n") %>%
+    .[[1]]
 
+  matchLine <- grep("\\d motifs with E-value <", lines, value = T)
+  return(matchLine)
+}
+
+#' Grab number of discovered motifs from stdout line
+#'
+#' @param line output of dreme_nmotifs_line
+#'
+#' @return
+#'
+#' @examples
+#' @noRd
+dreme_nmotifs <- function(line){
+  nmotifs <- gsub("(^\\d+).+", "\\1", line)
+  return(as.integer(nmotifs))
+}
+
+#' Return number of discovered DREME motifs
+#'
+#' @param processx_out output of processx run
+#'
+#' @return `integer(1)` of number of motifs passing threshold
+#' @export
+#'
+#' @examples
+dreme_nmotifs_found <- function(processx_out){
+  processx_out$stdout %>%
+    dreme_nmotifs_line() %>%
+    dreme_nmotifs()
+}
+
+#' Handle error or printing message on successful DREME run
+#'
+#' @param processx_out processx ouput
+#' @param silent whether or not to suppress printing all of stdout
+#'
+#' @return
+#'
+#' @examples
+#' @noRd
+print_dreme_stdout <- function(processx_out, silent = TRUE){
+  process_check_error(processx_out)
+
+  # leaving here incase needed for debugging
+  #nmotifs_line <- dreme_nmotifs_line(processx_out$stdout)
+  #if (!silent) message(nmotifs_line)
+
+  if (!silent) message(processx_out$stdout)
+
+}

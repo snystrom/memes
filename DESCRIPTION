@@ -15,7 +15,7 @@ Imports:
     processx,
     purrr,
     R.utils,
-    universalmotif,
+    universalmotif (>= 1.5.35),
     xml2
 Suggests:
     cowplot,
@@ -23,4 +23,5 @@ Suggests:
     testthat (>= 2.1.0)
 RoxygenNote: 7.0.2
 Remotes: 
-    snystrom/dotargs
+    snystrom/dotargs,
+    bjmt/universalmotif

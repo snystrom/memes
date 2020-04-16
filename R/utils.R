@@ -1,18 +1,67 @@
-
-#' Helper for writing unique directory names
+#' Get sequence from GRanges
 #'
-#' @param input input file path
-#' @param control control file path
+#' A light wrapper around Biostrings::getSeq to return named DNAStringSets.
 #'
-#' @return directory name in the style of: "input_vs_output".
+#' @param regions GRanges object
+#' @param genome object of any valid type in showMethods(Biostrings::getSeq).
+#'   Commonly a BSgenome object, or fasta file. Used to lookup sequences in regions.
+#' @param ... additional arguments passed to Biostrings::getSeq.
+#'
+#' @return Biostrings::DNAStringSet object with names corresponding to genomic coordinates
+#'
 #' @export
 #'
 #' @examples
-#' outdir_name("condition1.fa", "backgroundSequence.fa")
-outdir_name <- function(input, control){
+#' \dontrun{
+#' # Using character string as input
+#' genomeFasta <- "path/to/genome.fa"
+#' get_sequence("chr2L:100-200", geonmeFasta)
+#'
+#' # using BSgenome object for genome
+#' drosophila.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
+#' get_sequence("chr2L:100-200", drosophila.genome)
+#'
+#' # using GRanges object for regions
+#' regions <- GRanges(seqnames=Rle(c('chrX', 'chr2L', 'chr3R'), c(3, 3, 4)), IRanges(1:10, width=5))
+#' get_sequence(regions, drosophila.genome)
+#'
+#' }
+get_sequence <- function(regions, genome, ...){
 
-  paste0(dirname(input), "/",
-         basename(tools::file_path_sans_ext(input)),
-         "_vs_",
-         basename(tools::file_path_sans_ext(control)))
+  regions <- tryCatch(GenomicRanges::GRanges(regions),
+                      error = function(e){return(e)}
+           )
+
+  chrNames <- seqnames(regions)
+  startPos <- start(regions)
+  endPos <- end(regions)
+
+  feature_names <- paste0(chrNames,":",startPos,"-",endPos)
+
+  sequences <- Biostrings::getSeq(genome, regions, ...)
+  names(sequences) <- feature_names
+  return(sequences)
+}
+
+#' Write fasta file from stringset
+#'
+#' @param seq DNAstringset
+#' @param path path of fasta file to write (default: temporary file)
+#'
+#' @return path to created fasta file
+#' @export
+#'
+#' @examples
+write_fasta <- function(seq, path = tempfile(fileext = ".fa")){
+  Biostrings::writeXStringSet(x = seq,
+                              filepath = path,
+                              append = FALSE,
+                              compress = FALSE,
+                              format = "fasta")
+
+  if (!file.exists(path)) {
+    stop(paste0(path, " not created"))
+  }
+
+  return(path)
 }
