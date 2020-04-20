@@ -3,9 +3,23 @@ dreme_file <- dotargs::expected_outputs(c("txt", "xml", "html"), "dreme", "inst/
 
 tt_files <- runTomTom(dreme_file$txt, database = "inst/extdata/db/fly_factor_survey_id.meme", thresh = 10)
 
+
+
+#####
+# RETURN
+# use this to walk through get_tomtom_target_data line-by line
+tt_xml <- "tt_drememerge_dev/tomtom.xml"
+
 ###########
+test_that("tomtom target PWM and target metadata correctly assigned to eachother", {
+  # move below to setup chunk
+  fa <- duplicate_file("inst/extdata/fasta_ex/fa1.fa")
+  dreme_out <- runDreme(fa, "shuffle", e = 39)
+  options(tomtom_db = "inst/extdata/db/fly_factor_survey_id.meme")
+  tt_out <- runTomTom(dreme_out)
 
-
+  expect_equal(tt_out$best_match_motif[[2]]@name, tt_out$best_match_id[[2]])
+})
 
 
 dreme_file <- dotargs::expected_outputs(c("txt"), "dreme", "inst/extdata/fasta_ex/fa1_vs_shuffle/")
