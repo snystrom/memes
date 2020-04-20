@@ -22,6 +22,7 @@ data.frame:
     - match_strand: whether the motif was found on input strand (+) or as reverse-complement (-)
     - db_name: database source of matched motif
     - match_motif: universalmotif object containing the PWM that was matched
+    Returns NULL if not matches detected
 }
 \description{
 Return tomtom stat information and PWMs for matched motifs

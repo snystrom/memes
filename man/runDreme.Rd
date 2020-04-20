@@ -4,19 +4,37 @@
 \alias{runDreme}
 \title{Denovo motif discovery of target regions}
 \usage{
-runDreme(input, control, outdir = "auto", meme_path = NULL, ...)
+runDreme(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...)
 }
 \arguments{
-\item{input}{path to fasta file of target regions}
+\item{input}{regions to scan for motifs. Can be any of:
+\itemize{
+\item path to fasta file
+\item DNAStringSet object (can be generated from GRanges using get_sequence)
+\item \emph{NOTE:} If you want to retain the raw dreme output files, you must use a
+path to fasta file as input, or specify an "outdir"
+}}
 
-\item{control}{either path to fasta file of background regions, or "shuffle"
-to use dreme's built-in dinucleotide shuffle feature. optionally s = \<any
-number\> can be passed to \code{...} to use as random seed during shuffling. If
-no seed is passed, dreme will use 1 as random seed, so results will be
-reproducible if rerunning.}
+\item{control}{regions to use as background for motif search. Can be any of:
+\itemize{
+\item path to fasta file
+\item DNAStringSet object (can be generated from GRanges using get_sequence)
+\item "shuffle" to use dreme's built-in dinucleotide shuffle feature.
+Optionally can also pass \verb{s = <any number>} to \code{...} to use as the random
+seed during shuffling. If no seed is passed, dreme will use 1 as the random
+seed, so results will be reproducible if rerunning. \strong{NOTE:} beware
+system-specific differences. As of v5, dreme will compile using the default
+python installation on a system (either python2.7 or python3). The random
+number generator changed between python2.7 and python3, so results will not
+be reproducible between systems using python2.7 vs 3.
+}}
 
 \item{outdir}{path to output directory of dreme files, or "auto" to autogenerate path. Default: location of
-input fasta in dir named "\<input\>\emph{vs}\<control\>". If input is DNAstringset, will be temporary path.}
+input fasta in dir named "\<input\>\emph{vs}\<control\>". If input is
+DNAstringset, will be temporary path. This means that if you want to save
+the raw output files, you must use fasta files as input or use an
+informative (and unique) outdir name. dremeR will \strong{not check} if it
+overwrites files in a directory. Directories will be recursively created if needed.}
 
 \item{meme_path}{optional, path to "meme/bin/" on your local machine.
 runDreme will search 3 places in order for meme if this flag is unset:
@@ -29,6 +47,11 @@ runDreme will search 3 places in order for meme if this flag is unset:
 \item If the user sets meme_path in the function call, this value will always be used
 }}
 
+\item{silent}{whether to suppress printing dreme stdout as a message when
+finishing with no errors. Can be useful for troubleshooting in situations
+where no motifs are discovered, but command completes successfully.
+(default: TRUE)}
+
 \item{...}{dreme flags can be passed as R function arguments to use
 non-default behavior. For a full list of valid arguments, run your local
 install of dreme -h, or visit the dreme documentation
@@ -36,7 +59,8 @@ install of dreme -h, or visit the dreme documentation
 }
 \value{
 data.frame with statistics for each discovered motif. The \code{motifs}
-column contains a universalmotif object representation in PCM format of each DREME motif.
+column contains a universalmotif object representation in PCM format of
+each DREME motif. If no motifs are discovered, returns NULL.
 }
 \description{
 Denovo motif discovery of target regions
