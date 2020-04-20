@@ -230,22 +230,19 @@ get_tomtom_target_data <- function(tomtom_xml_data){
     purrr::map(get_probability_matrix) %>%
     purrr::map(t)
 
-  target_list <- target_df %>%
-    split(.$id)
-
-  pfmList <- purrr::map2(target_list, target_pfms, ~{
-    universalmotif::create_motif(.y,
-                                 type = "PCM",
-                                 name = .x$id,
-                                 altname = .x$alt,
-                                 nsites = .x$nsites)
-
-  })
+  target_df$pfm <- target_pfms
 
   target_data <- target_df %>%
+    dplyr::mutate(match_motif = purrr::pmap(list(pfm, id, alt, nsites), ~{
+      universalmotif::create_motif(..1,
+                                   type = "PCM",
+                                   name = ..2,
+                                   altname = ..3,
+                                   nsites = ..4)
+    })) %>%
+    dplyr::select(-"pfm") %>%
     dplyr::rename_at(c("id", "alt"), ~{paste0("match_", .x)}) %>%
-    dplyr::select(dplyr::contains("idx"), dplyr::contains("match")) %>%
-    dplyr::mutate(match_motif = pfmList)
+    dplyr::select(dplyr::contains("idx"), dplyr::contains("match"))
 
   return(target_data)
 
