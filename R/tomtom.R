@@ -59,10 +59,12 @@ runTomTom <- function(input, database = NULL,
 
   # save dreme results & join w/ tomtom results at end.
   # type validation happens below
+  nest_output <- FALSE
   if (class(input) == "data.frame") {
     dreme_results <- input
     nest_output <- TRUE
   }
+
   input <- tomtom_input(input)
 
   command <- handle_meme_path(path = meme_path, util = "tomtom")
@@ -333,3 +335,4 @@ nest_tomtom_results <- function(tomtom_results){
     dplyr::mutate(tomtom = purrr::map(tomtom, data.frame)) %>%
     dplyr::select("id", "alt", dplyr::contains("best_"), dplyr::everything())
 }
+
