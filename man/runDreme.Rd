@@ -4,13 +4,7 @@
 \alias{runDreme}
 \title{Denovo motif discovery of target regions}
 \usage{
-runDreme(
-  input,
-  control,
-  outdir = outdir_name(input, control),
-  meme_path = NULL,
-  ...
-)
+runDreme(input, control, outdir = "auto", meme_path = NULL, ...)
 }
 \arguments{
 \item{input}{path to fasta file of target regions}
@@ -21,8 +15,8 @@ number\> can be passed to \code{...} to use as random seed during shuffling. If
 no seed is passed, dreme will use 1 as random seed, so results will be
 reproducible if rerunning.}
 
-\item{outdir}{path to output directory of dreme files. Default: location of
-input fasta in dir named "\<input\>\emph{vs}\<control\>"}
+\item{outdir}{path to output directory of dreme files, or "auto" to autogenerate path. Default: location of
+input fasta in dir named "\<input\>\emph{vs}\<control\>". If input is DNAstringset, will be temporary path.}
 
 \item{meme_path}{optional, path to "meme/bin/" on your local machine.
 runDreme will search 3 places in order for meme if this flag is unset:
