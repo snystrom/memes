@@ -24,13 +24,13 @@
     <strands>both</strands>
     <background from="--query--" A="0.492999" C="0.00700097" G="0.00700097" T="0.492999"/>
     <host>c0920.ll.unc.edu</host>
-    <when>Tue Apr 14 10:06:44 2020</when>
+    <when>Tue Apr 14 16:45:08 2020</when>
   </model>
   <query_dbs>
-    <db source="inst/extdata/fasta_ex/fa1_vs_shuffle/dreme.txt" name="dreme.txt" loaded="3" excluded="0" last_mod_date="Mon Apr 13 16:36:24 2020"/>
+    <db source="inst/extdata/fasta_ex/fa1_vs_shuffle/dreme.txt" name="dreme.txt" loaded="3" excluded="0" last_mod_date="Tue Apr 14 15:27:53 2020"/>
   </query_dbs>
   <target_dbs>
-    <db source="inst/extdata/db/fly_factor_survey_id.meme" name="fly_factor_survey_id" loaded="608" excluded="48" last_mod_date="Mon Apr 13 16:56:22 2020"/>
+    <db source="inst/extdata/db/fly_factor_survey_id.meme" name="fly_factor_survey_id" loaded="608" excluded="48" last_mod_date="Tue Apr 14 15:27:53 2020"/>
   </target_dbs>
   <queries>
     <motif db="0" id="AAA" alt="DREME-1" length="3" nsites="5" evalue="3.9e+001">
@@ -196,5 +196,5 @@
       <target idx="7" rc="y" off="1" pv="1.64e-02" ev="9.99e+00" qv="5.92e-01"/>
     </query>
   </matches>
-  <runtime cycles="694583" seconds="0.695"/>
+  <runtime cycles="408644" seconds="0.409"/>
 </tomtom>
