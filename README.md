@@ -70,9 +70,9 @@ library(universalmotif)
 view_motifs(dreme_out$motifs)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" /> The
-primary advantage of using the `data.frame` output allows simple
-integration with base subsetting, piping, and the `tidyverse`.
+![](man/figures/README-unnamed-chunk-6-1.png)<!-- --> The primary
+advantage of using the `data.frame` output allows simple integration
+with base subsetting, piping, and the `tidyverse`.
 
 ``` r
 library(dplyr)
@@ -90,7 +90,7 @@ dreme_out %>%
   {universalmotif::view_motifs(.$motifs)}
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-7-1.png)<!-- -->
 
 `universalmotif` manipulations can easily be executed on data.frame
 columns. For example:
@@ -101,7 +101,7 @@ dreme_out$motifs %>%
   view_motifs()
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-8-1.png)<!-- -->
 
 ## TomTom
 
@@ -241,7 +241,7 @@ full_res$best_match_motif
 universalmotif::view_motifs(full_res$motifs)
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
 full_res %>% 
@@ -250,7 +250,8 @@ full_res %>%
   universalmotif::view_motifs()
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-2.png" width="100%" />
+![](man/figures/README-unnamed-chunk-14-2.png)<!-- --> \#\# Denovo Motif
+Pipeline w/ dremer
 
 ``` r
 suppressPackageStartupMessages(library(GenomicRanges))
@@ -258,12 +259,6 @@ suppressPackageStartupMessages(library(GenomicRanges))
 peaks <- "inst/extdata/peaks/peaks.tsv" %>%
   readr::read_tsv() %>%
   GRanges
-#> Parsed with column specification:
-#> cols(
-#>   seqnames = col_character(),
-#>   start = col_double(),
-#>   end = col_double()
-#> )
 ```
 
 ``` r
@@ -277,12 +272,61 @@ motif_analysis <- peaks %>%
   runTomTom()
 ```
 
+## Compare denovo motif with best match
+
+use `cowplot` to arrange plots in a grid.
+
+``` r
+purrr::map2(motif_analysis$motifs, motif_analysis$best_match_motif, ~{
+  universalmotif::view_motifs(c(.x, .y))
+}) %>% 
+  cowplot::plot_grid(plotlist = .)
+```
+
+![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
+
+## Evaluate top 3 hits from TOMTOM
+
+``` r
+view_tomtom_hits(motif_analysis, 3)
+#> [[1]]
+```
+
+![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
+
+    #> 
+    #> [[2]]
+
+![](man/figures/README-unnamed-chunk-18-2.png)<!-- -->
+
+    #> 
+    #> [[3]]
+
+![](man/figures/README-unnamed-chunk-18-3.png)<!-- -->
+
+    #> 
+    #> [[4]]
+
+![](man/figures/README-unnamed-chunk-18-4.png)<!-- -->
+
+``` r
+library(ggplot2)
+
+frac_plot <- motif_analysis %>% 
+  ggplot(aes(reorder(id, pos_frac), pos_frac/neg_frac)) +
+    geom_col() + 
+    coord_flip() +
+    labs(x = NULL,
+         y = "Enrichment Ratio") +
+    theme_bw() +
+    theme(axis.text.y = element_blank())
+```
+
 ``` r
 cowplot::plot_grid(
   universalmotif::view_motifs(motif_analysis$motifs),
-  universalmotif::view_motifs(motif_analysis$best_match_motif),
-  ncol = 2
+  frac_plot
 )
 ```
 
-<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->

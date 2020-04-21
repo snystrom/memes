@@ -8,8 +8,8 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
+  fig.path = "man/figures/README-"
+  #out.width = "100%"
 )
 ```
 
@@ -25,7 +25,7 @@ An R interface to the [MEME Suite](http://meme-suite.org/) family of tools.
 ## Installation
 
 
-```{r, include=F}
+```{r, include=F, eval=F}
 #You can install the released version of dremeR from [CRAN](https://CRAN.R-project.org) with:
 install.packages("dremeR")
 #And the development version from [GitHub](https://github.com/) with:
@@ -105,8 +105,8 @@ full_res %>%
   .$best_match_motif %>% 
   universalmotif::view_motifs()
 ```
-
-```{r}
+## Denovo Motif Pipeline w/ dremer
+```{r, message=F}
 suppressPackageStartupMessages(library(GenomicRanges))
 
 peaks <- "inst/extdata/peaks/peaks.tsv" %>%
@@ -124,11 +124,38 @@ motif_analysis <- peaks %>%
   runTomTom()
 ```
 
-```{r, fig.height=4, fig.width=10}
+## Compare denovo motif with best match
+
+use `cowplot` to arrange plots in a grid.
+```{r}
+purrr::map2(motif_analysis$motifs, motif_analysis$best_match_motif, ~{
+  universalmotif::view_motifs(c(.x, .y))
+}) %>% 
+  cowplot::plot_grid(plotlist = .)
+```
+
+## Evaluate top 3 hits from TOMTOM
+
+```{r}
+view_tomtom_hits(motif_analysis, 3)
+```
+```{r}
+library(ggplot2)
+
+frac_plot <- motif_analysis %>% 
+  ggplot(aes(reorder(id, pos_frac), pos_frac/neg_frac)) +
+    geom_col() + 
+    coord_flip() +
+    labs(x = NULL,
+         y = "Enrichment Ratio") +
+    theme_bw() +
+    theme(axis.text.y = element_blank())
+```
+
+```{r}
 cowplot::plot_grid(
   universalmotif::view_motifs(motif_analysis$motifs),
-  universalmotif::view_motifs(motif_analysis$best_match_motif),
-  ncol = 2
+  frac_plot
 )
 ```
 
