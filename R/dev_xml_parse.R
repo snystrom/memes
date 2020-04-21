@@ -3,23 +3,21 @@ tomtom_query_motif_dfs <- function(tt_xml){
   tt_motif_list <- tt_xml %>%
     xml2::xml_find_all("//queries") %>%
     xml2::xml_children() %>%
-    purrr::map(tomtom_xml_motif_to_dataframe, tt_xml)
+    purrr::map(tomtom_xml_motif_to_universalmotif, tt_xml)
 
-  tt_motifs <- purrr::map(tt_motif_list, "motif")
-  tt_data <- purrr::map(tt_motif_list, ~{dplyr::select(.x, -"motif")}) %>%
-    dplyr::bind_rows()
+  data <- universalmotif_to_meme_df(tt_motif_list) %>%
+    dplyr::mutate(query_idx = (1:nrow(.) - 1),
+      db_idx = purrr::map_int(tt_motif_list, ~{
+      .x@extrainfo["db"] %>%
+        as.integer()
+    }))
 
-  tt_data$motif <- tt_motifs
-
-  tt_data %<>%
-    dplyr::mutate(query_idx = (1:nrow(.) - 1))
-    dplyr::rename("db_idx" = "db")
-  return(tt_data)
+  return(data)
 }
 
-tomtom_xml_motif_to_dataframe <- function(entry, tt_xml){
-  df <- attrs_to_df(entry, stringsAsFactors = FALSE) %>%
-    dplyr::mutate_at(c("db", "length", "nsites"), as.integer) %>%
+tomtom_xml_motif_to_universalmotif <- function(entry, tt_xml){
+  data <- attrs_to_df(entry, stringsAsFactors = FALSE) %>%
+    dplyr::mutate_at(c("length", "nsites"), as.integer) %>%
     dplyr::mutate_at(c("evalue"), as.double)
 
   pfm <- t(get_probability_matrix(entry))
@@ -29,17 +27,17 @@ tomtom_xml_motif_to_dataframe <- function(entry, tt_xml){
   bkg <- dreme_get_background_freq(tt_run_info)
 
   motif <- universalmotif::create_motif(pfm,
-                               name = df$id,
-                               altname = check_col(df, "alt", character(0)),
+                               name = data$id,
+                               altname = check_col(data, "alt", character(0)),
                                bkg = bkg,
-                               pval = check_col(df, "pvalue"),
-                               nsites = check_col(df, "nsites"),
-                               eval = check_col(df, "evalue")
+                               pval = check_col(data, "pvalue"),
+                               nsites = check_col(data, "nsites"),
+                               eval = check_col(data, "evalue"),
+                               extrainfo = c("db" = data$db)
                                )
 
-  df$motif <- motif
 
-  return(df)
+  return(motif)
 }
 
 check_col <- function(df, col, type = numeric(0)){

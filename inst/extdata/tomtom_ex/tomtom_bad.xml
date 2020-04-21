@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<tomtom version="5.1.1" release="Wed Jan 29 15:00:42 2020 -0800">
+  <model>
+    <command_line>tomtom -oc inst/extdata/fasta_ex/fa1_vs_shuffle/tomtom -thresh 10 -min-overlap 5 -dist pearson -evalue inst/extdata/fasta_ex/fa1_vs_shuffle/dreme.txt inst/extdata/db/fly_factor_survey_id.meme</command_line>
+    <distance_measure value="pearson"/>
+    <threshold type="evalue">10</threshold>
+    <alphabet name="DNA" like="dna">
+      <letter id="A" symbol="A" complement="T" name="Adenine" colour="CC0000"/>
+      <letter id="C" symbol="C" complement="G" name="Cytosine" colour="0000CC"/>
+      <letter id="G" symbol="G" complement="C" name="Guanine" colour="FFB300"/>
+      <letter id="T" symbol="T" aliases="U" complement="A" name="Thymine" colour="008000"/>
+      <letter id="N" symbol="N" aliases="X." equals="ACGT" name="Any base"/>
+      <letter id="V" symbol="V" equals="ACG" name="Not T"/>
+      <letter id="H" symbol="H" equals="ACT" name="Not G"/>
+      <letter id="D" symbol="D" equals="AGT" name="Not C"/>
+      <letter id="B" symbol="B" equals="CGT" name="Not A"/>
+      <letter id="M" symbol="M" equals="AC" name="Amino"/>
+      <letter id="R" symbol="R" equals="AG" name="Purine"/>
+      <letter id="W" symbol="W" equals="AT" name="Weak"/>
+      <letter id="S" symbol="S" equals="CG" name="Strong"/>
+      <letter id="Y" symbol="Y" equals="CT" name="Pyrimidine"/>
+      <letter id="K" symbol="K" equals="GT" name="Keto"/>
+    </alphabet>
+    <strands>both</strands>
+    <background from="--query--" A="0.492999" C="0.00700097" G="0.00700097" T="0.492999"/>
+    <host>c0920.ll.unc.edu</host>
+    <when>Tue Apr 14 16:45:08 2020</when>
+  </model>
+  <query_dbs>
+    <db source="inst/extdata/fasta_ex/fa1_vs_shuffle/dreme.txt" name="dreme.txt" loaded="3" excluded="0" last_mod_date="Tue Apr 14 15:27:53 2020"/>
+  </query_dbs>
+  <target_dbs>
+    <db source="inst/extdata/db/fly_factor_survey_id.meme" name="fly_factor_survey_id" loaded="608" excluded="48" last_mod_date="Tue Apr 14 15:27:53 2020"/>
+  </target_dbs>
+  <queries>
+    <motif db="0" id="AAA" alt="DREME-1" length="3" nsites="5" evalue="3.9e+001">
+      <pos A="0.990059" C="0.000137274" G="0.000137274" T="0.00966665"/>
+      <pos A="0.990059" C="0.000137274" G="0.000137274" T="0.00966665"/>
+      <pos A="0.990059" C="0.000137274" G="0.000137274" T="0.00966665"/>
+    </motif>
+    <motif db="0" id="AAT" alt="DREME-3" length="3" nsites="10" evalue="1.2e+001">
+      <pos A="0.99498" C="6.93166e-05" G="6.93166e-05" T="0.00488118"/>
+      <pos A="0.99498" C="6.93166e-05" G="6.93166e-05" T="0.00488118"/>
+      <pos A="0.00488118" C="6.93166e-05" G="6.93166e-05" T="0.99498"/>
+    </motif>
+    <motif db="0" id="AATAATAA" alt="DREME-2" length="8" nsites="10" evalue="9.0e+000">
+      <pos A="0.99498" C="6.93166e-05" G="6.93166e-05" T="0.00488118"/>
+      <pos A="0.99498" C="6.93166e-05" G="6.93166e-05" T="0.00488118"/>
+      <pos A="0.00488118" C="6.93166e-05" G="6.93166e-05" T="0.99498"/>
+      <pos A="0.99498" C="6.93166e-05" G="6.93166e-05" T="0.00488118"/>
+      <pos A="0.99498" C="6.93166e-05" G="6.93166e-05" T="0.00488118"/>
+      <pos A="0.00488118" C="6.93166e-05" G="6.93166e-05" T="0.99498"/>
+      <pos A="0.99498" C="6.93166e-05" G="6.93166e-05" T="0.00488118"/>
+      <pos A="0.99498" C="6.93166e-05" G="6.93166e-05" T="0.00488118"/>
+    </motif>
+  </queries>
+  <targets>
+    <motif db="0" id="Antp_FlyReg" alt="FBgn0000095_2" length="6" nsites="12"
+        url="http://pgfe.umassmed.edu/TFDBS/TFdetails.php?FlybaseID=FBgn0000095">
+      <pos A="0.665232" C="5.78633e-05" G="5.78633e-05" T="0.334653"/>
+      <pos A="0.00407437" C="5.78633e-05" G="5.78633e-05" T="0.99581"/>
+      <pos A="0.913166" C="5.78633e-05" G="0.0827022" T="0.00407437"/>
+      <pos A="0.99581" C="5.78633e-05" G="5.78633e-05" T="0.00407437"/>
+      <pos A="0.00407437" C="5.78633e-05" G="0.247992" T="0.747876"/>
+      <pos A="0.252008" C="5.78633e-05" G="5.78633e-05" T="0.747876"/>
+    </motif>
+    <motif db="0" id="Hgtx_SOLEXA" alt="FBgn0040318_2" length="8" nsites="581"
+        url="http://pgfe.umassmed.edu/TFDBS/TFdetails.php?FlybaseID=FBgn0040318">
+      <pos A="0.32533" C="0.134229" G="0.173809" T="0.366631"/>
+      <pos A="0.28575" C="0.0567904" G="0.0877661" T="0.569694"/>
+      <pos A="0.00180554" C="0.0189309" G="0.0309769" T="0.948287"/>
+      <pos A="0.839871" C="0.0240931" G="0.0516273" T="0.0844073"/>
+      <pos A="0.967216" C="0.0309769" G="0.00172191" T="8.48388e-05"/>
+      <pos A="0.0121308" C="0.0103264" G="0.0894868" T="0.888056"/>
+      <pos A="0.103337" C="0.0154895" G="0.333851" T="0.547323"/>
+      <pos A="0.767595" C="0.0120471" G="0.199623" T="0.0207353"/>
+    </motif>
+    <motif db="0" id="Pph13_Cell" alt="FBgn0023489" length="8" nsites="21"
+        url="http://pgfe.umassmed.edu/TFDBS/TFdetails.php?FlybaseID=FBgn0023489">
+      <pos A="0.47627" C="0.189606" G="0.142213" T="0.19191"/>
+      <pos A="0.286696" C="0.426573" G="0.0948198" T="0.19191"/>
+      <pos A="0.00233649" C="3.31823e-05" G="3.31823e-05" T="0.997597"/>
+      <pos A="0.997597" C="3.31823e-05" G="3.31823e-05" T="0.00233649"/>
+      <pos A="0.997597" C="3.31823e-05" G="3.31823e-05" T="0.00233649"/>
+      <pos A="0.00233649" C="3.31823e-05" G="3.31823e-05" T="0.997597"/>
+      <pos A="0.00233649" C="0.0474265" G="3.31823e-05" T="0.950204"/>
+      <pos A="0.618451" C="0.0474265" G="0.284393" T="0.0497298"/>
+    </motif>
+    <motif db="0" id="So_Cell" alt="FBgn0003460" length="7" nsites="27"
+        url="http://pgfe.umassmed.edu/TFDBS/TFdetails.php?FlybaseID=FBgn0003460">
+      <pos A="0.444623" C="0.147627" G="0.184527" T="0.223221"/>
+      <pos A="0.481524" C="0.0369262" G="0.369029" T="0.11252"/>
+      <pos A="0.00181918" C="2.58356e-05" G="0.0369262" T="0.961229"/>
+      <pos A="0.00181918" C="2.58356e-05" G="0.996336" T="0.00181918"/>
+      <pos A="0.998129" C="2.58356e-05" G="2.58356e-05" T="0.00181918"/>
+      <pos A="0.00181918" C="2.58356e-05" G="0.0369262" T="0.961229"/>
+      <pos A="0.998129" C="2.58356e-05" G="2.58356e-05" T="0.00181918"/>
+    </motif>
+    <motif db="0" id="ap_FlyReg" alt="FBgn0000099_2" length="6" nsites="12"
+        url="http://pgfe.umassmed.edu/TFDBS/TFdetails.php?FlybaseID=FBgn0000099">
+      <pos A="0.0867187" C="0.330636" G="0.165347" T="0.417298"/>
+      <pos A="0.99581" C="5.78633e-05" G="5.78633e-05" T="0.00407437"/>
+      <pos A="0.99581" C="5.78633e-05" G="5.78633e-05" T="0.00407437"/>
+      <pos A="0.00407437" C="0.0827022" G="0.0827022" T="0.83052"/>
+      <pos A="0.334653" C="0.247992" G="0.0827022" T="0.334653"/>
+      <pos A="0.913166" C="5.78633e-05" G="0.0827022" T="0.00407437"/>
+    </motif>
+    <motif db="0" id="bab1_FlyReg" alt="FBgn0004870" length="10" nsites="6"
+        url="http://pgfe.umassmed.edu/TFDBS/TFdetails.php?FlybaseID=FBgn0004870">
+      <pos A="0.172017" C="0.000114778" G="0.000114778" T="0.827754"/>
+      <pos A="0.991689" C="0.000114778" G="0.000114778" T="0.00808194"/>
+      <pos A="0.00808194" C="0.000114778" G="0.000114778" T="0.991689"/>
+      <pos A="0.33595" C="0.000114778" G="0.000114778" T="0.66382"/>
+      <pos A="0.66382" C="0.000114778" G="0.16405" T="0.172017"/>
+      <pos A="0.33595" C="0.000114778" G="0.000114778" T="0.66382"/>
+      <pos A="0.00808194" C="0.000114778" G="0.000114778" T="0.991689"/>
+      <pos A="0.499885" C="0.000114778" G="0.491918" T="0.00808194"/>
+      <pos A="0.00808194" C="0.000114778" G="0.000114778" T="0.991689"/>
+      <pos A="0.00808194" C="0.000114778" G="0.16405" T="0.827754"/>
+    </motif>
+    <motif db="0" id="br-Z4_FlyReg" alt="FBgn0000210_4" length="6" nsites="8"
+        url="http://pgfe.umassmed.edu/TFDBS/TFdetails.php?FlybaseID=FBgn0000210">
+      <pos A="0.62337" C="8.64378e-05" G="0.370457" T="0.0060864"/>
+      <pos A="0.253" C="0.61737" G="8.64378e-05" T="0.129543"/>
+      <pos A="0.129543" C="8.64378e-05" G="8.64378e-05" T="0.870284"/>
+      <pos A="0.993741" C="8.64378e-05" G="8.64378e-05" T="0.0060864"/>
+      <pos A="0.993741" C="8.64378e-05" G="8.64378e-05" T="0.0060864"/>
+      <pos A="0.129543" C="8.64378e-05" G="8.64378e-05" T="0.870284"/>
+    </motif>
+    <motif db="0" id="eve_FlyReg" alt="FBgn0000606_2" length="12" nsites="19"
+        url="http://pgfe.umassmed.edu/TFDBS/TFdetails.php?FlybaseID=FBgn0000606">
+      <pos A="0.316717" C="0.418885" G="3.66568e-05" T="0.264361"/>
+      <pos A="0.00258114" C="0.157105" G="0.523597" T="0.316717"/>
+      <pos A="0.107293" C="0.261817" G="0.157105" T="0.473785"/>
+      <pos A="0.159649" C="3.66568e-05" G="3.66568e-05" T="0.840277"/>
+      <pos A="0.840277" C="3.66568e-05" G="0.104749" T="0.0549376"/>
+      <pos A="0.997346" C="3.66568e-05" G="3.66568e-05" T="0.00258114"/>
+      <pos A="0.00258114" C="0.261817" G="3.66568e-05" T="0.735565"/>
+      <pos A="0.159649" C="0.20946" G="0.261817" T="0.369073"/>
+      <pos A="0.369073" C="3.66568e-05" G="0.314172" T="0.316717"/>
+      <pos A="0.159649" C="3.66568e-05" G="0.104749" T="0.735565"/>
+      <pos A="0.0549376" C="3.66568e-05" G="0.366529" T="0.578497"/>
+      <pos A="0.00258114" C="0.314172" G="0.0523931" T="0.630853"/>
+    </motif>
+    <motif db="0" id="hb_FlyReg" alt="FBgn0001180_2" length="8" nsites="103"
+        url="http://pgfe.umassmed.edu/TFDBS/TFdetails.php?FlybaseID=FBgn0001180">
+      <pos A="0.165367" C="0.126098" G="0.0679019" T="0.640634"/>
+      <pos A="0.000478175" C="6.79094e-06" G="0.0291045" T="0.97041"/>
+      <pos A="0.0101778" C="0.0485037" G="0.00970637" T="0.931613"/>
+      <pos A="0.000478175" C="0.00970637" G="6.79094e-06" T="0.989809"/>
+      <pos A="0.000478175" C="6.79094e-06" G="6.79094e-06" T="0.999508"/>
+      <pos A="0.0101778" C="0.0388041" G="6.79094e-06" T="0.951011"/>
+      <pos A="0.572739" C="0.0679019" G="0.281287" T="0.0780728"/>
+      <pos A="0.194465" C="0.164896" G="0.135797" T="0.504843"/>
+    </motif>
+    <motif db="0" id="jigr1_SANGER_5" alt="FBgn0039350" length="11" nsites="20"
+        url="http://pgfe.umassmed.edu/TFDBS/TFdetails.php?FlybaseID=FBgn0039350">
+      <pos A="0.499965" C="0.348294" G="3.48331e-05" T="0.151706"/>
+      <pos A="0.499965" C="0.248791" G="0.149289" T="0.101955"/>
+      <pos A="0.00245273" C="3.48331e-05" G="3.48331e-05" T="0.997478"/>
+      <pos A="0.748721" C="3.48331e-05" G="0.0497861" T="0.201458"/>
+      <pos A="0.947726" C="0.0497861" G="3.48331e-05" T="0.00245273"/>
+      <pos A="0.947726" C="0.0497861" G="3.48331e-05" T="0.00245273"/>
+      <pos A="0.997478" C="3.48331e-05" G="3.48331e-05" T="0.00245273"/>
+      <pos A="0.798473" C="3.48331e-05" G="3.48331e-05" T="0.201458"/>
+      <pos A="0.748721" C="0.19904" G="3.48331e-05" T="0.052204"/>
+      <pos A="0.649219" C="3.48331e-05" G="0.0497861" T="0.30096"/>
+      <pos A="0.549716" C="0.19904" G="0.19904" T="0.052204"/>
+    </motif>
+    <motif db="0" id="zen_FlyReg" alt="FBgn0004053_2" length="10" nsites="12"
+        url="http://pgfe.umassmed.edu/TFDBS/TFdetails.php?FlybaseID=FBgn0004053">
+      <pos A="0.0867187" C="0.826504" G="0.0827022" T="0.00407437"/>
+      <pos A="0.99581" C="5.78633e-05" G="5.78633e-05" T="0.00407437"/>
+      <pos A="0.252008" C="0.0827022" G="5.78633e-05" T="0.665232"/>
+      <pos A="0.00407437" C="5.78633e-05" G="5.78633e-05" T="0.99581"/>
+      <pos A="0.582586" C="5.78633e-05" G="5.78633e-05" T="0.417298"/>
+      <pos A="0.83052" C="5.78633e-05" G="5.78633e-05" T="0.169364"/>
+      <pos A="0.665232" C="5.78633e-05" G="5.78633e-05" T="0.334653"/>
+      <pos A="0.417298" C="0.247992" G="0.165347" T="0.169364"/>
+      <pos A="0.169364" C="0.0827022" G="5.78633e-05" T="0.747876"/>
+      <pos A="0.00407437" C="0.0827022" G="0.165347" T="0.747876"/>
+    </motif>
+  </targets>
+  <matches>
+  </matches>
+  <runtime cycles="408644" seconds="0.409"/>
+</tomtom>
