@@ -8,7 +8,8 @@ tt_files <- runTomTom(dreme_file$txt, database = "inst/extdata/db/fly_factor_sur
 #####
 # RETURN
 # use this to walk through get_tomtom_target_data line-by line
-tt_xml <- "tt_drememerge_dev/tomtom.xml"
+tt_xml <- "tt_drememerge_dev/tomtom.xml" %>%
+  xml2::read_xml()
 
 ###########
 test_that("tomtom target PWM and target metadata correctly assigned to eachother", {
@@ -23,7 +24,7 @@ test_that("tomtom target PWM and target metadata correctly assigned to eachother
 
 
 dreme_file <- dotargs::expected_outputs(c("txt"), "dreme", "inst/extdata/fasta_ex/fa1_vs_shuffle/")
-dreme_file <- duplicate_file(dreme_file$txt)
+dreme_file <- dremeR:::duplicate_file(dreme_file$txt)
 runTomTom(dreme_file, "inst/extdata/db/fly_factor_survey_id.meme")
 runTomTom(dreme_out, "inst/extdata/db/fly_factor_survey_id.meme")
 

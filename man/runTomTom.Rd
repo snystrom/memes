@@ -7,7 +7,7 @@
 runTomTom(
   input,
   database = NULL,
-  outdir = paste0(dirname(input), "/tomtom"),
+  outdir = "auto",
   thresh = 10,
   min_overlap = 5,
   dist = "pearson",
