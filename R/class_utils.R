@@ -121,3 +121,30 @@ error_universalmotif_list <- function(list){
   }
 }
 
+
+#' Convert universalmotif to data.frame with motif column
+#'
+#' @param motif universalmotif object or list of universalmotifs
+#'
+#' @return data.frame with all motif metadata + `motifs` column containing universalmotif object
+#'
+#' @importFrom magrittr %>%
+#'
+#' @examples
+#' universalmotif::create_motif() %>%
+#'   universalmotif_to_df()
+#' @noRd
+universalmotif_to_meme_df <- function(motif){
+  # this is needed to overcome limitation of bind_rows causing error with list columns
+  data <- switch(class(motif),
+                 list = purrr::map(motif, universalmotif::as.data.frame) %>%
+                          dplyr::bind_rows(),
+                 universalmotif = universalmotif::as.data.frame(motif))
+
+  df <- data %>%
+    dplyr::rename("id" = "name",
+                  "alt" = "altname")
+
+  df$motifs <- motif
+  return(df)
+}

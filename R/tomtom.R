@@ -48,7 +48,7 @@ handle_tomtom_database_path <- function(path = NULL){
 #' runTomTom("searchmotifs.meme", "jasparMotifs.meme")
 #' }
 runTomTom <- function(input, database = NULL,
-                      outdir = paste0(dirname(input), "/tomtom"),
+                      outdir = "auto",
                       thresh = 10,
                       min_overlap = 5,
                       dist = "pearson",
@@ -59,20 +59,18 @@ runTomTom <- function(input, database = NULL,
 
   # save dreme results & join w/ tomtom results at end.
   # type validation happens below
-  nest_output <- FALSE
-  if (class(input) == "data.frame") {
-    dreme_results <- input
-    nest_output <- TRUE
-  }
 
   input <- tomtom_input(input)
 
   command <- handle_meme_path(path = meme_path, util = "tomtom")
 
+  if (outdir == "auto") {outdir <- file.path(dirname(input$path), "tomtom")}
+
   database <- handle_tomtom_database_path(path = database)
 
+  #flags <- prepareTomTomFlags(outdir = outdir, thresh = thresh, min_overlap = min_overlap, dist = dist, evalue = evalue)
   flags <- prepareTomTomFlags(outdir = outdir, thresh = thresh, min_overlap = min_overlap, dist = dist, evalue = evalue, ...)
-  flags <- c(flags, input, database)
+  flags <- c(flags, input$path, database)
 
   ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
 
@@ -84,12 +82,12 @@ runTomTom <- function(input, database = NULL,
     dotargs::check_files_exist()
 
   tomtom_results <- parseTomTom(tomtom_out$xml)
-
-  if (nest_output){
+  # TODO: if tomtom_results = NULL, figure out how to handle?
+  if (!is.null(input$metadata) & !is.null(tomtom_results)){
 
     nest_tomtom <- nest_tomtom_results(tomtom_results)
 
-    merge_res <- dplyr::left_join(dreme_results, nest_tomtom, by = c("id", "alt"))
+    merge_res <- dplyr::left_join(input$metadata, nest_tomtom, by = c("id", "alt"))
     return(merge_res)
   }
 

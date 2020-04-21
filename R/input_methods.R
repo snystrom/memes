@@ -12,6 +12,12 @@ dreme_input.DNAStringSet <- function(input){
 }
 
 tomtom_input.character <- function(input){
+  # TODO: Check is dreme xml format
+    # parse to dreme results
+    # read_xml %>% xml_name() == "dreme"
+    # convert to df
+    # importDremeXML()
+  # check is
   dotargs::check_files_exist(input)
   return(input)
 }
@@ -23,19 +29,37 @@ tomtom_input.data.frame <- function(input){
   path <- input$motifs %>%
     write_meme_list()
 
-  return(path)
+  out <- list(metadata = input,
+              path = path)
+  return(out)
 }
 
 tomtom_input.list <- function(input){
   # check list is universalmotif list
   if (!is_universalmotif_list(input)) error_universalmotif_list(list)
 
+  df <- universalmotif_to_meme_df(input)
+
   path <- input %>%
     write_meme_list()
 
-  return(path)
+  out <- list(metadata = df,
+              path = path)
+
+  return(out)
 }
 
 tomtom_input.universalmotif <- function(input){
-  write_meme_list(input)
+
+  df <- universalmotif_to_meme_df(input) %>%
+    data.frame
+
+  path <- input %>%
+    write_meme_list()
+
+  out <- list(metadata = df,
+              path = path)
+
+  return(out)
 }
+
