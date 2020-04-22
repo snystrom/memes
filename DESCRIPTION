@@ -1,7 +1,7 @@
 Package: dremeR
 Type: Package
 Title: An R Interface to the MEME Suite
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: person("Spencer", "Nystrom", email = "snystrom@email.unc.edu", role = c("aut", "cre", "cph"))
 Description: Provides functions for performing motif analysis in R using the MEME suite as a backend.
     Functions & outputs are designed for easy integration into tidy workflows for rapid iteration and delayed evaluation using futures if desired.
