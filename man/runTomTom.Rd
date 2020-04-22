@@ -39,8 +39,8 @@ Default: `pearson`.}
 `TRUE`). If evalue = FALSE, uses *q-value* instead.}
 
 \item{meme_path}{path to "meme/bin/" (optional). If unset, will check R
-environment variable "TOMTOM_DB" (set in `.Renviron`), or option
-"tomtom_db" (set with `option(tomtom_db = "path/to/meme/bin")`)}
+environment variable "MEME_DB (set in `.Renviron`), or option
+"meme_db" (set with `option(meme_db = "path/to/meme/bin")`)}
 
 \item{...}{additional flags passed to tomtom using {dotargs} formating (see
 [tomtom commandline reference](http://meme-suite.org/doc/tomtom.html?man_type=web) for details)}

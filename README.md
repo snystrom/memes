@@ -263,7 +263,7 @@ peaks <- "inst/extdata/peaks/peaks.tsv" %>%
 
 ``` r
 dm.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
-options(tomtom_db = "inst/extdata/db/fly_factor_survey_id.meme")
+options(meme_db = "inst/extdata/db/fly_factor_survey_id.meme")
 
 motif_analysis <- peaks %>% 
   resize(200, "center") %>% 

@@ -1,6 +1,6 @@
-#' Searches for valid TOMTOM database file
+#' Searches for valid MEME database file
 #'
-#' Default search heirarchy: Sys.getEnv("TOMTOM_DB") > getOption("tomtom_db") > user-defined path
+#' Default search heirarchy: Sys.getEnv("MEME_DB) > getOption("meme_db") > user-defined path
 #'
 #' @param path optional path to tomtom database
 #'
@@ -9,9 +9,9 @@
 #' @examples
 #'
 #' @noRd
-handle_tomtom_database_path <- function(path = NULL){
-  f <- dotargs::build_path_handler(environment_var = "TOMTOM_DB",
-                              option_name = "tomtom_db")
+handle_meme_database_path <- function(path = NULL){
+  f <- dotargs::build_path_handler(environment_var = "MEME_DB",
+                                   option_name = "meme_db")
   f(path = path)
 }
 
@@ -32,8 +32,8 @@ handle_tomtom_database_path <- function(path = NULL){
 #' @param evalue whether to use E-value as significance threshold (default:
 #'   `TRUE`). If evalue = FALSE, uses *q-value* instead.
 #' @param meme_path path to "meme/bin/" (optional). If unset, will check R
-#'   environment variable "TOMTOM_DB" (set in `.Renviron`), or option
-#'   "tomtom_db" (set with `option(tomtom_db = "path/to/meme/bin")`)
+#'   environment variable "MEME_DB (set in `.Renviron`), or option
+#'   "meme_db" (set with `option(meme_db = "path/to/meme/bin")`)
 #' @param ... additional flags passed to tomtom using {dotargs} formating (see
 #'   [tomtom commandline reference](http://meme-suite.org/doc/tomtom.html?man_type=web) for details)
 #'
@@ -66,7 +66,7 @@ runTomTom <- function(input, database = NULL,
 
   if (outdir == "auto") {outdir <- file.path(dirname(input$path), "tomtom")}
 
-  database <- handle_tomtom_database_path(path = database)
+  database <- handle_meme_database_path(path = database)
 
   #flags <- prepareTomTomFlags(outdir = outdir, thresh = thresh, min_overlap = min_overlap, dist = dist, evalue = evalue)
   flags <- prepareTomTomFlags(outdir = outdir, thresh = thresh, min_overlap = min_overlap, dist = dist, evalue = evalue, ...)
