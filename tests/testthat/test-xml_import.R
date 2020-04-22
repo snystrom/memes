@@ -1,7 +1,13 @@
+context("XML import works")
 
-tt_xml <- dremeR:::duplicate_file("tt_drememerge_dev/tomtom.xml")
-
-importTomTomXML(tt_xml)
+test_that("DREME XML import",{
+  expect_s3_class(importDremeXML("inst/extdata/dreme_example/dreme.xml"), "data.frame")
+  expect_true(is_dreme_results(importDremeXML("inst/extdata/dreme_example/dreme.xml")))
+})
 
 # testthat NULL tomtom result returns empty columns
-importTomTomXML("inst/extdata/tomtom_ex/tomtom_bad.xml")
+test_that("TomTom Import works",{
+  expect_s3_class(importTomTomXML("inst/extdata/tomtom_ex/tomtom_good.xml"), "data.frame")
+  # Should return query motifs w/ NA values for each column.
+  expect_s3_class(importTomTomXML("inst/extdata/tomtom_ex/tomtom_bad.xml"), "data.frame")
+})

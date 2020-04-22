@@ -59,4 +59,20 @@ importTomTomXML <- function(tomtom_xml_path){
 }
 
 
-# importDremeXML
+#' Import Dreme output from previous run
+#'
+#' @param dreme_xml_path path to dreme.xml file
+#'
+#' @return data.frame with statistics for each discovered motif. The `motifs`
+#'   column contains a universalmotif object representation in PCM format of
+#'   each DREME motif. If no motifs are discovered, returns NULL.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' importDremeXML("dreme.xml")
+#' }
+importDremeXML <- function(dreme_xml_path){
+  parseDreme(dreme_xml_path)
+}
