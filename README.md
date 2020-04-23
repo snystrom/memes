@@ -277,10 +277,8 @@ motif_analysis <- peaks %>%
 use `cowplot` to arrange plots in a grid.
 
 ``` r
-purrr::map2(motif_analysis$motifs, motif_analysis$best_match_motif, ~{
-  universalmotif::view_motifs(c(.x, .y))
-}) %>% 
-  cowplot::plot_grid(plotlist = .)
+view_tomtom_hits(motif_analysis, 1) %>% 
+  cowplot::plot_grid(plotlist = ., labels = "AUTO")
 ```
 
 ![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->

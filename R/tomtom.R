@@ -10,6 +10,7 @@
 #'
 #' @noRd
 handle_meme_database_path <- function(path = NULL){
+  # TODO: database can be path, or universalmotif list, (or vector: c(motifList, path)) (?)
   f <- dotargs::build_path_handler(environment_var = "MEME_DB",
                                    option_name = "meme_db")
   f(path = path)
@@ -68,7 +69,6 @@ runTomTom <- function(input, database = NULL,
 
   database <- handle_meme_database_path(path = database)
 
-  #flags <- prepareTomTomFlags(outdir = outdir, thresh = thresh, min_overlap = min_overlap, dist = dist, evalue = evalue)
   flags <- prepareTomTomFlags(outdir = outdir, thresh = thresh, min_overlap = min_overlap, dist = dist, evalue = evalue, ...)
   flags <- c(flags, input$path, database)
 
