@@ -1,4 +1,4 @@
-dreme_input <- function(x) UseMethod("dreme_input")
+sequence_input <- function(x) UseMethod("sequence_input")
 
-tomtom_input <- function(x) UseMethod("tomtom_input")
+motif_input <- function(x, ...) UseMethod("motif_input")
 

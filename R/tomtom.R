@@ -2,7 +2,8 @@
 #'
 #' Default search heirarchy: Sys.getEnv("MEME_DB) > getOption("meme_db") > user-defined path
 #'
-#' @param path optional path to tomtom database
+#' @param path optional path to tomtom database (either `character(1)` or
+#'   `list()` if named list, use names as database name)
 #'
 #' @return valid path to tomtom database
 #'
@@ -10,7 +11,39 @@
 #'
 #' @noRd
 handle_meme_database_path <- function(path = NULL){
-  # TODO: database can be path, or universalmotif list, (or vector: c(motifList, path)) (?)
+  # database can be path, or universalmotif list, (or vector: c(motifList, path))
+  # names will be used as file names for non file-path entries
+  if (any(is.data.frame(path))) {
+    stop("data.frame is not a supported input type, if this is a dreme results object, try passing it inside a list like: database = list(results)")
+  }
+
+  if (!is.character(path) & !is.list(path)){
+    stop("path must be character or list")
+  }
+
+  if (length(path) > 1 | is.list(path)){
+    paths <- purrr::imap(path, ~{
+      # Resolve how to name database entries:
+      if(.y != "" & !is.character(.x)) {
+        # rename non-path inputs to index# or name (if defined by user)
+        out <- file.path(tempdir(), .y)
+      } else if (.y != "" & !is.numeric(.y)) {
+        # use current file name & path if user does not define a new name for path entries
+        # (allows path inputs when all entries unnamed to not get renamed to their index position)
+        out <- file.path(tempdir(), .y)
+      } else{
+        # Otherwise, use type-specific path default
+        out <- NULL
+      }
+
+      motif_input(.x, out)
+    }) %>%
+      purrr::map_chr("path") %>%
+      purrr::set_names(NULL)
+    return(paths)
+  }
+
+  # Otherwise search envrionment variable / option definition
   f <- dotargs::build_path_handler(environment_var = "MEME_DB",
                                    option_name = "meme_db")
   f(path = path)
@@ -61,7 +94,7 @@ runTomTom <- function(input, database = NULL,
   # save dreme results & join w/ tomtom results at end.
   # type validation happens below
 
-  input <- tomtom_input(input)
+  input <- motif_input(input)
 
   command <- handle_meme_path(path = meme_path, util = "tomtom")
 

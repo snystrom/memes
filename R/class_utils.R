@@ -105,7 +105,7 @@ is_universalmotif_list <- function(list){
 #' @noRd
 error_universalmotif_list <- function(list){
 
-  if (is_universalmotif(list)) return(NULL)
+  if (is_universalmotif_list(list)) return(NULL)
 
   check_universalmotif <- purrr::map_lgl(list, ~{class(.x) == "universalmotif"}) %>%
     purrr::set_names(NULL)

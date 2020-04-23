@@ -1,8 +1,13 @@
 #' Title
 #'
-#' @param input
-#' @param control
-#' @param outdir
+#' @param input path to fasta, or DNAstringset (optional: DNAStringSet object
+#'   names contain fasta score, required for partitioning mode)
+#' @param control default: "shuffle", or set to
+#'   DNAstringset or path to fasta file to use those sequences in discriminative
+#'   mode. Set to NA for partitioning based on input fasta score (see
+#'   get_sequence for assigning fasta score).
+#' @param outdir default: auto
+#' @param method default: fisher
 #' @param database
 #' @param meme_path
 #' @param ...
@@ -17,26 +22,34 @@
 runAme <- function(input,
        control = "shuffle",
        outdir = "auto",
+       method = "fisher",
        database = NULL,
        meme_path = NULL, ...){
 
+  input <- sequence_input(input)
+
+  if (!is.na(control)){
+    control <- sequence_input(control)
+  }
+
+  # Autodetect outdir path from path names
+  # note: this line must run after input&control are parsed to paths
   if (outdir == "auto") {outdir <- outdir_name(input, control)}
 
-  # TODO: input either stringset or fasta path ~ dreme
-  input <- dreme_input(input)
-  # TODO: control either stringset, fasta path, or "shuffle"
-  flags <- prepareAmeFlags(control, outdir, ...)
+  flags <- prepareAmeFlags(control, outdir, method, ...)
   # TODO: database can be path, or universalmotif list, (or vector: c(motifList, path)) (?)
   database <- handle_meme_database_path(database)
   command <- handle_meme_path(path = meme_path, util = "ame")
 
-  flags <- c(flags, input$path, database)
+  flags <- c(flags, input, database)
 
-  ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
+  ps_out <- processx::run(command, flags, spinner = T, error_on_status = F) %T>%
+    process_check_error()
 
-  process_check_error(ps_out)
   # NOTE: sequences.tsv is only created when method == "fisher"
   # TODO: if `method` is unset or == "fisher", require sequences.tsv exists
+  ame_out <- dotargs::expected_outputs(c("html", "tsv"), "ame", outdir = outdir)
+  if (method == "fisher")
   ame_out <- dotargs::expected_outputs(c("html", "tsv", "tsv"),
                                        c("ame", "ame", "sequences"),
                                        outdir = outdir) %>%
@@ -45,7 +58,7 @@ runAme <- function(input,
 
 }
 
-prepareAmeFlags <- function(control, outdir, ...){
+prepareAmeFlags <- function(control, outdir, method, ...){
 
   argsDict <- c("outdir" = "oc")
 

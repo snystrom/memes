@@ -74,8 +74,8 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 
   # Handle multiple input types by multiple dispatch
   # input & control will be coerced to file paths
-  input <- dreme_input(input)
-  control <- dreme_input(control)
+  input <- sequence_input(input)
+  control <- sequence_input(control)
 
   if (outdir == "auto") {outdir <- outdir_name(input, control)}
 
