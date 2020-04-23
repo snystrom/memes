@@ -22,14 +22,19 @@ runAme <- function(input,
 
   if (outdir == "auto") {outdir <- outdir_name(input, control)}
 
-  # TODO: input either stringset or fasta path
+  # TODO: input either stringset or fasta path ~ dreme
+  input <- dreme_input(input)
   # TODO: control either stringset, fasta path, or "shuffle"
-
-  flags <- prepareAmeFlags(input, control, outdir, hit_lo_fraction, evalue_report_threshold, ...)
+  flags <- prepareAmeFlags(control, outdir, ...)
   # TODO: database can be path, or universalmotif list, (or vector: c(motifList, path)) (?)
   database <- handle_meme_database_path(database)
   command <- handle_meme_path(path = meme_path, util = "ame")
 
+  flags <- c(flags, input$path, database)
+
+  ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
+
+  process_check_error(ps_out)
   # NOTE: sequences.tsv is only created when method == "fisher"
   # TODO: if `method` is unset or == "fisher", require sequences.tsv exists
   ame_out <- dotargs::expected_outputs(c("html", "tsv", "tsv"),
@@ -40,23 +45,30 @@ runAme <- function(input,
 
 }
 
-prepareAmeFlags <- function(input, control, outdir, hit_lo_fraction, evalue_report_threshold, ...){
+prepareAmeFlags <- function(control, outdir, ...){
 
   argsDict <- c("outdir" = "oc")
 
   flagList <- dotargs::getAllArgs() %>%
-    dotargs::argsToFlags() %>%
+    dotargs::argsToFlags(argsDict) %>%
     purrr::set_names(~{gsub("_", "-", .x)})
-
-  if (control == "shuffle") {flagList$control <- "--shuffle--"}
+  return(flagList)
+  if (exists("control", flagList)) {
+    if (flagList$control == "shuffle") {
+      flagList$control <- "--shuffle--"
+    }
+  }
 
   flagList %>%
-    dotargs::crystallize_flags()
+    dotargs::crystallize_flags(prefix = "--")
 }
 
 parseAme <- function(){
   # parsing this will be potentially complicated
   # might need to deploy switch statement for method since output varies depending on method type.
+
+  # Strategey: build readr::cols() vector for each input type, the combine together using switch for import.
+  # NOTE: need to test whether readr::col_* can be used in c() inside readr::cols()?
 
   # also maybe want flag for sequences = T if method = fisher to optionally also import sequences data,
   # relevant because data are very large and many people might not want it.
