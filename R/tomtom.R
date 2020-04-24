@@ -17,7 +17,7 @@ handle_meme_database_path <- function(path = NULL){
     stop("data.frame is not a supported input type, if this is a dreme results object, try passing it inside a list like: database = list(results)")
   }
 
-  if (!is.character(path) & !is.list(path)){
+  if (!is.character(path) & !is.list(path) & !is.null(path)){
     stop("path must be character or list")
   }
 
