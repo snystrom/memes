@@ -11,3 +11,6 @@ runAme("inst/extdata/fasta_ex/fa1.fa", NULL)
 runAme("inst/extdata/fasta_ex/fa1.fa", NA)
 # expect success, discriminative mode
 runAme("inst/extdata/fasta_ex/fa1.fa", "inst/extdata/fasta_ex/fa2.fa")
+
+
+## Need functions to test import of all methods

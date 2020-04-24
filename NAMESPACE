@@ -3,6 +3,7 @@
 export(dreme_nmotifs_found)
 export(error_dreme_results)
 export(get_sequence)
+export(importAme)
 export(importDremeXML)
 export(importTomTomXML)
 export(parseTomTom)

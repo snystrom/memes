@@ -157,3 +157,14 @@ cowplot::plot_grid(
 )
 ```
 
+## Motif scanning & enrichment testing with AME
+```{r}
+ame_analysis <- peaks %>% 
+  resize(200, "center") %>% 
+  get_sequence(dm.genome) %>% 
+  runAme(evalue_report_threshold = 30)
+```
+```{r}
+ame_analysis
+```
+

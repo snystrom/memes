@@ -84,7 +84,7 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
   command <- handle_meme_path(path = meme_path, util = "dreme")
   ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
 
-  print_dreme_stdout(ps_out, silent = silent)
+  print_process_stdout(ps_out, silent = silent)
 
   n_motifs <- dreme_nmotifs_found(ps_out)
 
@@ -383,7 +383,7 @@ dreme_nmotifs_found <- function(processx_out){
 #'
 #' @examples
 #' @noRd
-print_dreme_stdout <- function(processx_out, silent = TRUE){
+print_process_stdout <- function(processx_out, silent = TRUE){
   process_check_error(processx_out)
 
   # leaving here incase needed for debugging

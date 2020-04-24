@@ -328,3 +328,23 @@ cowplot::plot_grid(
 ```
 
 ![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
+
+## Motif scanning & enrichment testing with AME
+
+``` r
+ame_analysis <- peaks %>% 
+  resize(200, "center") %>% 
+  get_sequence(dm.genome) %>% 
+  runAme(evalue_report_threshold = 30)
+```
+
+``` r
+ame_analysis
+#> # A tibble: 2 x 17
+#>    rank motif_db motif_id motif_alt_id consensus  pvalue adj.pvalue evalue tests
+#>   <int> <chr>    <chr>    <chr>        <chr>       <dbl>      <dbl>  <dbl> <int>
+#> 1     1 inst/ex… Eip93F_… FBgn0013948  ACWSCCRA… 5.14e-4     0.0339   20.6    67
+#> 2     2 inst/ex… Cf2-PB_… FBgn0000286… CSSHNKDT… 1.57e-3     0.04     24.3    26
+#> # … with 8 more variables: fasta_max <dbl>, pos <int>, neg <int>,
+#> #   pwm_min <dbl>, tp <int>, tp_percent <dbl>, fp <int>, fp_percent <dbl>
+```
