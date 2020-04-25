@@ -51,12 +51,19 @@ runTomTom <- function(input, database = NULL,
 
   database <- handle_meme_database_path(path = database)
 
-  flags <- prepareTomTomFlags(outdir = outdir, thresh = thresh, min_overlap = min_overlap, dist = dist, evalue = evalue, ...)
-  flags <- c(flags, input$path, database)
+  user_flags <- prepareTomTomFlags(outdir = outdir,
+                                   thresh = thresh,
+                                   min_overlap = min_overlap,
+                                   dist = dist,
+                                   evalue = evalue, ...)
+  flags <- c(user_flags, input$path, database)
 
   ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
-
-  process_check_error(ps_out)
+  ps_out %>%
+    process_check_error(help_fun = ~{tomtom_help(command)},
+                        user_flags = dotargs::get_help_flag_names(user_flags),
+                        flags_fun = ~{gsub("-", "_", .)}
+                        )
 
   tomtom_out <- dotargs::expected_outputs(c("tsv", "xml", "html"), "tomtom", outdir = outdir)
 
@@ -113,6 +120,17 @@ prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
     dotargs::crystallize_flags()
 
   return(flags)
+}
+
+#' Returns tomtom help lines
+#'
+#' @param command path to tomtom. output of handle_meme_path(util = "tomtom")
+#'
+#' @return
+#'
+#' @noRd
+tomtom_help <- function(command){
+  processx::run(command, error_on_status = FALSE)$stderr
 }
 
 #' Return query table from tomtom xml

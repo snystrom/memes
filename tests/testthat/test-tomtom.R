@@ -22,6 +22,14 @@ test_that("tomtom target PWM and target metadata correctly assigned to eachother
   expect_equal(tt_out$best_match_motif[[2]]@name, tt_out$best_match_id[[2]])
 })
 
+test_that("tomtom error checking suggets alternatives", {
+  expect_error(
+    suppressMessages(runTomTom(dreme_out, intternal = T)),
+    "internal", class = "error")
+  expect_error(
+    suppressMessages(runTomTom(dreme_out, incomplete_score = T)),
+    "incomplete_scores", class = "error")
+})
 
 dreme_file <- dotargs::expected_outputs(c("txt"), "dreme", "inst/extdata/fasta_ex/fa1_vs_shuffle/")
 dreme_file <- dremeR:::duplicate_file(dreme_file$txt)

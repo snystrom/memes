@@ -84,6 +84,10 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
   command <- handle_meme_path(path = meme_path, util = "dreme")
   ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
 
+  ps_out %>%
+    process_check_error(help_fun = ~{dreme_help(command)},
+                        user_flags = dotargs::get_help_flag_names(flags))
+
   print_process_stdout(ps_out, silent = silent)
 
   n_motifs <- dreme_nmotifs_found(ps_out)
@@ -150,6 +154,17 @@ parseDreme <- function(xml){
 
   dreme_stats$motifs <- pfms
   return(dreme_stats)
+}
+
+#' Returns Dreme help lines
+#'
+#' @param command path to ame. output of handle_meme_path(util = "ame")
+#'
+#' @return
+#'
+#' @noRd
+dreme_help <- function(command){
+  processx::run(command, "-h", error_on_status = FALSE)$stderr
 }
 
 #' Return statistics of DREME results

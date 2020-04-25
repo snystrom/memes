@@ -45,6 +45,13 @@ runDreme(seq, "shuffle", e = 49)
 
 runDreme(fa, seq)
 runDreme(fa, fa)
+
+## test error checking
+fa <- dremeR:::duplicate_file("inst/extdata/fasta_ex/fa1.fa")
+expect_error(suppressMessages(runDreme(fa, "shuffle", et = 39)),
+             "\"e\" instead of", class = "error")
+
+
 ###
 #test tomtom
 
