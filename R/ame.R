@@ -1,4 +1,4 @@
-#' Title
+#' Motif enrichment using AME
 #'
 #' @param input path to fasta, or DNAstringset (optional: DNAStringSet object
 #'   names contain fasta score, required for partitioning mode)
@@ -55,23 +55,28 @@ runAme <- function(input,
   # note: this line must run after input&control are parsed to paths
   if (outdir == "auto") {outdir <- outdir_name(input, control)}
 
-  flags <- prepareAmeFlags(control, outdir, method, ...)
-  # TODO: database can be path, or universalmotif list, (or vector: c(motifList, path)) (?)
+  user_flags <- prepareAmeFlags(control, outdir, method, ...)
   database <- handle_meme_database_path(database)
   command <- handle_meme_path(path = meme_path, util = "ame")
 
-  flags <- c(flags, input, database)
+  flags <- c(user_flags, input, database)
 
   ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
 
+  #uf <- dotargs::get_help_flag_names(user_flags) %>%
+  #  grep("shuffle", ., invert = TRUE, value = TRUE)
+  #return(uf)
+  #return(user_flags)
   ps_out %>%
-    process_check_error()
+    process_check_error(help_fun = ~{ame_help(command)},
+                        user_flags = dotargs::get_help_flag_names(user_flags) %>%
+                          grep("shuffle", ., invert = TRUE, value = TRUE),
+                        flags_fun = ~{gsub("-", "_", .x)})
 
   print_process_stdout(ps_out, silent = silent)
   print_process_stderr(ps_out, silent = silent)
 
   # NOTE: sequences.tsv is only created when method == "fisher"
-  # TODO: if `method` is unset or == "fisher", require sequences.tsv exists
   ame_out <- dotargs::expected_outputs(c("tsv", "html"), "ame", outdir)
   if (method == "fisher"){
     ame_seq <- dotargs::expected_outputs("tsv", "sequences", outdir)
@@ -81,27 +86,23 @@ runAme <- function(input,
   ame_out %>%
     dotargs::check_files_exist()
 
-  sequences_path <- FALSE
+  import_sequences <- FALSE
   if (method == "fisher" & sequences == TRUE){
-    sequences_path <- ame_out$sequences
+    import_sequences <- ame_out$sequences
   }
 
-  importAme(path = ame_out$tsv, method = method, sequences = sequences_path)
+  importAme(path = ame_out$tsv, method = method, sequences = import_sequences)
 }
 
-#' Print stderr from processx output
+#' Returns ame help lines
 #'
-#' @param processx_out
-#' @param silent whether to suppress stderr printing or not
+#' @param command path to ame. output of handle_meme_path(util = "ame")
 #'
 #' @return
 #'
 #' @noRd
-print_process_stderr <- function(processx_out, silent = TRUE){
-  process_check_error(processx_out)
-
-  if (!silent) message(processx_out$stderr)
-
+ame_help <- function(command){
+  processx::run(command, "--help", error_on_status = FALSE)$stderr
 }
 
 prepareAmeFlags <- function(control, outdir, method, ...){

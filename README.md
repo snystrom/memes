@@ -348,3 +348,14 @@ ame_analysis
 #> # … with 8 more variables: fasta_max <dbl>, pos <int>, neg <int>,
 #> #   pwm_min <dbl>, tp <int>, tp_percent <dbl>, fp <int>, fp_percent <dbl>
 ```
+
+### Dotargs backend & error checking
+
+``` r
+ame_analysis <- peaks %>% 
+  resize(200, "center") %>% 
+  get_sequence(dm.genome) %>% 
+  runAme(evalue_reportt_threshold = 30)
+```
+
+    #> Error: Invalid flags. Did you mean: "evalue_report_threshold" instead of: "evalue_reportt_threshold"

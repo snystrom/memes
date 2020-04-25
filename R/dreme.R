@@ -373,23 +373,3 @@ dreme_nmotifs_found <- function(processx_out){
     dreme_nmotifs_line() %>%
     dreme_nmotifs()
 }
-
-#' Handle error or printing message on successful DREME run
-#'
-#' @param processx_out processx ouput
-#' @param silent whether or not to suppress printing all of stdout
-#'
-#' @return
-#'
-#' @examples
-#' @noRd
-print_process_stdout <- function(processx_out, silent = TRUE){
-  process_check_error(processx_out)
-
-  # leaving here incase needed for debugging
-  #nmotifs_line <- dreme_nmotifs_line(processx_out$stdout)
-  #if (!silent) message(nmotifs_line)
-
-  if (!silent) message(processx_out$stdout)
-
-}

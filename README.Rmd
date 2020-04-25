@@ -168,3 +168,15 @@ ame_analysis <- peaks %>%
 ame_analysis
 ```
 
+### Dotargs backend & error checking
+
+```{r, eval=F}
+ame_analysis <- peaks %>% 
+  resize(200, "center") %>% 
+  get_sequence(dm.genome) %>% 
+  runAme(evalue_reportt_threshold = 30)
+```
+```{r, echo = F, error = T}
+usethis::ui_stop("Invalid flags. Did you mean: \"evalue_report_threshold\" instead of: \"evalue_reportt_threshold\"")
+```
+
