@@ -5,6 +5,8 @@
 #' @param regions GRanges object
 #' @param genome object of any valid type in showMethods(Biostrings::getSeq).
 #'   Commonly a BSgenome object, or fasta file. Used to lookup sequences in regions.
+#' @param score_column optional name of column (in mcols() of `regions`)
+#'   containing a fasta score, used in AME in partitioning mode. (default: `NULL`)
 #' @param ... additional arguments passed to Biostrings::getSeq.
 #'
 #' @return Biostrings::DNAStringSet object with names corresponding to genomic coordinates
@@ -26,7 +28,7 @@
 #' get_sequence(regions, drosophila.genome)
 #'
 #' }
-get_sequence <- function(regions, genome, ...){
+get_sequence <- function(regions, genome, score_column = NULL, ...){
 
   regions <- tryCatch(GenomicRanges::GRanges(regions),
                       error = function(e){return(e)}
@@ -37,6 +39,13 @@ get_sequence <- function(regions, genome, ...){
   endPos <- end(regions)
 
   feature_names <- paste0(chrNames,":",startPos,"-",endPos)
+
+  if (!is.null(score_column)){
+    stopifnot(score_column %in% names(mcols(regions)))
+
+    feature_names <- paste(feature_names, mcols(regions)[[score_column]], sep = " ")
+  }
+
 
   sequences <- Biostrings::getSeq(genome, regions, ...)
   names(sequences) <- feature_names
