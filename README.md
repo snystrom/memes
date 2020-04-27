@@ -335,19 +335,78 @@ cowplot::plot_grid(
 ame_analysis <- peaks %>% 
   resize(200, "center") %>% 
   get_sequence(dm.genome) %>% 
-  runAme(evalue_report_threshold = 30)
+  runAme(evalue_report_threshold = 50)
 ```
 
 ``` r
-ame_analysis
-#> # A tibble: 2 x 17
+ame_analysis %>% 
+  ame_plot_heatmap()
+```
+
+![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
+
+### Example for converting gene ids
+
+Try using `annotationDbi::mapIds` instead. Also, note below E93 Fbgn is
+out of date & does not map.
+
+``` r
+ame_analysis$motif_alt_id %>% 
+  gsub("_.+", "", .) %>% 
+  clusterProfiler::bitr(fromType = "FLYBASE", toType = "SYMBOL", OrgDb = org.Dm.eg.db::org.Dm.eg.db)
+#> 
+#> Registered S3 method overwritten by 'enrichplot':
+#>   method               from
+#>   fortify.enrichResult DOSE
+#> 
+#> 'select()' returned 1:1 mapping between keys and columns
+#> Warning in clusterProfiler::bitr(., fromType = "FLYBASE", toType = "SYMBOL", :
+#> 25% of input gene IDs are fail to map...
+#>       FLYBASE SYMBOL
+#> 2 FBgn0000286    Cf2
+#> 3 FBgn0263108 BtbVII
+#> 4 FBgn0013263    Trl
+```
+
+### reducing best matches from ame
+
+``` r
+
+ame_analysis %>% 
+  dplyr::group_by(motif_id) %>% 
+  dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
+  dplyr::ungroup()
+#> # A tibble: 4 x 17
 #>    rank motif_db motif_id motif_alt_id consensus  pvalue adj.pvalue evalue tests
 #>   <int> <chr>    <chr>    <chr>        <chr>       <dbl>      <dbl>  <dbl> <int>
 #> 1     1 inst/ex… Eip93F_… FBgn0013948  ACWSCCRA… 5.14e-4     0.0339   20.6    67
 #> 2     2 inst/ex… Cf2-PB_… FBgn0000286… CSSHNKDT… 1.57e-3     0.04     24.3    26
+#> 3     3 inst/ex… BtbVII_… FBgn0263108  MBTATGTA… 4.30e-4     0.0697   42.4   168
+#> 4     4 inst/ex… Trl_Fly… FBgn0013263  YYKCTCTC… 2.37e-4     0.0784   47.7   344
 #> # … with 8 more variables: fasta_max <dbl>, pos <int>, neg <int>,
 #> #   pwm_min <dbl>, tp <int>, tp_percent <dbl>, fp <int>, fp_percent <dbl>
 ```
+
+### Ame in partitioning mode
+
+``` r
+ame_partition <- peaks %>% 
+  data.frame %>% 
+  # NOTE: never actually do this, just a quick way to generate example data
+  dplyr::mutate(score = seq_along(start)) %>% 
+  GRanges %>% 
+  resize(200, "center") %>% 
+  get_sequence(dm.genome, score = "score") %>% 
+  runAme(control = NA, evalue_report_threshold = 50)
+```
+
+``` r
+ame_partition %>% 
+  dplyr::mutate(tfid = gsub("(.+)_{1}.+", "\\1", motif_id)) %>% 
+  ame_plot_heatmap(id = tfid)
+```
+
+![](man/figures/README-unnamed-chunk-26-1.png)<!-- -->
 
 ### Dotargs backend & error checking
 

@@ -4,13 +4,16 @@
 \alias{get_sequence}
 \title{Get sequence from GRanges}
 \usage{
-get_sequence(regions, genome, ...)
+get_sequence(regions, genome, score_column = NULL, ...)
 }
 \arguments{
 \item{regions}{GRanges object}
 
 \item{genome}{object of any valid type in showMethods(Biostrings::getSeq).
 Commonly a BSgenome object, or fasta file. Used to lookup sequences in regions.}
+
+\item{score_column}{optional name of column (in mcols() of `regions`)
+containing a fasta score, used in AME in partitioning mode. (default: `NULL`)}
 
 \item{...}{additional arguments passed to Biostrings::getSeq.}
 }

@@ -162,10 +162,48 @@ cowplot::plot_grid(
 ame_analysis <- peaks %>% 
   resize(200, "center") %>% 
   get_sequence(dm.genome) %>% 
-  runAme(evalue_report_threshold = 30)
+  runAme(evalue_report_threshold = 50)
 ```
 ```{r}
-ame_analysis
+ame_analysis %>% 
+  ame_plot_heatmap()
+```
+
+
+
+### Example for converting gene ids
+Try using `annotationDbi::mapIds` instead. Also, note below E93 Fbgn is out of date & does not map.
+```{r}
+ame_analysis$motif_alt_id %>% 
+  gsub("_.+", "", .) %>% 
+  clusterProfiler::bitr(fromType = "FLYBASE", toType = "SYMBOL", OrgDb = org.Dm.eg.db::org.Dm.eg.db)
+```
+
+### reducing best matches from ame
+```{r}
+
+ame_analysis %>% 
+  dplyr::group_by(motif_id) %>% 
+  dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
+  dplyr::ungroup()
+  
+```
+
+### Ame in partitioning mode
+```{r}
+ame_partition <- peaks %>% 
+  data.frame %>% 
+  # NOTE: never actually do this, just a quick way to generate example data
+  dplyr::mutate(score = seq_along(start)) %>% 
+  GRanges %>% 
+  resize(200, "center") %>% 
+  get_sequence(dm.genome, score = "score") %>% 
+  runAme(control = NA, evalue_report_threshold = 50)
+```
+```{r, fig.height=3, fig.width=10}
+ame_partition %>% 
+  dplyr::mutate(tfid = gsub("(.+)_{1}.+", "\\1", motif_id)) %>% 
+  ame_plot_heatmap(id = tfid)
 ```
 
 ### Dotargs backend & error checking
