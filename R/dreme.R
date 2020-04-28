@@ -52,7 +52,7 @@
 #'  - seed = random seed if using "shuffle" as control
 #'  - ngen = number of REs to generalize
 #'
-#' @return data.frame with statistics for each discovered motif. The `motifs`
+#' @return data.frame with statistics for each discovered motif. The `motif`
 #'   column contains a universalmotif object representation in PCM format of
 #'   each DREME motif. If no motifs are discovered, returns NULL.
 #'
@@ -142,7 +142,7 @@ prepareDremeFlags <- function(input, control, outdir, ...){
 #'
 #' @param xml path to dreme_out/dreme.xml
 #'
-#' @return data.frame with `motifs` column containing universalmotif object representation of each DREME motif.
+#' @return data.frame with `motif` column containing universalmotif object representation of each DREME motif.
 #'
 #' @examples
 #' parseDreme("dreme_out/dreme.xml")
@@ -152,7 +152,7 @@ parseDreme <- function(xml){
 
   pfms <- dreme_to_pfm(xml)
 
-  dreme_stats$motifs <- pfms
+  dreme_stats$motif <- pfms
   return(dreme_stats)
 }
 

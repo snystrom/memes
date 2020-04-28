@@ -36,7 +36,7 @@ dreme_file <- dremeR:::duplicate_file(dreme_file$txt)
 runTomTom(dreme_file, "inst/extdata/db/fly_factor_survey_id.meme")
 runTomTom(dreme_out, "inst/extdata/db/fly_factor_survey_id.meme")
 
-mList <- dreme_out$motifs
+mList <- dreme_out$motif
 m <- mList[[1]]
 options(meme_db = "inst/extdata/db/fly_factor_survey_id.meme")
 runTomTom(mList)

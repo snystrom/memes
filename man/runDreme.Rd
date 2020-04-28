@@ -58,7 +58,7 @@ install of dreme -h, or visit the dreme documentation
 \href{http://meme-suite.org/doc/dreme.html?man_type=web}{website}.}
 }
 \value{
-data.frame with statistics for each discovered motif. The \code{motifs}
+data.frame with statistics for each discovered motif. The \code{motif}
 column contains a universalmotif object representation in PCM format of
 each DREME motif. If no motifs are discovered, returns NULL.
 }

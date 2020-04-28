@@ -20,7 +20,7 @@
 #' }
 view_tomtom_hits <- function(results, top_n = "all"){
 
-  purrr::map2(results$motifs, results$tomtom, ~{
+  purrr::map2(results$motif, results$tomtom, ~{
 
     if (top_n == "all") {select <- 1:length(.y$match_motif)}
     else if (is.numeric(top_n)) {select <- 1:top_n}

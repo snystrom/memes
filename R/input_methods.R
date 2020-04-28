@@ -36,7 +36,7 @@ motif_input.data.frame <- function(input, path = tempfile(fileext = ".meme")){
   # check data.frame is dreme_out object
   if (!is_dreme_results(input)) warn_dreme_results(input)
 
-  path <- input$motifs %>%
+  path <- input$motif %>%
     write_meme_input_path(path = path)
 
   out <- list(metadata = input,

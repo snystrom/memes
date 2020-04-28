@@ -53,14 +53,14 @@ fa <- dremeR:::duplicate_file("inst/extdata/fasta_ex/fa1.fa")
 dreme_out <- runDreme(fa, "shuffle", e = 39)
 ```
 
-dreme results are a `data.frame`. The `motifs` column contains a `universalmotif` object with the PCM information for each *de-novo* discovered motif. This is so that any filtering of the results object also simply filter the available motifs.
+dreme results are a `data.frame`. The `motif` column contains a `universalmotif` object with the PCM information for each *de-novo* discovered motif. This is so that any filtering of the results object also simply filter the available motifs.
 ```{r}
 dreme_out
 ```
 ```{r}
 library(universalmotif)
 
-view_motifs(dreme_out$motifs)
+view_motifs(dreme_out$motif)
 ```
 The primary advantage of using the `data.frame` output allows simple integration with base subsetting, piping, and the `tidyverse`.
 ```{r}
@@ -68,12 +68,12 @@ library(dplyr)
 
 dreme_out %>% 
   filter(length == 3) %>% 
-  {universalmotif::view_motifs(.$motifs)}
+  {universalmotif::view_motifs(.$motif)}
 ```
 
 `universalmotif` manipulations can easily be executed on data.frame columns. For example:
 ```{r, fig.height=1.5}
-dreme_out$motifs %>% 
+dreme_out$motif %>% 
   merge_motifs() %>% 
   view_motifs()
 ```
@@ -148,7 +148,7 @@ frac_plot <- motif_analysis %>%
 
 ```{r}
 cowplot::plot_grid(
-  universalmotif::view_motifs(motif_analysis$motifs),
+  universalmotif::view_motifs(motif_analysis$motif),
   frac_plot
 )
 ```

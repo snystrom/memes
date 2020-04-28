@@ -3,7 +3,7 @@
 
 #' Unfinished constructor for a dreme_results data.frame
 #'
-#' NOTE: `motifs` is only a list() not universalmotif list when it's empty.
+#' NOTE: `motif` is only a list() not universalmotif list when it's empty.
 #'
 #' @return an empty dreme_results valid data.frame
 #'
@@ -25,7 +25,7 @@ new_dreme_results <- function(){
              negative_total = integer(),
              pos_frac = numeric(),
              neg_frac = numeric(),
-             motifs = list(),
+             motif = list(),
              stringsAsFactors = F
              )
 }
@@ -50,10 +50,10 @@ error_dreme_results <- function(res){
     stop(paste0("object is not a valid dreme results data.frame. Missing columns: ", nameString))
   }
 
-  is_universalmotif <- purrr::map_lgl(res$motifs, ~{class(.x) == "universalmotif"}) %>%
+  is_universalmotif <- purrr::map_lgl(res$motif, ~{class(.x) == "universalmotif"}) %>%
     purrr::set_names(NULL)
 
-  if (length(is_universalmotif) == 0) stop("motifs column is empty")
+  if (length(is_universalmotif) == 0) stop("motif column is empty")
 
   if (!all(is_universalmotif)) stop("not all objects in motif column are of type universalmotif")
   return(NULL)
@@ -76,7 +76,7 @@ is_dreme_results <- function(res){
   }
 
   # motif column is universalmotif type
-  is_universalmotif_list(res$motifs)
+  is_universalmotif_list(res$motif)
 }
 
 #' Bool is/isnot list of universalmotif objects
@@ -126,7 +126,7 @@ error_universalmotif_list <- function(list){
 #'
 #' @param motif universalmotif object or list of universalmotifs
 #'
-#' @return data.frame with all motif metadata + `motifs` column containing universalmotif object
+#' @return data.frame with all motif metadata + `motif` column containing universalmotif object
 #'
 #' @importFrom magrittr %>%
 #'
@@ -145,6 +145,6 @@ universalmotif_to_meme_df <- function(motif){
     dplyr::rename("id" = "name",
                   "alt" = "altname")
 
-  df$motifs <- list(motif)
+  df$motif <- list(motif)
   return(df)
 }

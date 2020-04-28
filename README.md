@@ -51,7 +51,7 @@ dreme_out <- runDreme(fa, "shuffle", e = 39)
 #>   root.phylo ape
 ```
 
-dreme results are a `data.frame`. The `motifs` column contains a
+dreme results are a `data.frame`. The `motif` column contains a
 `universalmotif` object with the PCM information for each *de-novo*
 discovered motif. This is so that any filtering of the results object
 also simply filter the available motifs.
@@ -66,7 +66,7 @@ dreme_out
 #> 1    1.0     39              39              1              1        1        1
 #> 2    0.5      9              18              1              1        1        0
 #> 3    1.0     12              12              1              1        1        1
-#>                                                                 motifs
+#>                                                                  motif
 #> 1 <S4 class 'universalmotif' [package "universalmotif"] with 20 slots>
 #> 2 <S4 class 'universalmotif' [package "universalmotif"] with 20 slots>
 #> 3 <S4 class 'universalmotif' [package "universalmotif"] with 20 slots>
@@ -75,7 +75,7 @@ dreme_out
 ``` r
 library(universalmotif)
 
-view_motifs(dreme_out$motifs)
+view_motifs(dreme_out$motif)
 ```
 
 ![](man/figures/README-unnamed-chunk-6-1.png)<!-- --> The primary
@@ -95,7 +95,7 @@ library(dplyr)
 
 dreme_out %>% 
   filter(length == 3) %>% 
-  {universalmotif::view_motifs(.$motifs)}
+  {universalmotif::view_motifs(.$motif)}
 ```
 
 ![](man/figures/README-unnamed-chunk-7-1.png)<!-- -->
@@ -104,7 +104,7 @@ dreme_out %>%
 columns. For example:
 
 ``` r
-dreme_out$motifs %>% 
+dreme_out$motif %>% 
   merge_motifs() %>% 
   view_motifs()
 ```
@@ -133,7 +133,7 @@ full_res
 #> 1    1.0     39              39              1              1        1        1
 #> 2    0.5      9              18              1              1        1        0
 #> 3    1.0     12              12              1              1        1        1
-#>                                                                 motifs
+#>                                                                  motif
 #> 1 <S4 class 'universalmotif' [package "universalmotif"] with 20 slots>
 #> 2 <S4 class 'universalmotif' [package "universalmotif"] with 20 slots>
 #> 3 <S4 class 'universalmotif' [package "universalmotif"] with 20 slots>
@@ -331,7 +331,7 @@ frac_plot <- motif_analysis %>%
 
 ``` r
 cowplot::plot_grid(
-  universalmotif::view_motifs(motif_analysis$motifs),
+  universalmotif::view_motifs(motif_analysis$motif),
   frac_plot
 )
 ```
