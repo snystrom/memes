@@ -16,7 +16,7 @@ test_that("tomtom target PWM and target metadata correctly assigned to eachother
   # move below to setup chunk
   fa <- duplicate_file("inst/extdata/fasta_ex/fa1.fa")
   dreme_out <- runDreme(fa, "shuffle", e = 39)
-  options(tomtom_db = "inst/extdata/db/fly_factor_survey_id.meme")
+  options(meme_db = "inst/extdata/db/fly_factor_survey_id.meme")
   tt_out <- runTomTom(dreme_out)
 
   expect_equal(tt_out$best_match_motif[[2]]@name, tt_out$best_match_id[[2]])
@@ -38,7 +38,7 @@ runTomTom(dreme_out, "inst/extdata/db/fly_factor_survey_id.meme")
 
 mList <- dreme_out$motifs
 m <- mList[[1]]
-options(tomtom_db = "inst/extdata/db/fly_factor_survey_id.meme")
+options(meme_db = "inst/extdata/db/fly_factor_survey_id.meme")
 runTomTom(mList)
 
 # FAILS because no motif detected, Need method to skip if NA

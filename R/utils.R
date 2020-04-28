@@ -74,3 +74,20 @@ write_fasta <- function(seq, path = tempfile(fileext = ".fa")){
 
   return(path)
 }
+
+#' Check user's MEME install
+#'
+#' Checks if "meme/bin" directory exists, returns green check if yes, or red X if no. Returns the path it searched for.
+#'
+#' If 'meme/bin' is detected, next checks if each utility is installed, green check if yes, red X if no.
+#'
+#' @param path path to "meme/bin" (if unset will search `MEME_BIN` environment variable or `meme_bin` option)
+#'
+#' @return message indicating which MEME utilities are installed and their location on disk
+#' @export
+#'
+#' @examples
+#' check_meme_install()
+check_meme_install <- function(path = NULL){
+  dotargs::check_install(handle_meme_path, path = path)
+}

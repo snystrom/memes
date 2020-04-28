@@ -40,11 +40,12 @@ remotes::install_github("snystrom/dremeR")
 ```
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
 ```{r example}
 library(dremeR)
-## basic example code
+
+# Verify that dremeR detects your meme install
+# should return all green checks if so.
+check_meme_install()
 ```
 
 ```{r}
@@ -96,15 +97,10 @@ full_res %>%
 ```
 ```{r}
 full_res$best_match_motif
+
+view_tomtom_hits(full_res, 1)
 ```
 
-```{r}
-universalmotif::view_motifs(full_res$motifs)
-full_res %>% 
-  dplyr::filter(!is.na(best_match_id)) %>% 
-  .$best_match_motif %>% 
-  universalmotif::view_motifs()
-```
 ## Denovo Motif Pipeline w/ dremer
 ```{r, message=F}
 suppressPackageStartupMessages(library(GenomicRanges))

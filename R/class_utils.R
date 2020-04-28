@@ -145,6 +145,6 @@ universalmotif_to_meme_df <- function(motif){
     dplyr::rename("id" = "name",
                   "alt" = "altname")
 
-  df$motifs <- motif
+  df$motifs <- list(motif)
   return(df)
 }

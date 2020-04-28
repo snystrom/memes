@@ -28,11 +28,19 @@ remotes::install_github("snystrom/dremeR")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
 ``` r
 library(dremeR)
-## basic example code
+
+# Verify that dremeR detects your meme install
+# should return all green checks if so.
+check_meme_install()
+#> checking main install
+#> ✔ /nas/longleaf/home/snystrom/meme/bin
+#> checking util installs
+#> ✔ /nas/longleaf/home/snystrom/meme/bin/dreme
+#> ✔ /nas/longleaf/home/snystrom/meme/bin/ame
+#> ✔ /nas/longleaf/home/snystrom/meme/bin/fimo
+#> ✔ /nas/longleaf/home/snystrom/meme/bin/tomtom
 ```
 
 ``` r
@@ -235,23 +243,24 @@ full_res$best_match_motif
 #> 
 #> [[3]]
 #> NULL
+
+view_tomtom_hits(full_res, 1)
+#> [[1]]
 ```
 
-``` r
-universalmotif::view_motifs(full_res$motifs)
-```
+![](man/figures/README-unnamed-chunk-13-1.png)<!-- -->
 
-![](man/figures/README-unnamed-chunk-14-1.png)<!-- -->
+    #> 
+    #> [[2]]
 
-``` r
-full_res %>% 
-  dplyr::filter(!is.na(best_match_id)) %>% 
-  .$best_match_motif %>% 
-  universalmotif::view_motifs()
-```
+![](man/figures/README-unnamed-chunk-13-2.png)<!-- -->
 
-![](man/figures/README-unnamed-chunk-14-2.png)<!-- --> \#\# Denovo Motif
-Pipeline w/ dremer
+    #> 
+    #> [[3]]
+
+![](man/figures/README-unnamed-chunk-13-3.png)<!-- -->
+
+## Denovo Motif Pipeline w/ dremer
 
 ``` r
 suppressPackageStartupMessages(library(GenomicRanges))
@@ -281,7 +290,7 @@ view_tomtom_hits(motif_analysis, 1) %>%
   cowplot::plot_grid(plotlist = ., labels = "AUTO")
 ```
 
-![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-16-1.png)<!-- -->
 
 ## Evaluate top 3 hits from TOMTOM
 
@@ -290,22 +299,22 @@ view_tomtom_hits(motif_analysis, 3)
 #> [[1]]
 ```
 
-![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
 
     #> 
     #> [[2]]
 
-![](man/figures/README-unnamed-chunk-18-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-17-2.png)<!-- -->
 
     #> 
     #> [[3]]
 
-![](man/figures/README-unnamed-chunk-18-3.png)<!-- -->
+![](man/figures/README-unnamed-chunk-17-3.png)<!-- -->
 
     #> 
     #> [[4]]
 
-![](man/figures/README-unnamed-chunk-18-4.png)<!-- -->
+![](man/figures/README-unnamed-chunk-17-4.png)<!-- -->
 
 ``` r
 library(ggplot2)
@@ -327,7 +336,7 @@ cowplot::plot_grid(
 )
 ```
 
-![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
 
 ## Motif scanning & enrichment testing with AME
 
@@ -343,7 +352,7 @@ ame_analysis %>%
   ame_plot_heatmap()
 ```
 
-![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
 
 ### Example for converting gene ids
 
@@ -406,7 +415,7 @@ ame_partition %>%
   ame_plot_heatmap(id = tfid)
 ```
 
-![](man/figures/README-unnamed-chunk-26-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-25-1.png)<!-- -->
 
 ### Dotargs backend & error checking
 
