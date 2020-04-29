@@ -175,3 +175,19 @@ parseFimo <- function(fimo_tsv){
     #dplyr::group_by(motif_alt_id) %>%
     #dplyr::mutate(q.value = p.value/n())
 }
+
+#' Import FIMO results
+#'
+#' @param fimo_tsv
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
+#' \dontrun{
+#' importFimo("fimo.tsv")
+#' }
+importFimo <- function(fimo_tsv){
+  parseFimo(fimo_tsv)
+}

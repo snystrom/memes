@@ -383,6 +383,8 @@ dreme_nmotifs <- function(line){
 #' @export
 #'
 #' @examples
+#'
+#' @noRd
 dreme_nmotifs_found <- function(processx_out){
   processx_out$stdout %>%
     dreme_nmotifs_line() %>%

@@ -12,6 +12,7 @@
 #' @importFrom rlang enquo
 #' @importFrom rlang !!
 #'
+#' @noRd
 ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
   # orders data in "order" column first by TFs unique to each type,
   # then by motifs shared between types such that tfs are shown by unique, pairwise, 3-wise, etc.

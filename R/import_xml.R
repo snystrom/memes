@@ -76,18 +76,3 @@ importTomTomXML <- function(tomtom_xml_path){
 importDremeXML <- function(dreme_xml_path){
   parseDreme(dreme_xml_path)
 }
-
-#' Import FIMO Results from tsv output
-#'
-#' @param fimo_tsv_path path to fimo.tsv
-#'
-#' @return
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' importFimoTSV("fimo.tsv")
-#' }
-importFimoTSV <- function(fimo_tsv_path){
-  parseFimo(fimo_tsv_path)
-}

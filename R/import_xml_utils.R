@@ -75,6 +75,7 @@ tomtom_xml_motif_to_universalmotif <- function(entry, tt_xml){
 #' df_def <- data.frame(a = 1)
 #' check_col(df_undef$a)
 #' }
+#' @noRd
 check_col <- function(df, col, type = numeric(0)){
   val <- ifelse(!is.null(df[[col]]), df[[col]], type)
   class(val) <- class(type)
