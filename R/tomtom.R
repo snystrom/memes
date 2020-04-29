@@ -21,7 +21,9 @@
 #'   [tomtom commandline reference](http://meme-suite.org/doc/tomtom.html?man_type=web) for details)
 #'
 #' @return data.frame of match results. Contains `match_motif` column of
-#'   `universalmotif` objects with the matched PWM from the database.
+#'   `universalmotif` objects with the matched PWM from the database. If no
+#'   matches are returned, `tomtom` and `best_match_motif` columns will be set
+#'   to `NA` and a message indicating this will print.
 #' @export
 #'
 #' @importFrom magrittr %>%
@@ -71,7 +73,15 @@ runTomTom <- function(input, database = NULL,
     dotargs::check_files_exist()
 
   tomtom_results <- parseTomTom(tomtom_out$xml)
-  # TODO: if tomtom_results = NULL, figure out how to handle?
+
+  if (!is.null(input$metadata) & is.null(tomtom_results)) {
+    message("TomTom returned no matches")
+    # TODO: add every tomtom results column w/ NA values?
+    input$metadata$best_match_motif <- rep(NA, nrow(input$metadata))
+    input$metadata$tomtom <- rep(NA, nrow(input$metadata))
+    return(input$metadata)
+  }
+
   if (!is.null(input$metadata) & !is.null(tomtom_results)){
 
     nest_tomtom <- nest_tomtom_results(tomtom_results)
