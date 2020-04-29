@@ -47,7 +47,9 @@ environment variable "MEME_DB (set in `.Renviron`), or option
 }
 \value{
 data.frame of match results. Contains `match_motif` column of
-  `universalmotif` objects with the matched PWM from the database.
+  `universalmotif` objects with the matched PWM from the database. If no
+  matches are returned, `tomtom` and `best_match_motif` columns will be set
+  to `NA` and a message indicating this will print.
 }
 \description{
 Run TomTom on target motifs
