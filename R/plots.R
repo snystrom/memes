@@ -42,12 +42,12 @@ cowplot_title <- function(plot, title, ...){
 #' view_tomtom_hits(results, top_n = 3)
 #'
 #' }
-view_tomtom_hits <- function(results, top_n = "all", ...){
+view_tomtom_hits <- function(results, top_n = "all"){
   # TODO: if tomtom is empty, return NONE as plot below??
   purrr::map2(results$motif, results$tomtom, ~{
 
     if (is.null(.y)) {
-      return(view_tomtom_nomatch(.x, ...))
+      return(view_tomtom_nomatch(.x))
     }
 
     if (top_n == "all") {select <- 1:length(.y$match_motif)}
@@ -59,7 +59,7 @@ view_tomtom_hits <- function(results, top_n = "all", ...){
     motifList <- c(list(.x), .y$match_motif[select]) %>%
       purrr::discard(is.null)
 
-    universalmotif::view_motifs(motifList, ...)
+    universalmotif::view_motifs(motifList)
   })
 }
 
@@ -73,13 +73,70 @@ view_tomtom_hits <- function(results, top_n = "all", ...){
 #'
 #' @return
 #'
+#' @importFrom ggplot2 ggtitle theme element_text
+#'
 #' @noRd
-view_tomtom_nomatch <- function(motif, ...){
-  plot <- universalmotif::view_motifs(motif, ...) %>%
-    cowplot_title(motif@name, hjust = 0.25, size = 11)
-  noMatch <- cowplot::ggdraw() +
-    cowplot::draw_text("No Match", size = 100)
+view_tomtom_nomatch <- function(motif){
+  # Thanks, Hadley: http://r-pkgs.had.co.nz/description.html
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("Package \"ggplot2\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  motif_logo <- universalmotif::view_motifs(motif)
 
-  cowplot::plot_grid(plot, noMatch, ncol = 1)
+  motif_logo <- motif_logo +
+    ggtitle(motif@name) +
+    theme(plot.title = element_text(hjust = 0.5))
+
+  nomatch_logo <- nomatch_logo()
+
+  cowplot::plot_grid(motif_logo, nomatch_logo, ncol = 1, rel_heights = c(1,0.6))
 }
 
+
+#' Returns motif matrix of "NO MATCH"
+#'
+#' To use ggseqlogo to render the "NO MATCH" text,
+#' I need to build a matrix with custom alphabet
+#'
+#' In matrix form NO MATCH is a matrix with diagonal all 1,
+#' except at "space" position where all values are 1
+#'
+#' @return
+#'
+#' @noRd
+nomatch_matrix <- function(){
+  m <- matrix(0,
+              nrow = 7,
+              ncol = 7)
+  diag(m) <- 1
+  n <- c("N", "O", "M", "A", "T", "C", "H")
+  rownames(m) <- c("N", "O", "M", "A", "T", "C", "H")
+  no <- m[,c(1,2)]
+  match <- m[,c(3:7)]
+  space <- matrix(1, nrow = 7, ncol = 1)
+  mat <- cbind(no, space, match)
+
+  return(mat)
+}
+
+#' Returns "NO MATCH" ggseqlogo
+#'
+#' @return
+
+#' @importFrom ggplot2 element_text
+#'
+nomatch_logo <- function(){
+  mat <- nomatch_matrix()
+  alph <- rownames(mat)
+  col <- ggseqlogo::make_col_scheme(chars = alph, cols = rep("#333333", length(alph)))
+
+  ggseqlogo::ggseqlogo(mat,
+                       namespace = alph,
+                       method = "bits",
+                       col_scheme = col) +
+    ggplot2::theme(axis.text = element_text(color = "white"),
+                   axis.text.x = element_text(color = "white"),
+                   axis.text.y = element_text(color = "white"),
+                   axis.title = element_text(color = "white"))
+}
