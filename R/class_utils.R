@@ -134,16 +134,23 @@ error_universalmotif_list <- function(list){
 #' universalmotif::create_motif() %>%
 #'   universalmotif_to_df()
 #' @noRd
-universalmotif_to_meme_df <- function(motif){
+universalmotif_to_meme_df <- function(motif, na.rm = FALSE){
   # this is needed to overcome limitation of bind_rows causing error with list columns
-  data <- switch(class(motif),
-                 list = purrr::map(motif, universalmotif::as.data.frame) %>%
-                          dplyr::bind_rows(),
-                 universalmotif = universalmotif::as.data.frame(motif))
+  #data <- switch(class(motif),
+  #               list = purrr::map(motif, universalmotif::as.data.frame) %>%
+  #                        dplyr::bind_rows(),
+  #               universalmotif = universalmotif::as.data.frame(motif))
+  data <- universalmotif::summarise_motifs(motif, na.rm = na.rm)
 
+  # rename columns if exist:
+  # https://stackoverflow.com/a/53842689
+  # recode is in form: "old" = "new"
   df <- data %>%
-    dplyr::rename("id" = "name",
-                  "alt" = "altname")
+    #dplyr::rename("id" = "name",
+    #              "alt" = "altname")
+    dplyr::rename_all(dplyr::recode,
+                      "name" = "id",
+                      "altname" = "alt")
 
   df$motif <- list(motif)
   return(df)
