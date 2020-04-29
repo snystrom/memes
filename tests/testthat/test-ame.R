@@ -42,3 +42,29 @@ test_that("input error checking works", {
 ## Need functions to test import of all methods
 
 expect_equal("NO", "You need to write import tests for AME")
+
+# Different versions of ame w/ sequence import.
+# maybe useful for checking import sequences function?
+#ame_analysis_seq <- peaks %>%
+#  resize(200, "center") %>%
+#  get_sequence(dm.genome) %>%
+#  runAme(evalue_report_threshold = 30, sequences = TRUE)
+#
+## ame fails
+#ame_analysis_seq2 <- peaks %>%
+#  resize(200, "center") %>%
+#  get_sequence(dm.genome) %>%
+#  runAme(control = fa, evalue_report_threshold = 100, sequences = T, silent = F)
+## ame succeeds paritiotning mode
+#ame_analysis_seq3 <- peaks %>%
+#  resize(200, "center") %>%
+#  get_sequence(dm.genome) %>%
+#  runAme(control = NA, evalue_report_threshold = 100, sequences = T)
+#
+## ame discriminative fisher
+#bg <- universalmotif::create_sequences()
+#names(bg) <- rep("chr2L:100-200", length(bg))
+#ame_analysis_seq4 <- peaks %>%
+#  resize(200, "center") %>%
+#  get_sequence(dm.genome) %>%
+#  runAme(control = bg, evalue_report_threshold = 100, sequences = T, silent = F)

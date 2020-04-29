@@ -4,7 +4,7 @@
 #'   names contain fasta score, required for partitioning mode)
 #' @param control default: "shuffle", or set to
 #'   DNAstringset or path to fasta file to use those sequences in discriminative
-#'   mode. Set to NA for partitioning based on input fasta score (see
+#'   mode. Set to `NA` for partitioning based on input fasta score (see
 #'   get_sequence for assigning fasta score).
 #' @param outdir default: auto
 #' @param method default: fisher
@@ -136,6 +136,7 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 #'   = "fisher", the list-column `sequences` will be appended to resulting
 #'   data.frame.
 #'
+#' @importFrom magrittr %<>%
 #' @export
 #'
 #' @examples
@@ -150,13 +151,25 @@ importAme <- function(path, method = "fisher", sequences = FALSE){
                           comment = "#"
                           )
 
+  if (nrow(data) == 0){
+    message("AME detected no enrichment")
+    return(NULL)
+  }
+
   if (sequences == FALSE | method != "fisher"){return(data)}
 
   if (sequences != FALSE & method == "fisher"){
-    seq <- importAmeSequences(sequences) %>%
+    seq <- importAmeSequences(sequences)
+
+    if (is.null(seq)){
+      return(data)
+    }
+
+    seq %<>%
       dplyr::group_by(motif_id, motif_db) %>%
       tidyr::nest() %>%
-      dplyr::rename("sequences" = "data")
+      dplyr::rename("sequences" = "data") %>%
+      data.frame
 
     return(dplyr::left_join(data, seq, by = c("motif_id","motif_db")))
   }
@@ -194,6 +207,8 @@ combine_cols <- function(col, cols_list){
 #'  - class_[fasta|pwm]_score: score used for classifying positives (either fasta or pwm score)
 #'  - class: whether a sequence was called true-positve ("tp") or false-positive ("fp")
 #'
+#' @importFrom magrittr %<>%
+#'
 #' @examples
 #' \dontrun{
 #' importAmeSequences("path/to/ame/sequences.tsv")
@@ -202,18 +217,23 @@ combine_cols <- function(col, cols_list){
 #' @noRd
 importAmeSequences <- function(path){
 
-  #cols_sequences <- readr::cols(.default = "c")
-  path <- "inst/extdata/ame_example/ame/sequences.tsv"
   sequences <- readr::read_tsv(path,
                                col_types = readr::cols("c", "c", "c", "d", "d", "c"),
                                col_names = T,
-                               comment = "#") %>%
+                               comment = "#")
+  if (nrow(sequences) == 0){
+    message("Sequences output is empty")
+    return(NULL)
+  }
+
+  sequences %<>%
     dplyr::rename_all(tolower) %>%
     # positions 4 & 5 encode which score was used to "label" (4) vs "classify" (5)
     # can be either PWM for Fasta score, and can't predict which one easily, so
     # just prefix these two.
     dplyr::rename_at(4, function(x){paste0("label_", x)}) %>%
     dplyr::rename_at(5, function(x){paste0("class_", x)})
+
 }
 
 #' Generate columntypes/names for ame results.
