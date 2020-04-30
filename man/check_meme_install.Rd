@@ -4,10 +4,10 @@
 \alias{check_meme_install}
 \title{Check user's MEME install}
 \usage{
-check_meme_install(path = NULL)
+check_meme_install(meme_path = NULL)
 }
 \arguments{
-\item{path}{path to "meme/bin" (if unset will search `MEME_BIN` environment variable or `meme_bin` option)}
+\item{meme_path}{path to "meme/bin" (if unset will search `MEME_BIN` environment variable or `meme_bin` option)}
 }
 \value{
 message indicating which MEME utilities are installed and their location on disk

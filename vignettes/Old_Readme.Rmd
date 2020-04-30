@@ -1,0 +1,218 @@
+---
+title: "readme"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{temp}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This is a copy of the old github readme which is being reworked to be more user friendly. 
+
+```{r, include = FALSE}
+# Remove to stop skipping the vignette
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Installation
+
+
+```{r, include=F, eval=F}
+#You can install the released version of dremeR from [CRAN](https://CRAN.R-project.org) with:
+install.packages("dremeR")
+#And the development version from [GitHub](https://github.com/) with:
+```
+
+You can install the development version of dremeR from [GitHub](https://github.com/) with:
+
+```{r, eval=F}
+# install.packages("remotes")
+remotes::install_github("snystrom/dotargs")
+remotes::install_github("snystrom/dremeR")
+```
+## Example
+
+```{r example}
+library(dremeR)
+
+# Verify that dremeR detects your meme install
+# should return all green checks if so.
+check_meme_install()
+```
+
+```{r}
+fa <- dremeR:::duplicate_file("inst/extdata/fasta_ex/fa1.fa")
+dreme_out <- runDreme(fa, "shuffle", e = 39)
+```
+
+dreme results are a `data.frame`. The `motif` column contains a `universalmotif` object with the PCM information for each *de-novo* discovered motif. This is so that any filtering of the results object also simply filter the available motifs.
+```{r}
+dreme_out
+```
+```{r}
+library(universalmotif)
+
+view_motifs(dreme_out$motif)
+```
+The primary advantage of using the `data.frame` output allows simple integration with base subsetting, piping, and the `tidyverse`.
+```{r}
+library(dplyr)
+
+dreme_out %>% 
+  filter(length == 3) %>% 
+  {universalmotif::view_motifs(.$motif)}
+```
+
+`universalmotif` manipulations can easily be executed on data.frame columns. For example:
+```{r, fig.height=1.5}
+dreme_out$motif %>% 
+  merge_motifs() %>% 
+  view_motifs()
+```
+
+## TomTom 
+TomTom can be used to match *de-novo* motifs from dreme to a database of known
+motifs. If run on the output of `runDreme` it will append information for the best match in columns prefixed `best_`. Secondary matches found by tomtom will be stored in the list column `tomtom`. 
+```{r}
+full_res <- runTomTom(dreme_out, database = "inst/extdata/db/fly_factor_survey_id.meme")
+```
+```{r}
+full_res
+```
+```{r}
+full_res$tomtom
+```
+
+```{r}
+full_res %>% 
+  dplyr::select(id, alt, seq, best_match_id, best_match_pvalue, best_match_evalue, best_match_motif)
+```
+```{r}
+full_res$best_match_motif
+
+view_tomtom_hits(full_res, 1)
+```
+```{r}
+view_tomtom_hits(full_res, 1) %>% 
+  cowplot::plot_grid(plotlist = ., labels = "AUTO")
+```
+
+## Denovo Motif Pipeline w/ dremer
+```{r, message=F}
+suppressPackageStartupMessages(library(GenomicRanges))
+
+peaks <- "inst/extdata/peaks/peaks.tsv" %>%
+  readr::read_tsv() %>%
+  GRanges
+```
+```{r}
+dm.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
+options(meme_db = "inst/extdata/db/fly_factor_survey_id.meme")
+
+motif_analysis <- peaks %>% 
+  resize(200, "center") %>% 
+  get_sequence(dm.genome) %>% 
+  runDreme("shuffle", e = 50) %>% 
+  runTomTom()
+```
+
+## Compare denovo motif with best match
+
+use `cowplot` to arrange plots in a grid.
+```{r}
+view_tomtom_hits(motif_analysis, 1) %>% 
+  cowplot::plot_grid(plotlist = ., labels = "AUTO")
+```
+
+## Evaluate top 3 hits from TOMTOM
+
+```{r}
+view_tomtom_hits(motif_analysis, 3)
+```
+```{r}
+library(ggplot2)
+
+frac_plot <- motif_analysis %>% 
+  ggplot(aes(reorder(id, pos_frac), pos_frac/neg_frac)) +
+    geom_col() + 
+    coord_flip() +
+    labs(x = NULL,
+         y = "Enrichment Ratio") +
+    theme_bw() +
+    theme(axis.text.y = element_blank())
+```
+
+```{r}
+cowplot::plot_grid(
+  universalmotif::view_motifs(motif_analysis$motif),
+  frac_plot
+)
+```
+
+## Motif scanning & enrichment testing with AME
+```{r}
+ame_analysis <- peaks %>% 
+  resize(200, "center") %>% 
+  get_sequence(dm.genome) %>% 
+  runAme(evalue_report_threshold = 50)
+```
+```{r}
+ame_analysis %>% 
+  ame_plot_heatmap()
+```
+
+
+
+### Example for converting gene ids
+Try using `annotationDbi::mapIds` instead. Also, note below E93 Fbgn is out of date & does not map.
+```{r}
+ame_analysis$motif_alt_id %>% 
+  gsub("_.+", "", .) %>% 
+  clusterProfiler::bitr(fromType = "FLYBASE", toType = "SYMBOL", OrgDb = org.Dm.eg.db::org.Dm.eg.db)
+```
+
+### reducing best matches from ame
+```{r}
+
+ame_analysis %>% 
+  dplyr::group_by(motif_id) %>% 
+  dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
+  dplyr::ungroup()
+  
+```
+
+### Ame in partitioning mode
+```{r}
+ame_partition <- peaks %>% 
+  data.frame %>% 
+  # NOTE: never actually do this, just a quick way to generate example data
+  dplyr::mutate(score = seq_along(start)) %>% 
+  GRanges %>% 
+  resize(200, "center") %>% 
+  get_sequence(dm.genome, score = "score") %>% 
+  runAme(control = NA, evalue_report_threshold = 50)
+```
+```{r, fig.height=3, fig.width=10}
+ame_partition %>% 
+  dplyr::mutate(tfid = gsub("(.+)_{1}.+", "\\1", motif_id)) %>% 
+  ame_plot_heatmap(id = tfid)
+```
+
+### Dotargs backend & error checking
+
+```{r, eval=F}
+ame_analysis <- peaks %>% 
+  resize(200, "center") %>% 
+  get_sequence(dm.genome) %>% 
+  runAme(evalue_reportt_threshold = 30)
+```
+```{r, echo = F, error = T}
+usethis::ui_stop("Invalid flags. Did you mean: \"evalue_report_threshold\" instead of: \"evalue_reportt_threshold\"")
+```
