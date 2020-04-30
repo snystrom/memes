@@ -2,7 +2,10 @@ Package: dremeR
 Type: Package
 Title: An R Interface to the MEME Suite
 Version: 0.0.1.9000
-Authors@R: person("Spencer", "Nystrom", email = "snystrom@email.unc.edu", role = c("aut", "cre", "cph"))
+Authors@R: person("Spencer", "Nystrom", 
+    email = "snystrom@email.unc.edu", 
+    role = c("aut", "cre", "cph"),
+    comment = c(ORCID = "0000-0003-1000-1579"))
 Description: Provides functions for performing motif analysis in R using the MEME suite as a backend.
     Functions & outputs are designed for easy integration into tidy workflows for rapid iteration and delayed evaluation using futures if desired.
 License: MIT + file LICENSE
@@ -11,6 +14,7 @@ LazyData: true
 Imports:
     dplyr,
     dotargs,
+    ggplot2,
     magrittr,
     processx,
     purrr,
@@ -22,7 +26,6 @@ Imports:
     xml2
 Suggests:
     cowplot,
-    ggplot2,
     gridExtra,
     testthat (>= 2.1.0)
 RoxygenNote: 7.0.2
