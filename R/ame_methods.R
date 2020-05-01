@@ -81,6 +81,7 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
 #' @return
 #' @export
 #'
+#' @importFrom ggplot2 ggplot geom_tile theme aes theme_bw labs scale_fill_gradient2 element_text .pt
 #' @importFrom magrittr %>%
 #' @importFrom rlang enquo
 #' @importFrom rlang !!

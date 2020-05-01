@@ -74,15 +74,86 @@ check_meme_install(meme_path = 'bad/path')
 ## The Core Tools
 
 - `runDreme()`
-- `runTomTom()`
 - `runAme()`
+- `runTomTom()`
 - `runFimo()`
 
-```{r}
+dremeR is built around the [universalmotif package](https://www.bioconductor.org/packages/release/bioc/html/universalmotif.html)
+which provides a framework for manipulating motifs in R.
 
+### Motif Discovery with DREME
+
+```{r}
+library(magrittr)
+library(GenomicRanges)
+
+# Transcription factor peaks
+peaks <- readr::read_tsv(system.file("extdata/peaks/peaks.tsv", package = "dremeR")) %>% 
+  GRanges
+
+# Genome object
+dm.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
+```
+```{r}
+sequences <- peaks %>% 
+  resize(200, "center") %>% 
+  get_sequence(dm.genome)
 ```
 
+`runDreme` accepts DNAStringSet or a path to a fasta file as input. You can use
+other sequences or shuffled input sequences as the control dataset.
+```{r}
+# runDreme accepts all arguments that the commandline version of dreme accepts
+# here I set e = 50 to detect motifs in the limited example peak list
+dreme_results <- runDreme(sequences, control = "shuffle", e = 50)
+```
+dremeR is built around the [universalmotif](https://www.bioconductor.org/packages/release/bioc/html/universalmotif.html) package. The runDreme results object includes a `motif` column of `universalmotif` objects which can be used in all `universalmotif` functions.
+```{r}
+library(universalmotif)
+view_motifs(dreme_results$motif)
+```
+
+### Matching motifs using TOMTOM
+Discovered motifs can be matched to known TF motifs using `runTomTom`, which can accept as input a path to a .meme formatted file, a `universalmotif` list, or the results of `runDreme`.
+
+TomTom uses a database of known motifs which can be passed to the `database` parameter as a path to a .meme format file, or a `universalmotif` object.
+
+Optionally, you can set the environment variable `MEME_DB` in `.Renviron`, or
+the `meme_db` value in `options` to a valid .meme format file and dremeR will
+use that file as the database. dremeR will always prefer user input to the
+function call.
+
+```{r}
+options(meme_db = system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR"))
+m <- create_motif("CMATTACN", altname = "testMotif")
+tomtom_results <- runTomTom(m)
+```
+```{r}
+tomtom_results
+```
+
+### Motif Enrichment using AME
+
+```{r}
+ame_results <- runAme(sequences, control = "shuffle", evalue_report_threshold = 30)
+ame_results
+```
+
+
 ## Visualizing Results
+
+```{r}
+dreme_results %>% 
+  runTomTom() %>% 
+  view_tomtom_hits(top_n = 1) %>% 
+  cowplot::plot_grid(plotlist = .)
+```
+```{r}
+ame_results %>% 
+  ame_plot_heatmap()
+```
+
+
 
 # FAQs
 ### How do I use dremeR/MEME on Windows?
