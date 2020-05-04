@@ -1,0 +1,222 @@
+---
+title: "Integrative Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Integrative Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r}
+# temporary
+knitr::opts_chunk$set(eval = F)
+```
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dremeR)
+library(magrittr)
+suppressPackageStartupMessages(library(GenomicRanges))
+```
+
+```{r}
+check_meme_install()
+```
+
+
+```{r, message=F}
+#"../inst/extdata/peaks/e93_chr3.csv"
+#system.file("extdata/peaks/e93_chr3.csv")
+peaks <- "../inst/extdata/peaks/e93_chr3.csv" %>% 
+  readr::read_csv() %>% 
+  GRanges
+```
+
+### Motifs in opening vs closing sites
+```{r}
+# These data use the dm3 reference genome
+dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
+
+# compute summits using the summit_position column
+summits <- peaks %>% 
+  plyranges::anchor_start() %>% 
+  plyranges::mutate(width = 1) %>% 
+  plyranges::shift_right(mcols(.)$summit_position) %>% 
+  plyranges::anchor_center()
+  
+# Get sequences in a 100bp window around the peak summit
+summit_flank <- summits %>% 
+  plyranges::mutate(width = 100)
+
+# split by response to E93 binding
+by_sens <- summit_flank %>% 
+  split(mcols(.)$e93_sensitive_behavior) %>% 
+  get_sequence(dm.genome)
+```
+
+```{r}
+dreme_by_sens_vs_static <- by_sens[c("Increasing", "Decreasing")] %>% 
+  lapply(function(seq){
+    runDreme(seq, control = by_sens$Static)
+  })
+```
+
+```{r}
+dreme_results <- dreme_by_sens_vs_static %>% 
+  dplyr::bind_rows(.id = "e93_response")
+```
+```{r}
+#options(meme_db = )
+options(meme_db = "../inst/extdata/db/fly_factor_survey_id.meme")
+all_res <- dreme_results %>% 
+  runTomTom(dist = "ed")
+```
+
+```{r, fig.height=8, fig.width=8}
+all_res %>% 
+  view_tomtom_hits(3) %>% 
+  cowplot::plot_grid(plotlist = ., labels = "AUTO")
+```
+```{r}
+all_res %<>% 
+  force_best_match(c("m01_CSAAAAM" = "Eip93F_SANGER_10",
+                     "m03_AKGG" = "pho_SANGER_10"))
+```
+
+
+```{r}
+all_res %>% 
+  view_tomtom_hits(1) %>% 
+  cowplot::plot_grid(plotlist = ., labels = "AUTO")
+```
+
+```{r, fig.height=3, fig.width=8}
+all_res %>% 
+  dplyr::mutate(label = paste0(e93_response, " in response to E93")) %>% 
+  split(.$label) %>% 
+  purrr::imap(~{
+    top_hits <- view_tomtom_hits(.x, 1) %>% 
+      cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
+    
+    title <- cowplot::ggdraw() +
+        cowplot::draw_text(.y)
+    
+    cowplot::plot_grid(plotlist = list(title, top_hits), 
+                       ncol = 1,
+                       rel_heights = c(0.1, 1)
+    )
+  })
+```
+
+### Motif scanning with AME
+```{r}
+by_binding <- summit_flank %>% 
+  split(mcols(.)$peak_binding_description) %>% 
+  get_sequence(dm.genome)
+```
+```{r}
+ame_by_binding <- by_binding %>% 
+  purrr::map(~{
+    runAme(.x)
+    })
+```
+
+### plot heatmap of results, notice there are redundant entries
+```{r}
+ame_res <- ame_by_binding %>% 
+  dplyr::bind_rows(.id = "binding_type")
+```
+```{r}
+library(ggplot2)
+ame_res %>% 
+  ggplot(aes(-log10(evalue))) +
+    stat_ecdf(aes(color = binding_type))
+```
+```{r}
+ame_res %>% 
+  dplyr::filter(evalue < 1e-3) %>% 
+  dplyr::group_by(binding_type) %>% 
+  dplyr::count()
+```
+
+This is too many hits to view
+```{r, fig.height=5,fig.width=15}
+ame_res %>% 
+  ame_plot_heatmap(group = binding_type)
+```
+
+Return top 50 hits
+```{r, fig.height=3,fig.width=20}
+ame_res %>% 
+  dplyr::group_by(binding_type) %>% 
+  dplyr::filter(rank %in% 1:50) %>% 
+  ame_plot_heatmap(group = binding_type)
+```
+
+Notice there are redundant entries
+```{r, fig.height=3, fig.width=15}
+ame_res %>% 
+  # It may not always be appropriate to do this type of subsetting,
+  # here I do it to simplify the example.
+  # It is a really good idea to look at ALL the data before filtering in this way
+  dplyr::group_by(binding_type) %>% 
+  dplyr::filter(rank %in% 1:50) %>% 
+  # the flyfactor genes have their Flybase gene numbers appended with a _<number> 
+  # to make the entries unique, but the gene ID is encoded before the _
+  dplyr::mutate(gene_id = gsub("_\\d+", "", motif_alt_id)) %>% 
+  dplyr::ungroup() %>% 
+  # Reduce redundant TF hits by returning only the match with the lowest p-value for each TF
+  dplyr::group_by(binding_type, gene_id) %>% 
+  dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
+  # add new id column to simplify motif name to TF name
+  dplyr::mutate(tfid = strsplit(motif_id, "_")[[1]][1]) %>% 
+  ame_plot_heatmap(group = binding_type, id = tfid) 
+```
+
+## Experimental
+```{r}
+denovo_motifs <- all_res %>% 
+  dplyr::mutate(id = paste0("denovo_", best_match_id)) %>% 
+  update_motifs()
+```
+
+```{r, fig.height=4, fig.width=10}
+by_binding %>% 
+  purrr::map(~{
+    runAme(.x, database = list(denovo_motifs))
+  }) %>% 
+  dplyr::bind_rows(.id = "binding_type") %>% 
+  ame_plot_heatmap(group = binding_type)
+```
+
+```{r}
+by_binding %>% 
+  purrr::map(~{
+    runAme(.x, database = list(dreme_results))
+  }) %>% 
+  dplyr::bind_rows(.id = "binding_type") -> da
+```
+```{r, fig.height=3, fig.width=7}
+da %>% 
+  ame_plot_heatmap(group = binding_type)
+```
+
+## Denovo motif similarity by binding
+```{r}
+dreme_by_binding <- by_binding %>% 
+  purrr::map(~{
+    runDreme(.x, "shuffle")
+  }) %>% 
+  dplyr::bind_rows(.id = "binding_type")
+```
+```{r, fig.height=10, fig.width=10}
+cols <- colorRampPalette(c("white", "dodgerblue4"))(255)
+universalmotif::compare_motifs(dreme_by_binding$motif, method = "PCC") %>% 
+  pheatmap::pheatmap(color = cols, breaks = seq(0, 1, by = 1/255))
+```
+
