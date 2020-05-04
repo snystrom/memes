@@ -1,38 +1,6 @@
-#' Get sequence from GRanges
-#'
-#' A light wrapper around Biostrings::getSeq to return named DNAStringSets.
-#'
-#' @param regions GRanges object
-#' @param genome object of any valid type in showMethods(Biostrings::getSeq).
-#'   Commonly a BSgenome object, or fasta file. Used to lookup sequences in regions.
-#' @param score_column optional name of column (in mcols() of `regions`)
-#'   containing a fasta score, used in AME in partitioning mode. (default: `NULL`)
-#' @param ... additional arguments passed to Biostrings::getSeq.
-#'
-#' @return Biostrings::DNAStringSet object with names corresponding to genomic coordinates
-#'
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' # Using character string as input
-#' genomeFasta <- "path/to/genome.fa"
-#' get_sequence("chr2L:100-200", geonmeFasta)
-#'
-#' # using BSgenome object for genome
-#' drosophila.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
-#' get_sequence("chr2L:100-200", drosophila.genome)
-#'
-#' # using GRanges object for regions
-#' regions <- GRanges(seqnames=Rle(c('chrX', 'chr2L', 'chr3R'), c(3, 3, 4)), IRanges(1:10, width=5))
-#' get_sequence(regions, drosophila.genome)
-#'
-#' }
-get_sequence <- function(regions, genome, score_column = NULL, ...){
-
-  regions <- tryCatch(GenomicRanges::GRanges(regions),
-                      error = function(e){return(e)}
-           )
+#' See generic get_sequence docs for details on inputs
+#' @noRd
+get_sequence.GRanges <- function(regions, genome, score_column = NULL, ...){
 
   chrNames <- seqnames(regions)
   startPos <- start(regions)
@@ -50,6 +18,46 @@ get_sequence <- function(regions, genome, score_column = NULL, ...){
   sequences <- Biostrings::getSeq(genome, regions, ...)
   names(sequences) <- feature_names
   return(sequences)
+}
+
+#' @export
+#' @noRd
+get_sequence.data.frame <- function(regions, genome, score_column = NULL, ...){
+  regions <- tryCatch(GenomicRanges::GRanges(regions),
+           error = function(e){stop(e)})
+
+  get_sequence.GRanges(regions = regions, genome = genome, score_column = score_column, ...)
+
+}
+
+#' This and all functions below are simply to support all the different GRangesList types that exist.
+#' they have no special inputs that differ from the other methods.
+#' @export
+#' @noRd
+get_sequence.GenomicRangesList <- function(regions, genome, score_column = NULL, ...){
+  sequences <- lapply(regions, function(x){
+    get_sequence.GRanges(regions = x, genome = genome, score_column = score_column, ...)
+  })
+
+  return(sequences)
+}
+
+#' @export
+#' @noRd
+get_sequence.GRangesList <- function(regions, genome, score_column = NULL, ...){
+  get_sequence.GenomicRangesList(regions = regions, genome = genome, score_column = score_column, ...)
+}
+
+#' @export
+#' @noRd
+get_sequence.CompressedGRangesList <- function(regions, genome, score_column = NULL, ...){
+  get_sequence.GenomicRangesList(regions = regions, genome = genome, score_column = score_column, ...)
+}
+
+#' @export
+#' @noRd
+get_sequence.SimpleGRangesList <- function(regions, genome, score_column = NULL, ...){
+  get_sequence.GenomicRangesList(regions = regions, genome = genome, score_column = score_column, ...)
 }
 
 #' Write fasta file from stringset
