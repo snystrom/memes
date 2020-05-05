@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 <!-- badges: end -->
 
 An R interface to the [MEME Suite](http://meme-suite.org/) family of tools.
@@ -84,8 +84,8 @@ which provides a framework for manipulating motifs in R.
 ### Motif Discovery with DREME
 
 ```{r}
-library(magrittr)
-library(GenomicRanges)
+suppressPackageStartupMessages(library(magrittr))
+suppressPackageStartupMessages(library(GenomicRanges))
 
 # Transcription factor peaks
 peaks <- readr::read_tsv(system.file("extdata/peaks/peaks.tsv", package = "dremeR")) %>% 
@@ -148,7 +148,7 @@ dreme_results %>%
   view_tomtom_hits(top_n = 1) %>% 
   cowplot::plot_grid(plotlist = .)
 ```
-```{r}
+```{r, fig.height=3, fig.width=5}
 ame_results %>% 
   ame_plot_heatmap()
 ```

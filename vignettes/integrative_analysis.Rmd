@@ -214,9 +214,27 @@ dreme_by_binding <- by_binding %>%
   }) %>% 
   dplyr::bind_rows(.id = "binding_type")
 ```
-```{r, fig.height=10, fig.width=10}
+Rename the motifs to indicate the binding category they were discovered in.
+```{r}
+dreme_by_binding_renamed <- dreme_by_binding %>% 
+  dplyr::mutate(id = paste(binding_type, seq, sep = "_")) %>% 
+  # update_motifs updates the information in the special `motif` column
+  update_motifs()
+```
+
+
+```{r, fig.height=7, fig.width=10}
 cols <- colorRampPalette(c("white", "dodgerblue4"))(255)
-universalmotif::compare_motifs(dreme_by_binding$motif, method = "PCC") %>% 
-  pheatmap::pheatmap(color = cols, breaks = seq(0, 1, by = 1/255))
+
+anno.df <- dreme_by_binding_renamed %>% 
+  dplyr::select(id, binding_type) %>% 
+  tibble::column_to_rownames("id")
+
+dreme_by_binding_renamed %>% 
+  {universalmotif::compare_motifs(.$motif, method = "PCC")} %>% 
+  pheatmap::pheatmap(color = cols, 
+                     breaks = seq(0, 1, by = 1/255), 
+                     annotation_col = anno.df, 
+                     show_colnames = FALSE) 
 ```
 

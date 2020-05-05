@@ -1,4 +1,5 @@
 #' See generic get_sequence docs for details on inputs
+#' @export
 #' @noRd
 get_sequence.GRanges <- function(regions, genome, score_column = NULL, ...){
 
