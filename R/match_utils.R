@@ -37,8 +37,6 @@ update_best_match <- function(res){
   res_nobest <- res %>%
     drop_best_match()
 
-  res_notomtom <- res_nobest %>%
-
   new_tomtom <- res_nobest %>%
     tidyr::unnest(tomtom) %>%
     dplyr::select("id", "alt", dplyr::contains("match_"), "db_name") %>%

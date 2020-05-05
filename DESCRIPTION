@@ -22,7 +22,7 @@ Imports:
     R.utils,
     utils,
     usethis,
-    universalmotif (>= 1.5.35),
+    universalmotif (>= 1.6.1),
     xml2
 Suggests:
     cowplot,
