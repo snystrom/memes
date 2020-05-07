@@ -9,5 +9,5 @@ test_that("DREME XML import",{
 test_that("TomTom Import works",{
   expect_s3_class(importTomTomXML("inst/extdata/tomtom_ex/tomtom_good.xml"), "data.frame")
   # Should return query motifs w/ NA values for each column.
-  expect_s3_class(importTomTomXML("inst/extdata/tomtom_ex/tomtom_bad.xml"), "data.frame")
+  expect_s3_class(suppressWarnings(importTomTomXML("inst/extdata/tomtom_ex/tomtom_bad.xml")), "data.frame")
 })

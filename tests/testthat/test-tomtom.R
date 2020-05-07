@@ -19,7 +19,7 @@ test_that("tomtom target PWM and target metadata correctly assigned to eachother
   options(meme_db = "inst/extdata/db/fly_factor_survey_id.meme")
   tt_out <- runTomTom(dreme_out)
 
-  expect_equal(tt_out$best_match_motif[[2]]@name, tt_out$best_match_id[[2]])
+  expect_equal(tt_out$best_match_motif[[2]]@name, tt_out$best_match_name[[2]])
 })
 
 test_that("tomtom error checking suggets alternatives", {
@@ -55,7 +55,7 @@ runTomTom(mList[[2]])
 fa <- duplicate_file("inst/extdata/fasta_ex/fa1.fa")
 dreme_out <- runDreme(fa, "shuffle", e = 39)
 # this first motif matches nothing
-m <- dremeR:::write_meme_list(dreme_out$motifs[[1]])
+m <- dremeR:::write_meme_list(dreme_out$motif[[1]])
 
 options(tomtom_db = "inst/extdata/db/fly_factor_survey_id.meme")
 runTomTom(m, outdir = "tt_nomatch_dev")

@@ -26,7 +26,7 @@ expect_true(is_dreme_results(dreme_out))
 expect_false(is_dreme_results(bad))
 
 expect_null(error_dreme_results(dreme_out))
-expect_error(error_dreme_results(spec), "motifs column is empty")
+expect_error(error_dreme_results(spec), "motif column is empty")
 expect_error(error_dreme_results(bad), "Missing columns")
 
 #####

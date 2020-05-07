@@ -35,3 +35,4 @@ expect_error(
   "\"evalue_report_threshold\" instead of: \"evalue_reorpt_threshold\"",
   class = "usethis_error"
 )
+

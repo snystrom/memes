@@ -118,8 +118,8 @@ motif. The following column names are special in that their values are
 used when running `update_motifs` to alter the properties of the motifs
 stored in the `motif` column. Be careful about changing these values.
 
-  - id
-  - alt
+  - name
+  - altname
   - family
   - organism
   - strand
@@ -224,14 +224,14 @@ tomtom_results <- runTomTom(m)
 
 ``` r
 tomtom_results
-#>      id       alt family organism consensus alphabet strand icscore nsites
+#>    name   altname family organism consensus alphabet strand icscore nsites
 #> 1 motif testMotif   <NA>     <NA>  CMATTACN      DNA     +-      13     NA
 #>   bkgsites pval qval eval
 #> 1       NA   NA   NA   NA
 #>                                                                  motif
 #> 1 <S4 class 'universalmotif' [package "universalmotif"] with 20 slots>
-#>   best_match_id best_match_alt best_match_pvalue best_match_evalue
-#> 1    prd_FlyReg  FBgn0003145_2          7.38e-06           0.00449
+#>   best_match_name best_match_altname best_match_pvalue best_match_evalue
+#> 1      prd_FlyReg      FBgn0003145_2          7.38e-06           0.00449
 #>   best_match_qvalue         best_db_name
 #> 1            0.0079 fly_factor_survey_id
 #>                                                       best_match_motif

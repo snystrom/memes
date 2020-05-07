@@ -105,8 +105,8 @@ names are special in that their values are used when running `update_motifs` to
 alter the properties of the motifs stored in the `motif` column. Be careful
 about changing these values.
 
- - id
- - alt
+ - name
+ - altname
  - family
  - organism
  - strand

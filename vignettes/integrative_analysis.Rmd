@@ -61,7 +61,7 @@ by_sens <- summit_flank %>%
 dreme_by_sens_vs_static <- by_sens[c("Increasing", "Decreasing")] %>% 
   lapply(function(seq){
     runDreme(seq, control = by_sens$Static)
-  })
+  }) 
 ```
 
 ```{r}

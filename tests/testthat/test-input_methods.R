@@ -37,6 +37,7 @@ test_that("Type checking errors correctly", {
 })
 
 test_that("motif input method dispatch works",{
+  fb <- "inst/extdata/db/fly_factor_survey_id.meme"
   # character(1)
   expect_equal(motif_input(fb), list(metadata = NULL, path = fb))
   expect_error(motif_input(c(fb, fb)), "length == 1")
