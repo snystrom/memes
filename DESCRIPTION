@@ -29,6 +29,7 @@ Suggests:
     gridExtra,
     testthat (>= 2.1.0),
     knitr,
+    MotifDb,
     rmarkdown
 RoxygenNote: 7.0.2
 Remotes: 

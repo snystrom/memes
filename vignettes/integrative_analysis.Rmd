@@ -6,10 +6,6 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-```{r}
-# temporary
-knitr::opts_chunk$set(eval = F)
-```
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -30,8 +26,10 @@ check_meme_install()
 
 
 ```{r, message=F}
+# TODO: Change this to use system.file(extadata/etc.) once example data is finalized.
 #"../inst/extdata/peaks/e93_chr3.csv"
 #system.file("extdata/peaks/e93_chr3.csv")
+warning("Remember to update the correct file path")
 peaks <- "../inst/extdata/peaks/e93_chr3.csv" %>% 
   readr::read_csv() %>% 
   GRanges
@@ -59,7 +57,7 @@ by_sens <- summit_flank %>%
   get_sequence(dm.genome)
 ```
 
-```{r}
+```{r dreme_by_sens_vs_static, cache=TRUE, cache.comments=FALSE}
 dreme_by_sens_vs_static <- by_sens[c("Increasing", "Decreasing")] %>% 
   lapply(function(seq){
     runDreme(seq, control = by_sens$Static)
@@ -89,7 +87,7 @@ all_res %<>%
 ```
 
 
-```{r}
+```{r, fig.height=4.5, fig.width=8}
 all_res %>% 
   view_tomtom_hits(1) %>% 
   cowplot::plot_grid(plotlist = ., labels = "AUTO")
@@ -144,33 +142,43 @@ ame_res %>%
   dplyr::count()
 ```
 
-This is too many hits to view
+This is too many hits to view in this vignette, but you can see that the heatmap will plot motifs by their overlap across groups, where unique motifs are on the left, and shared motifs are on the right. 
 ```{r, fig.height=5,fig.width=15}
 ame_res %>% 
   ame_plot_heatmap(group = binding_type)
 ```
-
-Return top 50 hits
-```{r, fig.height=3,fig.width=20}
+There is another key consideration for the above visualization and that is that
+in the FlyFactorSurvey database we used, different TFs can have multiple motif
+entries in the database which are all detected separately by AME. Here, when
+returning the top 5 hits from each group, you can see, for example, that a motif
+matching "Aef1" is reported 3 times within the top 5 hits of the ectopic sites.
+In this situation, it makes sense to summarize the data at the TF level, instead
+of the motif level. **Note:** There may be exceptions to this if for example, a
+TF has multiple DNA binding sequences it can recognize, in which case having
+multiple hits may reflect a biological property of your sequences. You will have
+to handle this on a case-by-case basis for interesting hits and different motif
+databases. Here, we can see that at least for Aef1, the consensus sequences are
+very similar.
+```{r}
 ame_res %>% 
   dplyr::group_by(binding_type) %>% 
-  dplyr::filter(rank %in% 1:50) %>% 
-  ame_plot_heatmap(group = binding_type)
+  dplyr::filter(rank %in% 1:5) %>% 
+  head(5) %>% 
+  dplyr::select(binding_type, rank, motif_id, motif_alt_id, consensus)
 ```
 
-Notice there are redundant entries
-```{r, fig.height=3, fig.width=15}
+How to solve this problem will vary with different motif databases. In the FlyFactorSurvey database, the `motif_alt_id` column contains a unique FBgn number for each TF. For entries of the same TF, the FBgn number is prepended with an `_<number>`. We can extract the FBgn number to use as a gene-level identifier, and reduce the matches to return 1 match per gene as follows:
+```{r, fig.height=3, fig.width=25}
 ame_res %>% 
-  # It may not always be appropriate to do this type of subsetting,
-  # here I do it to simplify the example.
-  # It is a really good idea to look at ALL the data before filtering in this way
-  dplyr::group_by(binding_type) %>% 
-  dplyr::filter(rank %in% 1:50) %>% 
   # the flyfactor genes have their Flybase gene numbers appended with a _<number> 
-  # to make the entries unique, but the gene ID is encoded before the _
+  # this is to make the entries unique, but the gene ID is encoded before the _
+  # so I remove the _<number> with a regex, leaving the FBgn number.
   dplyr::mutate(gene_id = gsub("_\\d+", "", motif_alt_id)) %>% 
   dplyr::ungroup() %>% 
-  # Reduce redundant TF hits by returning only the match with the lowest p-value for each TF
+  # Reduce redundant TF hits by returning only the match with the lowest p-value
+  # for each TF. It is important to group by binding_type because the analyses
+  # were run separately, so these are different results (we want to return the
+  # lowest p-value for each group a motif was found within).
   dplyr::group_by(binding_type, gene_id) %>% 
   dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
   # add new id column to simplify motif name to TF name
@@ -178,42 +186,136 @@ ame_res %>%
   ame_plot_heatmap(group = binding_type, id = tfid) 
 ```
 
-## Experimental
+## FIMO 
+Because we discover a *de-novo* motif from DREME that matches to E93, it can be useful to scan peaks for motif occurrances to further examine properties of different peak categories.
+
+Although we could also import the motifs from our local .meme database file, it is also possible to use motifs pulled from a [`MotifDb`](https://bioconductor.org/packages/release/bioc/html/MotifDb.html) query as follows. 
+```{r}
+e93_motif <- MotifDb::MotifDb %>% 
+  MotifDb::query("Eip93F") %>% 
+  universalmotif::convert_motifs() %>% 
+  .[[1]]
+
+# Rename the motif for simplicity
+e93_motif["name"] <- "E93"
+
+e93_motif
+```
+
+```{r}
+fimo_res <- summit_flank %>% 
+  get_sequence(dm.genome) %>% 
+  runFimo(motifs = e93_motif, thresh = 1e-3)
+```
+
+```{r}
+fimo_res
+```
+
+Here we add a count for each motif per peak in the `n_motifs` column. We also add a column `has_motif` which will be a binary indicator of whether a peak contains any motifs.
+```{r}
+summit_flank %<>% 
+  # Note, if running FIMO with multiple motifs, this solution will not work
+  # as it will count all motifs within the fimo-results without splitting by motif_id
+  plyranges::mutate(n_motifs = plyranges::count_overlaps(., fimo_res), 
+                    has_motif = n_motifs > 0)
+```
+
+Ask whether E93 sensitive sites are more likely to have E93 motifs in certain response types. Here we can see that sensitive decreasing sites are more likely to have E93 motifs than sensitive increasing or insensitive static sites.
+```{r, fig.height=4, fig.width=5}
+summit_flank %>% 
+  data.frame %>% 
+  dplyr::mutate(has_match = dplyr::if_else(has_motif, "Match", "No Match")) %>% 
+  ggplot(aes(e93_sensitive_behavior)) +
+    geom_bar(aes(fill = forcats::fct_rev(has_match)), position = "fill") +
+    scale_fill_manual(values = c("Match" = "firebrick",
+                                 "No Match" = "Black")) +
+    labs(fill = "E93 Motif Match")
+```
+
+
+To investigate whether E93-sensitive sites that open/close/don't change have
+different numbers of E93 motifs, we plot the fraction of sites with each number
+of motifs. Here we can see that in addition to being more likely to contain an E93 motif, sensitive decreasing sites are more likely to to contain 2 or more matches, where 10% contain at least 2 motifs.
+```{r, fig.height=5, fig.width=7}
+summit_flank %>% 
+  # currently, group operations are faster as data.frames, so we convert to data.frame
+  data.frame %>% 
+  dplyr::group_by(e93_sensitive_behavior, n_motifs) %>% 
+  dplyr::count() %>% 
+  dplyr::group_by(e93_sensitive_behavior) %>% 
+  dplyr::mutate(frac = n/sum(n)) %>% 
+  ggplot(aes(n_motifs, frac)) +
+    geom_line(aes(color = e93_sensitive_behavior)) +
+    labs(y = "Fraction of Sites",
+         x = "Number of E93 Motifs")
+```
+
+Finally, we want to assess whether the quality of E93 motifs is different between sensitivity categories. To examine this, we need to determine which motifs are found in which peaks. We use the `plyranges::join_overlap_intersect` to return motif entries appended with peak-level metadata, like the peak id each motif is found within.
+```{r}
+# return position of each motif match w/ peak meatadata
+intersect <- summit_flank %>% 
+  plyranges::join_overlap_intersect(fimo_res)
+```
+
+We use the FIMO `score` as a proxy for quality, where higher scores are better
+matches to the motif. Here we examine only the best match (highest score) motif
+within each peak. 
+
+```{r, fig.height=4, fig.width=3}
+intersect %>% 
+  data.frame %>% 
+  dplyr::group_by(id) %>% 
+  dplyr::filter(score == max(score)) %>% 
+  ggplot(aes(e93_sensitive_behavior, score)) +
+    geom_boxplot(aes(fill = e93_sensitive_behavior), notch = T, width = 0.5) +
+    guides(fill = "none") +
+    labs(x = "Response to E93",
+         y = "FIMO Score")
+  
+```
+
+
+
+# Below is in development
+
+```{r}
+# remove when done
+knitr::opts_chunk$set(eval = F)
+```
+
+## AME analysis by binding category (using dreme_results as query??)
+
+```{r ame_by_binding, cache=TRUE, cache.comments=FALSE}
+ame_by_binding <- by_binding %>% 
+  purrr::map(~{
+    runAme(.x, database = list(dreme_results))
+  }) %>% 
+  dplyr::bind_rows(.id = "binding_type") 
+```
+
+Plot heatmap of results by binding type.
+```{r, dependson=ame_by_binding, fig.height=4, fig.width=10}
+ame_by_binding %>% 
+  ame_plot_heatmap(group = binding_type)
+```
+
 ```{r}
 denovo_motifs <- all_res %>% 
   dplyr::mutate(id = paste0("denovo_", best_match_id)) %>% 
   update_motifs()
 ```
 
-```{r, fig.height=4, fig.width=10}
-by_binding %>% 
-  purrr::map(~{
-    runAme(.x, database = list(denovo_motifs))
-  }) %>% 
-  dplyr::bind_rows(.id = "binding_type") %>% 
-  ame_plot_heatmap(group = binding_type)
-```
-
-```{r}
-by_binding %>% 
-  purrr::map(~{
-    runAme(.x, database = list(dreme_results))
-  }) %>% 
-  dplyr::bind_rows(.id = "binding_type") -> da
-```
-```{r, fig.height=3, fig.width=7}
-da %>% 
-  ame_plot_heatmap(group = binding_type)
-```
 
 ## Denovo motif similarity by binding
-```{r}
+```{r dreme_by_binding, cache=TRUE, cache.comments=FALSE}
 dreme_by_binding <- by_binding %>% 
   purrr::map(~{
     runDreme(.x, "shuffle")
   }) %>% 
   dplyr::bind_rows(.id = "binding_type")
 ```
+
 Rename the motifs to indicate the binding category they were discovered in.
 ```{r}
 dreme_by_binding_renamed <- dreme_by_binding %>% 

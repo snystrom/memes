@@ -73,14 +73,57 @@ check_meme_install(meme_path = 'bad/path')
 
 ## The Core Tools
 
-- `runDreme()`
-- `runAme()`
-- `runTomTom()`
-- `runFimo()`
+| Function Name | Use              | Sequence Input | Motif Input | Output |
+|:-------------:|:----------------:|:--------------:|:-----------:|:------------------------------------------------------:|
+| `runDreme()`  | Motif Discovery  | Yes            | No          | data.frame w/ `motifs` column                          |
+| `runAme()`    | Motif Enrichment | Yes            | Yes         | data.frame (optional: `sequences` column)              |
+| `runFimo()`   | Motif Scanning   | Yes            | Yes         | GRanges of motif positions                             |
+| `runTomTom()` | Motif Comparison | No             | Yes         | data.frame w/ `best_match_motif` and `tomtom` columns* |
+
+\* **Note:** if `runTomTom()` is run using the results of `runDreme()`, the results
+will be joined with the `runDreme()` results as extra columns. This allows easy
+comparison of *de-novo* discovered motifs with their matches.
+
+**Sequence Inputs** can be any of:
+
+1. Path to a .fasta formatted file
+2. `Biostrings::XStringSet` (can be generated from GRanges using `get_sequence()` helper function)
+
+**Motif Inputs** can be any of:
+
+1. A path to a .meme formatted file of motifs to scan against
+2. A `universalmotif` object, or list of `universalmotif` objects
+3. A `runDreme()` results object (this allows the results of `runDreme()` to pass directly to `runTomTom()`)
+4. A combination of all of the above passed as a `list()` (e.g. `list("path/to/database.meme", "dreme_results" = dreme_res)`)
+
+**Output Types**:
+
+`runDreme()`, and `runTomTom()` return data.frames with special columns. The `motif`
+column contains `universalmotif` objects, with 1 entry per row. The remaining
+columns describe the properties of each returned motif. The following column
+names are special in that their values are used when running `update_motifs` to
+alter the properties of the motifs stored in the `motif` column. Be careful
+about changing these values.
+
+ - id
+ - alt
+ - family
+ - organism
+ - strand
+ - nsites
+ - bkgsites
+ - pval
+ - qval
+ - eval
 
 dremeR is built around the [universalmotif package](https://www.bioconductor.org/packages/release/bioc/html/universalmotif.html)
-which provides a framework for manipulating motifs in R.
+which provides a framework for manipulating motifs in R. The `motif` columns
+from `runDreme()` and `runTomTom()` can be used natively with all `universalmotif`
+functions (eg `universalmotif::view_motifs(dreme_results$motif)`).
 
+`runTomTom()` returns a special column: `tomtom` which is a `data.frame` of all match data for each input motif. This can be expanded out using `tidyr::unnest(tomtom_results, "tomtom")`.
+
+## Quick Examples
 ### Motif Discovery with DREME
 
 ```{r}
@@ -94,27 +137,36 @@ peaks <- readr::read_tsv(system.file("extdata/peaks/peaks.tsv", package = "dreme
 # Genome object
 dm.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
 ```
+The `get_sequence` function takes a `GRanges` or `GRangesList` as input and
+returns the sequences as a `BioStrings::XStringSet`, or list of `XStringSet`
+objects, respectively. `get_sequence` will name each fasta entry by the genomic
+coordinates each sequence is from.
 ```{r}
+# Generate sequences from 200bp about the center of my peaks of interest
 sequences <- peaks %>% 
   resize(200, "center") %>% 
   get_sequence(dm.genome)
 ```
 
-`runDreme` accepts DNAStringSet or a path to a fasta file as input. You can use
+`runDreme()` accepts XStringSet or a path to a fasta file as input. You can use
 other sequences or shuffled input sequences as the control dataset.
 ```{r}
 # runDreme accepts all arguments that the commandline version of dreme accepts
 # here I set e = 50 to detect motifs in the limited example peak list
 dreme_results <- runDreme(sequences, control = "shuffle", e = 50)
 ```
-dremeR is built around the [universalmotif](https://www.bioconductor.org/packages/release/bioc/html/universalmotif.html) package. The runDreme results object includes a `motif` column of `universalmotif` objects which can be used in all `universalmotif` functions.
+dremeR is built around the
+[universalmotif](https://www.bioconductor.org/packages/release/bioc/html/universalmotif.html)
+package. The `motif` column of the runDreme results object contains
+`universalmotif` objects which can be used natively in all `universalmotif`
+functions.
 ```{r}
 library(universalmotif)
 view_motifs(dreme_results$motif)
 ```
 
 ### Matching motifs using TOMTOM
-Discovered motifs can be matched to known TF motifs using `runTomTom`, which can accept as input a path to a .meme formatted file, a `universalmotif` list, or the results of `runDreme`.
+Discovered motifs can be matched to known TF motifs using `runTomTom()`, which can accept as input a path to a .meme formatted file, a `universalmotif` list, or the results of `runDreme()`.
 
 TomTom uses a database of known motifs which can be passed to the `database` parameter as a path to a .meme format file, or a `universalmotif` object.
 
@@ -132,8 +184,20 @@ tomtom_results <- runTomTom(m)
 tomtom_results
 ```
 
+### Using runDreme results as TOMTOM input
+`runTomTom()` will add its results as columns to a `runDreme()` results data.frame.
+```{r}
+full_results <- dreme_results %>% 
+  runTomTom()
+```
+
+
 ### Motif Enrichment using AME
 
+AME is used to test for enrichment of known motifs in target sequences. `runAme()`
+will use the `MEME_DB` entry in `.Renviron` or `options(meme_db =
+"path/to/database.meme")` as the motif database. Alternately, it will accept all
+valid inputs as `runTomTom()`.
 ```{r}
 ame_results <- runAme(sequences, control = "shuffle", evalue_report_threshold = 30)
 ame_results
@@ -142,12 +206,22 @@ ame_results
 
 ## Visualizing Results
 
+`view_tomtom_hits` allows comparing the input motifs to the top hits from
+TomTom. Manual inspection of these matches is important, as sometimes the top
+match is not always the correct assignment. Altering `top_n` allows you to show
+additional matches in descending order of their rank.
+
 ```{r}
-dreme_results %>% 
-  runTomTom() %>% 
+full_results %>% 
   view_tomtom_hits(top_n = 1) %>% 
+  # Here I use the cowplot library simply to combine each plot into a 4-panel grid
   cowplot::plot_grid(plotlist = .)
 ```
+
+It can be useful to view the results from `runAme()` as a heatmap. 
+`ame_plot_heatmap()` can create complex visualizations for analysis of enrichment
+between different region types (see vignettes for details). Here is a simple
+example heatmap.
 ```{r, fig.height=3, fig.width=5}
 ame_results %>% 
   ame_plot_heatmap()
@@ -161,3 +235,25 @@ The MEME Suite does not currently support Windows, although it can be
 installed under [Cygwin](https://www.cygwin.com/) or the [Windows Linux Subsytem](https://docs.microsoft.com/en-us/windows/wsl/install-win10) (WSL).
 Please note that if MEME is installed on Cygwin or WSL, you must also run R
 inside Cygwin or WSL to use dremeR.
+
+# Citation
+
+dremeR is a wrapper for a select few tools from the MEME Suite, which were
+developed by another group. In addition to citing dremeR, please cite the MEME
+Suite tools corresponding to the tools you use.
+
+If you use `runDreme()` in your analysis, please cite:
+
+Timothy L. Bailey, "DREME: Motif discovery in transcription factor ChIP-seq data", Bioinformatics, 27(12):1653-1659, 2011. [full text](https://academic.oup.com/bioinformatics/article/27/12/1653/257754)
+
+If you use `runTomTom()` in your analysis, please cite:
+
+Shobhit Gupta, JA Stamatoyannopolous, Timothy Bailey and William Stafford Noble, "Quantifying similarity between motifs", Genome Biology, 8(2):R24, 2007. [full text](http://genomebiology.com/2007/8/2/R24)
+
+If you use `runAme()` in your analysis, please cite:
+
+Robert McLeay and Timothy L. Bailey, "Motif Enrichment Analysis: A unified framework and method evaluation", BMC Bioinformatics, 11:165, 2010, doi:10.1186/1471-2105-11-165. [full text](http://www.biomedcentral.com/1471-2105/11/165)
+
+If you use `runFimo()` in your analysis, please cite:
+
+Charles E. Grant, Timothy L. Bailey, and William Stafford Noble, "FIMO: Scanning for occurrences of a given motif", Bioinformatics, 27(7):1017-1018, 2011. [full text](http://bioinformatics.oxfordjournals.org/content/early/2011/02/16/bioinformatics.btr064.full)
