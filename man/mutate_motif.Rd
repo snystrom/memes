@@ -29,10 +29,9 @@ user-feedback. Please provide feedback at
 }
 \examples{
 motif <- universalmotif::create_motif()
-df <- universalmotif_to_meme_df(motif)
+df <- as_universalmotif_dataframe(motif)
 df <- dplyr::mutate(df, id = "newName")
-df <- dplyr::mutate(df, name = "newName")
-df <- mutate_motif(df, "name" = "name")
+df <- mutate_motif(df, "name" = "id")
 # renamed motif
 df$motif
 }

@@ -48,7 +48,7 @@ motif_input.list <- function(input, path = tempfile(fileext = ".meme")){
   # check list is universalmotif list
   if (!is_universalmotif_list(input)) error_universalmotif_list(list)
 
-  df <- universalmotif_to_meme_df(input)
+  df <- as_universalmotif_dataframe(input)
 
   path <- input %>%
     write_meme_input_path(path = path)
@@ -61,7 +61,7 @@ motif_input.list <- function(input, path = tempfile(fileext = ".meme")){
 
 motif_input.universalmotif <- function(input, path = tempfile(fileext = ".meme")){
 
-  df <- universalmotif_to_meme_df(input) %>%
+  df <- as_universalmotif_dataframe(input) %>%
     data.frame
 
   path <- input %>%

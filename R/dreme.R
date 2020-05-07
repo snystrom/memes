@@ -232,7 +232,11 @@ dreme_motif_stats <- function(dreme_xml_path) {
                   "neg_frac" = negative_hits/negative_total) %>%
     dplyr::mutate(rank = gsub("^m", "", id) %>% as.integer(),
                   id = paste0(id, "_", seq)) %>%
-    dplyr::select(rank, dplyr::everything())
+    dplyr::select(rank, dplyr::everything()) %>%
+    # Finally, change id and alt to "name" and "altname"
+    # for compatibility with universalmotif
+    dplyr::rename("name" = "id",
+                  "altname" = "alt")
 
   return(motif_stats_final)
 }
@@ -291,13 +295,13 @@ dreme_to_pfm <- function(dreme_xml_path){
     purrr::map(t)
 
   motif_stats_list <- dreme_motif_stats(dreme_xml_path) %>%
-    split(.$id)
+    split(.$name)
 
   pfmList <- purrr::map2(motif_stats_list, motifs_matrix, ~{
     universalmotif::create_motif(.y,
                                  type = "PCM",
-                                 name = .x$id,
-                                 altname = .x$alt,
+                                 name = .x$name,
+                                 altname = .x$altname,
                                  bkg = background_freq,
                                  pval = .x$pvalue,
                                  nsites = .x$nsites,

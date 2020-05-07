@@ -11,8 +11,8 @@
 #' @noRd
 new_dreme_results <- function(){
   data.frame(rank = integer(),
-             id = character(),
-             alt = character(),
+             name = character(),
+             altname = character(),
              seq = character(),
              length = integer(),
              nsites = integer(),
@@ -126,26 +126,16 @@ error_universalmotif_list <- function(list){
 #'
 #' @param motif universalmotif object or list of universalmotifs
 #'
-#' @return data.frame with all motif metadata + `motif` column containing universalmotif object
+#' @return data.frame with all motif metadata + `motif` column containing the universalmotif object
 #'
-#' @importFrom magrittr %>%
+#' @export
 #'
 #' @examples
 #' universalmotif::create_motif() %>%
-#'   universalmotif_to_df()
-#' @noRd
-universalmotif_to_meme_df <- function(motif, na.rm = FALSE){
-  # this is needed to overcome limitation of bind_rows causing error with list columns
+#'   as_universalmotif_dataframe()
+as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
   data <- universalmotif::summarise_motifs(motif, na.rm = na.rm)
 
-  # rename columns if exist:
-  # https://stackoverflow.com/a/53842689
-  # recode is in form: "old" = "new"
-  df <- data %>%
-    dplyr::rename_all(dplyr::recode,
-                      "name" = "id",
-                      "altname" = "alt")
-
-  df$motif <- list(motif)
-  return(df)
+  data$motif <- list(motif)
+  return(data)
 }

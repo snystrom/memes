@@ -1,5 +1,5 @@
 
-#' Convert tomtom query entries to meme_df format
+#' Convert tomtom query entries to universalmotif dataframe format
 #'
 #' @param tt_xml tomtom xml2 data
 #'
@@ -12,7 +12,7 @@ tomtom_query_motif_dfs <- function(tt_xml){
     xml2::xml_children() %>%
     purrr::map(tomtom_xml_motif_to_universalmotif, tt_xml)
 
-  data <- universalmotif_to_meme_df(tt_motif_list) %>%
+  data <- as_universalmotif_dataframe(tt_motif_list) %>%
     dplyr::mutate(query_idx = (1:nrow(.) - 1),
       db_idx = purrr::map_int(tt_motif_list, ~{
       .x@extrainfo["db"] %>%

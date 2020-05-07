@@ -28,12 +28,13 @@ importTomTomXML <- function(tomtom_xml_path){
     warning("TomTom detected no matches")
     #TODO: handle NULL w/ return data w/ NA for all tomtom columns,
     # this way hopefully it will break fewer pipelines
-    query_data %>%
+    null_match <- query_data %>%
       dplyr::mutate(
-        best_match_id = NA,
+        best_match_name = NA,
         best_motifs = NA,
-        tomtom = NA) %>%
-      return()
+        tomtom = NA)
+
+    return(null_match)
   }
 
   match_data %<>%
@@ -50,9 +51,12 @@ importTomTomXML <- function(tomtom_xml_path){
   tomtom_results <- query_data %>%
     dplyr::left_join(match_data, by = "query_idx") %>%
     dplyr::left_join(target_data, by = "target_idx") %>%
-    dplyr::select(-dplyr::contains("idx"))
+    dplyr::select(-dplyr::contains("idx")) %>%
+    # Rename columns for max compatibility with universalmotif
+    dplyr::rename("match_name" = "match_id",
+                  "match_altname" = "match_alt")
 
-  res <- dplyr::left_join(query_data, nest_tomtom_results(tomtom_results), by = c("id", "alt"))
+  res <- dplyr::left_join(query_data, nest_tomtom_results(tomtom_results), by = c("name", "altname"))
 
   return(res)
 

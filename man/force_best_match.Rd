@@ -9,7 +9,7 @@ force_best_match(res, matches)
 \arguments{
 \item{res}{results from runTomTom}
 
-\item{matches}{named vector where name is the input motif id, and value is the match_id to use as the new best match}
+\item{matches}{named vector where name is the input motif id, and value is the match_name to use as the new best match}
 }
 \value{
 `res` with new best_* columns and re-ranked tomtom data in the `tomtom` list column for the updated entries.

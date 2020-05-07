@@ -17,10 +17,9 @@
 #'
 #' @examples
 #' motif <- universalmotif::create_motif()
-#' df <- universalmotif_to_meme_df(motif)
+#' df <- as_universalmotif_dataframe(motif)
 #' df <- dplyr::mutate(df, id = "newName")
-#' df <- dplyr::mutate(df, name = "newName")
-#' df <- mutate_motif(df, "name" = "name")
+#' df <- mutate_motif(df, "name" = "id")
 #' # renamed motif
 #' df$motif
 mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
@@ -82,8 +81,8 @@ mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
 #' Table of values updated
 #' | `motif`  | `data.frame` |
 #' |:--------:|:------------:|
-#' | name     | id           |
-#' | altname  | alt          |
+#' | name     | name         |
+#' | altname  | altname      |
 #' | family   | family       |
 #' | organism | organism     |
 #' | strand   | strand       |
@@ -95,14 +94,14 @@ mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
 #'
 #' @examples
 #' motif <- universalmotif::create_motif()
-#' df <- universalmotif_to_meme_df(motif)
+#' df <- as_universalmotif_dataframe(motif)
 #' df <- dplyr::mutate(df, id = "newName")
 #' df <- update_motifs(df)
 #' # renamed motif
 #' df$motif
 update_motifs <- function(.data){
-  names_lookup <- c("name" = "id",
-                    "altname" = "alt",
+  names_lookup <- c("name" = "name",
+                    "altname" = "altname",
                     "family" = "family",
                     "organism" = "organism",
                     "strand" = "strand",

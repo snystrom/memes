@@ -22,8 +22,8 @@ cannot be updated.
 Table of values updated
 | `motif`  | `data.frame` |
 |:--------:|:------------:|
-| name     | id           |
-| altname  | alt          |
+| name     | name         |
+| altname  | altname      |
 | family   | family       |
 | organism | organism     |
 | strand   | strand       |
@@ -35,7 +35,7 @@ Table of values updated
 }
 \examples{
 motif <- universalmotif::create_motif()
-df <- universalmotif_to_meme_df(motif)
+df <- as_universalmotif_dataframe(motif)
 df <- dplyr::mutate(df, id = "newName")
 df <- update_motifs(df)
 # renamed motif

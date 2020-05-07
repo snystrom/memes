@@ -1,7 +1,7 @@
 #' Force best tomtom match by id
 #'
 #' @param res results from runTomTom
-#' @param matches named vector where name is the input motif id, and value is the match_id to use as the new best match
+#' @param matches named vector where name is the input motif id, and value is the match_name to use as the new best match
 #'
 #' @return `res` with new best_* columns and re-ranked tomtom data in the `tomtom` list column for the updated entries.
 #' @export
@@ -13,10 +13,10 @@
 #' res <- runTomTom(motif)
 #' force_best_match(res, c("id" = "update"))
 force_best_match <- function(res, matches){
-  # matches is named vector, id = best_match
+  # matches is named vector, name = best_match
   purrr::iwalk(matches, ~{
-    res[res$id == .y,]$tomtom[[1]] <<- res[res$id == .y,]$tomtom[[1]] %>%
-      rank_tomtom_by_id(.x)
+    res[res$name == .y,]$tomtom[[1]] <<- res[res$name == .y,]$tomtom[[1]] %>%
+      rank_tomtom_by_name(.x)
   })
 
   res %>%
@@ -39,12 +39,12 @@ update_best_match <- function(res){
 
   new_tomtom <- res_nobest %>%
     tidyr::unnest(tomtom) %>%
-    dplyr::select("id", "alt", dplyr::contains("match_"), "db_name") %>%
+    dplyr::select("name", "altname", dplyr::contains("match_"), "db_name") %>%
     nest_tomtom_results()
 
   res_nobest %>%
     dplyr::select(-"tomtom") %>%
-    dplyr::left_join(new_tomtom, by = c("id", "alt"))
+    dplyr::left_join(new_tomtom, by = c("name", "altname"))
 
 }
 
@@ -83,8 +83,8 @@ drop_best_match <- function(res){
 #' }
 nest_tomtom <- function(data){
   data %>%
-    tidyr::nest(data = c("match_id",
-                "match_alt",
+    tidyr::nest(data = c("match_name",
+                "match_altname",
                 "match_pvalue",
                 "match_evalue",
                 "match_qvalue",
@@ -93,20 +93,20 @@ nest_tomtom <- function(data){
     dplyr::rename("tomtom" = "data")
 }
 
-#' Rank a tomtom results dataframe by match_id
+#' Rank a tomtom results dataframe by match_name
 #'
 #' @param tomtom
 #'
-#' @param match_id
+#' @param match_name
 #'
 #' @importFrom rlang !!
 #' @importFrom magrittr %>%
 #' @importFrom dplyr desc
 #'
 #' @noRd
-rank_tomtom_by_id <- function(tomtom, match_id){
+rank_tomtom_by_name <- function(tomtom, match_name){
 
   tomtom %>%
-    dplyr::arrange(desc(match_id %in% !!match_id))
+    dplyr::arrange(desc(match_name %in% !!match_name))
 
 }

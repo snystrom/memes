@@ -86,7 +86,7 @@ runTomTom <- function(input, database = NULL,
 
     nest_tomtom <- nest_tomtom_results(tomtom_results)
 
-    merge_res <- dplyr::left_join(input$metadata, nest_tomtom, by = c("id", "alt"))
+    merge_res <- dplyr::left_join(input$metadata, nest_tomtom, by = c("name", "altname"))
     return(merge_res)
   }
 
@@ -312,7 +312,12 @@ parseTomTom <- function(tomtom_xml_path){
     dplyr::left_join(match_data, by = "query_idx") %>%
     dplyr::left_join(target_data, by = "target_idx") %>%
     dplyr::select(-dplyr::contains("idx")) %>%
-    dplyr::select("id", "alt", "match_id", "match_alt", dplyr::contains("value"), "db_name", "match_motif")
+    dplyr::select("id", "alt", "match_id", "match_alt", dplyr::contains("value"), "db_name", "match_motif") %>%
+    # Rename columns for max compatibility with universalmotif
+    dplyr::rename("name" = "id",
+                  "altname" = "alt",
+                  "match_name" = "match_id",
+                  "match_altname" = "match_alt")
 
   return(tomtom_results)
 
@@ -330,7 +335,7 @@ parseTomTom <- function(tomtom_xml_path){
 #' @noRd
 nest_tomtom_results <- function(tomtom_results){
   tomtom_results %>%
-    dplyr::group_by(id, alt) %>%
+    dplyr::group_by(name, altname) %>%
     tidyr::nest() %>%
     dplyr::mutate(best_match_info = purrr::map(data, ~{
       .x %>%
@@ -341,6 +346,6 @@ nest_tomtom_results <- function(tomtom_results){
     tidyr::unnest(best_match_info) %>%
     dplyr::rename("tomtom" = "data") %>%
     dplyr::mutate(tomtom = purrr::map(tomtom, data.frame)) %>%
-    dplyr::select("id", "alt", dplyr::contains("best_"), dplyr::everything())
+    dplyr::select("name", "altname", dplyr::contains("best_"), dplyr::everything())
 }
 
