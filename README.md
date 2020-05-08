@@ -13,7 +13,8 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 <!-- badges: end -->
 
 An R interface to the [MEME Suite](http://meme-suite.org/) family of
-tools.
+tools, which provides several utilities for performing motif analysis on
+DNA, RNA, and protein sequences.
 
 ## Installation
 
