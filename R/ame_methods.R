@@ -75,8 +75,16 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
 #' @param ame ame results data.frame
 #' @param id column of motif ids to use (default: motif_id).
 #' @param group grouping column if comparing across multiple ame runs (optional, default: NULL).
-#' @param value value to display as heatmap intensity. Default: -log10(adj.pvalue). Takes function or column name as input.
+#' @param value value to display as heatmap intensity. Default:
+#'   -log10(adj.pvalue). Takes function or column name as input. If set to
+#'   "normalize", will use normalized rank within `group` as the heatmap values.
+#'   This can be a more appropriate visualization for between-group comparisons.
 #' @param group_name when group = NULL, name to use for input regions. Ignored if group is set.
+#'
+#' @details
+#' Common mistake: if `value` is set to a string that is not "normalize", it
+#' will return: "Error: Discrete value supplied to continuous scale". To use a
+#' column by name, do not quote the column name.
 #'
 #' @return
 #' @export
@@ -96,6 +104,8 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
   group <- enquo(group)
   value <- enquo(value)
 
+
+  # Only order by group if group is set
   if (rlang::quo_is_null(group)){
     res <- ame %>%
       ame_order_by_cluster(id = id, group = NULL, name = group_name)
@@ -104,18 +114,46 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
       ame_order_by_cluster(id = !!id, group = !!group)
   }
 
-  res %>%
-    ggplot(aes(reorder(!!id, order), as.factor(type))) +
-      geom_tile(aes(fill = !!value), color = 'black', size = 0.3) +
-      theme_bw() +
-      #theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
-      theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
-            axis.text = element_text(color = "black",
-                                     size = 34 / .pt)) +
-      labs(x = substitute(id),
-           y = substitute(group),
-           fill = substitute(value)) +
-      scale_fill_gradient2(low = "white",
-                           high = "firebrick")
+  # ggplot theme for ame heatmap
+  heatmap_theme <- theme_bw() +
+   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+         axis.text = element_text(color = "black",
+                                  size = 34 / .pt))
+
+  # Check whether value is set to "normalize" (quotes important)
+  # have to do as_label because as_name errors w/ expressions
+  value_eval <- rlang::as_label(value) != "\"normalize\""
+
+  if (value_eval){
+    # Default behavior is to do tidyeval on value
+    plot <-  res %>%
+      ggplot(aes(reorder(!!id, order), as.factor(type))) +
+        geom_tile(aes(fill = !!value), color = 'black', size = 0.3) +
+        heatmap_theme +
+        labs(x = substitute(id),
+             y = substitute(group),
+             fill = substitute(value)) +
+        scale_fill_gradient2(low = "white",
+                             high = "firebrick")
+
+  } else {
+    # Otherwise use normalized rank
+    plot <-  res %>%
+      dplyr::group_by(!!group) %>%
+      dplyr::mutate(norm_rank = rank_normalize(rank)) %>%
+      ggplot(aes(reorder(!!id, order), as.factor(type))) +
+        geom_tile(aes(fill = norm_rank), color = 'black', size = 0.3) +
+        heatmap_theme +
+        labs(x = substitute(id),
+             y = substitute(group),
+             fill = "Normalized Rank") +
+        scale_fill_continuous(low = "firebrick",
+                              high = "white",
+                              breaks = c(0, 1),
+                              labels = c("High", "Low"))
+
+  }
+
+  return(plot)
 
 }

@@ -148,3 +148,19 @@ duplicate_file <- function(path){
   return(dupFile)
 }
 
+
+#' Normalize rank
+#'
+#' For groups of different size, it is inappropriate to compare rank position in a heatmap, for example
+#'
+#' This function converts rank as a fraction of total ranks for better between-group comparisons.
+#'
+#' @param rank
+#'
+#' @return
+#'
+#' @examples
+#' @noRd
+rank_normalize <- function(rank){
+  (rank - 1) / (max(rank) - 1)
+}
