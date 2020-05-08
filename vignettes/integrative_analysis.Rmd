@@ -293,9 +293,10 @@ summit_flank %>%
   dplyr::group_by(e93_sensitive_behavior) %>% 
   dplyr::mutate(frac = n/sum(n)) %>% 
   ggplot(aes(n_motifs, frac)) +
-    geom_line(aes(color = e93_sensitive_behavior)) +
+    geom_line(aes(color = e93_sensitive_behavior), size = 1) +
     labs(y = "Fraction of Sites",
-         x = "Number of E93 Motifs")
+         x = "Number of E93 Motifs") +
+    theme_bw()
 ```
 
 Finally, we want to assess whether the quality of E93 motifs is different between sensitivity categories. To examine this, we need to determine which motifs are found in which peaks. We use the `plyranges::join_overlap_intersect` to return motif entries appended with peak-level metadata, like the peak id each motif is found within.
@@ -318,10 +319,90 @@ intersect %>%
     geom_boxplot(aes(fill = e93_sensitive_behavior), notch = T, width = 0.5) +
     guides(fill = "none") +
     labs(x = "Response to E93",
-         y = "FIMO Score")
+         y = "FIMO Score") +
+    theme_bw()
   
 ```
+```{r}
+intersect %>% 
+  data.frame %>% 
+  dplyr::group_by(id) %>% 
+  dplyr::filter(score == max(score)) %>% 
+  dplyr::mutate(behavior = factor(e93_sensitive_behavior)) %>% 
+  PMCMRplus::adAllPairsTest(score ~ behavior, ., p.adjust.method = "fdr")
+```
 
+
+### Centrality of E93 motif
+Next we want to visualize whether the E93 motif has altered positioning across the response categories. To do this we 
+```{r}
+distance_to_nearest <- function(query, subject, ...){
+  hits <- GenomicRanges::distanceToNearest(query, subject, ...)
+  mcols(hits)$distance
+}
+
+summit_nearest_e93_motif <- summit_flank %>% 
+  plyranges::anchor_center() %>% 
+  plyranges::mutate(width = 1) %>% 
+  plyranges::join_nearest(fimo_res) %>% 
+  plyranges::mutate(dist_to_motif = distance_to_nearest(., fimo_res))
+
+```
+
+```{r}
+summit_nearest_e93_motif %>% 
+  data.frame %>% 
+  dplyr::filter(has_motif == TRUE) %>% 
+  ggplot(aes(dist_to_motif)) +
+    stat_ecdf(aes(color = e93_sensitive_behavior), size = 1, pad = FALSE) +
+    labs(x = "Distance to nearest E93 Motif",
+         y = "Fraction of Sites",
+         color = "E93 Response") +
+    theme_linedraw() 
+  
+```
+```{r}
+summit_nearest_e93_motif %>% 
+  data.frame %>% 
+  dplyr::filter(has_motif == TRUE) %>% 
+  dplyr::mutate(behavior = factor(e93_sensitive_behavior)) %>% 
+  # Anderson-darling test for multiple distributions
+  PMCMRplus::adAllPairsTest(dist_to_motif ~ behavior, ., p.adjust.method = "fdr") 
+
+```
+
+```{r,include=F}
+summit_nearest_e93_motif %>% 
+  data.frame %>% 
+  dplyr::filter(has_motif == TRUE) %>% 
+  dplyr::mutate(behavior = factor(e93_sensitive_behavior)) %>% 
+  # Anderson-darling test for multiple distributions
+  PMCMRplus::adAllPairsTest(dist_to_motif ~ behavior, ., p.adjust.method = "fdr") -> x
+
+# Idea: show p-val signif stars on figure legend for ecdf plot?
+
+# Below is spec code for parsing PMCMRplus output for adding to ggplot annotation
+# use levels(x$model$g) to assign levels to c1 & c2 below
+
+# for ECDF plot: consider taking plot as input, then use cowplot to grab legend, etc.
+# for boxplot: grab max values from x$model$x and adjust lines from there, return annotation df
+#  user will have to configure y positions
+x$p.value %>% 
+  data.frame %>% 
+  tibble::rownames_to_column('v') %>% 
+  split(.$v) %>% 
+  purrr::imap(~{
+    .x %>% 
+      dplyr::select(-v) %>% 
+      dplyr::rename_all(function(x){paste0(x, "_", .y)})
+  }) %>% 
+  dplyr::bind_cols() %>% 
+  tidyr::pivot_longer(dplyr::everything(), names_to = "vs", values_to = "pval") %>% 
+  tidyr::separate(vs, c("c1", "c2")) %>% 
+  dplyr::filter(!is.na(pval)) %>% 
+  dplyr::mutate(c1 = factor(c1, levels = levels(x$model$g)),
+                c2 = factor(c2, levels = levels(x$model$g)))
+```
 
 
 # Below is in development
