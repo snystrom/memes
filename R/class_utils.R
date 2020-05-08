@@ -136,6 +136,32 @@ error_universalmotif_list <- function(list){
 as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
   data <- universalmotif::summarise_motifs(motif, na.rm = na.rm)
 
-  data$motif <- list(motif)
+  if (class(motif) == "universalmotif"){
+    data$motif <- list(motif)
+  } else if (class(motif) == "list"){
+    data$motif <- motif
+  }
   return(data)
+}
+
+#' Convert special data.frames back into universalmotifs
+#'
+#' @param data a universalmotif_dataframe (output from
+#'   `as_universalmotif_dataframe()`, or `runDreme()`)
+#'
+#' @return universalmotif list from motifs, updated to reflect the data.frame
+#'   column values.
+#' @export
+#'
+#' @examples
+#' df <- universalmotif::create_motif() %>%
+#'   as_universalmotif_dataframe() %>%
+#'   dplyr::mutate(altname = "new_alt_name")
+#'
+#' motifs <- as_universalmotif(df)
+as_universalmotif <- function(data){
+  data %<>%
+    update_motifs()
+
+  return(data$motif)
 }
