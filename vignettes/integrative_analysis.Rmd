@@ -44,12 +44,12 @@ dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
 summits <- peaks %>% 
   plyranges::anchor_start() %>% 
   plyranges::mutate(width = 1) %>% 
-  plyranges::shift_right(mcols(.)$summit_position) %>% 
-  plyranges::anchor_center()
+  plyranges::shift_right(mcols(.)$summit_position) 
   
 # Get sequences in a 100bp window around the peak summit
 summit_flank <- summits %>% 
-  plyranges::mutate(width = 100)
+  plyranges::anchor_center() %>% 
+  plyranges::mutate(width = 100) 
 
 # split by response to E93 binding
 by_sens <- summit_flank %>% 
@@ -183,8 +183,55 @@ ame_res %>%
   dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
   # add new id column to simplify motif name to TF name
   dplyr::mutate(tfid = strsplit(motif_id, "_")[[1]][1]) %>% 
-  ame_plot_heatmap(group = binding_type, id = tfid) 
+  ame_plot_heatmap(group = binding_type, id = tfid)
 ```
+
+
+## Issues with AME Heatmap Visualization
+Finally, because the data for each binding type are generated from different AME
+runs, it is not the best idea to compare p-values across experiments (ie between
+rows), because the dynamic range of p-values will vary between groups. Here you
+can see that, for example, the orphan sites will have a very different scale of
+-log10(adjusted pvalues) than ectopic and entopic sites.
+
+```{r}
+ame_res %>% 
+  ggplot(aes(-log10(adj.pvalue))) +
+    stat_ecdf(aes(color = binding_type)) +
+    labs(y = "Fraction of Motifs")
+```
+
+We can partially overcome this limitation by filling the heatmap with its
+normalized rank value, which accounts for differences in total number of
+discovered motifs between AME runs. Although it does not completely abrograte
+differeces, the signal values for high-ranked motifs within groups will be more
+comparable.
+```{r}
+ame_res %>% 
+  ggplot(aes(dremeR:::rank_normalize(rank))) +
+    stat_ecdf(aes(color = binding_type)) +
+    scale_x_continuous(
+                       breaks = c(0, 0.25, 0.5, 0.75, 1),
+                       labels = c("0\n(High)", 0.25, 0.5, 0.75, "1\n(Low)"),
+                       ) +
+    labs(y = "Fraction of Motifs",
+         x = "Normalized Rank") 
+```
+
+We achieve this by setting `value = "normalize"` in `ame_plot_heatmap()`. If
+plotting with multiple groups, it may be more appropriate to make this
+visualization.
+
+```{r, fig.height=3, fig.width=25}
+ame_res %>% 
+  dplyr::mutate(gene_id = gsub("_\\d+", "", motif_alt_id)) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::group_by(binding_type, gene_id) %>% 
+  dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
+  dplyr::mutate(tfid = strsplit(motif_id, "_")[[1]][1]) %>% 
+  ame_plot_heatmap(group = binding_type, id = tfid, value = "normalize")
+```
+
 
 ## FIMO 
 Because we discover a *de-novo* motif from DREME that matches to E93, it can be useful to scan peaks for motif occurrances to further examine properties of different peak categories.
