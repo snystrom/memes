@@ -1,0 +1,152 @@
+---
+title: "Tidying Motif Metadata"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tidying Motif Metadata}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+dremeR contains several experimental features to simplify working with motif
+metadata. These can be used to manipulate motifs detected from MEME Suite tools,
+or to deal with motifs from other sources.
+
+**Note:** These features are experimental and will be influenced by user
+feedback. Please provide comments, issues, or other feedback at the [dremeR
+issues page](https://github.com/snystrom/dremeR/issues).
+
+```{r setup}
+library(dremeR)
+library(magrittr)
+library(universalmotif)
+```
+
+The `MotifDb` package makes it easy to query thousands of motifs from public
+databases. Here, I will describe how to use one of these queries as input to
+dremeR functions, and how to manipulate the resulting motifs to prepare them for
+MEME suite tools.
+
+I will use the motifs from the [FlyFactorSurvey](https://mccb.umassmed.edu/ffs/)
+as an example. They can be accessed from `MotifDb` using the following query.
+```{r}
+flyFactorDb <- MotifDb::MotifDb %>% 
+  MotifDb::query("FlyFactorSurvey")
+```
+
+Use `universalmotif::convert_motifs()` to convert a `MotifDb` query into motif
+objects. In many cases, the resulting list can be used directly as input to
+dremeR functions, like `runTomTom`, or `runAme`.
+```{r}
+flyFactorMotifs <- flyFactorDb %>% 
+  convert_motifs()
+```
+
+But there are some issues with this database. For example, the following motif
+name is the FlyBase gene number, and the alternate name is the actual
+informative name of the PWM.
+```{r}
+flyFactorMotifs %>% 
+  head(1)
+```
+
+dremeR provides the `as_universalmotif_dataframe()` method for converting
+universalmotif lists into special data.frames which can be used to update motif
+entries. This is particularly useful when dealing with several motifs at once.
+```{r}
+flyFactor_data <- flyFactorMotifs %>% 
+  as_universalmotif_dataframe()
+```
+
+The universalmotif data.frame contains all the columns that can be used to
+update motif entries. Any additional columns added to the data.frame will be
+ignored. The `motif` column is a list column that holds the original
+universalmotif objects.
+
+**Note:** If the `motif` column is altered by non-dremeR methods, the following
+approaches are not guaranteed to work. These features are experimental and will
+be influenced by user feedback. Please provide comments, issues, or other
+feedback at the [dremeR issues page](https://github.com/snystrom/dremeR/issues).
+```{r}
+# The following columns can be used to update motif metadata
+flyFactor_data %>% 
+  names
+```
+
+
+using the universalmotif data.frame, we can quickly see that the issue with FBgn
+numbers only applies to certain entries. And TFs which are represented by
+multiple motifs in the database are assigned the same name. The MEME Suite tools
+which use a motif database (like TomTom and AME) require that the entries have
+unique primary identifiers, therefore the default names will not be appropriate.
+
+```{r}
+flyFactor_data %>% 
+  # The `motif` column can slow down printing, so it can be helpful to drop it.
+  dplyr::select(-motif) %>% 
+  head(5)
+```
+
+
+However, the `altname` slots from the `motifDb` query are already unique, so we can make them the primary name.
+```{r}
+flyFactor_data$altname %>% length
+flyFactor_data$altname %>% unique %>% length
+```
+
+An easy way is to use `dplyr::rename` to swap the columns.
+```{r}
+flyFactor_data %<>% 
+  dplyr::rename("altname" = "name", 
+                "name" = "altname")
+```
+
+The `name` column now contains the full motif name. 
+```{r}
+flyFactor_data %>% 
+  head(3)
+```
+
+Next to solve the issue with the FBgn's. As of this writing in May 2020, the
+FBgn entries are out of date, making them difficult to look up within R
+([FlyBase.org](flybase.org) has a nice conversion tool for this, however). For this
+example, we will try to grab the correct gene name from the motif name, which is
+stored in the first field of the name, formatted as follows:
+"<gene>_<sequencing-platform>_<FBgn>".
+
+We use `tidyr::separate` to split out the first entry to the `tifd` column, then
+only use this value if the altname contains an FBgn.
+```{r}
+flyFactor_data %<>% 
+  # Critical to set remove = FALSE to keep the `name` column
+  tidyr::separate(name, c("tfid"), remove = FALSE) %>% 
+  # Only use the tfid if the altname contains an FBgn
+  dplyr::mutate(altname = ifelse(grepl("^FBgn", altname), tfid, altname))
+```
+
+Now, the first two entries are listed as "ab" instead of "FBgn0259750".
+```{r}
+flyFactor_data %>% 
+  head(3)
+```
+
+Finally, the resulting data.frame can be converted back into a universalmotif list using `as_universalmotif()`.
+```{r}
+flyFactorMotifs_final <- as_universalmotif(flyFactor_data)
+```
+
+The resulting universalmotif list object now reflects the changes we made to the
+`data.frame` and can now be exported as a .meme format file using
+`universalmotif::write_meme` or can be used directly as input to tools like
+`runTomTom` or `runAme`.
+```{r}
+flyFactorMotifs_final %>% 
+  head(1)
+```
+
