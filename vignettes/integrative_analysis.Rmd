@@ -119,39 +119,57 @@ by_binding <- summit_flank %>%
 ```
 ```{r}
 ame_by_binding <- by_binding %>% 
-  purrr::map(~{
-    runAme(.x)
-    })
+  purrr::map(runAme) 
 ```
 
-### plot heatmap of results, notice there are redundant entries
+### Visualizing AME results
+
+The `ame_plot_heatmap()` function provides a quick way to visualize AME results.
+It is built on top of `ggplot2`, so all `ggplot2` functions can be used to
+further modify the plot.
+
+By default, it uses the -log10(adjusted p-value) as the heat values. See the
+documentation for additional notes on customization.
+```{r, fig.height=3.5, fig.width=7}
+library(ggplot2)
+
+ame_by_binding$entopic %>% 
+  dplyr::filter(rank %in% 1:10) %>% 
+  ame_plot_heatmap(group_name = "Entopic Sites")  +
+    ggtitle("Top 10 AME Hits in Entopic Sites")
+```
+
+To plot results from multiple runs together, they must first be joined into 1
+data frame. The `ame_by_binding` object is a list whose names correspond to the
+E93 binding category. The list can be combined into a data.frame using
+`dplyr::bind_rows`. Setting `.id = "binding_type` creates a new column
+`binding_type` that contains the names from the `ame_by_binding` list. In this
+way, the `ame_res` data.frame contains all AME results for each run, which can
+be distinguished by the `binding_type` column.
 ```{r}
 ame_res <- ame_by_binding %>% 
   dplyr::bind_rows(.id = "binding_type")
-```
-```{r}
-library(ggplot2)
-ame_res %>% 
-  ggplot(aes(-log10(evalue))) +
-    stat_ecdf(aes(color = binding_type))
-```
-```{r}
-ame_res %>% 
-  dplyr::filter(evalue < 1e-3) %>% 
-  dplyr::group_by(binding_type) %>% 
-  dplyr::count()
+  
 ```
 
-This is too many hits to view in this vignette, but you can see that the heatmap will plot motifs by their overlap across groups, where unique motifs are on the left, and shared motifs are on the right. 
+It is possible to aggregate results from multiple runs into a heatmap by setting
+the `group` parameter in `ame_plot_heatmap()`.
+
+This is too many hits to view in this vignette, but you can see that the heatmap
+will plot motifs by their overlap across groups, where unique motifs are on the
+left, and shared motifs are on the right.
 ```{r, fig.height=5,fig.width=15}
 ame_res %>% 
   ame_plot_heatmap(group = binding_type)
 ```
+
+### Reducing redundant motif hits
 There is another key consideration for the above visualization and that is that
 in the FlyFactorSurvey database we used, different TFs can have multiple motif
 entries in the database which are all detected separately by AME. Here, when
 returning the top 5 hits from each group, you can see, for example, that a motif
-matching "Aef1" is reported 3 times within the top 5 hits of the ectopic sites.
+matching "Aef1" is reported 3 times within the top 5 hits of the ectopic sites
+(A similar result can also be seen in the top 10 entopic hits heatmap above).
 In this situation, it makes sense to summarize the data at the TF level, instead
 of the motif level. **Note:** There may be exceptions to this if for example, a
 TF has multiple DNA binding sequences it can recognize, in which case having
@@ -167,7 +185,11 @@ ame_res %>%
   dplyr::select(binding_type, rank, motif_id, motif_alt_id, consensus)
 ```
 
-How to solve this problem will vary with different motif databases. In the FlyFactorSurvey database, the `motif_alt_id` column contains a unique FBgn number for each TF. For entries of the same TF, the FBgn number is prepended with an `_<number>`. We can extract the FBgn number to use as a gene-level identifier, and reduce the matches to return 1 match per gene as follows:
+How to solve this problem will vary with different motif databases. In the
+FlyFactorSurvey database, the `motif_alt_id` column contains a unique FBgn
+number for each TF. For entries of the same TF, the FBgn number is prepended
+with an `_<number>`. We can extract the FBgn number to use as a gene-level
+identifier, and reduce the matches to return 1 match per gene as follows:
 ```{r, fig.height=3, fig.width=25}
 ame_res %>% 
   # the flyfactor genes have their Flybase gene numbers appended with a _<number> 
@@ -192,30 +214,36 @@ Finally, because the data for each binding type are generated from different AME
 runs, it is not the best idea to compare p-values across experiments (ie between
 rows), because the dynamic range of p-values will vary between groups. Here you
 can see that, for example, the orphan sites will have a very different scale of
--log10(adjusted pvalues) than ectopic and entopic sites.
+-log10(adjusted pvalues) than ectopic and entopic sites. In other words, because
+the dynamic range of values are different between experiments, placing them on
+the same scale for comparison may be misleading in certain contexts.
 
 ```{r}
 ame_res %>% 
   ggplot(aes(-log10(adj.pvalue))) +
-    stat_ecdf(aes(color = binding_type)) +
-    labs(y = "Fraction of Motifs")
+    stat_ecdf(aes(color = binding_type), size = 1, pad = FALSE) +
+    labs(y = "Fraction of Motifs") +
+    theme_bw()
 ```
 
-We can partially overcome this limitation by filling the heatmap with its
-normalized rank value, which accounts for differences in total number of
+We can partially overcome this limitation by filling the heatmap with the
+normalized rank value for each TF, which accounts for differences in total number of
 discovered motifs between AME runs. Although it does not completely abrograte
 differeces, the signal values for high-ranked motifs within groups will be more
 comparable.
 ```{r}
+# rank_normalize transforms the ranks to values between 0 and 1 as follows:
+# (1 - rank)/(1 - max(rank))
 ame_res %>% 
   ggplot(aes(dremeR:::rank_normalize(rank))) +
-    stat_ecdf(aes(color = binding_type)) +
+    stat_ecdf(aes(color = binding_type), size = 1, pad = FALSE) +
     scale_x_continuous(
                        breaks = c(0, 0.25, 0.5, 0.75, 1),
                        labels = c("0\n(High)", 0.25, 0.5, 0.75, "1\n(Low)"),
                        ) +
     labs(y = "Fraction of Motifs",
-         x = "Normalized Rank") 
+         x = "Normalized Rank")  +
+    theme_bw() 
 ```
 
 We achieve this by setting `value = "normalize"` in `ame_plot_heatmap()`. If

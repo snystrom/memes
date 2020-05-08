@@ -19,7 +19,10 @@ ame_plot_heatmap(
 
 \item{group}{grouping column if comparing across multiple ame runs (optional, default: NULL).}
 
-\item{value}{value to display as heatmap intensity. Default: -log10(adj.pvalue). Takes function or column name as input.}
+\item{value}{value to display as heatmap intensity. Default:
+-log10(adj.pvalue). Takes function or column name as input. If set to
+"normalize", will use normalized rank within `group` as the heatmap values.
+This can be a more appropriate visualization for between-group comparisons.}
 
 \item{group_name}{when group = NULL, name to use for input regions. Ignored if group is set.}
 }
@@ -28,6 +31,11 @@ ame_plot_heatmap(
 }
 \description{
 Plot AME heatmap clustered by similarity in detected motifs
+}
+\details{
+Common mistake: if `value` is set to a string that is not "normalize", it
+will return: "Error: Discrete value supplied to continuous scale". To use a
+column by name, do not quote the column name.
 }
 \examples{
 \dontrun{
