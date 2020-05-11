@@ -1,0 +1,37 @@
+---
+title: "Denovo Motif Discovery Using DREME"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Denovo Motif Discovery Using DREME}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dremeR)
+```
+
+
+
+### vs shuffled sequence
+
+* using built-in shuffle
+* using R shuffle
+
+### Differential analysis
+
+### Explanation of data output
+
+* Editing features of motifs w/ `update_motifs()` and `mutate_motif()`
+* saving results as data.frame and .meme file
+
+## Importing previous data
+
+* Screenshot of dremeResults page and how do download .xml file
