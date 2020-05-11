@@ -36,3 +36,4 @@ Remotes:
     snystrom/dotargs,
     bjmt/universalmotif
 VignetteBuilder: knitr
+URL: https://snystrom.github.io/dremeR/, https://github.com/snystrom/dremeR

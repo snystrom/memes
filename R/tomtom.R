@@ -276,7 +276,7 @@ get_tomtom_target_data <- function(tomtom_xml_data){
 #'     - match_motif: universalmotif object containing the PWM that was matched
 #'     Returns NULL if not matches detected
 #'
-#' @export
+#'
 #'
 #' @importFrom magrittr %>%
 #' @importFrom magrittr %<>%

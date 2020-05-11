@@ -185,7 +185,8 @@ ame_res %>%
   dplyr::select(binding_type, rank, motif_id, motif_alt_id, consensus)
 ```
 
-How to solve this problem will vary with different motif databases. In the
+How to solve this problem will vary with different motif databases (For details
+on how to pre-process a motif database, see `vignette("tidy_motifs")`). In the
 FlyFactorSurvey database, the `motif_alt_id` column contains a unique FBgn
 number for each TF. For entries of the same TF, the FBgn number is prepended
 with an `_<number>`. We can extract the FBgn number to use as a gene-level

@@ -1,1 +1,47 @@
+url: https://snystrom.github.io/dremeR/
+
 destination: docs
+
+template:
+  params:
+    bootswatch: flatly
+
+reference:
+- title: Core Tools
+  contents:
+  - runDreme
+  - runTomTom
+  - runAme
+  - runFimo
+
+- title: Utilities
+  contents:
+  - check_meme_install
+  - get_sequence
+  - write_fasta
+
+- title: Data Visualization
+  contents:
+  - view_tomtom_hits
+  - ame_plot_heatmap
+
+- title: Motif Manipulation
+  contents:
+  - as_universalmotif_dataframe
+  - as_universalmotif
+  - update_motifs
+  - mutate_motif
+
+- title: Data Helpers
+  contents:
+  - force_best_match
+  - update_best_match
+  - drop_best_match
+  - nest_tomtom
+
+- title: Data Import
+  contents:
+  - importDremeXML
+  - importTomTomXML
+  - importAme
+  - importFimo

@@ -24,3 +24,4 @@ data.frame with method-specific results. See [AME
 \description{
 Parse ame output
 }
+\concept{import}

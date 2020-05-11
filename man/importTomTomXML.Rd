@@ -13,11 +13,26 @@ importTomTomXML(tomtom_xml_path)
 will return data.frame with input motifs & results for best match.
   `tomtom` list column contains full tomtom data for each input motif.
   NOTE: if tomtom detects no matches for any input motif, currently will
-  throw warning & return NA values for `tomtom`, `best_match_id`, and
+  throw warning & return NA values for `tomtom`, `best_match_name`, and
   `best_match_motifs`.
 }
 \description{
 Import tomtom data from previous run
+}
+\details{
+tomtom list column format
+the `tomtom` list column contains data.frames with the following format:
+    - name: name of query PWM
+    - altname: alternate name of query PWM
+    - match_name: name of matched PWM
+    - match_altname: alt name of matched PWM
+    - match_pvalue: p-value of match
+    - match_evalue: E-value of match
+    - match_qvalue: q-value of match
+    - match_offset: number of letters the query was offset from the target match
+    - match_strand: whether the motif was found on input strand (+) or as reverse-complement (-)
+    - db_name: database source of matched motif
+    - match_motif: universalmotif object containing the PWM that was matched
 }
 \examples{
 \dontrun{

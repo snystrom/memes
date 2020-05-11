@@ -139,6 +139,8 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 #' @importFrom magrittr %<>%
 #' @export
 #'
+#' @family import
+#'
 #' @examples
 importAme <- function(path, method = "fisher", sequences = FALSE){
 
