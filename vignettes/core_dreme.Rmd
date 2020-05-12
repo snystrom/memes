@@ -19,6 +19,47 @@ library(dremeR)
 ```
 
 ```{r}
+# Verify that dremeR detects your meme install
+# should return all green checks if so.
+check_meme_install()
+```
+
+```{r, eval=F}
+fa <- system.file("extdata/fasta_ex/fa1.fa", package = "dremeR")
+dreme_out <- runDreme(fa, "shuffle", e = 39, outdir = tempdir())
+```
+
+dreme results are a `data.frame`. The `motif` column contains a `universalmotif`
+object with the PCM information for each *de-novo* discovered motif. This is so
+that any filtering of the results object also simply filter the available
+motifs.
+```{r}
+dreme_out
+```
+
+The `motif` column can be used as input to all `universalmotif` functions.
+```{r}
+library(universalmotif)
+
+view_motifs(dreme_out$motif)
+```
+
+The primary advantage of using the `data.frame` output allows simple integration
+with base subsetting, piping, and the `tidyverse`.
+```{r}
+library(dplyr)
+
+dreme_out %>% 
+  filter(length == 3) %>% 
+  # after filtering with dplyr, only motifs with length 3 will be plotted
+  {universalmotif::view_motifs(.$motif)}
+```
+
+`universalmotif` manipulations can easily be executed on the `motif` column as well. For example:
+```{r, fig.height=1.5}
+dreme_out$motif %>% 
+  merge_motifs() %>% 
+  view_motifs()
 ```
 
 ### vs shuffled sequence
@@ -37,5 +78,12 @@ library(dremeR)
 
 ## Importing previous data
 
+`importDremeXML()` can be used to import a `dreme.xml` file from a previous run
+on the MEME server or on the commandline.
+
 ### Saving data from DREME Web Server
-![saving dreme XML results](save_dreme.png)
+To download XML data from the MEME Server, right-click the DREME XML output link
+and "Save Target As" or "Save Link As" (see example image below), and save as
+`<filename>.xml`. This file can be read using `importDremeXML()`
+
+![](save_dreme.png)
