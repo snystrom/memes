@@ -119,3 +119,52 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...) {
   UseMethod("runDreme")
 }
+
+#' Motif enrichment using AME
+#'
+#' @param input path to fasta, or DNAstringset (optional: DNAStringSet object
+#'   names contain fasta score, required for partitioning mode)
+#' @param control default: "shuffle", or set to
+#'   DNAstringset or path to fasta file to use those sequences in discriminative
+#'   mode. Set to `NA` for partitioning based on input fasta score (see
+#'   get_sequence for assigning fasta score).
+#' @param outdir default: auto
+#' @param method default: fisher
+#' @param database path to .meme format file, universalmotif list object, dreme
+#'   results data.frame, or list() of multiple of these. If objects are assigned names in the list,
+#'   that name will be used as the database id. It is highly recommended you set
+#'   a name if not using a file path so the database name will be informative,
+#'   otherwise the position in the list will be used as the database id. For
+#'   example, if the input is: list("motifs.meme", list_of_motifs), the database
+#'   id's will be: "motifs.meme" and "2". If the input is list("motifs.meme",
+#'   "customMotifs" = list_of_motifs), the database id's will be "motifs.meme"
+#'   and "customMotifs".
+#' @param meme_path
+#' @param sequences `logical(1)` add results from `sequences.tsv` to `sequences`
+#'   list column to returned data.frame. Valid only if method = "fisher". See
+#'   [AME outputs](http://alternate.meme-suite.org/doc/ame-output-format.html)
+#'   webpage for more information.
+#' @param silent whether to suppress stdout (default: TRUE), useful for debugging.
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @importFrom magrittr %>%
+#' @importFrom magrittr %T>%
+#'
+#' @examples
+#' \dontrun{
+#' dreme_out <- runDreme("input.fa")
+#' runAme("input.fa", database = "jasparmotifs.meme")
+#' runAme("input.fa", database = list("jasparmotifs.meme", "my_dreme_motifs" = dreme_out))
+#' }
+runAme <- function(input,
+       control = "shuffle",
+       outdir = "auto",
+       method = "fisher",
+       database = NULL,
+       meme_path = NULL,
+       sequences = FALSE, silent = TRUE, ...){
+  UseMethod("runAme")
+}
