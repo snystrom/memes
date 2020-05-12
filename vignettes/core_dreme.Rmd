@@ -24,7 +24,7 @@ library(dremeR)
 check_meme_install()
 ```
 
-```{r, eval=F}
+```{r}
 fa <- system.file("extdata/fasta_ex/fa1.fa", package = "dremeR")
 dreme_out <- runDreme(fa, "shuffle", e = 39, outdir = tempdir())
 ```
