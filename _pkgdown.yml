@@ -6,6 +6,33 @@ template:
   params:
     bootswatch: flatly
 
+navbar:
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: De-Novo Motif Discovery
+        href: articles/core_dreme.html
+      - text: Motif Matching
+        href: articles/core_tomtom.html
+      - text: Motif Enrichment
+        href: articles/core_ame.html
+      - text: Motif Scanning
+        href: articles/core_fimo.html
+      - text: Motif Manipulation
+        href: articles/tidy_motifs.html
+      - text: Integrative Analysis
+        href: articles/integrative_analysis.html
+
+articles:
+- title: Core Utilities
+  contents:
+  - starts_with("core_")
+- title: Examples
+  contents:
+  - tidy_motifs
+  - integrative_analysis
+
 reference:
 - title: Core Tools
   contents:
