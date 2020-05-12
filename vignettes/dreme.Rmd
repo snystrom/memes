@@ -18,20 +18,24 @@ knitr::opts_chunk$set(
 library(dremeR)
 ```
 
-
+```{r}
+```
 
 ### vs shuffled sequence
 
 * using built-in shuffle
-* using R shuffle
+* using universalmotif shuffle
 
 ### Differential analysis
 
+* using list input
+
 ### Explanation of data output
 
-* Editing features of motifs w/ `update_motifs()` and `mutate_motif()`
+* Editing features of motifs w/ `update_motifs()` and `as_universalmotif`
 * saving results as data.frame and .meme file
 
 ## Importing previous data
 
-* Screenshot of dremeResults page and how do download .xml file
+### Saving data from DREME Web Server
+![saving dreme XML results](save_dreme.png)

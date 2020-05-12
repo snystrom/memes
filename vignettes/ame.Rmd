@@ -1,0 +1,22 @@
+---
+title: "Motif Enrichment Testing using AME"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Motif Enrichment Testing using AME}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dremeR)
+```
+
+## Saving data from AME Web Server
+![saving AME tsv results](save_ame.png)

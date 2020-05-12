@@ -58,10 +58,7 @@ by_sens <- summit_flank %>%
 ```
 
 ```{r dreme_by_sens_vs_static, cache=TRUE, cache.comments=FALSE}
-dreme_by_sens_vs_static <- by_sens[c("Increasing", "Decreasing")] %>% 
-  lapply(function(seq){
-    runDreme(seq, control = by_sens$Static)
-  }) 
+dreme_by_sens_vs_static <- runDreme(by_sens, "Static")
 ```
 
 ```{r}
@@ -117,9 +114,10 @@ by_binding <- summit_flank %>%
   split(mcols(.)$peak_binding_description) %>% 
   get_sequence(dm.genome)
 ```
+
 ```{r}
 ame_by_binding <- by_binding %>% 
-  purrr::map(runAme) 
+  runAme
 ```
 
 ### Visualizing AME results
