@@ -7,7 +7,6 @@
 #'
 #' @return an empty dreme_results valid data.frame
 #'
-#' @examples
 #' @noRd
 new_dreme_results <- function(){
   data.frame(rank = integer(),
@@ -39,7 +38,6 @@ new_dreme_results <- function(){
 #'   to the user when describing properties that are incompatible with the data type.
 #' @export
 #'
-#' @examples
 #' @noRd
 error_dreme_results <- function(res){
   spec_dreme_res <- new_dreme_results()
@@ -65,7 +63,6 @@ error_dreme_results <- function(res){
 #'
 #' @return TRUE or FALSE
 #'
-#' @examples
 #' @noRd
 is_dreme_results <- function(res){
   spec_dreme_res <- new_dreme_results()
@@ -85,7 +82,6 @@ is_dreme_results <- function(res){
 #'
 #' @return TRUE or FALSE if all members are universalmotif objects.
 #'
-#' @examples
 #' @noRd
 is_universalmotif_list <- function(list){
   if (length(list) == 0) {return(FALSE)}
@@ -101,7 +97,6 @@ is_universalmotif_list <- function(list){
 #'
 #' @return NULL or informative error describing why list is invalid
 #'
-#' @examples
 #' @noRd
 error_universalmotif_list <- function(list){
 

@@ -65,7 +65,6 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
 #' @return vector of flags for system2 or processx
 #'
 #' @importFrom magrittr %>%
-#' @examples
 #'
 #' @noRd
 prepareDremeFlags <- function(input, control, outdir, ...){
@@ -94,7 +93,6 @@ prepareDremeFlags <- function(input, control, outdir, ...){
 #'
 #' @return data.frame with `motif` column containing universalmotif object representation of each DREME motif.
 #'
-#' @examples
 #' parseDreme("dreme_out/dreme.xml")
 #' @noRd
 parseDreme <- function(xml){
@@ -137,8 +135,6 @@ dreme_help <- function(command){
 #'  - positive_total: total number of sequences in positives (ie number of fasta entries)
 #'  - negative_total: total number of sequences in negatives
 #'  - pos_frac/neg_frac: fraction of positive or negative sites with a match
-#'
-#' @examples
 #'
 #' @importFrom magrittr %>%
 #' @importFrom magrittr %<>%
@@ -201,8 +197,6 @@ dreme_motif_stats <- function(dreme_xml_path) {
 #'
 #' @importFrom magrittr %>%
 #'
-#' @examples
-#'
 #' @noRd
 dreme_get_background_freq <- function(dreme_run_info){
   background_entry <- xml2::xml_find_all(dreme_run_info, "//background")
@@ -227,8 +221,6 @@ dreme_get_background_freq <- function(dreme_run_info){
 #'   from DREME output.
 #'
 #' @importFrom magrittr %>%
-#'
-#' @examples
 #'
 #' @noRd
 dreme_to_pfm <- function(dreme_xml_path){
@@ -271,8 +263,6 @@ dreme_to_pfm <- function(dreme_xml_path){
 #'
 #' @return position probability matrix
 #'
-#' @examples
-#'
 #' @noRd
 get_probability_matrix <- function(motif_xml_entry){
   # takes a <motif></motif> XML entry to return the probability matrix
@@ -306,7 +296,6 @@ get_probability_matrix <- function(motif_xml_entry){
 #'
 #' @return
 #'
-#' @examples
 #' @noRd
 dreme_nmotifs_line <- function(stdout){
   lines <- strsplit(stdout, "\n") %>%

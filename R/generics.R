@@ -126,8 +126,13 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #'   names contain fasta score, required for partitioning mode)
 #' @param control default: "shuffle", or set to
 #'   DNAstringset or path to fasta file to use those sequences in discriminative
-#'   mode. Set to `NA` for partitioning based on input fasta score (see
-#'   get_sequence for assigning fasta score).
+#'   mode. If `input` is a list of DNAStringSet objects, and `control` is set to
+#'   a character vector of names in `input`, those regions will be used as
+#'   background in discriminitive mode and AME will skip running on any
+#'   `control` entries (NOTE: if `input` contains an entry named "shuffle" and
+#'   control is set to "shuffle", it will use the `input` entry, not the AME
+#'   shuffle algorithm). Set to `NA` for partitioning based on input fasta score
+#'   (see `get_sequence()` for assigning fasta score).
 #' @param outdir default: auto
 #' @param method default: fisher
 #' @param database path to .meme format file, universalmotif list object, dreme
@@ -139,7 +144,8 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #'   id's will be: "motifs.meme" and "2". If the input is list("motifs.meme",
 #'   "customMotifs" = list_of_motifs), the database id's will be "motifs.meme"
 #'   and "customMotifs".
-#' @param meme_path
+#' @param meme_path path to "meme/bin/" (default: `NULL`). Will use default
+#'   search behavior as described in `check_meme_install()` if unset.
 #' @param sequences `logical(1)` add results from `sequences.tsv` to `sequences`
 #'   list column to returned data.frame. Valid only if method = "fisher". See
 #'   [AME outputs](http://alternate.meme-suite.org/doc/ame-output-format.html)

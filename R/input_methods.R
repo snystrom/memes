@@ -107,6 +107,8 @@ write_meme_input_path <- function(input, path){
 #' @param control character vector matching names in input
 #'
 #' @return list with `input` and `control` values
+#'
+#' @noRd
 split_input_control <- function(input, control){
   # input = list
   # control = character vector

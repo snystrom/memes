@@ -110,13 +110,13 @@ runFimo <- function(sequences, motifs, bfile = "motif",
 
 #' Parse flags for FIMO input
 #'
-#' @param bfile
-#' @param parse_genomic_coord
-#' @param skip_matched_sequence
-#' @param max_strand
-#' @param text
-#' @param outdir
-#' @param ...
+#' @param bfile background file
+#' @param parse_genomic_coord parse genomic coordinates from name
+#' @param skip_matched_sequence skip matched
+#' @param max_strand max strand
+#' @param text text
+#' @param outdir outdir
+#' @param ... ...
 #'
 #' @return
 #'
