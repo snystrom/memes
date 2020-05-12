@@ -30,7 +30,6 @@ reference:
   - as_universalmotif_dataframe
   - as_universalmotif
   - update_motifs
-  - mutate_motif
 
 - title: Data Helpers
   contents:
