@@ -11,6 +11,14 @@ sequence_input.DNAStringSet <- function(input){
   write_fasta(input)
 }
 
+sequence_input.BStringSet <- function(input){
+  write_fasta(input)
+}
+
+sequence_input.AAStringSet <- function(input){
+  write_fasta(input)
+}
+
 motif_input.character <- function(input, path = NULL){
   # character input must be file path,
   # subsequent type checking will be carried out by commandline utility
@@ -91,4 +99,31 @@ write_meme_input_path <- function(input, path){
 
   input %>%
     write_meme_list(path = as.character(path))
+}
+
+#' filter out control entries from list input
+#'
+#' @param input list of Biostrings::XStringSet objects
+#' @param control character vector matching names in input
+#'
+#' @return list with `input` and `control` values
+split_input_control <- function(input, control){
+  # input = list
+  # control = character vector
+  input_minus_control <- input %>%
+    dotargs::drop_list_by_name(control)
+
+  control_seq <- input %>%
+    dotargs::keep_list_by_name(control) %>%
+    Biostrings::BStringSetList(., use.names = FALSE) %>%
+    unlist
+
+  input <- input_minus_control
+  control <- control_seq
+
+  return(
+    list(input = input,
+         control = control)
+        )
+
 }
