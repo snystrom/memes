@@ -22,6 +22,8 @@ runAme("inst/extdata/fasta_ex/fa1.fa", NA)
 runAme("inst/extdata/fasta_ex/fa1.fa", "inst/extdata/fasta_ex/fa2.fa")
 # expect error
 
+# Check list input
+expect_equal("NO", "Need to write test for list input to runAme similar to runDreme tests")
 
 test_that("input error checking works", {
   expect_error(

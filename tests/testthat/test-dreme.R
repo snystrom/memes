@@ -34,6 +34,7 @@ expect_error(error_dreme_results(bad), "Missing columns")
 peaks <- "inst/extdata/peaks/peaks.tsv" %>%
   readr::read_tsv() %>%
   GRanges
+dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
 
 seq <- get_sequence(peaks, dm.genome)
 fa <- write_fasta(seq)
@@ -46,9 +47,29 @@ runDreme(seq, "shuffle", e = 49)
 runDreme(fa, seq)
 runDreme(fa, fa)
 
+## test stringset list input
+seq_by_type <- peaks %>%
+  data.frame %>%
+  dplyr::mutate(type = c(rep("A", nrow(.) / 2), rep("B", nrow(.) / 2))) %>%
+  GRanges %>%
+  split(mcols(.)$type) %>%
+  # genome is dm3
+  get_sequence(dm.genome)
+
+# Use all input w/ shuffled background sequence
+expect_named(runDreme(seq_by_type, "shuffle", e = 70), c("A", "B"))
+# use "A" as background
+expect_named(runDreme(seq_by_type, "A", e = 70), "B")
+# Use invalid background
+expect_error(runDreme(seq_by_type, "d", e = 70), "d was not found")
+
+
 ## test error checking
 fa <- dremeR:::duplicate_file("inst/extdata/fasta_ex/fa1.fa")
 expect_error(suppressMessages(runDreme(fa, "shuffle", et = 39)),
+             "\"e\" instead of", class = "error")
+## Ensure error catch works with list input also
+expect_error(suppressMessages(runDreme(seq_by_type, "A", et = 70)),
              "\"e\" instead of", class = "error")
 
 
