@@ -285,6 +285,7 @@ get_tomtom_target_data <- function(tomtom_xml_data){
 #' \dontrun{
 #' parseTomTom("tomtom.xml")
 #' }
+#' @noRd
 parseTomTom <- function(tomtom_xml_path){
   tt_xml <- xml2::read_xml(tomtom_xml_path)
 

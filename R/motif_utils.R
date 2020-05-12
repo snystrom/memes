@@ -13,7 +13,6 @@
 #'   motif_column_name, values are data_column_name, used instead of ... (useful for programatically passing values)
 #'
 #' @return `.data` where `.motif` entries have been updated to values passed to `...` or `.override`
-#' @export
 #'
 #' @examples
 #' motif <- universalmotif::create_motif()
@@ -22,6 +21,7 @@
 #' df <- mutate_motif(df, "name" = "id")
 #' # renamed motif
 #' df$motif
+#' @noRd
 mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
   #dots <- enquos(...)
   #return(dots)
