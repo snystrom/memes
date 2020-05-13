@@ -11,6 +11,8 @@ navbar:
     articles:
       text: Articles
       menu:
+      - text: Install MEME
+        href: articles/install_guide.html
       - text: De-Novo Motif Discovery
         href: articles/core_dreme.html
       - text: Motif Matching
