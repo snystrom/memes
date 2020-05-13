@@ -56,7 +56,7 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #'   - "shuffle" to use dreme's built-in dinucleotide shuffle feature (NOTE: if
 #'   `input` is a list object with an entry named "shuffle", the list entry will
 #'   be used instead).
-#'   Optionally can also pass `s = <any number>` to `...` to use as the random
+#'   Optionally can also pass `seed = <any number>` to `...` to use as the random
 #'   seed during shuffling. If no seed is passed, dreme will use 1 as the random
 #'   seed, so results will be reproducible if rerunning. **NOTE:** beware
 #'   system-specific differences. As of v5, dreme will compile using the default
@@ -108,7 +108,25 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #'
 #' @return data.frame with statistics for each discovered motif. The `motif`
 #'   column contains a universalmotif object representation in PCM format of
-#'   each DREME motif. If no motifs are discovered, returns NULL.
+#'   each DREME motif. If no motifs are discovered, returns NULL. The column
+#'   values are as follows:
+#'   - rank = ranked order of discovered motif
+#'   - name = primary name of motif
+#'   - altname = alternative name of motif
+#'   - seq = consensus sequence of the motif
+#'   - length = length of discovered motif
+#'   - nsites = number of times the motif is found in input sequences
+#'   - positive_hits = number of sequences in input containing at least 1 of the motif
+#'   - negative_hits = number of sequences in control containing at least 1 of the motif
+#'   - pvalue = p-value
+#'   - evalue = E-value
+#'   - unerased_evalue = Unerased E-Value
+#'   - positive_total = number of sequences in input
+#'   - negative_total = number of sequences in control
+#'   - pos_frac = fraction of positive sequences with a hit
+#'   - neg_frac = fraction of negative sequences with a hit
+#'   - motif = a universalmotif object of the discovered motif
+#'
 #'
 #' @importFrom magrittr %>%
 #'

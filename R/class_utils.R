@@ -139,7 +139,7 @@ as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
   return(data)
 }
 
-#' Convert special data.frames back into universalmotifs
+#' Convert universalmotif data.frames back into universalmotifs
 #'
 #' @param data a universalmotif_dataframe (output from
 #'   `as_universalmotif_dataframe()`, or `runDreme()`)
