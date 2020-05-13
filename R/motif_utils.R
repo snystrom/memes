@@ -71,14 +71,17 @@ mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
 #' @param .data data.frame with `motif` column
 #'
 #' @return .data where `motif` column has been updated to reflect the values
-#'   from columns sharing names with unprotected universalmotif slots.
+#'   from columns sharing names with unprotected universalmotif slots. Names of
+#'   `motif` list are updated to reflect name.
 #' @export
 #'
 #' @details
 #'
 #' **NOTE** that `consensus`, `alphabet`, `multifreq`, and `icscore` are protected columns and
 #' cannot be updated.
-#' Table of values updated
+#'
+#' ## Table of values updated
+#'
 #' | `motif`  | `data.frame` |
 #' |:--------:|:------------:|
 #' | name     | name         |
@@ -114,6 +117,10 @@ update_motifs <- function(.data){
 
   to_mutate <- names_lookup[names_lookup %in% names(.data)]
 
-  .data %>%
+  .data %<>%
     mutate_motif(.override = to_mutate)
+
+  names(.data$motif) <- .data$name
+
+  return(.data)
 }
