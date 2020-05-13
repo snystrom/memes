@@ -190,7 +190,7 @@ runDreme(seq_by_behavior, control = "shuffle")
 #### Discriminative analysis using list input
 For this analysis, however, we are most interested in identifying motifs
 associated with increasing and decreasing that do not involve E93 binding.
-Therefore, a more appropriate control is to use to use the Static sites as
+Therefore, a more appropriate control is to use the Static sites as
 background. 
 
 As always, an `XStringSet` object can be used as the control regions. However, running dreme in this way will run 3 jobs:
