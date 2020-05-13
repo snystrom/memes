@@ -44,6 +44,7 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #'   - path to fasta file
 #'   - DNAStringSet object (can be generated from GRanges using `get_sequence()`)
 #'   - List of DNAStringSet objects (generated from `get_sequence()`)
+#'   - *NOTE:* if using StringSet inputs, each entry must be named (set with `names()`).
 #'   - *NOTE:* If you want to retain the raw dreme output files, you must use a
 #'   path to fasta file as input, or specify an "outdir"
 #' @param control regions to use as background for motif search. Can be any of:
@@ -83,13 +84,15 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' @param ... dreme flags can be passed as R function arguments to use
 #'   non-default behavior. For a full list of valid arguments, run your local
 #'   install of dreme -h, or visit the dreme documentation
-#'   [website](http://meme-suite.org/doc/dreme.html?man_type=web).
+#'   [website](http://meme-suite.org/doc/dreme.html). See list below for aliases
+#'   of common flags. To set flags with no values (ex. `-dna`), pass the
+#'   argument as a boolean value (ex. `dna = TRUE`).
 #'
 #' @details
 #' In addition to allowing any valid flag of dreme to be passed to `...`, we
-#' provide a few user-friendly aliases for common flags which will hopefully
-#' make it things easier to remember. For example, m = 2 will search for 2
-#' motifs. This is equivalent to setting nmotifs = 2.
+#' provide a few user-friendly aliases for common flags which are more readable (see list below).
+#' For example, e = 1 will use a max evalue cutoff of 1. This is equivalent to
+#' setting evalue = 1.
 #'
 #' List of aliased values which can be passed to `...`
 #'  - nmotifs = max number of motifs to search for
@@ -97,6 +100,11 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #'  - evalue = max evalue cutoff
 #'  - seed = random seed if using "shuffle" as control
 #'  - ngen = number of REs to generalize
+#'
+#' **NOTE:** `nmotifs` is an alias for the dreme `-m` flag. If you want to set
+#' `-m` you **must** use the `nmotifs` alias, not `m`. The same is true for
+#' `seed` and `s`.
+#'
 #'
 #' @return data.frame with statistics for each discovered motif. The `motif`
 #'   column contains a universalmotif object representation in PCM format of
@@ -114,7 +122,7 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' runDreme("input.fa", "shuffle")
 #'
 #' # Runs searching for max 2 motifs, e-value cutoff = 0.1, explicitly using the DNA alphabet
-#' runDreme("input.fa", "shuffle", m = 2, e = 0.1, dna = T)
+#' runDreme("input.fa", "shuffle", nmotifs = 2, e = 0.1, dna = T)
 #' }
 runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...) {
   UseMethod("runDreme")
