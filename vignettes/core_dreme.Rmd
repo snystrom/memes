@@ -200,7 +200,7 @@ As always, an `XStringSet` object can be used as the control regions. However, r
 3. Static vs Static
 
 This will waste time, as job #3 will detect no motifs (since input & control are
-identical), but will still take a long time to run. `runDreme` has additional
+identical), but will still take a long time to run. `runDreme()` has additional
 functionality to help avoid these issues, and to facilitate more complicated
 analysis designs.
 ```{r, eval=F}

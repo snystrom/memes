@@ -18,5 +18,26 @@ knitr::opts_chunk$set(
 library(dremeR)
 ```
 
+## Input types
+ - universalmotif
+ - dreme results
+ 
+## database types
+ - .meme file
+ - universalmotif list
+ - dreme_results
+ - `list()` of all the above (named will use that name as db id)
+
+## output data
+ - `tomtom` column
+ - `drop_best_match()` to remove the best_match columns
+ - `tidyr::unnest(tomtom)` to expand list column
+ - `nest_tomtom` to re-nest
+ - `update_best_match()` adds best_match columns to data from `tomtom` ranks
+ - `force_best_match()` to manually set best match motif for certain entries.
+ 
+## Visualize data
+ - `view_tomtom_matches()`
+
 ## Saving Data from TomTom Web Server
 ![saving TomTom XML results](save_tomtom.png)

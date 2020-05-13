@@ -14,7 +14,9 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 
 An R interface to the [MEME Suite](http://meme-suite.org/) family of
 tools, which provides several utilities for performing motif analysis on
-DNA, RNA, and protein sequences.
+DNA, RNA, and protein sequences. dremeR works by detecting a local
+install of the MEME suite, running the commands, then importing the
+results directly into R.
 
 ## Installation
 

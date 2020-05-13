@@ -18,5 +18,16 @@ knitr::opts_chunk$set(
 library(dremeR)
 ```
 
+## Inputs
+ - sequences (list not supported since no reason to split, instead use plyranges joins after fimo to add metadata)
+  - copy info from Chip-seq example
+  - explain about why `get_sequence()` is good to use, becaues of `parse_genomic_coord`
+ - motifs: path or universalmotif
+ 
+## Note about settings 
+  - I use nondefault fimo settings to make it work better with R interface and run faster.
+  - text = TRUE
+    - if running on huge sequence, may overflow memory. Link to article about running FIMO on whole genome.
+
 ## Saving data from FIMO Web Server
 ![saving FIMO tsv results](save_fimo.png)

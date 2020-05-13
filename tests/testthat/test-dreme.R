@@ -63,6 +63,10 @@ expect_named(runDreme(seq_by_type, "A", e = 70), "B")
 # Use invalid background
 expect_error(runDreme(seq_by_type, "d", e = 70), "d was not found")
 
+# test that control names are all inside names of input
+# ie that if name isn't in name, throws error
+error('need test here')
+
 
 ## test error checking
 fa <- dremeR:::duplicate_file("inst/extdata/fasta_ex/fa1.fa")

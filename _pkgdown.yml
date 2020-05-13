@@ -23,7 +23,7 @@ navbar:
         href: articles/core_fimo.html
       - text: Motif Manipulation
         href: articles/tidy_motifs.html
-      - text: Integrative Analysis
+      - text: ChIP-Seq Data Analysis
         href: articles/integrative_analysis.html
 
 articles:
@@ -34,6 +34,9 @@ articles:
   contents:
   - tidy_motifs
   - integrative_analysis
+- title: Help & Troubleshooting
+  contents:
+  - install_guide
 
 reference:
 - title: Core Tools

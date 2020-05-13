@@ -18,5 +18,17 @@ knitr::opts_chunk$set(
 library(dremeR)
 ```
 
+
+## Running AME
+ - shuffle sequences (copy core_dreme shuffle info)
+ - discriminative mode
+ - partitioning mode (`get_sequences(score = "col")`, `runAme(control = NA)`)
+
+## Database input
+ - different from tomtom (no list input), but can be universalmotif, dreme results, or path to file.
+ 
+## visualizing data
+ - move heatmap information here
+
 ## Saving data from AME Web Server
 ![saving AME tsv results](save_ame.png)
