@@ -1,12 +1,14 @@
 #' @export
 #' @noRd
 runDreme.list <- function(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...){
-  if (control %in% names(input)){
+  if (all(control %in% names(input))){
     x <- split_input_control(input, control)
 
     input <- x$input
     control <- x$control
   }
+
+
 
   res <- purrr::map(input, runDreme.default,
              control = control,
