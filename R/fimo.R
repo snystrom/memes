@@ -37,7 +37,8 @@
 #' @return GenomicRanges object contining positions of each match. Note: if
 #'   `parse_genomic_coords = FALSE`, each `seqnames` entry will be the fasta
 #'   header, and start/end will be the position within that sequence of the
-#'   match. It is a good idea to use `parse_genomic_coords = TRUE`.
+#'   match. It is a good idea to use `parse_genomic_coords = TRUE` if using
+#'   `get_sequence()` to create input sequences.
 #' @export
 #'
 #' @examples
