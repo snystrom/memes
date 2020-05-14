@@ -8,3 +8,4 @@ genomics_dremefix.sif
 rstudio-server.job.*
 runSingularity.sh
 ^LICENSE\.md$
+^data-raw$

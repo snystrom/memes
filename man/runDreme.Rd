@@ -12,6 +12,7 @@ runDreme(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...)
 \item path to fasta file
 \item DNAStringSet object (can be generated from GRanges using \code{get_sequence()})
 \item List of DNAStringSet objects (generated from \code{get_sequence()})
+\item \emph{NOTE:} if using StringSet inputs, each entry must be named (set with \code{names()}).
 \item \emph{NOTE:} If you want to retain the raw dreme output files, you must use a
 path to fasta file as input, or specify an "outdir"
 }}
@@ -26,7 +27,7 @@ those regions as input.
 \item "shuffle" to use dreme's built-in dinucleotide shuffle feature (NOTE: if
 \code{input} is a list object with an entry named "shuffle", the list entry will
 be used instead).
-Optionally can also pass \verb{s = <any number>} to \code{...} to use as the random
+Optionally can also pass \verb{seed = <any number>} to \code{...} to use as the random
 seed during shuffling. If no seed is passed, dreme will use 1 as the random
 seed, so results will be reproducible if rerunning. \strong{NOTE:} beware
 system-specific differences. As of v5, dreme will compile using the default
@@ -61,21 +62,42 @@ where no motifs are discovered, but command completes successfully.
 \item{...}{dreme flags can be passed as R function arguments to use
 non-default behavior. For a full list of valid arguments, run your local
 install of dreme -h, or visit the dreme documentation
-\href{http://meme-suite.org/doc/dreme.html?man_type=web}{website}.}
+\href{http://meme-suite.org/doc/dreme.html}{website}. See list below for aliases
+of common flags. To set flags with no values (ex. \code{-dna}), pass the
+argument as a boolean value (ex. \code{dna = TRUE}).}
 }
 \value{
 data.frame with statistics for each discovered motif. The \code{motif}
 column contains a universalmotif object representation in PCM format of
-each DREME motif. If no motifs are discovered, returns NULL.
+each DREME motif. If no motifs are discovered, returns NULL. The column
+values are as follows:
+\itemize{
+\item rank = ranked order of discovered motif
+\item name = primary name of motif
+\item altname = alternative name of motif
+\item seq = consensus sequence of the motif
+\item length = length of discovered motif
+\item nsites = number of times the motif is found in input sequences
+\item positive_hits = number of sequences in input containing at least 1 of the motif
+\item negative_hits = number of sequences in control containing at least 1 of the motif
+\item pvalue = p-value
+\item evalue = E-value
+\item unerased_evalue = Unerased E-Value
+\item positive_total = number of sequences in input
+\item negative_total = number of sequences in control
+\item pos_frac = fraction of positive sequences with a hit
+\item neg_frac = fraction of negative sequences with a hit
+\item motif = a universalmotif object of the discovered motif
+}
 }
 \description{
 Denovo motif discovery of target regions
 }
 \details{
 In addition to allowing any valid flag of dreme to be passed to \code{...}, we
-provide a few user-friendly aliases for common flags which will hopefully
-make it things easier to remember. For example, m = 2 will search for 2
-motifs. This is equivalent to setting nmotifs = 2.
+provide a few user-friendly aliases for common flags which are more readable (see list below).
+For example, e = 1 will use a max evalue cutoff of 1. This is equivalent to
+setting evalue = 1.
 
 List of aliased values which can be passed to \code{...}
 \itemize{
@@ -85,6 +107,10 @@ List of aliased values which can be passed to \code{...}
 \item seed = random seed if using "shuffle" as control
 \item ngen = number of REs to generalize
 }
+
+\strong{NOTE:} \code{nmotifs} is an alias for the dreme \code{-m} flag. If you want to set
+\code{-m} you \strong{must} use the \code{nmotifs} alias, not \code{m}. The same is true for
+\code{seed} and \code{s}.
 }
 \examples{
 \dontrun{
@@ -92,6 +118,6 @@ List of aliased values which can be passed to \code{...}
 runDreme("input.fa", "shuffle")
 
 # Runs searching for max 2 motifs, e-value cutoff = 0.1, explicitly using the DNA alphabet
-runDreme("input.fa", "shuffle", m = 2, e = 0.1, dna = T)
+runDreme("input.fa", "shuffle", nmotifs = 2, e = 0.1, dna = T)
 }
 }

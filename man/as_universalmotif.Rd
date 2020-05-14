@@ -2,7 +2,7 @@
 % Please edit documentation in R/class_utils.R
 \name{as_universalmotif}
 \alias{as_universalmotif}
-\title{Convert special data.frames back into universalmotifs}
+\title{Convert universalmotif data.frames back into universalmotifs}
 \usage{
 as_universalmotif(data)
 }
@@ -15,7 +15,7 @@ universalmotif list from motifs, updated to reflect the data.frame
   column values.
 }
 \description{
-Convert special data.frames back into universalmotifs
+Convert universalmotif data.frames back into universalmotifs
 }
 \examples{
 df <- universalmotif::create_motif() \%>\%

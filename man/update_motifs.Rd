@@ -11,7 +11,8 @@ update_motifs(.data)
 }
 \value{
 .data where `motif` column has been updated to reflect the values
-  from columns sharing names with unprotected universalmotif slots.
+  from columns sharing names with unprotected universalmotif slots. Names of
+  `motif` list are updated to reflect name.
 }
 \description{
 Update the `motif` column to data.frame values
@@ -19,7 +20,9 @@ Update the `motif` column to data.frame values
 \details{
 **NOTE** that `consensus`, `alphabet`, `multifreq`, and `icscore` are protected columns and
 cannot be updated.
-Table of values updated
+
+## Table of values updated
+
 | `motif`  | `data.frame` |
 |:--------:|:------------:|
 | name     | name         |
