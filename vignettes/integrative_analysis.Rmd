@@ -26,11 +26,7 @@ check_meme_install()
 
 
 ```{r, message=F}
-# TODO: Change this to use system.file(extadata/etc.) once example data is finalized.
-#"../inst/extdata/peaks/e93_chr3.csv"
-#system.file("extdata/peaks/e93_chr3.csv")
-warning("Remember to update the correct file path")
-peaks <- "../inst/extdata/peaks/e93_chr3.csv" %>% 
+peaks <- system.file("extdata/peaks/e93_chr3.csv", package = "dremeR") %>% 
   readr::read_csv() %>% 
   GRanges
 ```

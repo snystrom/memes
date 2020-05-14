@@ -18,15 +18,33 @@ knitr::opts_chunk$set(
 library(dremeR)
 ```
 
-## Input types
- - universalmotif
- - dreme results
- 
 ## database types
  - .meme file
  - universalmotif list
  - dreme_results
  - `list()` of all the above (named will use that name as db id)
+```{r}
+options(meme_db = system.file("inst/extdata/db/fly_factor_survey_id.meme", package = "dremeR"))
+```
+ 
+ 
+## Input types
+
+To use TomTom on existing motifs, `runTomTom()` will accept any motifs in
+`universalmotif` format. The `universalmotif` package provides several utilities
+for importing data from various sources.
+```{r, eval=F}
+library(universalmotif)
+example_motif <- create_motif("CCRAAAW")
+runTomTom(example_motif)
+```
+
+ 
+`runTomTom()` can also take the output of `runDreme` as input. 
+```{r, eval=F}
+data("dreme_example")
+runTomTom(dreme_example) 
+```
 
 ## output data
  - `tomtom` column
