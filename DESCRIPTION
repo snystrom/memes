@@ -33,7 +33,6 @@ Suggests:
     rmarkdown
 RoxygenNote: 7.0.2
 Remotes: 
-    snystrom/dotargs,
-    bjmt/universalmotif
+    snystrom/dotargs
 VignetteBuilder: knitr
 URL: https://snystrom.github.io/dremeR/, https://github.com/snystrom/dremeR
