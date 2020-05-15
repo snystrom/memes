@@ -238,3 +238,13 @@ and "Save Target As" or "Save Link As" (see example image below), and save as
 `<filename>.xml`. This file can be read using `importDremeXML()`
 
 ![](save_dreme.png)
+
+# Citation
+
+dremeR is a wrapper for a select few tools from the MEME Suite, which were
+developed by another group. In addition to citing dremeR, please cite the MEME
+Suite tools corresponding to the tools you use.
+
+If you use `runDreme()` in your analysis, please cite:
+
+Timothy L. Bailey, "DREME: Motif discovery in transcription factor ChIP-seq data", Bioinformatics, 27(12):1653-1659, 2011. [full text](https://academic.oup.com/bioinformatics/article/27/12/1653/257754)
