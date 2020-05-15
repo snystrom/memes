@@ -350,3 +350,26 @@ nest_tomtom_results <- function(tomtom_results){
     dplyr::select("name", "altname", dplyr::contains("best_"), dplyr::everything())
 }
 
+
+#' Return best_match data for top row of `tomtom`
+#'
+#' @param tomtom_results tomtom results object
+#'
+#' @return data.frame with columns w/ all data for "best" match (defined by first row of `tomtom` data).
+#'   All other matches are nested into 'tomtom' column.
+#'   Which is list of data.frames for each match too the given id.
+#'
+#' @noRd
+nest_tomtom_results_best_top_row <- function(tomtom_results){
+  tomtom_results %>%
+    dplyr::group_by(name, altname) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(best_match_info = purrr::map(data, ~{
+      .x[1,] %>%
+        dplyr::rename_all(~{paste0("best_", .x)})
+    })) %>%
+    tidyr::unnest(best_match_info) %>%
+    dplyr::rename("tomtom" = "data") %>%
+    dplyr::mutate(tomtom = purrr::map(tomtom, data.frame)) %>%
+    dplyr::select("name", "altname", dplyr::contains("best_"), dplyr::everything())
+}

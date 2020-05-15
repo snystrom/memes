@@ -40,12 +40,13 @@ update_best_match <- function(res){
   new_tomtom <- res_nobest %>%
     tidyr::unnest(tomtom) %>%
     dplyr::select("name", "altname", dplyr::contains("match_"), "db_name") %>%
-    nest_tomtom_results()
+    nest_tomtom_results_best_top_row()
 
   res_nobest %>%
     dplyr::select(-"tomtom") %>%
-    dplyr::left_join(new_tomtom, by = c("name", "altname"))
-
+    dplyr::left_join(new_tomtom, by = c("name", "altname")) %>%
+    dplyr::select("name", "altname", dplyr::everything(),
+                  dplyr::contains("best_"), "tomtom")
 }
 
 #' Drop best match info from tomtom results
@@ -63,17 +64,23 @@ update_best_match <- function(res){
 drop_best_match <- function(res){
   res %>%
     dplyr::select(-dplyr::contains("best_match_"),
-                  -"best_db_name")
+                  -dplyr::any_of("best_db_name"))
 
 }
 
 #' Nest TomTom results columns into a data.frame column named "tomtom"
+#'
+#' This will also update the best_match information automatically to avoid any
+#' ambiguities after manipulating unnested data. **NOTE:** that the resulting
+#' columns may not be in the same order, so operations like `identical()` may
+#' fail even though the column values are unchanged.
 #'
 #' @param data
 #'
 #' @return
 #' @export
 #'
+#' @importFrom magrittr %<>%
 #' @examples
 #' \dontrun{
 #' #TODO: add better example
@@ -82,15 +89,38 @@ drop_best_match <- function(res){
 #' identical(nest_tomtom(data), res)
 #' }
 nest_tomtom <- function(data){
-  data %>%
+  # Save motifs
+  motif <- data$motif
+  names(motif) <- data$name
+  motif <- unique(motif)
+
+  match_motif <- data$match_motif
+
+  # tidyr::nest doesn't work with S4 because vctrs doesn't support it
+  df <- data %>%
+    dplyr::select(-dplyr::any_of(c("motif", "match_motif", "best_match_motif"))) %>%
     tidyr::nest(data = c("match_name",
                 "match_altname",
                 "match_pvalue",
                 "match_evalue",
                 "match_qvalue",
-                "match_motif",
                 "db_name")) %>%
     dplyr::rename("tomtom" = "data")
+
+  # add back motifs
+  df$motif <- motif
+  # Add database motifs to tomtom
+  i <- 1
+  df$tomtom <- lapply(df$tomtom, function(x) {
+    n <- nrow(x)
+    j <- i + n - 1
+    x$match_motif <- match_motif[i:j]
+    i <<- j + 1
+    return(x)
+  })
+
+  df %>%
+    update_best_match()
 }
 
 #' Rank a tomtom results dataframe by match_name
