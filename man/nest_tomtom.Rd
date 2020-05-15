@@ -13,7 +13,10 @@ nest_tomtom(data)
 
 }
 \description{
-Nest TomTom results columns into a data.frame column named "tomtom"
+This will also update the best_match information automatically to avoid any
+ambiguities after manipulating unnested data. **NOTE:** that the resulting
+columns may not be in the same order, so operations like `identical()` may
+fail even though the column values are unchanged.
 }
 \examples{
 \dontrun{

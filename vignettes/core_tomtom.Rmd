@@ -21,6 +21,7 @@ run using the `runTomTom()` function.
 
 ```{r setup}
 library(dremeR)
+library(magrittr)
 ```
 
 ## Accepted database formats
@@ -91,14 +92,20 @@ the rank-order list of TomTom hits for the motif listed in `name`.
 names(example_tomtom$tomtom[[1]])
 ```
 
-The `match_motif` column of `tomtom` contains the universalmotif format motif from the database corresponding to the match.
+the `best_match_motif` column contains the universalmotif representation of the best match motif.
+```{r, fig.height=2, fig.width=5}
+library(universalmotif)
+view_motifs(example_tomtom$best_match_motif)
+```
+
+The `match_motif` column of `tomtom` contains the universalmotif format motif from the database corresponding to each match in descending order.
 ```{r, fig.height=3, fig.width=5}
 example_tomtom$tomtom[[1]]$match_motif[1:2] %>% 
   view_motifs()
 ```
 
 
-The `drop_best_match()` function drops all the `best_*` columns from the `runTomTom()` output.
+The `drop_best_match()` function drops all the `best_match_*` columns from the `runTomTom()` output.
 ```{r}
 example_tomtom %>% 
   drop_best_match() %>% 
@@ -113,7 +120,7 @@ unnested <- example_tomtom %>%
 names(unnested)
 ```
 
-To re-nest the tomtom results, use `nest_tomtom()` (Note: that `best_match_` columns will be automatically updated)
+To re-nest the tomtom results, use `nest_tomtom()` (Note: that `best_match_` columns will be automatically updated based on the rank-order of the `tomtom` data.frame)
 
 ```{r}
 unnested %>% 
@@ -121,7 +128,7 @@ unnested %>%
   names
 ```
 
-#### Manipulating the assigned best match
+### Manipulating the assigned best match
 
 While TomTom can be useful for limiting the search-space for potential true motif matches, often times the default "best match" is not the correct assignment. Users should use their domain-specific knowledge in conjunction with the data returned by TomTom to make this judgement (see below for more details). dremeR provides a few convenience functions for reassigning these values.
 
@@ -174,7 +181,7 @@ example_tomtom %>%
   view_tomtom_hits(top_n = 3)
 ```
 
-## Saving Data from TomTom Web Server
+## Importing previous data
 
 `importTomTomXML()` can be used to import a `tomtom.xml` file from a previous
 run on the MEME server or on the commandline. Details for how to save data from
