@@ -13,8 +13,17 @@
 #' res <- runTomTom(motif)
 #' force_best_match(res, c("id" = "update"))
 force_best_match <- function(res, matches){
-  # matches is named vector, name = best_match
+  if (!all(names(matches) %in% res$name)) {
+    bad <- names(matches)[!names(matches) %in% res$name]
+    stop(paste0("The following are invalid names: ", bad))
+  }
+
   purrr::iwalk(matches, ~{
+
+    if (!(.x %in% res[res$name == .y,]$tomtom[[1]]$match_name)) {
+      stop(paste0(.x, " is not found within the tomtom hits for ", .y))
+    }
+
     res[res$name == .y,]$tomtom[[1]] <<- res[res$name == .y,]$tomtom[[1]] %>%
       rank_tomtom_by_name(.x)
   })
