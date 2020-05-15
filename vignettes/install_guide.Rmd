@@ -77,3 +77,11 @@ check_meme_install()
 # If no meme/bin is detected, will return a red X
 check_meme_install(meme_path = 'bad/path')
 ```
+
+
+## FAQS
+
+I get the following error: installation of package 'R.oo' had non-zero exit status
+ - Problem: Your R installation likely lacks the `R.css` file
+ - Solution: when installing the package, set `remotes::install_github("snystrom/dremeR", INSTALL_opts = c("--no-html"))`
+ - NOTE: all help documents for dremeR will be parsed as plain-text so will lack links or other formatting.
