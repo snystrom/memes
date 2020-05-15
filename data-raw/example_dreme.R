@@ -27,7 +27,6 @@ dreme_by_sens_vs_static <- runDreme(by_sens, "Static")
 
 dreme_example <- dreme_by_sens_vs_static$Decreasing
 
-#db <- system.file("extdata/db/fly_factor_survey_id.meme")
-#tomtom_example <- runTomTom(dreme_example, database = db)
+
 usethis::use_data(dreme_example)
 
