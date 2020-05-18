@@ -162,5 +162,9 @@ duplicate_file <- function(path){
 #' @examples
 #' @noRd
 rank_normalize <- function(rank){
+  if (length(rank) == 1) {
+    # Rank 1 is highest rank
+    return(0)
+  }
   (rank - 1) / (max(rank) - 1)
 }

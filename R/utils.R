@@ -1,4 +1,5 @@
 #' See generic get_sequence docs for details on inputs
+#' @importFrom GenomicRanges seqnames start end mcols
 #' @export
 #' @noRd
 get_sequence.GRanges <- function(regions, genome, score_column = NULL, ...){

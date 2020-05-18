@@ -20,6 +20,8 @@ motif_input <- function(x, ...) UseMethod("motif_input")
 #'
 #' @export
 #'
+#' @importFrom GenomicRanges mcols `mcols<-`
+#'
 #' @examples
 #' \dontrun{
 #' # Using character string as input
