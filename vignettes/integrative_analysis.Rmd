@@ -357,18 +357,15 @@ intersect %>%
 
 
 ### Centrality of E93 motif
-Next we want to visualize whether the E93 motif has altered positioning across the response categories. To do this we 
+Next we want to visualize whether the E93 motif has altered positioning across
+the response categories. To do this we add the metadata for each nearest motif
+to our peak summits. Setting `distance = TRUE` in `plyranges::join_nearest` adds
+a `distance` column indicating the distance to the nearest joined region.
 ```{r}
-distance_to_nearest <- function(query, subject, ...){
-  hits <- GenomicRanges::distanceToNearest(query, subject, ...)
-  mcols(hits)$distance
-}
-
 summit_nearest_e93_motif <- summit_flank %>% 
   plyranges::anchor_center() %>% 
   plyranges::mutate(width = 1) %>% 
-  plyranges::join_nearest(fimo_res) %>% 
-  plyranges::mutate(dist_to_motif = distance_to_nearest(., fimo_res))
+  plyranges::join_nearest(fimo_res, distance = TRUE)
 
 ```
 
@@ -376,7 +373,7 @@ summit_nearest_e93_motif <- summit_flank %>%
 summit_nearest_e93_motif %>% 
   data.frame %>% 
   dplyr::filter(has_motif == TRUE) %>% 
-  ggplot(aes(dist_to_motif)) +
+  ggplot(aes(distance)) +
     stat_ecdf(aes(color = e93_sensitive_behavior), size = 1, pad = FALSE) +
     labs(x = "Distance to nearest E93 Motif",
          y = "Fraction of Sites",
@@ -390,7 +387,7 @@ summit_nearest_e93_motif %>%
   dplyr::filter(has_motif == TRUE) %>% 
   dplyr::mutate(behavior = factor(e93_sensitive_behavior)) %>% 
   # Anderson-darling test for multiple distributions
-  PMCMRplus::adAllPairsTest(dist_to_motif ~ behavior, ., p.adjust.method = "fdr") 
+  PMCMRplus::adAllPairsTest(distance ~ behavior, ., p.adjust.method = "fdr") 
 
 ```
 
@@ -400,7 +397,7 @@ summit_nearest_e93_motif %>%
   dplyr::filter(has_motif == TRUE) %>% 
   dplyr::mutate(behavior = factor(e93_sensitive_behavior)) %>% 
   # Anderson-darling test for multiple distributions
-  PMCMRplus::adAllPairsTest(dist_to_motif ~ behavior, ., p.adjust.method = "fdr") -> x
+  PMCMRplus::adAllPairsTest(distance ~ behavior, ., p.adjust.method = "fdr") -> x
 
 # Idea: show p-val signif stars on figure legend for ecdf plot?
 
