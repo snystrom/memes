@@ -41,7 +41,7 @@ runAme.default <- function(input,
 
   input <- sequence_input(input)
 
-  if (!is.na(control)){
+  if (!all(is.na(control))){
     control <- sequence_input(control)
   }
 
