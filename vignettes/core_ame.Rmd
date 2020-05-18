@@ -16,19 +16,155 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(dremeR)
+library(magrittr)
+```
+
+## Sequence Input
+AME requires a series of input sequences to scan for motif enrichment.
+`runAme()` accepts sequence input in the following formats:
+
+ - a `Biostrings::XStringSet` object
+ - a named list of `Biostrings::XStringSet` objects
+ - a path to a .fasta file
+ 
+**NOTE** `XStringSet` inputs can be easily generated for DNA sequences from a
+GRanges object using the `get_sequence()` function
+
+```{r}
+data("example_peaks", package = "dremeR")
+
+dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
+
+sequence <- example_peaks %>% 
+  get_sequence(dm.genome)
+```
+
+## Database Input
+AME scans input sequences against a database of known motifs and tests for
+enrichment of each motif in the database. `runAme()` can accept a database in
+the following formats:
+
+ - a list of universalmotif objects
+ - a single universalmotif object
+ - the results object from `runDreme`
+ - a path to a .meme format file
+
+### Setting a default database 
+
+dremeR can be configured to use a default .meme format file as the query
+database, which it will use if the user does not provide a value to `database`
+when calling `runAme()`. The following locations will be searched in order.
+
+1. The `meme_db` option, defined using `options(meme_db = "path/to/database.meme")`
+2. The `MEME_DB` environment variable defined in `.Renviron`
+
+**NOTE:** if an invalid location is found at one option, `runAme()` will fall
+back to the next location if valid (eg if the `meme_db` option is set to an
+invalid file, but the `MEME_DB` environment variable is a valid file, the
+`MEME_DB` path will be used.
+
+```{r}
+options(meme_db = system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR"))
+```
+
+## Running AME
+
+`runAme()` supports running AME using three modes:
+
+| AME Mode          | Description                | Command                                         |
+|:-----------------:|:--------------------------:|:------------------------------------------------|
+| Vs Shuffled       | Input vs Shuffled Sequence | `runAme(input = sequence, control = "shuffle")` |
+| Discriminative    | Input vs Control Sequence  | `runAme(input = sequence, control = control)`   |
+| Partitioning      | Rank Input by fasta score  | `runAme(input = sequence, control = NA)`        |
+
+```{r, eval=F}
+ame_vs_shuffle <- runAme(sequence)
+```
+
+```{r, eval=F}
+ame_vs_control <- runAme(sequence[1:5], sequence[6:10])
 ```
 
 
-## Running AME
- - shuffle sequences (copy core_dreme shuffle info)
- - discriminative mode
- - partitioning mode (`get_sequences(score = "col")`, `runAme(control = NA)`)
+To run AME using partitioning mode, the fasta header must contain a score value
+for each entry in the form: ">entry_name score". The `get_sequences()` `score`
+argument allows users to set the score value to a column value from input
+regions.
 
-## Database input
- - different from tomtom (no list input), but can be universalmotif, dreme results, or path to file.
- 
+```{r}
+sequence_scored <- example_peaks %>% 
+  plyranges::mutate(score = seq_along(.)) %>% 
+  get_sequence(dm.genome, score = "score")
+
+names(sequence_scored)[1]
+```
+```{r, eval=F}
+ame_partition <- runAme(sequence_scored, control = NA)
+```
+
+### Running AME on multiple groups
+
+If using a list input to `runAme()`, it will dispatch multiple AME runs for each
+object in the list.
+
+```{r}
+data("example_chip_summits", package = "dremeR")
+
+seq_by_behavior <- example_chip_summits %>% 
+  plyranges::mutate(width = 100) %>% 
+  split(mcols(.)$e93_sensitive_behavior) %>% 
+  get_sequence(dm.genome)
+```
+```{r, eval=F}
+ame_by_behavior <- runAme.list(seq_by_behavior)
+```
+
+#### Discriminative analysis using list input
+
+If the input to `runAme()` is a named list of `XStringSet` objects, `control`
+can be set to one or more values from `names(input)` to use those regions as
+background. It will skip running those regions as the input. The following code
+will result in these comparisons:
+
+1. Increasing vs Static
+2. Decreasing vs Static
+```{r}
+ame_by_behavior_vs_static <- runAme(seq_by_behavior, control = "Static")
+```
+
+If multiple names are used in the `control` section, they will be combined
+together to make a single control set which will be used for all comparisons.
+Here, we use "Static" and "Decreasing" sites as the control, which will result
+in only running 1 comparison: Increasing vs Static+Decreasing.
+```{r, eval=F}
+runAme(seq_by_behavior, control = c("Static", "Decreasing"))
+```
+
+## Output Format
+
+AME will return different output formats depending on the `method` used. For
+detailed information about these values see the [AME Output description
+webpage](http://meme-suite.org/doc/ame-output-format.html). As a general rule of
+thumb, `runAme()` will return the same column names described in the webpage,
+except dashes are removed and all column names are lowercase.
+
+```{r}
+ame_by_behavior_vs_static$Decreasing
+```
+
+If `runAme()` is run with `method = "fisher"`, the sequences output can be added
+to the results by setting `sequences = TRUE`. This will be added as a list
+column named `sequences` that can be unnested using `tidyr::unnest()`.
+
 ## visualizing data
  - move heatmap information here
+ 
+```{r}
+ame_by_behavior_vs_static %>% 
+  dplyr::bind_rows(.id = "behavior") %>% 
+  ame_plot_heatmap(group = behavior)
+```
+ 
 
 ## Saving data from AME Web Server
 ![saving AME tsv results](save_ame.png)
