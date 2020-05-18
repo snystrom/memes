@@ -134,9 +134,8 @@ functions (eg `universalmotif::view_motifs(dreme_results$motif)`).
 suppressPackageStartupMessages(library(magrittr))
 suppressPackageStartupMessages(library(GenomicRanges))
 
-# Transcription factor peaks
-peaks <- readr::read_tsv(system.file("extdata/peaks/peaks.tsv", package = "dremeR")) %>% 
-  GRanges
+# Example transcription factor peaks as GRanges
+data("example_peaks", package = "dremeR")
 
 # Genome object
 dm.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
@@ -147,7 +146,7 @@ objects, respectively. `get_sequence` will name each fasta entry by the genomic
 coordinates each sequence is from.
 ```{r}
 # Generate sequences from 200bp about the center of my peaks of interest
-sequences <- peaks %>% 
+sequences <- example_peaks %>% 
   resize(200, "center") %>% 
   get_sequence(dm.genome)
 ```

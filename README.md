@@ -153,15 +153,8 @@ of all match data for each input motif. This can be expanded out using
 suppressPackageStartupMessages(library(magrittr))
 suppressPackageStartupMessages(library(GenomicRanges))
 
-# Transcription factor peaks
-peaks <- readr::read_tsv(system.file("extdata/peaks/peaks.tsv", package = "dremeR")) %>% 
-  GRanges
-#> Parsed with column specification:
-#> cols(
-#>   seqnames = col_character(),
-#>   start = col_double(),
-#>   end = col_double()
-#> )
+# Example transcription factor peaks as GRanges
+data("example_peaks", package = "dremeR")
 
 # Genome object
 dm.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
@@ -174,7 +167,7 @@ entry by the genomic coordinates each sequence is from.
 
 ``` r
 # Generate sequences from 200bp about the center of my peaks of interest
-sequences <- peaks %>% 
+sequences <- example_peaks %>% 
   resize(200, "center") %>% 
   get_sequence(dm.genome)
 ```
