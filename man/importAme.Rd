@@ -10,7 +10,7 @@ importAme(path, method = "fisher", sequences = FALSE)
 \item{path}{path to ame results file ("ame.tsv")}
 
 \item{method}{ame run method used (one of: c("fisher", "ranksum", "dmhg3",
-"dmhg4", "pearson", "spearman")). Default: "fisher".}
+"dmhg4", "pearson", "spearman")). Default: "fisher". **NOTE:**}
 
 \item{sequences}{FALSE or path to sequences file (only valid for method = "fisher")}
 }
@@ -23,5 +23,11 @@ data.frame with method-specific results. See [AME
 }
 \description{
 Parse ame output
+}
+\examples{
+\dontrun{
+importAme("path/to/ame.tsv")
+importAme("path/to/ame.tsv", sequence = "path/to/sequences.tsv")
+}
 }
 \concept{import}

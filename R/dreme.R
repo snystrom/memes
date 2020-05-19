@@ -313,7 +313,6 @@ dreme_nmotifs_line <- function(stdout){
 #'
 #' @return
 #'
-#' @examples
 #' @noRd
 dreme_nmotifs <- function(line){
   nmotifs <- gsub("(^\\d+).+", "\\1", line)
@@ -326,8 +325,6 @@ dreme_nmotifs <- function(line){
 #'
 #' @return `integer(1)` of number of motifs passing threshold
 #' @export
-#'
-#' @examples
 #'
 #' @noRd
 dreme_nmotifs_found <- function(processx_out){

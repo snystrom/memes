@@ -20,15 +20,17 @@ summit_flank <- summits %>%
   plyranges::anchor_center() %>%
   plyranges::mutate(width = 100)
 
-# split by response to E93 binding
-by_sens <- summit_flank %>%
-  split(mcols(.)$e93_sensitive_behavior) %>%
-  get_sequence(dm.genome)
+# Use E93 motif from motifdb
+e93_motif <- MotifDb::MotifDb %>%
+  MotifDb::query("Eip93F") %>%
+  universalmotif::convert_motifs() %>%
+  .[[1]]
 
-dreme_by_sens_vs_static <- runDreme(by_sens, "Static")
+# Rename the motif for simplicity
+e93_motif["name"] <- "E93"
 
-example_dreme <- dreme_by_sens_vs_static$Decreasing
+example_fimo <- summit_flank %>%
+  get_sequence(dm.genome) %>%
+  runFimo(motifs = e93_motif, thresh = 1e-3)
 
-
-usethis::use_data(example_dreme)
-
+usethis::use_data(example_fimo)

@@ -83,7 +83,7 @@ motif_input.universalmotif <- function(input, path = tempfile(fileext = ".meme")
 
 #' Helper for exporting universalmotif data to temp files
 #'
-#' @param input
+#' @param input universalmotif list
 #' @param path if path = "" (or NULL or NA) use tempfile, default: tempfile
 #'
 #' @return

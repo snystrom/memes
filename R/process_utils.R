@@ -5,7 +5,6 @@
 #'
 #' @return
 #'
-#' @examples
 #' @noRd
 print_process_stdout <- function(processx_out, silent = TRUE){
   process_check_error(processx_out)
@@ -20,7 +19,7 @@ print_process_stdout <- function(processx_out, silent = TRUE){
 
 #' Print stderr from processx output
 #'
-#' @param processx_out
+#' @param processx_out output from processx::run(error_on_status = FALSE)
 #' @param silent whether to suppress stderr printing or not
 #'
 #' @return

@@ -42,6 +42,15 @@ force_best_match <- function(res, matches){
 #' @export
 #'
 #' @examples
+#' data("example_dreme_tomtom")
+#' # best match is "CG2052_SANGER_2.5"
+#' example_dreme_tomtom$best_match_name[1]
+#' # reorder the `tomtom` data.frame
+#' example_dreme_tomtom$tomtom[[1]] <- dplyr::arrange(example_dreme_tomtom$tomtom[[1]], dplyr::desc(match_evalue))
+#' # update_best_match will use the new order of rows, taking the top row as the new best match
+#' new_res <- update_best_match(example_dreme_tomtom)
+#' # new best match is now "CG3407_SOLEXA_2.5"
+#' new_res$best_match_name[1]
 update_best_match <- function(res){
   res_nobest <- res %>%
     drop_best_match()
@@ -62,14 +71,17 @@ update_best_match <- function(res){
 #'
 #' Convenience function for dropping all columns created by runTomTom prefixed
 #' by "best_match_" and the "best_db_name" column. Keeps the "tomtom" data.frame
-#' column. Can be useful if you want to unnest the data to resort the data
+#' column. Can be useful if you want to unnest the `tomtom` data.
 #'
 #' @param res results of runTomTom
 #'
-#' @return
+#' @return `res` without the tomtom best_match_ columns
 #' @export
 #'
 #' @examples
+#' data("example_dreme_tomtom")
+#' names(example_dreme_tomtom)
+#' names(drop_best_match(example_dreme_tomtom))
 drop_best_match <- function(res){
   res %>%
     dplyr::select(-dplyr::contains("best_match_"),

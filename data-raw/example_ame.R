@@ -25,10 +25,11 @@ by_sens <- summit_flank %>%
   split(mcols(.)$e93_sensitive_behavior) %>%
   get_sequence(dm.genome)
 
-dreme_by_sens_vs_static <- runDreme(by_sens, "Static")
+# Use FlyFactor database
+db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR")
 
-example_dreme <- dreme_by_sens_vs_static$Decreasing
+ame_by_sens_vs_static <- runAme(by_sens, "Static", database = db)
 
+example_ame <- ame_by_sens_vs_static
 
-usethis::use_data(example_dreme)
-
+usethis::use_data(example_ame)

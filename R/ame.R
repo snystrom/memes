@@ -57,6 +57,8 @@ runAme.default <- function(input,
 
   ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
 
+  # Handles printing argument suggestions if process has non-zero exit status
+  # help_fun must be anonymous function to delay evaluating ame_help unless it's needed
   ps_out %>%
     process_check_error(help_fun = ~{ame_help(command)},
                         user_flags = dotargs::get_help_flag_names(user_flags) %>%
@@ -117,7 +119,7 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 #'
 #' @param path path to ame results file ("ame.tsv")
 #' @param method ame run method used (one of: c("fisher", "ranksum", "dmhg3",
-#'   "dmhg4", "pearson", "spearman")). Default: "fisher".
+#'   "dmhg4", "pearson", "spearman")). Default: "fisher". **NOTE:**
 #' @param sequences FALSE or path to sequences file (only valid for method = "fisher")
 #'
 #' @return data.frame with method-specific results. See [AME
@@ -132,6 +134,10 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 #' @family import
 #'
 #' @examples
+#' \dontrun{
+#' importAme("path/to/ame.tsv")
+#' importAme("path/to/ame.tsv", sequence = "path/to/sequences.tsv")
+#' }
 importAme <- function(path, method = "fisher", sequences = FALSE){
 
   cols <- get_ame_coltypes(method)
@@ -238,7 +244,6 @@ importAmeSequences <- function(path){
 #' @noRd
 get_ame_coltypes <- function(method){
   # Strategey: build readr::cols() vector for each input type, the combine together using switch for import.
-  # NOTE: need to test whether readr::col_* can be used in c() inside readr::cols()?
 
   cols_common <- readr::cols("rank" = "i",
                              "motif_db" = "c",

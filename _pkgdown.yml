@@ -76,3 +76,7 @@ reference:
   - importTomTomXML
   - importAme
   - importFimo
+
+- title: Example Datasets
+  contents:
+  - starts_with("example_")

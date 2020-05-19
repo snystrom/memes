@@ -137,7 +137,7 @@ write_meme_list <- function(list, path = tempfile(fileext = ".meme"), version = 
 #' I want to test using some preexisting files but don't want to update the git
 #' history for them, so this copies to temp location.
 #'
-#' @param path
+#' @param path path to file to duplicate to tempfile
 #'
 #' @return tempfile path
 #'
@@ -160,6 +160,8 @@ duplicate_file <- function(path){
 #' @return
 #'
 #' @examples
+#' rank_normalize(c(1,3,5))
+#'
 #' @noRd
 rank_normalize <- function(rank){
   if (length(rank) == 1) {

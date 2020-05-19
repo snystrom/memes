@@ -332,7 +332,6 @@ parseTomTom <- function(tomtom_xml_path){
 #'   hit, lowest pvalue). All other matches are nested into 'tomtom' column.
 #'   Which is list of data.frames for each match too the given id.
 #'
-#' @examples
 #' @noRd
 nest_tomtom_results <- function(tomtom_results){
   tomtom_results %>%

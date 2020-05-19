@@ -10,10 +10,15 @@ drop_best_match(res)
 \item{res}{results of runTomTom}
 }
 \value{
-
+`res` without the tomtom best_match_ columns
 }
 \description{
 Convenience function for dropping all columns created by runTomTom prefixed
 by "best_match_" and the "best_db_name" column. Keeps the "tomtom" data.frame
-column. Can be useful if you want to unnest the data to resort the data
+column. Can be useful if you want to unnest the `tomtom` data.
+}
+\examples{
+data("example_dreme_tomtom")
+names(example_dreme_tomtom)
+names(drop_best_match(example_dreme_tomtom))
 }

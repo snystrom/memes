@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(dremeR)
+suppressPackageStartupMessages(library(GenomicRanges))
 library(magrittr)
 ```
 
@@ -139,6 +140,10 @@ in only running 1 comparison: Increasing vs Static+Decreasing.
 ```{r, eval=F}
 runAme(seq_by_behavior, control = c("Static", "Decreasing"))
 ```
+```{r, echo=F}
+data("example_ame", package = "dremeR")
+ame_by_behavior_vs_static <- example_ame
+```
 
 ## Output Format
 
@@ -149,24 +154,42 @@ thumb, `runAme()` will return the same column names described in the webpage,
 except dashes are removed and all column names are lowercase.
 
 ```{r}
-ame_by_behavior_vs_static$Decreasing
+ame_by_behavior_vs_static$Decreasing %>% 
+  names
 ```
 
 If `runAme()` is run with `method = "fisher"`, the sequences output can be added
 to the results by setting `sequences = TRUE`. This will be added as a list
 column named `sequences` that can be unnested using `tidyr::unnest()`.
 
-## visualizing data
+## Visualizing Results as Heatmap
  - move heatmap information here
  
 ```{r}
 ame_by_behavior_vs_static %>% 
+  # AME results in list format are easily combined using dplyr::bind_rows
+  # .id will specify a column to hold the list object names
   dplyr::bind_rows(.id = "behavior") %>% 
+  # setting group to a column name will split the results on the y-axis
   ame_plot_heatmap(group = behavior)
 ```
  
 
-## Saving data from AME Web Server
+## Importing Previous Data
+
+`importAme()` can be used to import an `ame.tsv` file from a previous run
+on the MEME server or on the commandline. Details for how to save data from the
+AME webserver are below.
+
+Optionally, if AME was run on the commandline with `--method fisher`, the user
+can pass a path to the `sequences.tsv` file to the `sequences` argument of
+`importAme()` to append the sequence information to the AME results.
+
+### Saving data from AME Web Server
+To download TSV data from the MEME Server, right-click the AME TSV output link
+and "Save Target As" or "Save Link As" (see example image below), and save as
+`<filename>.tsv`. This file can be read using `importAme()`. 
+
 ![saving AME tsv results](save_ame.png)
 
 # Citation

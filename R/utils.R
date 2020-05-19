@@ -71,6 +71,10 @@ get_sequence.SimpleGRangesList <- function(regions, genome, score_column = NULL,
 #' @export
 #'
 #' @examples
+#' seq <- universalmotif::create_sequences()
+#' \dontrun{
+#' write_fasta(seq)
+#' }
 write_fasta <- function(seq, path = tempfile(fileext = ".fa")){
   Biostrings::writeXStringSet(x = seq,
                               filepath = path,

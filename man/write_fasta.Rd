@@ -17,3 +17,9 @@ path to created fasta file
 \description{
 Write fasta file from stringset
 }
+\examples{
+seq <- universalmotif::create_sequences()
+\dontrun{
+write_fasta(seq)
+}
+}
