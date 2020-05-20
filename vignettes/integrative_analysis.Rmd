@@ -24,7 +24,6 @@ suppressPackageStartupMessages(library(GenomicRanges))
 check_meme_install()
 ```
 
-
 ```{r, message=F}
 peaks <- system.file("extdata/peaks/e93_chr3.csv", package = "dremeR") %>% 
   readr::read_csv() %>% 
@@ -66,8 +65,8 @@ dreme_results <- dreme_by_sens_vs_static %>%
   dplyr::bind_rows(.id = "e93_response")
 ```
 ```{r}
-#options(meme_db = )
-options(meme_db = "../inst/extdata/db/fly_factor_survey_id.meme")
+meme_db_path <- system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR")
+options(meme_db = meme_db_path)
 all_res <- dreme_results %>% 
   runTomTom(dist = "ed")
 ```
@@ -490,28 +489,6 @@ x$p.value %>%
                 c2 = factor(c2, levels = levels(x$model$g)))
 ```
 
-
-# Below is in development
-
-```{r}
-# remove when done
-knitr::opts_chunk$set(eval = F)
-```
-
-## AME analysis by binding category (using dreme_results as query??)
-
-```{r ame_by_binding, cache=TRUE, cache.comments=FALSE}
-ame_by_binding <- by_binding %>% 
-  runAme(database = list(dreme_results)) %>% 
-  dplyr::bind_rows(.id = "binding_type") 
-```
-
-Plot heatmap of results by binding type.
-```{r, dependson=ame_by_binding, fig.height=4, fig.width=10}
-ame_by_binding %>% 
-  ame_plot_heatmap(group = binding_type)
-```
-
 ## Denovo motif similarity by binding
 ```{r dreme_by_binding, eval=F}
 dreme_by_binding <- by_binding %>% 
@@ -524,13 +501,14 @@ dreme_by_binding <- by_binding %>%
 # dremeR is packaged with the results of this run in the "example_dreme_by_binding" dataset
 # which can be loaded as follows:
 data("example_dreme_by_binding", package = "dremeR")
-dreme_by_binding <- example_dreme_by_binding
+dreme_by_binding <- example_dreme_by_binding %>% 
+  dplyr::bind_rows(.id = "binding_type")
 ```
 
 Rename the motifs to indicate the binding category they were discovered in.
 ```{r}
 dreme_by_binding_renamed <- dreme_by_binding %>% 
-  dplyr::mutate(id = paste(binding_type, seq, sep = "_")) %>% 
+  dplyr::mutate(name = paste(binding_type, seq, sep = "_")) %>% 
   # update_motifs updates the information in the special `motif` column
   update_motifs()
 ```
@@ -540,14 +518,66 @@ dreme_by_binding_renamed <- dreme_by_binding %>%
 cols <- colorRampPalette(c("white", "dodgerblue4"))(255)
 
 anno.df <- dreme_by_binding_renamed %>% 
-  dplyr::select(id, binding_type) %>% 
-  tibble::column_to_rownames("id")
+  dplyr::select(name, binding_type) %>% 
+  tibble::column_to_rownames("name")
 
 dreme_by_binding_renamed %>% 
   {universalmotif::compare_motifs(.$motif, method = "PCC")} %>% 
   pheatmap::pheatmap(color = cols, 
                      breaks = seq(0, 1, by = 1/255), 
-                     annotation_col = anno.df, 
+                     annotation_col = anno.df,
                      show_colnames = FALSE) 
 ```
 
+### Test Denovo motif enrichment using AME
+
+The above analysis suggests the motif content of the different binding
+categories are highly similar. To extend these analyses, we can use AME to test
+for motif enrichment of the denovo discovered motifs within each binding category.
+
+`runAme()` allows using a `runDreme()` results object as the `database` input by
+passing it within a `list()`. Naming the `list()` entry produces an informative
+`motif_db` name in the results data.frame.
+
+```{r ame_by_binding, cache=TRUE, cache.comments=FALSE}
+ame_denovo_by_binding <- by_binding %>% 
+  runAme(database = list("denovo_binding_motifs" = dreme_by_binding_renamed)) %>% 
+  dplyr::bind_rows(.id = "binding_type") 
+```
+
+Plotting the heatmap of results reveals that indeed a majority of the Denovo
+motifs discovered within a single category are detected in all 3 categories,
+supporting the conclusion that orphan, ectopic, and entopic sites are highly
+similar in sequence content.
+```{r, dependson=ame_by_binding, fig.height=4, fig.width=10}
+ame_denovo_by_binding %>% 
+  ame_plot_heatmap(group = binding_type)
+```
+
+However, there are 3 interesting motifs which distinguish orphan and ectopic
+sites from entopic sites. To help identify which TFs these motifs might belong
+to, we can use TomTom to match them to known motifs.
+
+First, we isolate the motifs by ID which are unique to 1 group.
+```{r}
+ame_denovo_binding_unique <- ame_denovo_by_binding %>% 
+  # Counts the number of groups a motif is found within
+  dplyr::group_by(motif_id) %>% 
+  dplyr::add_count() %>% 
+  # Selects only rows from motifs found in 1 group
+  dplyr::filter(n == 1)
+```
+
+Next, we use the motif id's from the AME results to filter the dreme results, and run TomTom on that subset.
+```{r}
+dreme_by_binding_unique <- dreme_by_binding_renamed %>% 
+  dplyr::filter(name %in% ame_denovo_binding_unique$motif_id) %>% 
+  runTomTom(dist = "ed")
+```
+
+Finally, we visualize the TomTom results to identify candidate TFs driving the presence of ectopic and orphan sites.
+```{r, fig.height=4, fig.width=10}
+dreme_by_binding_unique %>% 
+  view_tomtom_hits(3) %>% 
+  cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
+```
