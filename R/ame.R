@@ -8,12 +8,10 @@ runAme.list <- function(input,
                         meme_path = NULL,
                         sequences = FALSE,
                         silent = TRUE, ...){
-  if (control %in% names(input)){
-    x <- split_input_control(input, control)
 
-    input <- x$input
-    control <- x$control
-  }
+  x <- sequence_input_control_list(input, control)
+  input <- x$input
+  control <- x$control
 
   res <- purrr::map(input, runAme.default,
              control = control,

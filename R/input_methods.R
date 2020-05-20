@@ -129,3 +129,39 @@ split_input_control <- function(input, control){
         )
 
 }
+
+#' Correctly handle input/control input logic when input is a list
+#'
+#' This is the backend that allows operations like using a name in input as control
+#' or when passing a list of sequences to control to use the pool of them. used
+#' in runDreme and runAme, or any other command that takes sequences as input and control
+#'
+#' @param input sequences
+#' @param control control
+#'
+#' @return list w/ correct input & controls
+#'
+#' @noRd
+sequence_input_control_list <- function(input, control){
+
+  if (is.character(control)){
+    if (all(control %in% names(input))){
+      x <- split_input_control(input, control)
+
+      input <- x$input
+      control <- x$control
+    }
+  }
+
+  if (is.list(control)){
+    ctrl <- Biostrings::BStringSetList(control)
+    control <- unlist(ctrl)
+  }
+
+  if (is(control, "BStringSetList")){
+    control <- unlist(control)
+  }
+
+  return(list(input = input,
+              control = control))
+}
