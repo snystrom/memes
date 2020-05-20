@@ -53,8 +53,12 @@ by_sens <- summit_flank %>%
   get_sequence(dm.genome)
 ```
 
-```{r dreme_by_sens_vs_static, cache=TRUE, cache.comments=FALSE}
+```{r dreme_by_sens_vs_static, eval=F}
 dreme_by_sens_vs_static <- runDreme(by_sens, "Static")
+```
+```{r, echo=F}
+data("example_dreme_by_sens_vs_static", package = "dremeR")
+dreme_by_sens_vs_static <- example_dreme_by_sens_vs_static
 ```
 
 ```{r}
@@ -111,9 +115,14 @@ by_binding <- summit_flank %>%
   get_sequence(dm.genome)
 ```
 
-```{r}
+```{r, eval=F}
 ame_by_binding <- by_binding %>% 
   runAme
+```
+```{r, echo=F}
+# Allows vignette to build on systems w/o functioning MEME suite
+data("example_ame_large", package = "dremeR")
+ame_by_binding <- example_ame_large
 ```
 
 ### Visualizing AME results
@@ -207,44 +216,74 @@ ame_res %>%
 ## Issues with AME Heatmap Visualization
 Finally, because the data for each binding type are generated from different AME
 runs, it is not the best idea to compare p-values across experiments (ie between
-rows), because the dynamic range of p-values will vary between groups. Here you
+heatmap rows), because the dynamic range of p-values will vary between groups. Here you
 can see that, for example, the orphan sites will have a very different scale of
 -log10(adjusted pvalues) than ectopic and entopic sites. In other words, because
 the dynamic range of values are different between experiments, placing them on
 the same scale for comparison may be misleading in certain contexts.
 
 ```{r}
-ame_res %>% 
+logpval_dist <- ame_res %>% 
   ggplot(aes(-log10(adj.pvalue))) +
     stat_ecdf(aes(color = binding_type), size = 1, pad = FALSE) +
     labs(y = "Fraction of Motifs") +
-    theme_bw()
+    theme_bw() +
+    theme(legend.position = "none") +
+    labs(title = "value = -log10(adj.pvalue)")
+    
 ```
 
 We can partially overcome this limitation by filling the heatmap with the
 normalized rank value for each TF, which accounts for differences in total number of
 discovered motifs between AME runs. Although it does not completely abrograte
 differeces, the signal values for high-ranked motifs within groups will be more
-comparable.
+comparable. However, **the normalized rank visualization eliminates all real values related to statistical significance!** 
+Instead, this visualization represents the relative ranks of hits within an AME
+run, which already pass a significance threshold set during `runAME()`. This
+means that even if several motifs have similar or even identical pvalues, their
+heatmap representation will be a different color value based on their ranked
+order in the results list. Both visualizations can be useful and reveal different
+properties of the data to the user. **If in doubt**, prefer the
+`-log10(adj.pvalue)` representation.
 ```{r}
 # rank_normalize transforms the ranks to values between 0 and 1 as follows:
 # (1 - rank)/(1 - max(rank))
-ame_res %>% 
+normrank_dist <- ame_res %>% 
   ggplot(aes(dremeR:::rank_normalize(rank))) +
     stat_ecdf(aes(color = binding_type), size = 1, pad = FALSE) +
     scale_x_continuous(
                        breaks = c(0, 0.25, 0.5, 0.75, 1),
                        labels = c("0\n(High)", 0.25, 0.5, 0.75, "1\n(Low)"),
                        ) +
-    labs(y = "Fraction of Motifs",
-         x = "Normalized Rank")  +
+    labs(title = "value = \"normalize\"",
+         y = NULL,
+         x = "Normalized Rank",
+         color = "Binding Type")  +
     theme_bw() 
+```
+
+Below is a comparison of the distribution of values when using
+`-log10(adj.pvalue)` (A) vs normalized ranks (B). Because orphan sites tend to
+have smaller p-values overall, the heatmap scale will be skewed towards the high
+values in the orphan data, making ectopic and entopic heat values lighter by
+comparison.
+```{r, fig.height=3, fig.width=7.5}
+cowplot::plot_grid(logpval_dist,
+                   normrank_dist,
+                   rel_widths = c(1,1.25),
+                   labels = "AUTO")
 ```
 
 We achieve this by setting `value = "normalize"` in `ame_plot_heatmap()`. If
 plotting with multiple groups, it may be more appropriate to make this
 visualization.
 
+This plot reveals that the motifs which tend to be shared across all 3
+categories tend to be higher ranks in the output than the motifs unique to the
+different categories, which tend to come from lower ranks. This *suggests* that
+although there are differences in motif content across the three categories,
+they may be largely similar in motif makeup. We will investigate this question
+in more detail in the "Denovo motif similarity" section.
 ```{r, fig.height=3, fig.width=25}
 ame_res %>% 
   dplyr::mutate(gene_id = gsub("_\\d+", "", motif_alt_id)) %>% 
@@ -262,27 +301,43 @@ Because we discover a *de-novo* motif from DREME that matches to E93, it can be 
 Although we could also import the motifs from our local .meme database file, it is also possible to use motifs pulled from a [`MotifDb`](https://bioconductor.org/packages/release/bioc/html/MotifDb.html) query as follows. 
 ```{r}
 e93_motif <- MotifDb::MotifDb %>% 
+  # Query the database for the E93 motif using it's gene name
   MotifDb::query("Eip93F") %>% 
+  # Convert from motifdb format to universalmotif format
   universalmotif::convert_motifs() %>% 
+  # The result is a list, to simplify the object, return it as a single universalmotif
   .[[1]]
 
-# Rename the motif for simplicity
+# Rename the motif from it's flybase gene number to a more user-friendly name
 e93_motif["name"] <- "E93"
 
 e93_motif
 ```
 
+Just like `runDreme()` and `runAme()`, `runFimo()` takes a
+`Biostrings::XStringSet` as input. Using `get_sequence()` to generate these for
+DNA sequences is preferred because it creates sequence inputs that can be parsed
+into genomic coordinates by Fimo.
 ```{r}
 fimo_res <- summit_flank %>% 
   get_sequence(dm.genome) %>% 
   runFimo(motifs = e93_motif, thresh = 1e-3)
 ```
 
+The results of `runFimo()` are returned as a `GRanges` object containing the
+positions of each motif discovered in the input sequences. The best way to
+integrate these data with our input peaks is to use the `plyranges` suite of
+tools for performing overlaps and joins between `GRanges` objects.
 ```{r}
 fimo_res
 ```
 
-Here we add a count for each motif per peak in the `n_motifs` column. We also add a column `has_motif` which will be a binary indicator of whether a peak contains any motifs.
+### Counting the number of motifs per peak
+
+`plyranges` extends `dplyr`-like syntax to range objects. Here we add a count
+for each motif per peak in the `n_motifs` column. We also add a column
+`has_motif` which will be a binary indicator of whether a peak contains any
+motifs.
 ```{r}
 summit_flank %<>% 
   # Note, if running FIMO with multiple motifs, this solution will not work
@@ -291,7 +346,10 @@ summit_flank %<>%
                     has_motif = n_motifs > 0)
 ```
 
-Ask whether E93 sensitive sites are more likely to have E93 motifs in certain response types. Here we can see that sensitive decreasing sites are more likely to have E93 motifs than sensitive increasing or insensitive static sites.
+First, to we want to determine whether E93 sensitive sites are more likely to
+have E93 motifs in certain response types. Here we can see that sensitive
+decreasing sites are more likely to have E93 motifs than sensitive increasing or
+insensitive static sites.
 ```{r, fig.height=4, fig.width=5}
 summit_flank %>% 
   data.frame %>% 
@@ -300,13 +358,17 @@ summit_flank %>%
     geom_bar(aes(fill = forcats::fct_rev(has_match)), position = "fill") +
     scale_fill_manual(values = c("Match" = "firebrick",
                                  "No Match" = "Black")) +
-    labs(fill = "E93 Motif Match")
+    labs(fill = "E93 Motif Match",
+         y = "Fraction of Sites",
+         x = "Response to E93 binding")
 ```
 
 
 To investigate whether E93-sensitive sites that open/close/don't change have
 different numbers of E93 motifs, we plot the fraction of sites with each number
-of motifs. Here we can see that in addition to being more likely to contain an E93 motif, sensitive decreasing sites are more likely to to contain 2 or more matches, where 10% contain at least 2 motifs.
+of motifs. Here we can see that in addition to being more likely to contain an
+E93 motif, sensitive decreasing sites are more likely to to contain 2 or more
+matches, where 10% contain at least 2 motifs.
 ```{r, fig.height=5, fig.width=7}
 summit_flank %>% 
   # currently, group operations are faster as data.frames, so we convert to data.frame
@@ -318,13 +380,14 @@ summit_flank %>%
   ggplot(aes(n_motifs, frac)) +
     geom_line(aes(color = e93_sensitive_behavior), size = 1) +
     labs(y = "Fraction of Sites",
-         x = "Number of E93 Motifs") +
+         x = "Number of E93 Motifs",
+         color = "Response to E93 Binding") +
     theme_bw()
 ```
 
 Finally, we want to assess whether the quality of E93 motifs is different between sensitivity categories. To examine this, we need to determine which motifs are found in which peaks. We use the `plyranges::join_overlap_intersect` to return motif entries appended with peak-level metadata, like the peak id each motif is found within.
 ```{r}
-# return position of each motif match w/ peak meatadata
+# return position of each motif match w/ peak metadata
 intersect <- summit_flank %>% 
   plyranges::join_overlap_intersect(fimo_res)
 ```
@@ -337,6 +400,7 @@ within each peak.
 intersect %>% 
   data.frame %>% 
   dplyr::group_by(id) %>% 
+  # Keep only motifs w/ the highest score within a peak
   dplyr::filter(score == max(score)) %>% 
   ggplot(aes(e93_sensitive_behavior, score)) +
     geom_boxplot(aes(fill = e93_sensitive_behavior), notch = T, width = 0.5) +
@@ -346,6 +410,8 @@ intersect %>%
     theme_bw()
   
 ```
+
+The [Anderson-Darling test](https://en.wikipedia.org/wiki/Anderson%E2%80%93Darling_test) can be used to test differences in the distribution of FIMO scores across multiple groups. For a pairwise comparison, a [Kolmogorov-Smirnov test](https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test) is commonly used instead.
 ```{r}
 intersect %>% 
   data.frame %>% 
@@ -436,9 +502,7 @@ knitr::opts_chunk$set(eval = F)
 
 ```{r ame_by_binding, cache=TRUE, cache.comments=FALSE}
 ame_by_binding <- by_binding %>% 
-  purrr::map(~{
-    runAme(.x, database = list(dreme_results))
-  }) %>% 
+  runAme(database = list(dreme_results)) %>% 
   dplyr::bind_rows(.id = "binding_type") 
 ```
 
@@ -448,20 +512,19 @@ ame_by_binding %>%
   ame_plot_heatmap(group = binding_type)
 ```
 
-```{r}
-denovo_motifs <- all_res %>% 
-  dplyr::mutate(id = paste0("denovo_", best_match_id)) %>% 
-  update_motifs()
+## Denovo motif similarity by binding
+```{r dreme_by_binding, eval=F}
+dreme_by_binding <- by_binding %>% 
+  runDreme("shuffle") %>% 
+  dplyr::bind_rows(.id = "binding_type")
 ```
 
-
-## Denovo motif similarity by binding
-```{r dreme_by_binding, cache=TRUE, cache.comments=FALSE}
-dreme_by_binding <- by_binding %>% 
-  purrr::map(~{
-    runDreme(.x, "shuffle")
-  }) %>% 
-  dplyr::bind_rows(.id = "binding_type")
+```{r}
+# The above code chunk takes a long time to run.
+# dremeR is packaged with the results of this run in the "example_dreme_by_binding" dataset
+# which can be loaded as follows:
+data("example_dreme_by_binding", package = "dremeR")
+dreme_by_binding <- example_dreme_by_binding
 ```
 
 Rename the motifs to indicate the binding category they were discovered in.
