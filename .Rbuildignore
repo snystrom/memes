@@ -9,3 +9,5 @@ rstudio-server.job.*
 runSingularity.sh
 ^LICENSE\.md$
 ^data-raw$
+^doc$
+^Meta$

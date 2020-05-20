@@ -29,6 +29,7 @@ Suggests:
     testthat (>= 2.1.0),
     knitr,
     MotifDb,
+    pheatmap,
     PMCMRplus,
     plyranges (>= 1.9.1),
     rmarkdown
