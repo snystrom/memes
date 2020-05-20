@@ -4,7 +4,7 @@
 \name{example_dreme_tomtom}
 \alias{example_dreme_tomtom}
 \title{Example runDreme() output after passing to runTomTom()}
-\format{a data.frame}
+\format{a runDreme results data.frame with runTomTom results columns}
 \usage{
 example_dreme_tomtom
 }

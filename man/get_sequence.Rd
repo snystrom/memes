@@ -19,7 +19,10 @@ containing a fasta score, used in AME in partitioning mode. (default: `NULL`)}
 \item{...}{additional arguments passed to Biostrings::getSeq.}
 }
 \value{
-Biostrings::DNAStringSet object with names corresponding to genomic coordinates
+Biostrings::DNAStringSet object with names corresponding to genomic
+  coordinates. If input is a list object, output will be a
+  `Biostrings::BStringSetList` with list names corresponding to input list
+  names.
 }
 \description{
 A light wrapper around Biostrings::getSeq to return named DNAStringSets.

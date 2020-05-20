@@ -55,6 +55,8 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' @param control regions to use as background for motif search. Can be any of:
 #'   - path to fasta file
 #'   - DNAStringSet object (can be generated from GRanges using get_sequence)
+#'   - A Biostrings::BStringSetList (generated using `get_sequence`), in which
+#'   case all sequences in the list will be combined as the control set.
 #'   - if `input` is a list of DNAStringSet objects, a character vector of names
 #'   in `input` will use those sequences as background. runDreme will not scan
 #'   those regions as input.
@@ -162,8 +164,10 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #'   background in discriminitive mode and AME will skip running on any
 #'   `control` entries (NOTE: if `input` contains an entry named "shuffle" and
 #'   control is set to "shuffle", it will use the `input` entry, not the AME
-#'   shuffle algorithm). Set to `NA` for partitioning based on input fasta score
-#'   (see `get_sequence()` for assigning fasta score).
+#'   shuffle algorithm). If `control` is a Biostrings::BStringSetList (generated
+#'   using `get_sequence`), all sequences in the list will be combined as the
+#'   control set. Set to `NA` for partitioning based on input fasta score (see
+#'   `get_sequence()` for assigning fasta score).
 #' @param outdir default: auto
 #' @param method default: fisher
 #' @param database path to .meme format file, universalmotif list object, dreme

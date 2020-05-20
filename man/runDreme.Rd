@@ -21,6 +21,8 @@ path to fasta file as input, or specify an "outdir"
 \itemize{
 \item path to fasta file
 \item DNAStringSet object (can be generated from GRanges using get_sequence)
+\item A Biostrings::BStringSetList (generated using \code{get_sequence}), in which
+case all sequences in the list will be combined as the control set.
 \item if \code{input} is a list of DNAStringSet objects, a character vector of names
 in \code{input} will use those sequences as background. runDreme will not scan
 those regions as input.

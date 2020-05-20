@@ -7,7 +7,7 @@
 write_fasta(seq, path = tempfile(fileext = ".fa"))
 }
 \arguments{
-\item{seq}{DNAstringset}
+\item{seq}{`Biostrings::XStringSet`}
 
 \item{path}{path of fasta file to write (default: temporary file)}
 }

@@ -22,7 +22,9 @@ ame_plot_heatmap(
 \item{value}{value to display as heatmap intensity. Default:
 -log10(adj.pvalue). Takes function or column name as input. If set to
 "normalize", will use normalized rank within `group` as the heatmap values.
-This can be a more appropriate visualization for between-group comparisons.}
+**If in doubt**, prefer the -log10(adj.pvalue) plot. (See "Normalized rank
+visualization" section below for more details on how to interpret these
+data)}
 
 \item{group_name}{when group = NULL, name to use for input regions. Ignored if group is set.}
 }
@@ -33,6 +35,17 @@ This can be a more appropriate visualization for between-group comparisons.}
 Plot AME heatmap clustered by similarity in detected motifs
 }
 \details{
+Normalized rank visualization
+**NOTE:** The normalized rank visualization eliminates all real values
+related to statistical significance! Instead, this visualization represents
+the relative ranks of hits within an AME run, which already pass a
+significance threshold set during `runAME()`. This means that even if several
+motifs have similar or even identical pvalues, their heatmap representation
+will be a different color value based on their ranked order in the results
+list. Both visualizations can be useful and reveal different properties of
+the data to the user. **If in doubt**, prefer the
+`-log10(adj.pvalue)` representation.
+
 Common mistake: if `value` is set to a string that is not "normalize", it
 will return: "Error: Discrete value supplied to continuous scale". To use a
 column by name, do not quote the column name.

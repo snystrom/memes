@@ -27,8 +27,10 @@ a character vector of names in `input`, those regions will be used as
 background in discriminitive mode and AME will skip running on any
 `control` entries (NOTE: if `input` contains an entry named "shuffle" and
 control is set to "shuffle", it will use the `input` entry, not the AME
-shuffle algorithm). Set to `NA` for partitioning based on input fasta score
-(see `get_sequence()` for assigning fasta score).}
+shuffle algorithm). If `control` is a Biostrings::BStringSetList (generated
+using `get_sequence`), all sequences in the list will be combined as the
+control set. Set to `NA` for partitioning based on input fasta score (see
+`get_sequence()` for assigning fasta score).}
 
 \item{outdir}{default: auto}
 
