@@ -16,7 +16,10 @@ motif_input <- function(x, ...) UseMethod("motif_input")
 #'   containing a fasta score, used in AME in partitioning mode. (default: `NULL`)
 #' @param ... additional arguments passed to Biostrings::getSeq.
 #'
-#' @return Biostrings::DNAStringSet object with names corresponding to genomic coordinates
+#' @return Biostrings::DNAStringSet object with names corresponding to genomic
+#'   coordinates. If input is a list object, output will be a
+#'   `Biostrings::BStringSetList` with list names corresponding to input list
+#'   names.
 #'
 #' @export
 #'

@@ -28,6 +28,19 @@ runAme.list <- function(input,
   return(res)
 }
 
+#' @export
+#' @noRd
+runAme.BStringSetList <- function(input,
+                        control = "shuffle",
+                        outdir = "auto",
+                        method = "fisher",
+                        database = NULL,
+                        meme_path = NULL,
+                        sequences = FALSE,
+                        silent = TRUE, ...){
+  runAme.list(as.list(input), control, outdir, method, database, meme_path, sequences, silent, ...)
+}
+
 #' See runAme Generic for details
 #' @export
 #' @noRd

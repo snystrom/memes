@@ -8,8 +8,6 @@ runDreme.list <- function(input, control, outdir = "auto", meme_path = NULL, sil
     control <- x$control
   }
 
-
-
   res <- purrr::map(input, runDreme.default,
              control = control,
              outdir = outdir,
@@ -18,6 +16,12 @@ runDreme.list <- function(input, control, outdir = "auto", meme_path = NULL, sil
              ...
              )
   return(res)
+}
+
+#' @export
+#' @noRd
+runDreme.BStringSetList <- function(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...){
+  runDreme.list(as.list(input), control, outdir, meme_path, silent, ...)
 }
 
 #' @export

@@ -41,7 +41,7 @@ get_sequence.GenomicRangesList <- function(regions, genome, score_column = NULL,
     get_sequence.GRanges(regions = x, genome = genome, score_column = score_column, ...)
   })
 
-  return(sequences)
+  Biostrings::BStringSetList(sequences)
 }
 
 #' @export
@@ -64,7 +64,7 @@ get_sequence.SimpleGRangesList <- function(regions, genome, score_column = NULL,
 
 #' Write fasta file from stringset
 #'
-#' @param seq DNAstringset
+#' @param seq `Biostrings::XStringSet`
 #' @param path path of fasta file to write (default: temporary file)
 #'
 #' @return path to created fasta file
