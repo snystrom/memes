@@ -21,14 +21,10 @@ summit_flank <- summits %>%
   plyranges::mutate(width = 100)
 
 # split by response to E93 binding
-by_sens <- summit_flank %>%
-  split(mcols(.)$e93_sensitive_behavior) %>%
+by_binding <- summit_flank %>%
+  split(mcols(.)$peak_binding_description) %>%
   get_sequence(dm.genome)
 
-example_dreme_by_sens_vs_static <- runDreme(by_sens, "Static")
+example_dreme_by_binding <- runDreme(by_binding, "shuffle")
 
-example_dreme <- example_dreme_by_sens_vs_static$Decreasing
-
-usethis::use_data(example_dreme_by_sens_vs_static)
-usethis::use_data(example_dreme)
-
+usethis::use_data(example_dreme_by_binding)

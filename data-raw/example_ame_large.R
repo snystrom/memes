@@ -21,14 +21,13 @@ summit_flank <- summits %>%
   plyranges::mutate(width = 100)
 
 # split by response to E93 binding
-by_sens <- summit_flank %>%
-  split(mcols(.)$e93_sensitive_behavior) %>%
+by_binding <- summit_flank %>%
+  split(mcols(.)$peak_binding_description) %>%
   get_sequence(dm.genome)
 
-example_dreme_by_sens_vs_static <- runDreme(by_sens, "Static")
+# Use FlyFactor database
+db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR")
 
-example_dreme <- example_dreme_by_sens_vs_static$Decreasing
+example_ame_large <- runAme(by_binding, "shuffle", database = db)
 
-usethis::use_data(example_dreme_by_sens_vs_static)
-usethis::use_data(example_dreme)
-
+usethis::use_data(example_ame_large)

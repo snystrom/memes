@@ -47,7 +47,7 @@
 #' Result when running dreme using 100bp window around example_chip_summits
 #' using "Decreasing" sites as foreground, and "Static" sites as background.
 #'
-#' @format a data.frame
+#' @format a runDreme results data.frame
 #'
 "example_dreme"
 
@@ -55,9 +55,25 @@
 #'
 #' Result when running `runTomTom(example_dreme)` using FlyFactorSurvey as database.
 #'
-#' @format a data.frame
+#' @format a runDreme results data.frame with runTomTom results columns
 #'
 "example_dreme_tomtom"
+
+#' runDreme() output for example_chip_summits split by binding description
+#'
+#' See vignette("integrative_analysis", package = "dremeR") for details
+#'
+#'
+#' @format a runDreme results data.frame
+"example_dreme_by_binding"
+
+#' runDreme() output for example_chip_summits split by response behavior
+#'
+#' See `vignette("integrative_analysis", package = "dremeR")` for details
+#'
+#' @format a runDreme results data.frame
+#'
+"example_dreme_by_sens_vs_static"
 
 #' Example runTomTom() output
 #'
@@ -83,6 +99,18 @@
 #' # where the "behavior" column will hold the "Increasing"/"Decreasing" information
 #' dplyr::bind_rows(example_ame, .id = "behavior")
 "example_ame"
+
+#' runAme() output for example_chip_summits split by binding description
+#'
+#' AME was run for "ectopic", "entopic", and "orphan" sites using shuffled background.
+#'
+#' see `vignette("integrative_analysis", package = "dremeR")` for details.
+#'
+#' @format a list of runAme() results data.frames
+#' @examples
+#' # Data can be combined into 1 large data.frame using:
+#' dplyr::bind_rows(example_ame_large, .id = "binding_type")
+"example_ame_large"
 
 #' Example runFimo() output
 #'
