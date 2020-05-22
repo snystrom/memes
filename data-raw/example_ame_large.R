@@ -26,7 +26,7 @@ by_binding <- summit_flank %>%
   get_sequence(dm.genome)
 
 # Use FlyFactor database
-db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR")
+db <- here::here("inst/extdata/flyFactorSurvey_cleaned.meme")
 
 example_ame_large <- runAme(by_binding, "shuffle", database = db)
 

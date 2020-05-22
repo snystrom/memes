@@ -26,10 +26,8 @@ by_sens <- summit_flank %>%
   get_sequence(dm.genome)
 
 # Use FlyFactor database
-db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR")
+db <- here::here("inst/extdata/flyFactorSurvey_cleaned.meme")
 
-ame_by_sens_vs_static <- runAme(by_sens, "Static", database = db)
-
-example_ame <- ame_by_sens_vs_static
+example_ame <- runAme(by_sens, "Static", database = db)
 
 usethis::use_data(example_ame)

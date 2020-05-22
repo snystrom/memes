@@ -1,5 +1,6 @@
 library(dremeR)
-db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR")
+# Use FlyFactor database
+db <- here::here("inst/extdata/flyFactorSurvey_cleaned.meme")
 
 motif <- universalmotif::create_motif("CCRAAAW")
 motif["name"] <- "example_motif"
