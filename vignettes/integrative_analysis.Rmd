@@ -23,14 +23,13 @@ suppressPackageStartupMessages(library(GenomicRanges))
 ```{r}
 check_meme_install()
 ```
-
+### Prepare peaks for analysis
 ```{r, message=F}
 peaks <- system.file("extdata/peaks/e93_chr3.csv", package = "dremeR") %>% 
   readr::read_csv() %>% 
   GRanges
 ```
 
-### Motifs in opening vs closing sites
 ```{r}
 # These data use the dm3 reference genome
 dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
@@ -44,70 +43,14 @@ summits <- peaks %>%
 # Get sequences in a 100bp window around the peak summit
 summit_flank <- summits %>% 
   plyranges::anchor_center() %>% 
-  plyranges::mutate(width = 100) 
-
-# split by response to E93 binding
-by_sens <- summit_flank %>% 
-  split(mcols(.)$e93_sensitive_behavior) %>% 
-  get_sequence(dm.genome)
+  plyranges::mutate(width = 100)
 ```
 
-```{r dreme_by_sens_vs_static, eval=F}
-dreme_by_sens_vs_static <- runDreme(by_sens, "Static")
-```
-```{r, echo=F}
-data("example_dreme_by_sens_vs_static", package = "dremeR")
-dreme_by_sens_vs_static <- example_dreme_by_sens_vs_static
-```
-
-```{r}
-dreme_results <- dreme_by_sens_vs_static %>% 
-  dplyr::bind_rows(.id = "e93_response")
-```
-```{r}
-meme_db_path <- system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR")
-options(meme_db = meme_db_path)
-all_res <- dreme_results %>% 
-  runTomTom(dist = "ed")
-```
-
-```{r, fig.height=8, fig.width=8}
-all_res %>% 
-  view_tomtom_hits(3) %>% 
-  cowplot::plot_grid(plotlist = ., labels = "AUTO")
-```
-```{r}
-all_res %<>% 
-  force_best_match(c("m01_CSAAAAM" = "Eip93F_SANGER_10",
-                     "m03_AKGG" = "pho_SANGER_10"))
-```
+## Determinants of ectopic and orphan binding
 
 
-```{r, fig.height=4.5, fig.width=8}
-all_res %>% 
-  view_tomtom_hits(1) %>% 
-  cowplot::plot_grid(plotlist = ., labels = "AUTO")
-```
 
-```{r, fig.height=3, fig.width=8}
-all_res %>% 
-  dplyr::mutate(label = paste0(e93_response, " in response to E93")) %>% 
-  split(.$label) %>% 
-  purrr::imap(~{
-    top_hits <- view_tomtom_hits(.x, 1) %>% 
-      cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
-    
-    title <- cowplot::ggdraw() +
-        cowplot::draw_text(.y)
-    
-    cowplot::plot_grid(plotlist = list(title, top_hits), 
-                       ncol = 1,
-                       rel_heights = c(0.1, 1)
-    )
-  })
-```
-
-### Motif scanning with AME
+### Motif scanning with AME (by binding)
 ```{r}
 by_binding <- summit_flank %>% 
   split(mcols(.)$peak_binding_description) %>% 
@@ -124,7 +67,7 @@ data("example_ame_large", package = "dremeR")
 ame_by_binding <- example_ame_large
 ```
 
-### Visualizing AME results
+### Visualizing AME results 
 
 The `ame_plot_heatmap()` function provides a quick way to visualize AME results.
 It is built on top of `ggplot2`, so all `ggplot2` functions can be used to
@@ -294,7 +237,182 @@ ame_res %>%
 ```
 
 
-## FIMO 
+## Denovo motif similarity by binding
+```{r dreme_by_binding, eval=F}
+dreme_by_binding <- by_binding %>% 
+  runDreme("shuffle") %>% 
+  dplyr::bind_rows(.id = "binding_type")
+```
+
+```{r}
+# The above code chunk takes a long time to run.
+# dremeR is packaged with the results of this run in the "example_dreme_by_binding" dataset
+# which can be loaded as follows:
+data("example_dreme_by_binding", package = "dremeR")
+dreme_by_binding <- example_dreme_by_binding %>% 
+  dplyr::bind_rows(.id = "binding_type")
+```
+
+Rename the motifs to indicate the binding category they were discovered in.
+```{r}
+dreme_by_binding_renamed <- dreme_by_binding %>% 
+  dplyr::mutate(name = paste(binding_type, seq, sep = "_")) %>% 
+  # update_motifs updates the information in the special `motif` column
+  update_motifs()
+```
+
+
+```{r, fig.height=7, fig.width=10}
+cols <- colorRampPalette(c("white", "dodgerblue4"))(255)
+
+anno.df <- dreme_by_binding_renamed %>% 
+  dplyr::select(name, binding_type) %>% 
+  tibble::column_to_rownames("name")
+
+dreme_by_binding_renamed %>% 
+  {universalmotif::compare_motifs(.$motif, method = "PCC")} %>% 
+  pheatmap::pheatmap(color = cols, 
+                     breaks = seq(0, 1, by = 1/255), 
+                     annotation_col = anno.df,
+                     show_colnames = FALSE) 
+```
+
+### Test Denovo motif enrichment using AME
+
+The above analysis suggests the motif content of the different binding
+categories are highly similar. To extend these analyses, we can use AME to test
+for motif enrichment of the denovo discovered motifs within each binding category.
+
+`runAme()` allows using a `runDreme()` results object as the `database` input by
+passing it within a `list()`. Naming the `list()` entry produces an informative
+`motif_db` name in the results data.frame.
+
+```{r ame_by_binding, cache=TRUE, cache.comments=FALSE}
+ame_denovo_by_binding <- by_binding %>% 
+  runAme(database = list("denovo_binding_motifs" = dreme_by_binding_renamed)) %>% 
+  dplyr::bind_rows(.id = "binding_type") 
+```
+
+Plotting the heatmap of results reveals that indeed a majority of the Denovo
+motifs discovered within a single category are detected in all 3 categories,
+supporting the conclusion that orphan, ectopic, and entopic sites are highly
+similar in sequence content.
+```{r, dependson=ame_by_binding, fig.height=4, fig.width=10}
+ame_denovo_by_binding %>% 
+  ame_plot_heatmap(group = binding_type)
+```
+
+However, there are 3 interesting motifs which distinguish orphan and ectopic
+sites from entopic sites. To help identify which TFs these motifs might belong
+to, we can use TomTom to match them to known motifs.
+
+First, we isolate the motifs by ID which are unique to 1 group.
+```{r}
+ame_denovo_binding_unique <- ame_denovo_by_binding %>% 
+  # Counts the number of groups a motif is found within
+  dplyr::group_by(motif_id) %>% 
+  dplyr::add_count() %>% 
+  # Selects only rows from motifs found in 1 group
+  dplyr::filter(n == 1)
+```
+
+Next, we use the motif id's from the AME results to filter the dreme results, and run TomTom on that subset.
+```{r}
+dreme_by_binding_unique <- dreme_by_binding_renamed %>% 
+  dplyr::filter(name %in% ame_denovo_binding_unique$motif_id) %>% 
+  runTomTom(dist = "ed")
+```
+
+Finally, we visualize the TomTom results to identify candidate TFs driving the presence of ectopic and orphan sites.
+```{r, fig.height=4, fig.width=10}
+dreme_by_binding_unique %>% 
+  view_tomtom_hits(3) %>% 
+  cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Motifs in opening vs closing sites
+```{r}
+# split by response to E93 binding
+by_sens <- summit_flank %>% 
+  split(mcols(.)$e93_sensitive_behavior) %>% 
+  get_sequence(dm.genome)
+```
+
+```{r dreme_by_sens_vs_static, eval=F}
+dreme_by_sens_vs_static <- runDreme(by_sens, "Static")
+```
+```{r, echo=F}
+data("example_dreme_by_sens_vs_static", package = "dremeR")
+dreme_by_sens_vs_static <- example_dreme_by_sens_vs_static
+```
+
+```{r}
+dreme_results <- dreme_by_sens_vs_static %>% 
+  dplyr::bind_rows(.id = "e93_response")
+```
+```{r}
+meme_db_path <- system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR")
+options(meme_db = meme_db_path)
+all_res <- dreme_results %>% 
+  runTomTom(dist = "ed")
+```
+
+```{r, fig.height=8, fig.width=8}
+all_res %>% 
+  view_tomtom_hits(3) %>% 
+  cowplot::plot_grid(plotlist = ., labels = "AUTO")
+```
+```{r}
+all_res %<>% 
+  force_best_match(c("m01_CSAAAAM" = "Eip93F_SANGER_10",
+                     "m03_AKGG" = "pho_SANGER_10"))
+```
+
+
+```{r, fig.height=4.5, fig.width=8}
+all_res %>% 
+  view_tomtom_hits(1) %>% 
+  cowplot::plot_grid(plotlist = ., labels = "AUTO")
+```
+
+```{r, fig.height=3, fig.width=8}
+all_res %>% 
+  dplyr::mutate(label = paste0(e93_response, " in response to E93")) %>% 
+  split(.$label) %>% 
+  purrr::imap(~{
+    top_hits <- view_tomtom_hits(.x, 1) %>% 
+      cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
+    
+    title <- cowplot::ggdraw() +
+        cowplot::draw_text(.y)
+    
+    cowplot::plot_grid(plotlist = list(title, top_hits), 
+                       ncol = 1,
+                       rel_heights = c(0.1, 1)
+    )
+  })
+```
+
+
+### FIMO (by response)
 Because we discover a *de-novo* motif from DREME that matches to E93, it can be useful to scan peaks for motif occurrances to further examine properties of different peak categories.
 
 Although we could also import the motifs from our local .meme database file, it is also possible to use motifs pulled from a [`MotifDb`](https://bioconductor.org/packages/release/bioc/html/MotifDb.html) query as follows. 
@@ -489,95 +607,3 @@ x$p.value %>%
                 c2 = factor(c2, levels = levels(x$model$g)))
 ```
 
-## Denovo motif similarity by binding
-```{r dreme_by_binding, eval=F}
-dreme_by_binding <- by_binding %>% 
-  runDreme("shuffle") %>% 
-  dplyr::bind_rows(.id = "binding_type")
-```
-
-```{r}
-# The above code chunk takes a long time to run.
-# dremeR is packaged with the results of this run in the "example_dreme_by_binding" dataset
-# which can be loaded as follows:
-data("example_dreme_by_binding", package = "dremeR")
-dreme_by_binding <- example_dreme_by_binding %>% 
-  dplyr::bind_rows(.id = "binding_type")
-```
-
-Rename the motifs to indicate the binding category they were discovered in.
-```{r}
-dreme_by_binding_renamed <- dreme_by_binding %>% 
-  dplyr::mutate(name = paste(binding_type, seq, sep = "_")) %>% 
-  # update_motifs updates the information in the special `motif` column
-  update_motifs()
-```
-
-
-```{r, fig.height=7, fig.width=10}
-cols <- colorRampPalette(c("white", "dodgerblue4"))(255)
-
-anno.df <- dreme_by_binding_renamed %>% 
-  dplyr::select(name, binding_type) %>% 
-  tibble::column_to_rownames("name")
-
-dreme_by_binding_renamed %>% 
-  {universalmotif::compare_motifs(.$motif, method = "PCC")} %>% 
-  pheatmap::pheatmap(color = cols, 
-                     breaks = seq(0, 1, by = 1/255), 
-                     annotation_col = anno.df,
-                     show_colnames = FALSE) 
-```
-
-### Test Denovo motif enrichment using AME
-
-The above analysis suggests the motif content of the different binding
-categories are highly similar. To extend these analyses, we can use AME to test
-for motif enrichment of the denovo discovered motifs within each binding category.
-
-`runAme()` allows using a `runDreme()` results object as the `database` input by
-passing it within a `list()`. Naming the `list()` entry produces an informative
-`motif_db` name in the results data.frame.
-
-```{r ame_by_binding, cache=TRUE, cache.comments=FALSE}
-ame_denovo_by_binding <- by_binding %>% 
-  runAme(database = list("denovo_binding_motifs" = dreme_by_binding_renamed)) %>% 
-  dplyr::bind_rows(.id = "binding_type") 
-```
-
-Plotting the heatmap of results reveals that indeed a majority of the Denovo
-motifs discovered within a single category are detected in all 3 categories,
-supporting the conclusion that orphan, ectopic, and entopic sites are highly
-similar in sequence content.
-```{r, dependson=ame_by_binding, fig.height=4, fig.width=10}
-ame_denovo_by_binding %>% 
-  ame_plot_heatmap(group = binding_type)
-```
-
-However, there are 3 interesting motifs which distinguish orphan and ectopic
-sites from entopic sites. To help identify which TFs these motifs might belong
-to, we can use TomTom to match them to known motifs.
-
-First, we isolate the motifs by ID which are unique to 1 group.
-```{r}
-ame_denovo_binding_unique <- ame_denovo_by_binding %>% 
-  # Counts the number of groups a motif is found within
-  dplyr::group_by(motif_id) %>% 
-  dplyr::add_count() %>% 
-  # Selects only rows from motifs found in 1 group
-  dplyr::filter(n == 1)
-```
-
-Next, we use the motif id's from the AME results to filter the dreme results, and run TomTom on that subset.
-```{r}
-dreme_by_binding_unique <- dreme_by_binding_renamed %>% 
-  dplyr::filter(name %in% ame_denovo_binding_unique$motif_id) %>% 
-  runTomTom(dist = "ed")
-```
-
-Finally, we visualize the TomTom results to identify candidate TFs driving the presence of ectopic and orphan sites.
-```{r, fig.height=4, fig.width=10}
-dreme_by_binding_unique %>% 
-  view_tomtom_hits(3) %>% 
-  cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
-```
