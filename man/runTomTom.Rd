@@ -32,23 +32,23 @@ set a value between 0-1 (default = 0.5).}
 unless input motif is shorter, in which case the shorter length is used as
 the minimum value}
 
-\item{dist}{distance metric. Valid arguments: `allr | ed | kullback | pearson | sandelin | blic1 | blic5 | llr1 | llr5`.
-Default: `pearson`.}
+\item{dist}{distance metric. Valid arguments: \code{allr | ed | kullback | pearson | sandelin | blic1 | blic5 | llr1 | llr5}.
+Default: \code{pearson}.}
 
 \item{evalue}{whether to use E-value as significance threshold (default:
-`TRUE`). If evalue = FALSE, uses *q-value* instead.}
+\code{TRUE}). If evalue = FALSE, uses \emph{q-value} instead.}
 
 \item{meme_path}{path to "meme/bin/" (optional). If unset, will check R
-environment variable "MEME_DB (set in `.Renviron`), or option
-"meme_db" (set with `option(meme_db = "path/to/meme/bin")`)}
+environment variable "MEME_DB (set in \code{.Renviron}), or option
+"meme_db" (set with \code{option(meme_db = "path/to/meme/bin")})}
 
 \item{...}{additional flags passed to tomtom using {dotargs} formating (see table below for details)}
 }
 \value{
-data.frame of match results. Contains `match_motif` column of
-  `universalmotif` objects with the matched PWM from the database. If no
-  matches are returned, `tomtom` and `best_match_motif` columns will be set
-  to `NA` and a message indicating this will print.
+data.frame of match results. Contains \code{match_motif} column of
+\code{universalmotif} objects with the matched PWM from the database. If no
+matches are returned, \code{tomtom} and \code{best_match_motif} columns will be set
+to \code{NA} and a message indicating this will print.
 }
 \description{
 Run TomTom on target motifs
@@ -56,32 +56,32 @@ Run TomTom on target motifs
 \details{
 Additional arguments
 
- runTomTom() can accept all valid tomtom arguments passed to `...` as described in the
- [tomtom commandline reference](http://meme-suite.org/doc/tomtom.html?man_type=web). For
- convenience, below is a table of valid arguments, their default values, and
- their description.
-
-| TomTom Flag       | allowed values | default | description                |
-|:-----------------:|:--------------:|:-------:|:---------------------------|
-| bfile             | file path      | `NULL`  | path to background model for converting frequency matrix to log-odds score (not used when `dist` is set to "ed", "kullback", "pearson", or "sandelin" |
-| motif_pseudo      | `numeric`      | 0.1     | pseudocount to add to motifs |
-| xalph             | `logical`      | FALSE   | convert alphabet of target database to alphabet of query database |
-| norc              | `logical`      | FALSE   | Do not score reverse complements of motifs |
-| incomplete_scores | `logical`      | FALSE   | Compute scores using only aligned columns |
-| thresh            | `numeric`      | 0.5     | only report matches with significance values <= this value. Unless `evalue = TRUE`, this value must be < 1. |
-| internal          | `logical`      | FALSE   | forces the shorter motif to be completely contained in the longer motif |
-| min_overlap       | `integer`      | 1       | only report matches that overlap by this number of positions or more. If query motif is smaller than this value, its width is used as the min overlap for that query |
-| time              | `integer`      | `NULL`  | Maximum runtime in CPU seconds (default: no limit) |
-
-Citation
-If you use `runTomTom()` in your analysis, please cite:
-
-Shobhit Gupta, JA Stamatoyannopolous, Timothy Bailey and William Stafford
-Noble, "Quantifying similarity between motifs", Genome Biology, 8(2):R24,
-2007. [full text](http://genomebiology.com/2007/8/2/R24)
+runTomTom() can accept all valid tomtom arguments passed to \code{...} as described in the
+\href{http://meme-suite.org/doc/tomtom.html?man_type=web}{tomtom commandline reference}. For
+convenience, below is a table of valid arguments, their default values, and
+their description.\tabular{cccl}{
+   TomTom Flag \tab allowed values \tab default \tab description \cr
+   bfile \tab file path \tab \code{NULL} \tab path to background model for converting frequency matrix to log-odds score (not used when \code{dist} is set to "ed", "kullback", "pearson", or "sandelin" \cr
+   motif_pseudo \tab \code{numeric} \tab 0.1 \tab pseudocount to add to motifs \cr
+   xalph \tab \code{logical} \tab FALSE \tab convert alphabet of target database to alphabet of query database \cr
+   norc \tab \code{logical} \tab FALSE \tab Do not score reverse complements of motifs \cr
+   incomplete_scores \tab \code{logical} \tab FALSE \tab Compute scores using only aligned columns \cr
+   thresh \tab \code{numeric} \tab 0.5 \tab only report matches with significance values <= this value. Unless \code{evalue = TRUE}, this value must be < 1. \cr
+   internal \tab \code{logical} \tab FALSE \tab forces the shorter motif to be completely contained in the longer motif \cr
+   min_overlap \tab \code{integer} \tab 1 \tab only report matches that overlap by this number of positions or more. If query motif is smaller than this value, its width is used as the min overlap for that query \cr
+   time \tab \code{integer} \tab \code{NULL} \tab Maximum runtime in CPU seconds (default: no limit) \cr
+}
 }
 \examples{
 \dontrun{
 runTomTom("searchmotifs.meme", "jasparMotifs.meme")
 }
+}
+\section{Citation}{
+
+If you use \code{runTomTom()} in your analysis, please cite:
+
+Shobhit Gupta, JA Stamatoyannopolous, Timothy Bailey and William Stafford
+Noble, "Quantifying similarity between motifs", Genome Biology, 8(2):R24,
+2007. \href{http://genomebiology.com/2007/8/2/R24}{full text}
 }

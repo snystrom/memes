@@ -43,6 +43,7 @@
 #'
 #' @details Additional arguments passed to `...`
 #'
+#'
 #' | FIMO Flag         | allowed values | default | description                |
 #' |:-----------------:|:--------------:|:-------:|:---------------------------|
 #' | alpha             | `numeric(1)`   | 1       | alpha for calculating position-specific priors. Represents fraction of sites that are binding sites of TF of interest. Used in conjunction with `psp` |
@@ -56,12 +57,15 @@
 #' | qv_thresh         | `logical(1)`   | FALSE   | use q-values for the output threshold |
 #' | thresh            | `numeric(1)`   | `1e-4`  | output threshold for returning a match, only matches with values less than `thresh` are returned. |
 #'
-#' @details Citation
+#'
+#' @details # Citation
 #' If you use `runFimo()` in your analysis, please cite:
 #'
 #' Charles E. Grant, Timothy L. Bailey, and William Stafford Noble, "FIMO:
 #' Scanning for occurrences of a given motif", Bioinformatics, 27(7):1017-1018,
 #' 2011. [full text](http://bioinformatics.oxfordjournals.org/content/early/2011/02/16/bioinformatics.btr064.full)
+#'
+#' @md
 #'
 #' @examples
 #' \dontrun{

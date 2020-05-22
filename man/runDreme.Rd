@@ -109,9 +109,10 @@ List of aliased values which can be passed to \code{...}\tabular{cclc}{
    evalue \tab e \tab max E-value cutoff \tab 0.05 \cr
    seed \tab s \tab random seed if using "shuffle" as control \tab 1 \cr
    ngen \tab g \tab nuber of REs to generalize \tab 100 \cr
-   \strong{NOTE:} aliased values must be set using their alias, not the DREME Flag name. \tab  \tab  \tab  \cr
 }
 
+
+\strong{NOTE:} aliased values must be set using their alias, not the DREME Flag name.
 
 Additional DREME parameters which can be passed to \code{...}\tabular{ccc}{
    DREME Flag \tab description \tab default \cr
@@ -123,13 +124,6 @@ Additional DREME parameters which can be passed to \code{...}\tabular{ccc}{
    rna \tab use RNA alphabet \tab FALSE \cr
    protein \tab use protein alphabet (NOT RECCOMENDED) \tab FALSE \cr
 }
-
-Citation
-If you use \code{runDreme()} in your analysis, please cite:
-
-Timothy L. Bailey, "DREME: Motif discovery in transcription factor ChIP-seq
-data", Bioinformatics, 27(12):1653-1659, 2011.
-\href{https://academic.oup.com/bioinformatics/article/27/12/1653/257754}{full text}
 }
 \examples{
 \dontrun{
@@ -139,4 +133,12 @@ runDreme("input.fa", "shuffle")
 # Runs searching for max 2 motifs, e-value cutoff = 0.1, explicitly using the DNA alphabet
 runDreme("input.fa", "shuffle", nmotifs = 2, e = 0.1, dna = T)
 }
+}
+\section{Citation}{
+
+If you use \code{runDreme()} in your analysis, please cite:
+
+Timothy L. Bailey, "DREME: Motif discovery in transcription factor ChIP-seq
+data", Bioinformatics, 27(12):1653-1659, 2011.
+\href{https://academic.oup.com/bioinformatics/article/27/12/1653/257754}{full text}
 }

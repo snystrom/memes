@@ -119,3 +119,20 @@
 #' @format A GRanges object of E93 motif positions within 100bp windows of `example_chip_summits`
 #'
 "example_fimo"
+
+#' RNAseq data from Early and Late Drosophila wings
+#'
+#' These data are a subset of RNAseq counts from the full FPKM table in
+#' GSE97956. Includes counts for all Drosophila transcription factors and ~200
+#' other random genes.
+#'
+#' @source "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE97956&format=file&file=GSE97956%5FgeneFPKMs%5FL3%5F24hr%5F44hr%2Exlsx"
+#'
+#' @format A data.frame of RNAseq FPKM data
+#' \describe{
+#'  \item{symbol}{The FlyBase gene symbol}
+#'  \item{time}{Developmental stage of RNAseq experiment}
+#'  \item{fpkm}{RNAseq count in Fragments per Kilobase Million (FPKM)}
+#' }
+#'
+"example_rnaseq"

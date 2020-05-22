@@ -26,6 +26,7 @@
 #'  convenience, below is a table of valid arguments, their default values, and
 #'  their description.
 #'
+#'
 #' | TomTom Flag       | allowed values | default | description                |
 #' |:-----------------:|:--------------:|:-------:|:---------------------------|
 #' | bfile             | file path      | `NULL`  | path to background model for converting frequency matrix to log-odds score (not used when `dist` is set to "ed", "kullback", "pearson", or "sandelin" |
@@ -38,12 +39,13 @@
 #' | min_overlap       | `integer`      | 1       | only report matches that overlap by this number of positions or more. If query motif is smaller than this value, its width is used as the min overlap for that query |
 #' | time              | `integer`      | `NULL`  | Maximum runtime in CPU seconds (default: no limit) |
 #'
+#'
 #' @return data.frame of match results. Contains `match_motif` column of
 #'   `universalmotif` objects with the matched PWM from the database. If no
 #'   matches are returned, `tomtom` and `best_match_motif` columns will be set
 #'   to `NA` and a message indicating this will print.
 #'
-#' @details Citation
+#' @details # Citation
 #' If you use `runTomTom()` in your analysis, please cite:
 #'
 #' Shobhit Gupta, JA Stamatoyannopolous, Timothy Bailey and William Stafford
@@ -51,6 +53,8 @@
 #' 2007. [full text](http://genomebiology.com/2007/8/2/R24)
 #'
 #' @export
+#'
+#' @md
 #'
 #' @importFrom magrittr %>%
 #'

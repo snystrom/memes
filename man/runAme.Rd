@@ -22,15 +22,15 @@ names contain fasta score, required for partitioning mode)}
 
 \item{control}{default: "shuffle", or set to
 DNAstringset or path to fasta file to use those sequences in discriminative
-mode. If `input` is a list of DNAStringSet objects, and `control` is set to
-a character vector of names in `input`, those regions will be used as
+mode. If \code{input} is a list of DNAStringSet objects, and \code{control} is set to
+a character vector of names in \code{input}, those regions will be used as
 background in discriminitive mode and AME will skip running on any
-`control` entries (NOTE: if `input` contains an entry named "shuffle" and
-control is set to "shuffle", it will use the `input` entry, not the AME
-shuffle algorithm). If `control` is a Biostrings::BStringSetList (generated
-using `get_sequence`), all sequences in the list will be combined as the
-control set. Set to `NA` for partitioning based on input fasta score (see
-`get_sequence()` for assigning fasta score).}
+\code{control} entries (NOTE: if \code{input} contains an entry named "shuffle" and
+control is set to "shuffle", it will use the \code{input} entry, not the AME
+shuffle algorithm). If \code{control} is a Biostrings::BStringSetList (generated
+using \code{get_sequence}), all sequences in the list will be combined as the
+control set. Set to \code{NA} for partitioning based on input fasta score (see
+\code{get_sequence()} for assigning fasta score).}
 
 \item{outdir}{Path to output directory location to save data files. If set to "auto",
 will use location of input files if passing file paths, otherwise will
@@ -48,12 +48,12 @@ id's will be: "motifs.meme" and "2". If the input is list("motifs.meme",
 "customMotifs" = list_of_motifs), the database id's will be "motifs.meme"
 and "customMotifs".}
 
-\item{meme_path}{path to "meme/bin/" (default: `NULL`). Will use default
-search behavior as described in `check_meme_install()` if unset.}
+\item{meme_path}{path to "meme/bin/" (default: \code{NULL}). Will use default
+search behavior as described in \code{check_meme_install()} if unset.}
 
-\item{sequences}{`logical(1)` add results from `sequences.tsv` to `sequences`
+\item{sequences}{\code{logical(1)} add results from \code{sequences.tsv} to \code{sequences}
 list column to returned data.frame. Valid only if method = "fisher". See
-[AME outputs](http://alternate.meme-suite.org/doc/ame-output-format.html)
+\href{http://alternate.meme-suite.org/doc/ame-output-format.html}{AME outputs}
 webpage for more information.}
 
 \item{silent}{whether to suppress stdout (default: TRUE), useful for debugging.}
@@ -69,38 +69,28 @@ Motif enrichment using AME
 \details{
 Additional AME arguments
 
-dremeR allows passing any valid flag to it's target programs via `...`. For
-additional details for all valid AME arguments, see the [AME
-Manual](http://meme-suite.org/doc/ame.html) webpage. For convenience, a table
+dremeR allows passing any valid flag to it's target programs via \code{...}. For
+additional details for all valid AME arguments, see the \href{http://meme-suite.org/doc/ame.html}{AME Manual} webpage. For convenience, a table
 of valid parameters, and brief descriptions of their function are provided
-below:
-
-| AME Flag                | allowed values | default | description                |
-|:-----------------------:|:--------------:|:-------:|:---------------------------|
-| kmer                    | `integer(1)`   | 2       | kmer frequency to preserve when shuffling control sequences |
-| seed                    | `integer(1)`   | 1       | seed for random number generator when shuffling control sequences |
-| scoring                 | "avg", "max", "sum", "totalhits" | "avg" | Method for scoring a sequence for matches to a PWM (avg, max, sum, totalhits) |
-| hit_lo_fraction         | `numeric(1)`   | 0.25    | fraction of hit log odds score to exceed to be considered a "hit" |
-| evalue_report_threshold | `numeric(1)`   | 10      | E-value threshold for reporting a motif as significantly enriched |
-| fasta_threshold         | `numeric(1)`   | 0.001   | AME will classify sequences with FASTA scores below this value as positives. Only valid when `method = "fisher", poslist = "pwm", control = NA, fix_partition = NULL`. |
-| fix_partition           | `numeric(1)`   | `NULL`  |AME evaluates only the partition of the first N sequences. Only works when `control = NA` and `poslist = "fasta"` |
-| poslist                 | "pwm", "fasta" | "fasta" | When using paritioning mode (`control = NA`), test thresholds on either PWM or Fasta score |
-| log_fscores             | `logical(1)`   | FALSE   | Convert FASTA scores into log-space (only used when `method = "pearson"`) |
-| log_pwmscores           | `logical(1)`   | FALSE   | Convert PWM scores into log-space (only used for `method = "pearson"` or `method = "spearman`) |
-| lingreg_switchxy        | `logical(1)`   | FALSE   | Make the x-points FASTA scores and y-points PWM scores (only used for `method = "pearson"` or `method = "spearman`) |
-| xalph                   | file path      | `NULL(1)`  | alphabet file to use if input motifs are in different alphabet than input sequences |
-| bfile                   | "motif", "motif-file", "uniform", path to file | `NULL` | source of 0-order background model. If "motif" or "motif-file" 0-order letter frequencies in the first motif file are used. If "uniform" uses uniform letter frequencies. |
-| motif_pseudo            | `numeric(1)`   | 0.1     | Addd this pseudocount when converting from frequency matrix to log-odds matrix |
-| inc                     | `character(1)` | `NULL`  | use only motifs with names matching this regex |
-| exc                     | `character(1)` | `NULL`  | exclude motifs with names matching this regex  |
-
-Citation
-
-If you use `runAme()` in your analysis, please cite:
-
-Robert McLeay and Timothy L. Bailey, "Motif Enrichment Analysis: A unified
-framework and method evaluation", BMC Bioinformatics, 11:165, 2010,
-doi:10.1186/1471-2105-11-165. [full text](http://www.biomedcentral.com/1471-2105/11/165)
+below:\tabular{cccl}{
+   AME Flag \tab allowed values \tab default \tab description \cr
+   kmer \tab \code{integer(1)} \tab 2 \tab kmer frequency to preserve when shuffling control sequences \cr
+   seed \tab \code{integer(1)} \tab 1 \tab seed for random number generator when shuffling control sequences \cr
+   scoring \tab "avg", "max", "sum", "totalhits" \tab "avg" \tab Method for scoring a sequence for matches to a PWM (avg, max, sum, totalhits) \cr
+   hit_lo_fraction \tab \code{numeric(1)} \tab 0.25 \tab fraction of hit log odds score to exceed to be considered a "hit" \cr
+   evalue_report_threshold \tab \code{numeric(1)} \tab 10 \tab E-value threshold for reporting a motif as significantly enriched \cr
+   fasta_threshold \tab \code{numeric(1)} \tab 0.001 \tab AME will classify sequences with FASTA scores below this value as positives. Only valid when \verb{method = "fisher", poslist = "pwm", control = NA, fix_partition = NULL}. \cr
+   fix_partition \tab \code{numeric(1)} \tab \code{NULL} \tab AME evaluates only the partition of the first N sequences. Only works when \code{control = NA} and \code{poslist = "fasta"} \cr
+   poslist \tab "pwm", "fasta" \tab "fasta" \tab When using paritioning mode (\code{control = NA}), test thresholds on either PWM or Fasta score \cr
+   log_fscores \tab \code{logical(1)} \tab FALSE \tab Convert FASTA scores into log-space (only used when \code{method = "pearson"}) \cr
+   log_pwmscores \tab \code{logical(1)} \tab FALSE \tab Convert PWM scores into log-space (only used for \code{method = "pearson"} or \verb{method = "spearman}) \cr
+   lingreg_switchxy \tab \code{logical(1)} \tab FALSE \tab Make the x-points FASTA scores and y-points PWM scores (only used for \code{method = "pearson"} or \verb{method = "spearman}) \cr
+   xalph \tab file path \tab \code{NULL(1)} \tab alphabet file to use if input motifs are in different alphabet than input sequences \cr
+   bfile \tab "motif", "motif-file", "uniform", path to file \tab \code{NULL} \tab source of 0-order background model. If "motif" or "motif-file" 0-order letter frequencies in the first motif file are used. If "uniform" uses uniform letter frequencies. \cr
+   motif_pseudo \tab \code{numeric(1)} \tab 0.1 \tab Addd this pseudocount when converting from frequency matrix to log-odds matrix \cr
+   inc \tab \code{character(1)} \tab \code{NULL} \tab use only motifs with names matching this regex \cr
+   exc \tab \code{character(1)} \tab \code{NULL} \tab exclude motifs with names matching this regex \cr
+}
 }
 \examples{
 \dontrun{
@@ -108,4 +98,12 @@ dreme_out <- runDreme("input.fa")
 runAme("input.fa", database = "jasparmotifs.meme")
 runAme("input.fa", database = list("jasparmotifs.meme", "my_dreme_motifs" = dreme_out))
 }
+}
+\section{Citation}{
+
+If you use \code{runAme()} in your analysis, please cite:
+
+Robert McLeay and Timothy L. Bailey, "Motif Enrichment Analysis: A unified
+framework and method evaluation", BMC Bioinformatics, 11:165, 2010,
+doi:10.1186/1471-2105-11-165. \href{http://www.biomedcentral.com/1471-2105/11/165}{full text}
 }

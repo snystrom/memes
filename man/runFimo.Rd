@@ -31,29 +31,29 @@ letter distribution. (default: "motif")}
 "auto" to autogenerate directory name. Note: if not using a fasta path as
 input, this will be a temporary location unless explicity set.}
 
-\item{parse_genomic_coord}{`logical(1)` whether to parse genomic position
+\item{parse_genomic_coord}{\code{logical(1)} whether to parse genomic position
 from fasta name. Fasta names must be UCSC format positions (ie
 "chr:start-end"). If names of fasta entries are genomic coordinates and
 parse_genomic_coord == TRUE, results will contain positions of motif matches,
 otherwise FIMO will count positions from 1 to length of fasta file.}
 
-\item{skip_matched_sequence}{`logical(1)` whether or not to include the DNA
-sequence of the match. Default: `FALSE`. Note: jobs will complete faster if
-set to FALSE. `get_sequences()` can be used to lookup the sequence after data import if
-`parse_genomic_coord` is `TRUE`, so setting this flag is not needed except for convenience.}
+\item{skip_matched_sequence}{\code{logical(1)} whether or not to include the DNA
+sequence of the match. Default: \code{FALSE}. Note: jobs will complete faster if
+set to FALSE. \code{get_sequences()} can be used to lookup the sequence after data import if
+\code{parse_genomic_coord} is \code{TRUE}, so setting this flag is not needed except for convenience.}
 
 \item{max_strand}{if match is found on both strands, only report strand with
 best match.}
 
-\item{text}{`logical(1)` (default: `TRUE`). No output files will be created on the filesystem.
+\item{text}{\code{logical(1)} (default: \code{TRUE}). No output files will be created on the filesystem.
 The results are unsorted and no q-values are computed. This setting allows
 fast searches on very large inputs.}
 
-\item{meme_path}{path to `meme/bin/` (optional). Defaut: `NULL`, searches
+\item{meme_path}{path to \verb{meme/bin/} (optional). Defaut: \code{NULL}, searches
 "MEME_PATH" environment variable or "meme_path" option.}
 
-\item{silent}{`logical(1)` whether to suppress stdout/stderr printing to
-terminal (default: TRUE). NOTE: if `text = TRUE`, setting `silent = TRUE`
+\item{silent}{\code{logical(1)} whether to suppress stdout/stderr printing to
+terminal (default: TRUE). NOTE: if \code{text = TRUE}, setting \code{silent = TRUE}
 will print all FIMO matches to terminal if the run is successful. Can be
 useful for troubleshooting.}
 
@@ -62,37 +62,29 @@ useful for troubleshooting.}
 }
 \value{
 GenomicRanges object contining positions of each match. Note: if
-  `parse_genomic_coords = FALSE`, each `seqnames` entry will be the fasta
-  header, and start/end will be the position within that sequence of the
-  match. It is a good idea to use `parse_genomic_coords = TRUE` if using
-  `get_sequence()` to create input sequences.
+\code{parse_genomic_coords = FALSE}, each \code{seqnames} entry will be the fasta
+header, and start/end will be the position within that sequence of the
+match. It is a good idea to use \code{parse_genomic_coords = TRUE} if using
+\code{get_sequence()} to create input sequences.
 }
 \description{
-NOTE: runs best using `text = TRUE`, setting genomic coordinates in fasta
-headers, and using `parse_genomic_coord = TRUE`.
+NOTE: runs best using \code{text = TRUE}, setting genomic coordinates in fasta
+headers, and using \code{parse_genomic_coord = TRUE}.
 }
 \details{
-Additional arguments passed to `...`
-
-| FIMO Flag         | allowed values | default | description                |
-|:-----------------:|:--------------:|:-------:|:---------------------------|
-| alpha             | `numeric(1)`   | 1       | alpha for calculating position-specific priors. Represents fraction of sites that are binding sites of TF of interest. Used in conjunction with `psp` |
-| bfile             | "motif", "motif-file", "uniform", file path, | "motif" | If "motif" or "motif-file", use 0-order letter frequencies from motif. "uniform" sets uniform letter frequencies. |
-| max_stored_scores | `integer(1)`   | NULL    | maximum number of scores to be stored for computing q-values. used when `text = FALSE`, see FIMO webpage for details |
-| motif_pseudo      | `numeric(1)`   | 0.1     | pseudocount added to motif matrix |
-| no_qvalue         | `logical(1)`   | FALSE   | only needed when `text = FALSE`, do not compute q-value for each p-value |
-| norc              | `logical(1)`   | FALSE   | Do not score reverse complement strand |
-| prior_dist        | file path      | NULL    | file containing binned distribution of priors |
-| psp               | file path      | NULL    | file containing position specific priors. Requires `prior_dist` |
-| qv_thresh         | `logical(1)`   | FALSE   | use q-values for the output threshold |
-| thresh            | `numeric(1)`   | `1e-4`  | output threshold for returning a match, only matches with values less than `thresh` are returned. |
-
-Citation
-If you use `runFimo()` in your analysis, please cite:
-
-Charles E. Grant, Timothy L. Bailey, and William Stafford Noble, "FIMO:
-Scanning for occurrences of a given motif", Bioinformatics, 27(7):1017-1018,
-2011. [full text](http://bioinformatics.oxfordjournals.org/content/early/2011/02/16/bioinformatics.btr064.full)
+Additional arguments passed to \code{...}\tabular{cccl}{
+   FIMO Flag \tab allowed values \tab default \tab description \cr
+   alpha \tab \code{numeric(1)} \tab 1 \tab alpha for calculating position-specific priors. Represents fraction of sites that are binding sites of TF of interest. Used in conjunction with \code{psp} \cr
+   bfile \tab "motif", "motif-file", "uniform", file path, \tab "motif" \tab If "motif" or "motif-file", use 0-order letter frequencies from motif. "uniform" sets uniform letter frequencies. \cr
+   max_stored_scores \tab \code{integer(1)} \tab NULL \tab maximum number of scores to be stored for computing q-values. used when \code{text = FALSE}, see FIMO webpage for details \cr
+   motif_pseudo \tab \code{numeric(1)} \tab 0.1 \tab pseudocount added to motif matrix \cr
+   no_qvalue \tab \code{logical(1)} \tab FALSE \tab only needed when \code{text = FALSE}, do not compute q-value for each p-value \cr
+   norc \tab \code{logical(1)} \tab FALSE \tab Do not score reverse complement strand \cr
+   prior_dist \tab file path \tab NULL \tab file containing binned distribution of priors \cr
+   psp \tab file path \tab NULL \tab file containing position specific priors. Requires \code{prior_dist} \cr
+   qv_thresh \tab \code{logical(1)} \tab FALSE \tab use q-values for the output threshold \cr
+   thresh \tab \code{numeric(1)} \tab \code{1e-4} \tab output threshold for returning a match, only matches with values less than \code{thresh} are returned. \cr
+}
 }
 \examples{
 \dontrun{
@@ -102,4 +94,12 @@ names(seq) <- seq_along(seq)
 motif <- universalmotif::create_motif()
 runFimo(seq, motif, parse_genomic_coord = FALSE)
 }
+}
+\section{Citation}{
+
+If you use \code{runFimo()} in your analysis, please cite:
+
+Charles E. Grant, Timothy L. Bailey, and William Stafford Noble, "FIMO:
+Scanning for occurrences of a given motif", Bioinformatics, 27(7):1017-1018,
+2011. \href{http://bioinformatics.oxfordjournals.org/content/early/2011/02/16/bioinformatics.btr064.full}{full text}
 }

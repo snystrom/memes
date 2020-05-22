@@ -111,7 +111,7 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' | evalue       | e          | max E-value cutoff                        | 0.05    |
 #' | seed         | s          | random seed if using "shuffle" as control | 1       |
 #' | ngen         | g          | nuber of REs to generalize                | 100     |
-
+#'
 #' **NOTE:** aliased values must be set using their alias, not the DREME Flag name.
 #'
 #' Additional DREME parameters which can be passed to `...`
@@ -148,7 +148,7 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #'   - neg_frac = fraction of negative sequences with a hit
 #'   - motif = a universalmotif object of the discovered motif
 #'
-#' @details Citation
+#' @details # Citation
 #' If you use `runDreme()` in your analysis, please cite:
 #'
 #' Timothy L. Bailey, "DREME: Motif discovery in transcription factor ChIP-seq
@@ -218,6 +218,7 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #' of valid parameters, and brief descriptions of their function are provided
 #' below:
 #'
+#'
 #' | AME Flag                | allowed values | default | description                |
 #' |:-----------------------:|:--------------:|:-------:|:---------------------------|
 #' | kmer                    | `integer(1)`   | 2       | kmer frequency to preserve when shuffling control sequences |
@@ -240,7 +241,7 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #' @return
 #'
 #'
-#' @details Citation
+#' @details # Citation
 #'
 #' If you use `runAme()` in your analysis, please cite:
 #'
@@ -249,6 +250,8 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #' doi:10.1186/1471-2105-11-165. [full text](http://www.biomedcentral.com/1471-2105/11/165)
 #'
 #' @export
+#'
+#' @md
 #'
 #' @importFrom magrittr %>%
 #' @importFrom magrittr %T>%
