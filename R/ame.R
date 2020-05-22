@@ -122,6 +122,12 @@ prepareAmeFlags <- function(control, outdir, method, ...){
     }
   }
 
+  if (exists("bfile", flagList)) {
+    if (flagList$control %in% c("motif", "uniform")) {
+      flagList$control <- paste0("--", flagList$control, "--")
+    }
+  }
+
   flagList %>%
     dotargs::crystallize_flags(prefix = "--")
 }

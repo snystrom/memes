@@ -99,18 +99,32 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' In addition to allowing any valid flag of dreme to be passed to `...`, we
 #' provide a few user-friendly aliases for common flags which are more readable (see list below).
 #' For example, e = 1 will use a max evalue cutoff of 1. This is equivalent to
-#' setting evalue = 1.
+#' setting evalue = 1. For additional details about each DREME flag, see the
+#' [DREME Manual Webpage](http://meme-suite.org/doc/dreme.html).
 #'
 #' List of aliased values which can be passed to `...`
-#'  - nmotifs = max number of motifs to search for
-#'  - sec = max runtime in seconds
-#'  - evalue = max evalue cutoff
-#'  - seed = random seed if using "shuffle" as control
-#'  - ngen = number of REs to generalize
 #'
-#' **NOTE:** `nmotifs` is an alias for the dreme `-m` flag. If you want to set
-#' `-m` you **must** use the `nmotifs` alias, not `m`. The same is true for
-#' `seed` and `s`.
+#' | dremeR alias | DREME Flag | description                               | default |
+#' |:------------:|:----------:|:------------------------------------------|:-------:|
+#' | nmotifs      | m          | max number of motifs to discover          | NULL    |
+#' | sec          | t          | max number of seconds to run              | NULL    |
+#' | evalue       | e          | max E-value cutoff                        | 0.05    |
+#' | seed         | s          | random seed if using "shuffle" as control | 1       |
+#' | ngen         | g          | nuber of REs to generalize                | 100     |
+
+#' **NOTE:** aliased values must be set using their alias, not the DREME Flag name.
+#'
+#' Additional DREME parameters which can be passed to `...`
+#'
+#' | DREME Flag | description                                | default|
+#' |:----------:|:------------------------------------------:|:------:|
+#' | mink       | minimum motif width to search              | 3      |
+#' | maxk       | maximum motif width to search              | 7      |
+#' | k          | set mink and maxk to this value            | NULL   |
+#' | norc       | search only the input strand for sequences | FALSE  |
+#' | dna        | use DNA alphabet                           | TRUE   |
+#' | rna        | use RNA alphabet                           | FALSE  |
+#' | protein    | use protein alphabet (NOT RECCOMENDED)     | FALSE  |
 #'
 #'
 #' @return data.frame with statistics for each discovered motif. The `motif`
@@ -134,6 +148,12 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #'   - neg_frac = fraction of negative sequences with a hit
 #'   - motif = a universalmotif object of the discovered motif
 #'
+#' @details Citation
+#' If you use `runDreme()` in your analysis, please cite:
+#'
+#' Timothy L. Bailey, "DREME: Motif discovery in transcription factor ChIP-seq
+#' data", Bioinformatics, 27(12):1653-1659, 2011.
+#' [full text](https://academic.oup.com/bioinformatics/article/27/12/1653/257754)
 #'
 #' @importFrom magrittr %>%
 #'
@@ -188,7 +208,44 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #' @param silent whether to suppress stdout (default: TRUE), useful for debugging.
 #' @param ...
 #'
+#' @details Additional AME arguments
+#'
+#' dremeR allows passing any valid flag to it's target programs via `...`. For
+#' additional details for all valid AME arguments, see the [AME
+#' Manual](http://meme-suite.org/doc/ame.html) webpage. For convenience, a table
+#' of valid parameters, and brief descriptions of their function are provided
+#' below:
+#'
+#' | AME Flag                | allowed values | default | description                |
+#' |:-----------------------:|:--------------:|:-------:|:---------------------------|
+#' | kmer                    | `integer`      | 2       | kmer frequency to preserve when shuffling control sequences |
+#' | seed                    | `integer`      | 1       | seed for random number generator when shuffling control sequences |
+#' | scoring                 | "avg", "max", "sum", "totalhits" | "avg" | Method for scoring a sequence for matches to a PWM (avg, max, sum, totalhits) |
+#' | hit_lo_fraction         | `numeric`      | 0.25    | fraction of hit log odds score to exceed to be considered a "hit" |
+#' | evalue_report_threshold | `numeric`      | 10      | E-value threshold for reporting a motif as significantly enriched |
+#' | fasta_threshold         | `numeric`      | 0.001   | AME will classify sequences with FASTA scores below this value as positives. Only valid when `method = "fisher", poslist = "pwm", control = NA, fix_partition = NULL`. |
+#' | fix_partition           | `numeric`      | `NULL`  |AME evaluates only the partition of the first N sequences. Only works when `control = NA` and `poslist = "fasta"` |
+#' | poslist                 | "pwm", "fasta" | "fasta" | When using paritioning mode (`control = NA`), test thresholds on either PWM or Fasta score |
+#' | log_fscores             | `logical`      | FALSE   | Convert FASTA scores into log-space (only used when `method = "pearson"`) |
+#' | log_pwmscores           | `logical`      | FALSE   | Convert PWM scores into log-space (only used for `method = "pearson"` or `method = "spearman`) |
+#' | lingreg_switchxy        | `logical`      | FALSE   | Make the x-points FASTA scores and y-points PWM scores (only used for `method = "pearson"` or `method = "spearman`) |
+#' | xalph                   | file path      | `NULL`  | alphabet file to use if input motifs are in different alphabet than input sequences |
+#' | bfile                   | "motif", "motif-file", "uniform", path to file | `NULL` | source of 0-order background model. If "motif" or "motif-file" 0-order letter frequencies in the first motif file are used. If "uniform" uses uniform letter frequencies. |
+#' | motif_pseudo            | `numeric`      | 0.1     | Addd this pseudocount when converting from frequency matrix to log-odds matrix |
+#' | inc                     | `character`    | `NULL`  | use only motifs with names matching this regex |
+#' | exc                     | `character`    | `NULL`  | exclude motifs with names matching this regex  |
+#'
 #' @return
+#'
+#'
+#' @details Citation
+#'
+#' If you use `runAme()` in your analysis, please cite:
+#'
+#' Robert McLeay and Timothy L. Bailey, "Motif Enrichment Analysis: A unified
+#' framework and method evaluation", BMC Bioinformatics, 11:165, 2010,
+#' doi:10.1186/1471-2105-11-165. [full text](http://www.biomedcentral.com/1471-2105/11/165)
+#'
 #' @export
 #'
 #' @importFrom magrittr %>%

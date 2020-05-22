@@ -64,6 +64,42 @@ webpage for more information.}
 \description{
 Motif enrichment using AME
 }
+\details{
+Additional AME arguments
+
+dremeR allows passing any valid flag to it's target programs via `...`. For
+additional details for all valid AME arguments, see the [AME
+Manual](http://meme-suite.org/doc/ame.html) webpage. For convenience, a table
+of valid parameters, and brief descriptions of their function are provided
+below:
+
+| AME Flag                | allowed values | default | description                |
+|:-----------------------:|:--------------:|:-------:|:---------------------------|
+| kmer                    | `integer`      | 2       | kmer frequency to preserve when shuffling control sequences |
+| seed                    | `integer`      | 1       | seed for random number generator when shuffling control sequences |
+| scoring                 | "avg", "max", "sum", "totalhits" | "avg" | Method for scoring a sequence for matches to a PWM (avg, max, sum, totalhits) |
+| hit_lo_fraction         | `numeric`      | 0.25    | fraction of hit log odds score to exceed to be considered a "hit" |
+| evalue_report_threshold | `numeric`      | 10      | E-value threshold for reporting a motif as significantly enriched |
+| fasta_threshold         | `numeric`      | 0.001   | AME will classify sequences with FASTA scores below this value as positives. Only valid when `method = "fisher", poslist = "pwm", control = NA, fix_partition = NULL`. |
+| fix_partition           | `numeric`      | `NULL`  |AME evaluates only the partition of the first N sequences. Only works when `control = NA` and `poslist = "fasta"` |
+| poslist                 | "pwm", "fasta" | "fasta" | When using paritioning mode (`control = NA`), test thresholds on either PWM or Fasta score |
+| log_fscores             | `logical`      | FALSE   | Convert FASTA scores into log-space (only used when `method = "pearson"`) |
+| log_pwmscores           | `logical`      | FALSE   | Convert PWM scores into log-space (only used for `method = "pearson"` or `method = "spearman`) |
+| lingreg_switchxy        | `logical`      | FALSE   | Make the x-points FASTA scores and y-points PWM scores (only used for `method = "pearson"` or `method = "spearman`) |
+| xalph                   | file path      | `NULL`  | alphabet file to use if input motifs are in different alphabet than input sequences |
+| bfile                   | "motif", "motif-file", "uniform", path to file | `NULL` | source of 0-order background model. If "motif" or "motif-file" 0-order letter frequencies in the first motif file are used. If "uniform" uses uniform letter frequencies. |
+| motif_pseudo            | `numeric`      | 0.1     | Addd this pseudocount when converting from frequency matrix to log-odds matrix |
+| inc                     | `character`    | `NULL`  | use only motifs with names matching this regex |
+| exc                     | `character`    | `NULL`  | exclude motifs with names matching this regex  |
+
+Citation
+
+If you use `runAme()` in your analysis, please cite:
+
+Robert McLeay and Timothy L. Bailey, "Motif Enrichment Analysis: A unified
+framework and method evaluation", BMC Bioinformatics, 11:165, 2010,
+doi:10.1186/1471-2105-11-165. [full text](http://www.biomedcentral.com/1471-2105/11/165)
+}
 \examples{
 \dontrun{
 dreme_out <- runDreme("input.fa")

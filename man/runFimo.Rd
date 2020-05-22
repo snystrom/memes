@@ -71,6 +71,14 @@ GenomicRanges object contining positions of each match. Note: if
 NOTE: runs best using `text = TRUE`, setting genomic coordinates in fasta
 headers, and using `parse_genomic_coord = TRUE`.
 }
+\details{
+Citation
+If you use `runFimo()` in your analysis, please cite:
+
+Charles E. Grant, Timothy L. Bailey, and William Stafford Noble, "FIMO:
+Scanning for occurrences of a given motif", Bioinformatics, 27(7):1017-1018,
+2011. [full text](http://bioinformatics.oxfordjournals.org/content/early/2011/02/16/bioinformatics.btr064.full)
+}
 \examples{
 \dontrun{
 seq <- universalmotif::create_sequences()

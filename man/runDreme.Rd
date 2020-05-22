@@ -99,20 +99,37 @@ Denovo motif discovery of target regions
 In addition to allowing any valid flag of dreme to be passed to \code{...}, we
 provide a few user-friendly aliases for common flags which are more readable (see list below).
 For example, e = 1 will use a max evalue cutoff of 1. This is equivalent to
-setting evalue = 1.
+setting evalue = 1. For additional details about each DREME flag, see the
+\href{http://meme-suite.org/doc/dreme.html}{DREME Manual Webpage}.
 
-List of aliased values which can be passed to \code{...}
-\itemize{
-\item nmotifs = max number of motifs to search for
-\item sec = max runtime in seconds
-\item evalue = max evalue cutoff
-\item seed = random seed if using "shuffle" as control
-\item ngen = number of REs to generalize
+List of aliased values which can be passed to \code{...}\tabular{cclc}{
+   dremeR alias \tab DREME Flag \tab description \tab default \cr
+   nmotifs \tab m \tab max number of motifs to discover \tab NULL \cr
+   sec \tab t \tab max number of seconds to run \tab NULL \cr
+   evalue \tab e \tab max E-value cutoff \tab 0.05 \cr
+   seed \tab s \tab random seed if using "shuffle" as control \tab 1 \cr
+   ngen \tab g \tab nuber of REs to generalize \tab 100 \cr
+   \strong{NOTE:} aliased values must be set using their alias, not the DREME Flag name. \tab  \tab  \tab  \cr
 }
 
-\strong{NOTE:} \code{nmotifs} is an alias for the dreme \code{-m} flag. If you want to set
-\code{-m} you \strong{must} use the \code{nmotifs} alias, not \code{m}. The same is true for
-\code{seed} and \code{s}.
+
+Additional DREME parameters which can be passed to \code{...}\tabular{ccc}{
+   DREME Flag \tab description \tab default \cr
+   mink \tab minimum motif width to search \tab 3 \cr
+   maxk \tab maximum motif width to search \tab 7 \cr
+   k \tab set mink and maxk to this value \tab NULL \cr
+   norc \tab search only the input strand for sequences \tab FALSE \cr
+   dna \tab use DNA alphabet \tab TRUE \cr
+   rna \tab use RNA alphabet \tab FALSE \cr
+   protein \tab use protein alphabet (NOT RECCOMENDED) \tab FALSE \cr
+}
+
+Citation
+If you use \code{runDreme()} in your analysis, please cite:
+
+Timothy L. Bailey, "DREME: Motif discovery in transcription factor ChIP-seq
+data", Bioinformatics, 27(12):1653-1659, 2011.
+\href{https://academic.oup.com/bioinformatics/article/27/12/1653/257754}{full text}
 }
 \examples{
 \dontrun{

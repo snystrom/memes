@@ -42,8 +42,7 @@ Default: `pearson`.}
 environment variable "MEME_DB (set in `.Renviron`), or option
 "meme_db" (set with `option(meme_db = "path/to/meme/bin")`)}
 
-\item{...}{additional flags passed to tomtom using {dotargs} formating (see
-[tomtom commandline reference](http://meme-suite.org/doc/tomtom.html?man_type=web) for details)}
+\item{...}{additional flags passed to tomtom using {dotargs} formating (see table below for details)}
 }
 \value{
 data.frame of match results. Contains `match_motif` column of
@@ -53,6 +52,33 @@ data.frame of match results. Contains `match_motif` column of
 }
 \description{
 Run TomTom on target motifs
+}
+\details{
+Additional arguments
+
+ runTomTom() can accept all valid tomtom arguments passed to `...` as described in the
+ [tomtom commandline reference](http://meme-suite.org/doc/tomtom.html?man_type=web). For
+ convenience, below is a table of valid arguments, their default values, and
+ their description.
+
+| TomTom Flag       | allowed values | default | description                |
+|:-----------------:|:--------------:|:-------:|:---------------------------|
+| bfile             | file path      | `NULL`  | path to background model for converting frequency matrix to log-odds score (not used when `dist` is set to "ed", "kullback", "pearson", or "sandelin" |
+| motif_pseudo      | `numeric`      | 0.1     | pseudocount to add to motifs |
+| xalph             | `logical`      | FALSE   | convert alphabet of target database to alphabet of query database |
+| norc              | `logical`      | FALSE   | Do not score reverse complements of motifs |
+| incomplete_scores | `logical`      | FALSE   | Compute scores using only aligned columns |
+| thresh            | `numeric`      | 0.5     | only report matches with significance values <= this value. Unless `evalue = TRUE`, this value must be < 1. |
+| internal          | `logical`      | FALSE   | forces the shorter motif to be completely contained in the longer motif |
+| min_overlap       | `integer`      | 1       | only report matches that overlap by this number of positions or more. If query motif is smaller than this value, its width is used as the min overlap for that query |
+| time              | `integer`      | `NULL`  | Maximum runtime in CPU seconds (default: no limit) |
+
+Citation
+If you use `runTomTom()` in your analysis, please cite:
+
+Shobhit Gupta, JA Stamatoyannopolous, Timothy Bailey and William Stafford
+Noble, "Quantifying similarity between motifs", Genome Biology, 8(2):R24,
+2007. [full text](http://genomebiology.com/2007/8/2/R24)
 }
 \examples{
 \dontrun{
