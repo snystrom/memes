@@ -34,6 +34,11 @@ handle_meme_path <- function(path = NULL, util = NULL){
 handle_meme_database_path <- function(path = NULL){
   # database can be path, or universalmotif list, (or vector: c(motifList, path))
   # names will be used as file names for non file-path entries
+
+  if (path == ""){
+    stop("path cannot be an empty string")
+  }
+
   if (any(is.data.frame(path))) {
     stop("data.frame is not a supported input type, if this is a dreme results object, try passing it inside a list like: database = list(results)")
   }
