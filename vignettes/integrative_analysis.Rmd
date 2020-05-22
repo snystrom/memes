@@ -1,5 +1,5 @@
 ---
-title: "Integrative Analysis"
+title: "ChIP-seq Analysis"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Integrative Analysis}
@@ -23,25 +23,20 @@ suppressPackageStartupMessages(library(GenomicRanges))
 ```{r}
 check_meme_install()
 ```
+
+## Experimental Design
+
 ### Prepare peaks for analysis
 ```{r, message=F}
-peaks <- system.file("extdata/peaks/e93_chr3.csv", package = "dremeR") %>% 
-  readr::read_csv() %>% 
-  GRanges
+data("example_chip_summits", package = "dremeR")
 ```
 
 ```{r}
 # These data use the dm3 reference genome
 dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
 
-# compute summits using the summit_position column
-summits <- peaks %>% 
-  plyranges::anchor_start() %>% 
-  plyranges::mutate(width = 1) %>% 
-  plyranges::shift_right(mcols(.)$summit_position) 
-  
 # Get sequences in a 100bp window around the peak summit
-summit_flank <- summits %>% 
+summit_flank <- example_chip_summits %>% 
   plyranges::anchor_center() %>% 
   plyranges::mutate(width = 100)
 ```
@@ -55,6 +50,10 @@ summit_flank <- summits %>%
 by_binding <- summit_flank %>% 
   split(mcols(.)$peak_binding_description) %>% 
   get_sequence(dm.genome)
+```
+```{r}
+meme_db_path <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "dremeR")
+options(meme_db = meme_db_path)
 ```
 
 ```{r, eval=F}
@@ -369,8 +368,6 @@ dreme_results <- dreme_by_sens_vs_static %>%
   dplyr::bind_rows(.id = "e93_response")
 ```
 ```{r}
-meme_db_path <- system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR")
-options(meme_db = meme_db_path)
 all_res <- dreme_results %>% 
   runTomTom(dist = "ed")
 ```
