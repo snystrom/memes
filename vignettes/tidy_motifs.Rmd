@@ -125,7 +125,7 @@ only use this value if the altname contains an FBgn.
 ```{r}
 flyFactor_data %<>% 
   # Critical to set remove = FALSE to keep the `name` column
-  tidyr::separate(name, c("tfid"), remove = FALSE) %>% 
+  tidyr::separate(name, c("tfid"), remove = FALSE, extra = "drop") %>% 
   # Only use the tfid if the altname contains an FBgn
   dplyr::mutate(altname = ifelse(grepl("^FBgn", altname), tfid, altname))
 ```
@@ -135,6 +135,15 @@ Now, the first two entries are listed as "ab" instead of "FBgn0259750".
 flyFactor_data %>% 
   head(3)
 ```
+
+Next, because the FBgn's are out of date, we will remove them from the "names"
+to shorten up the motif names. This also makes the motif name more comparable to
+the original motif names from the [FlyFactor Survey](https://mccb.umassmed.edu/ffs/).
+```{r}
+flyFactor_data %<>% 
+  mutate(name = gsub("_FBgn\\d+", "", name))
+```
+
 
 Finally, the resulting data.frame can be converted back into a universalmotif list using `as_universalmotif()`.
 ```{r}
@@ -148,5 +157,10 @@ The resulting universalmotif list object now reflects the changes we made to the
 ```{r}
 flyFactorMotifs_final %>% 
   head(1)
+```
+This cleaned-up version of the FlyFactorSurvey data is packaged with dremeR in
+`system.file("extdata/flyFactorSurvey_cleaned.meme", package = "dremeR")`.
+```{r,eval=F,include=T}
+write_meme(flyFactorMotifs_final, "flyFactorSurvey_cleaned.meme")
 ```
 
