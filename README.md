@@ -26,7 +26,10 @@ You can install the development version of dremeR from
 [GitHub](https://github.com/snystrom/dremeR) with:
 
 ``` r
-# install.packages("remotes")
+if (!requireNamespace("remotes", quietly=TRUE))
+  install.packages("remotes")
+# dremeR currently requires the development version of universalmotif:
+remotes::install_github("bjmt/universalmotif")
 remotes::install_github("snystrom/dremeR")
 ```
 
