@@ -18,8 +18,8 @@
 #'   otherwise FIMO will count positions from 1 to length of fasta file.
 #' @param skip_matched_sequence `logical(1)` whether or not to include the DNA
 #'   sequence of the match. Default: `FALSE`. Note: jobs will complete faster if
-#'   set to FALSE. Other utilities can be used to lookup the sequence if
-#'   `parse_genomic_coord` is `TRUE`.
+#'   set to FALSE. `get_sequences()` can be used to lookup the sequence after data import if
+#'   `parse_genomic_coord` is `TRUE`, so setting this flag is not needed except for convenience.
 #' @param max_strand if match is found on both strands, only report strand with
 #'   best match.
 #' @param text `logical(1)` (default: `TRUE`). No output files will be created on the filesystem.
@@ -40,6 +40,21 @@
 #'   match. It is a good idea to use `parse_genomic_coords = TRUE` if using
 #'   `get_sequence()` to create input sequences.
 #' @export
+#'
+#' @details Additional arguments passed to `...`
+#'
+#' | FIMO Flag         | allowed values | default | description                |
+#' |:-----------------:|:--------------:|:-------:|:---------------------------|
+#' | alpha             | `numeric(1)`   | 1       | alpha for calculating position-specific priors. Represents fraction of sites that are binding sites of TF of interest. Used in conjunction with `psp` |
+#' | bfile             | "motif", "motif-file", "uniform", file path, | "motif" | If "motif" or "motif-file", use 0-order letter frequencies from motif. "uniform" sets uniform letter frequencies. |
+#' | max_stored_scores | `integer(1)`   | NULL    | maximum number of scores to be stored for computing q-values. used when `text = FALSE`, see FIMO webpage for details |
+#' | motif_pseudo      | `numeric(1)`   | 0.1     | pseudocount added to motif matrix |
+#' | no_qvalue         | `logical(1)`   | FALSE   | only needed when `text = FALSE`, do not compute q-value for each p-value |
+#' | norc              | `logical(1)`   | FALSE   | Do not score reverse complement strand |
+#' | prior_dist        | file path      | NULL    | file containing binned distribution of priors |
+#' | psp               | file path      | NULL    | file containing position specific priors. Requires `prior_dist` |
+#' | qv_thresh         | `logical(1)`   | FALSE   | use q-values for the output threshold |
+#' | thresh            | `numeric(1)`   | `1e-4`  | output threshold for returning a match, only matches with values less than `thresh` are returned. |
 #'
 #' @details Citation
 #' If you use `runFimo()` in your analysis, please cite:
@@ -138,7 +153,7 @@ prepareFimoFlags <- function(bfile, parse_genomic_coord, skip_matched_sequence, 
     purrr::set_names(~{gsub("_", "-", .x)})
 
   if (!is.null(bfile)){
-    if (!file.exists(bfile)){
+    if (!file.exists(bfile) & bfile %in% c("motif", "uniform")){
       # if bfile isn't a path, user is probably inputting special keywords which
       # get wrapped in '--', but first drop all "-" in bfile input in case user
       # added '--' already.

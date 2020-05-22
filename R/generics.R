@@ -188,8 +188,10 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #'   using `get_sequence`), all sequences in the list will be combined as the
 #'   control set. Set to `NA` for partitioning based on input fasta score (see
 #'   `get_sequence()` for assigning fasta score).
-#' @param outdir default: auto
-#' @param method default: fisher
+#' @param outdir Path to output directory location to save data files. If set to "auto",
+#'   will use location of input files if passing file paths, otherwise will
+#'   write to a temporary directory. default: "auto"
+#' @param method default: fisher (allowed values: fisher, ranksum, pearson , spearman, 3dmhg, 4dmhg)
 #' @param database path to .meme format file, universalmotif list object, dreme
 #'   results data.frame, or list() of multiple of these. If objects are assigned names in the list,
 #'   that name will be used as the database id. It is highly recommended you set
@@ -218,22 +220,22 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #'
 #' | AME Flag                | allowed values | default | description                |
 #' |:-----------------------:|:--------------:|:-------:|:---------------------------|
-#' | kmer                    | `integer`      | 2       | kmer frequency to preserve when shuffling control sequences |
-#' | seed                    | `integer`      | 1       | seed for random number generator when shuffling control sequences |
+#' | kmer                    | `integer(1)`   | 2       | kmer frequency to preserve when shuffling control sequences |
+#' | seed                    | `integer(1)`   | 1       | seed for random number generator when shuffling control sequences |
 #' | scoring                 | "avg", "max", "sum", "totalhits" | "avg" | Method for scoring a sequence for matches to a PWM (avg, max, sum, totalhits) |
-#' | hit_lo_fraction         | `numeric`      | 0.25    | fraction of hit log odds score to exceed to be considered a "hit" |
-#' | evalue_report_threshold | `numeric`      | 10      | E-value threshold for reporting a motif as significantly enriched |
-#' | fasta_threshold         | `numeric`      | 0.001   | AME will classify sequences with FASTA scores below this value as positives. Only valid when `method = "fisher", poslist = "pwm", control = NA, fix_partition = NULL`. |
-#' | fix_partition           | `numeric`      | `NULL`  |AME evaluates only the partition of the first N sequences. Only works when `control = NA` and `poslist = "fasta"` |
+#' | hit_lo_fraction         | `numeric(1)`   | 0.25    | fraction of hit log odds score to exceed to be considered a "hit" |
+#' | evalue_report_threshold | `numeric(1)`   | 10      | E-value threshold for reporting a motif as significantly enriched |
+#' | fasta_threshold         | `numeric(1)`   | 0.001   | AME will classify sequences with FASTA scores below this value as positives. Only valid when `method = "fisher", poslist = "pwm", control = NA, fix_partition = NULL`. |
+#' | fix_partition           | `numeric(1)`   | `NULL`  |AME evaluates only the partition of the first N sequences. Only works when `control = NA` and `poslist = "fasta"` |
 #' | poslist                 | "pwm", "fasta" | "fasta" | When using paritioning mode (`control = NA`), test thresholds on either PWM or Fasta score |
-#' | log_fscores             | `logical`      | FALSE   | Convert FASTA scores into log-space (only used when `method = "pearson"`) |
-#' | log_pwmscores           | `logical`      | FALSE   | Convert PWM scores into log-space (only used for `method = "pearson"` or `method = "spearman`) |
-#' | lingreg_switchxy        | `logical`      | FALSE   | Make the x-points FASTA scores and y-points PWM scores (only used for `method = "pearson"` or `method = "spearman`) |
-#' | xalph                   | file path      | `NULL`  | alphabet file to use if input motifs are in different alphabet than input sequences |
+#' | log_fscores             | `logical(1)`   | FALSE   | Convert FASTA scores into log-space (only used when `method = "pearson"`) |
+#' | log_pwmscores           | `logical(1)`   | FALSE   | Convert PWM scores into log-space (only used for `method = "pearson"` or `method = "spearman`) |
+#' | lingreg_switchxy        | `logical(1)`   | FALSE   | Make the x-points FASTA scores and y-points PWM scores (only used for `method = "pearson"` or `method = "spearman`) |
+#' | xalph                   | file path      | `NULL(1)`  | alphabet file to use if input motifs are in different alphabet than input sequences |
 #' | bfile                   | "motif", "motif-file", "uniform", path to file | `NULL` | source of 0-order background model. If "motif" or "motif-file" 0-order letter frequencies in the first motif file are used. If "uniform" uses uniform letter frequencies. |
-#' | motif_pseudo            | `numeric`      | 0.1     | Addd this pseudocount when converting from frequency matrix to log-odds matrix |
-#' | inc                     | `character`    | `NULL`  | use only motifs with names matching this regex |
-#' | exc                     | `character`    | `NULL`  | exclude motifs with names matching this regex  |
+#' | motif_pseudo            | `numeric(1)`   | 0.1     | Addd this pseudocount when converting from frequency matrix to log-odds matrix |
+#' | inc                     | `character(1)` | `NULL`  | use only motifs with names matching this regex |
+#' | exc                     | `character(1)` | `NULL`  | exclude motifs with names matching this regex  |
 #'
 #' @return
 #'
