@@ -43,24 +43,69 @@ summit_flank <- example_chip_summits %>%
 
 ## Determinants of ectopic and orphan binding
 
-
-
 ### Motif scanning with AME (by binding)
+
+### Pre-filtering database for expressed transcription factors
+```{r}
+meme_db_path <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "dremeR")
+```
+
+```{r}
+library(universalmotif)
+meme_db <- read_meme(meme_db_path) %>% 
+  as_universalmotif_dataframe()
+```
+
+```{r}
+data("example_rnaseq", package = "dremeR")
+```
+
+```{r}
+library(ggplot2)
+
+example_rnaseq %>% 
+  dplyr::group_by(symbol) %>% 
+  dplyr::filter(fpkm == max(fpkm)) %>% 
+  ggplot(aes(fpkm)) +
+    geom_histogram(binwidth = 1) +
+    coord_cartesian(xlim = c(0, 25))
+    
+```
+
+```{r}
+expressed_genes <- example_rnaseq %>% 
+  dplyr::group_by(symbol) %>% 
+  dplyr::filter(max(fpkm) >= 5)
+```
+
+```{r}
+meme_db_expressed <- meme_db %>% 
+  dplyr::filter(altname %in% expressed_genes$symbol)
+```
+
+We've decreased our multiple-testing penalty by about 50%.
+```{r}
+nrow(meme_db)
+nrow(meme_db_expressed)
+```
+### Examination of binding categories with AME
 ```{r}
 by_binding <- summit_flank %>% 
   split(mcols(.)$peak_binding_description) %>% 
   get_sequence(dm.genome)
 ```
+
 ```{r}
-meme_db_path <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "dremeR")
-options(meme_db = meme_db_path)
+#options(meme_db = meme_db_path)
+options(meme_db = as_universalmotif(meme_db_expressed))
 ```
 
 ```{r, eval=F}
 ame_by_binding <- by_binding %>% 
   runAme
 ```
-```{r, echo=F}
+```{r, echo=F, eval=T}
+stop("NEED TO FIX THIS DATASET")
 # Allows vignette to build on systems w/o functioning MEME suite
 data("example_ame_large", package = "dremeR")
 ame_by_binding <- example_ame_large
@@ -75,7 +120,6 @@ further modify the plot.
 By default, it uses the -log10(adjusted p-value) as the heat values. See the
 documentation for additional notes on customization.
 ```{r, fig.height=3.5, fig.width=7}
-library(ggplot2)
 
 ame_by_binding$entopic %>% 
   dplyr::filter(rank %in% 1:10) %>% 
@@ -99,9 +143,6 @@ ame_res <- ame_by_binding %>%
 It is possible to aggregate results from multiple runs into a heatmap by setting
 the `group` parameter in `ame_plot_heatmap()`.
 
-This is too many hits to view in this vignette, but you can see that the heatmap
-will plot motifs by their overlap across groups, where unique motifs are on the
-left, and shared motifs are on the right.
 ```{r, fig.height=5,fig.width=15}
 ame_res %>% 
   ame_plot_heatmap(group = binding_type)
@@ -112,129 +153,62 @@ There is another key consideration for the above visualization and that is that
 in the FlyFactorSurvey database we used, different TFs can have multiple motif
 entries in the database which are all detected separately by AME. Here, when
 returning the top 5 hits from each group, you can see, for example, that a motif
-matching "Aef1" is reported 3 times within the top 5 hits of the ectopic sites
-(A similar result can also be seen in the top 10 entopic hits heatmap above).
+matching "Aef1" is reported 2 times within the top 5 hits of the entopic sites
+(A similar result can also be seen for motifs matching "klu").
 In this situation, it makes sense to summarize the data at the TF level, instead
 of the motif level. **Note:** There may be exceptions to this if for example, a
 TF has multiple DNA binding sequences it can recognize, in which case having
 multiple hits may reflect a biological property of your sequences. You will have
 to handle this on a case-by-case basis for interesting hits and different motif
-databases. Here, we can see that at least for Aef1, the consensus sequences are
-very similar.
+databases. Here, we can see that at least for Aef1 and klu, the consensus
+sequences are very similar.
 ```{r}
 ame_res %>% 
-  dplyr::group_by(binding_type) %>% 
-  dplyr::filter(rank %in% 1:5) %>% 
+  dplyr::filter(binding_type == "entopic", rank %in% 1:5) %>% 
   head(5) %>% 
   dplyr::select(binding_type, rank, motif_id, motif_alt_id, consensus)
 ```
 
 How to solve this problem will vary with different motif databases (For details
 on how to pre-process a motif database, see `vignette("tidy_motifs")`). In the
-FlyFactorSurvey database, the `motif_alt_id` column contains a unique FBgn
-number for each TF. For entries of the same TF, the FBgn number is prepended
-with an `_<number>`. We can extract the FBgn number to use as a gene-level
-identifier, and reduce the matches to return 1 match per gene as follows:
-```{r, fig.height=3, fig.width=25}
+tidy version of the FlyFactorSurvey database, the `altname`s of the motifs are
+set to the transcription factor gene symbol. This information is included in the
+AME results as the `motif_alt_id` column.
+
+```{r, fig.height=3, fig.width=9.5}
 ame_res %>% 
-  # the flyfactor genes have their Flybase gene numbers appended with a _<number> 
-  # this is to make the entries unique, but the gene ID is encoded before the _
-  # so I remove the _<number> with a regex, leaving the FBgn number.
-  dplyr::mutate(gene_id = gsub("_\\d+", "", motif_alt_id)) %>% 
-  dplyr::ungroup() %>% 
-  # Reduce redundant TF hits by returning only the match with the lowest p-value
-  # for each TF. It is important to group by binding_type because the analyses
-  # were run separately, so these are different results (we want to return the
-  # lowest p-value for each group a motif was found within).
-  dplyr::group_by(binding_type, gene_id) %>% 
+  dplyr::group_by(binding_type, motif_alt_id) %>% 
   dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
-  # add new id column to simplify motif name to TF name
-  dplyr::mutate(tfid = strsplit(motif_id, "_")[[1]][1]) %>% 
-  ame_plot_heatmap(group = binding_type, id = tfid)
+  ame_plot_heatmap(group = binding_type, id = motif_alt_id) +
+    labs(y = "Binding Category",
+         x = "Transcription Factor Motif")
 ```
 
 
-## Issues with AME Heatmap Visualization
-Finally, because the data for each binding type are generated from different AME
-runs, it is not the best idea to compare p-values across experiments (ie between
-heatmap rows), because the dynamic range of p-values will vary between groups. Here you
-can see that, for example, the orphan sites will have a very different scale of
--log10(adjusted pvalues) than ectopic and entopic sites. In other words, because
-the dynamic range of values are different between experiments, placing them on
-the same scale for comparison may be misleading in certain contexts.
-
-```{r}
-logpval_dist <- ame_res %>% 
-  ggplot(aes(-log10(adj.pvalue))) +
-    stat_ecdf(aes(color = binding_type), size = 1, pad = FALSE) +
-    labs(y = "Fraction of Motifs") +
-    theme_bw() +
-    theme(legend.position = "none") +
-    labs(title = "value = -log10(adj.pvalue)")
-    
-```
-
-We can partially overcome this limitation by filling the heatmap with the
-normalized rank value for each TF, which accounts for differences in total number of
-discovered motifs between AME runs. Although it does not completely abrograte
-differeces, the signal values for high-ranked motifs within groups will be more
-comparable. However, **the normalized rank visualization eliminates all real values related to statistical significance!** 
-Instead, this visualization represents the relative ranks of hits within an AME
-run, which already pass a significance threshold set during `runAME()`. This
-means that even if several motifs have similar or even identical pvalues, their
-heatmap representation will be a different color value based on their ranked
-order in the results list. Both visualizations can be useful and reveal different
-properties of the data to the user. **If in doubt**, prefer the
-`-log10(adj.pvalue)` representation.
-```{r}
-# rank_normalize transforms the ranks to values between 0 and 1 as follows:
-# (1 - rank)/(1 - max(rank))
-normrank_dist <- ame_res %>% 
-  ggplot(aes(dremeR:::rank_normalize(rank))) +
-    stat_ecdf(aes(color = binding_type), size = 1, pad = FALSE) +
-    scale_x_continuous(
-                       breaks = c(0, 0.25, 0.5, 0.75, 1),
-                       labels = c("0\n(High)", 0.25, 0.5, 0.75, "1\n(Low)"),
-                       ) +
-    labs(title = "value = \"normalize\"",
-         y = NULL,
-         x = "Normalized Rank",
-         color = "Binding Type")  +
-    theme_bw() 
-```
+### AME Heatmap Visualization
+If you have read `vignette("core_ame")`, the "normalized rank" heatmap was
+introduced as an alternative visualization method useful when AME produces very
+large numbers of hits. In contrast to the `vignette("core_ame")` example, the
+`-log10(adj.pvalue)` visualization in this context will be more informative. The
+`ame_compare_heatmap_methods()` function can be used to visualize why.
 
 Below is a comparison of the distribution of values when using
-`-log10(adj.pvalue)` (A) vs normalized ranks (B). Because orphan sites tend to
-have smaller p-values overall, the heatmap scale will be skewed towards the high
-values in the orphan data, making ectopic and entopic heat values lighter by
-comparison.
+`-log10(adj.pvalue)` (A) vs normalized ranks (B). Because there are relatively
+few hits in the results (~30), and the number of hits between groups varies more
+than the `-log10(p-value)` distributions, the "normalize" method will produce a misleading
+heatmap relative to the `-log10(p-value)` map.
+
 ```{r, fig.height=3, fig.width=7.5}
-cowplot::plot_grid(logpval_dist,
-                   normrank_dist,
-                   rel_widths = c(1,1.25),
-                   labels = "AUTO")
-```
-
-We achieve this by setting `value = "normalize"` in `ame_plot_heatmap()`. If
-plotting with multiple groups, it may be more appropriate to make this
-visualization.
-
-This plot reveals that the motifs which tend to be shared across all 3
-categories tend to be higher ranks in the output than the motifs unique to the
-different categories, which tend to come from lower ranks. This *suggests* that
-although there are differences in motif content across the three categories,
-they may be largely similar in motif makeup. We will investigate this question
-in more detail in the "Denovo motif similarity" section.
-```{r, fig.height=3, fig.width=25}
 ame_res %>% 
-  dplyr::mutate(gene_id = gsub("_\\d+", "", motif_alt_id)) %>% 
-  dplyr::ungroup() %>% 
-  dplyr::group_by(binding_type, gene_id) %>% 
-  dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
-  dplyr::mutate(tfid = strsplit(motif_id, "_")[[1]][1]) %>% 
-  ame_plot_heatmap(group = binding_type, id = tfid, value = "normalize")
+  ame_compare_heatmap_methods(group = binding_type)
 ```
 
+```{r, fig.height=3, fig.width=9.5}
+ame_res %>% 
+  dplyr::group_by(binding_type, motif_alt_id) %>% 
+  dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
+  ame_plot_heatmap(group = binding_type, id = motif_alt_id, value = "normalize")
+```
 
 ## Denovo motif similarity by binding
 ```{r dreme_by_binding, eval=F}
@@ -300,8 +274,16 @@ similar in sequence content.
 ame_denovo_by_binding %>% 
   ame_plot_heatmap(group = binding_type)
 ```
+```{r, fig.height=3, fig.width=7.5}
+ame_denovo_by_binding %>% 
+  ame_compare_heatmap_methods(group = binding_type)
+```
+```{r, fig.height=4, fig.width=10}
+ame_denovo_by_binding %>% 
+  ame_plot_heatmap(group = binding_type, value = "normalize")
+```
 
-However, there are 3 interesting motifs which distinguish orphan and ectopic
+However, there are 4 interesting motifs which distinguish orphan and ectopic
 sites from entopic sites. To help identify which TFs these motifs might belong
 to, we can use TomTom to match them to known motifs.
 
@@ -323,13 +305,38 @@ dreme_by_binding_unique <- dreme_by_binding_renamed %>%
 ```
 
 Finally, we visualize the TomTom results to identify candidate TFs driving the presence of ectopic and orphan sites.
-```{r, fig.height=4, fig.width=10}
+```{r, fig.height=4, fig.width=12}
 dreme_by_binding_unique %>% 
   view_tomtom_hits(3) %>% 
   cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
 ```
 
+```{r}
+dreme_by_binding_unique %<>% 
+  force_best_match(c("entopic_CCCAAAM" = "Eip93F_SANGER_10",
+                     "entopic_CCSTCTCC" = "ttk-PF_SANGER_5")) 
+```
 
+
+```{r}
+dreme_by_binding_unique %>% 
+tidyr::separate(name, c("binding_type"), remove = FALSE, extra = "drop") %>% 
+  ggplot(aes(best_match_altname, pos_frac/neg_frac)) +
+    geom_col(aes(fill = binding_type)) +
+    theme_bw() +
+    scale_y_continuous(expand = expand_scale(mult = c(0, 0.1))) +
+    theme(axis.text = element_text(size = 12, color = "black"))
+```
+
+```{r, fig.height=2, fig.width=7.5}
+expressed_genes %>% 
+  dplyr::filter(symbol %in% dreme_by_binding_unique$best_match_altname) %>% 
+  ggplot(aes(time, fpkm)) +
+    geom_point() +
+    geom_line(aes(group = symbol)) +
+    facet_wrap(~symbol, nrow = 1, scales = "free_y") +
+    theme_bw()
+```
 
 
 
