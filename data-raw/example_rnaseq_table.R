@@ -19,6 +19,8 @@ ff_df <- flyFactorMotifs %>%
   as_universalmotif_dataframe()
 
 tf_rnaseq <- full_rnaseq %>%
+  dplyr::mutate(symbol = case_when(symbol == "Bap" ~ "bap",
+                                   T ~ symbol)) %>%
   dplyr::filter(symbol %in% ff_df$altname)
 
 set.seed(123)
@@ -29,4 +31,4 @@ no_tf_rnaseq <- full_rnaseq %>%
 example_rnaseq <- tf_rnaseq %>%
   dplyr::bind_rows(no_tf_rnaseq)
 
-usethis::use_data(example_rnaseq)
+usethis::use_data(example_rnaseq, overwrite = T)
