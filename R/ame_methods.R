@@ -89,9 +89,13 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
 #' significance threshold set during `runAME()`. This means that even if several
 #' motifs have similar or even identical pvalues, their heatmap representation
 #' will be a different color value based on their ranked order in the results
-#' list. Both visualizations can be useful and reveal different properties of
-#' the data to the user. **If in doubt**, prefer the
-#' `-log10(adj.pvalue)` representation.
+#' list. This also means that using the normalized rank visualization will
+#' be misleading if there are only a few AME hits; it is only worth using if the
+#' number of hits is very large (>100). Both visualizations can be useful and reveal
+#' different properties of the data to the user.  Use `ame_compare_heatmap_methods()` to
+#' help assess differences in the two visualizations. **If in doubt**, prefer
+#' the `-log10(adj.pvalue)` representation.
+#'
 #'
 #' @param group_name when group = NULL, name to use for input regions. Ignored if group is set.
 #'
@@ -170,5 +174,53 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
   }
 
   return(plot)
+
+}
+
+#' Compare AME heatmap methods
+#'
+#' This helper function allows the user to visualize the distribution of their AME results data on different scales
+#' to help understand the implications of using different values in `ame_plot_heatmap()`
+#'
+#' @param ame ame results object
+#' @param group optional name of group to split results by
+#' @param value value to compare to "normalize" method (default: -log10(adj.pvalue))
+#'
+#' @return a cowplot 2 panel plot comparing the distribution of `value` to normalized rank values
+#' @export
+#'
+#' @importFrom rlang enquo
+#' @importFrom ggplot2 ggplot stat_ecdf scale_x_continuous labs theme_bw aes theme
+#'
+#' @examples
+ame_compare_heatmap_methods <- function(ame, group, value = -log10(adj.pvalue)){
+
+  group <- enquo(group)
+  value <- enquo(value)
+
+  value_dist <- ame %>%
+    ggplot(aes(-log10(adj.pvalue))) +
+      stat_ecdf(aes(color = !!group), size = 1, pad = FALSE) +
+      labs(y = "Fraction of Motifs") +
+      theme_bw() +
+      theme(legend.position = "none") +
+      labs(title = paste0("value = ", rlang::as_label(value)))
+
+  normrank_dist <- ame %>%
+    ggplot(aes(rank_normalize(rank))) +
+      stat_ecdf(aes(color = !!group), size = 1, pad = FALSE) +
+      scale_x_continuous(
+                         breaks = c(0, 0.25, 0.5, 0.75, 1),
+                         labels = c("0\n(High)", 0.25, 0.5, 0.75, "1\n(Low)"),
+                         ) +
+      labs(title = "value = \"normalize\"",
+           y = NULL,
+           x = "Normalized Rank")  +
+      theme_bw()
+
+  cowplot::plot_grid(value_dist,
+                     normrank_dist,
+                     rel_widths = c(1,1.25),
+                     labels = "AUTO")
 
 }
