@@ -35,8 +35,10 @@ handle_meme_database_path <- function(path = NULL){
   # database can be path, or universalmotif list, (or vector: c(motifList, path))
   # names will be used as file names for non file-path entries
 
-  if (path == ""){
-    stop("path cannot be an empty string")
+  if (!is.null(path)){
+    if (path == ""){
+      stop("path cannot be an empty string")
+    }
   }
 
   if (any(is.data.frame(path))) {
@@ -67,6 +69,17 @@ handle_meme_database_path <- function(path = NULL){
       purrr::map_chr("path") %>%
       purrr::set_names(NULL)
     return(paths)
+  }
+
+
+  # Allows setting option to a universalmotif object
+  # and return path
+  if (is.null(path) & !is.null(getOption("meme_db"))) {
+    if (!is.character(getOption("meme_db"))){
+      db <- getOption("meme_db")
+      x <- motif_input(db)
+      return(x$path)
+    }
   }
 
   # Otherwise search envrionment variable / option definition
