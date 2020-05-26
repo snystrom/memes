@@ -121,10 +121,10 @@ By default, it uses the -log10(adjusted p-value) as the heat values. See the
 documentation for additional notes on customization.
 ```{r, fig.height=3.5, fig.width=7}
 
-ame_by_binding$entopic %>% 
+ame_by_binding$ectopic %>% 
   dplyr::filter(rank %in% 1:10) %>% 
-  ame_plot_heatmap(group_name = "Entopic Sites")  +
-    ggtitle("Top 10 AME Hits in Entopic Sites")
+  ame_plot_heatmap(group_name = "Ectopic Sites")  +
+    ggtitle("Top 10 AME Hits in Ectopic Sites")
 ```
 
 To plot results from multiple runs together, they must first be joined into 1
@@ -153,7 +153,7 @@ There is another key consideration for the above visualization and that is that
 in the FlyFactorSurvey database we used, different TFs can have multiple motif
 entries in the database which are all detected separately by AME. Here, when
 returning the top 5 hits from each group, you can see, for example, that a motif
-matching "Aef1" is reported 2 times within the top 5 hits of the entopic sites
+matching "Aef1" is reported 2 times within the top 5 hits of the ectopic sites
 (A similar result can also be seen for motifs matching "klu").
 In this situation, it makes sense to summarize the data at the TF level, instead
 of the motif level. **Note:** There may be exceptions to this if for example, a
@@ -164,7 +164,7 @@ databases. Here, we can see that at least for Aef1 and klu, the consensus
 sequences are very similar.
 ```{r}
 ame_res %>% 
-  dplyr::filter(binding_type == "entopic", rank %in% 1:5) %>% 
+  dplyr::filter(binding_type == "ectopic", rank %in% 1:5) %>% 
   head(5) %>% 
   dplyr::select(binding_type, rank, motif_id, motif_alt_id, consensus)
 ```
@@ -175,7 +175,7 @@ tidy version of the FlyFactorSurvey database, the `altname`s of the motifs are
 set to the transcription factor gene symbol. This information is included in the
 AME results as the `motif_alt_id` column.
 
-```{r, fig.height=3, fig.width=9.5}
+```{r, fig.height=3, fig.width=12}
 ame_res %>% 
   dplyr::group_by(binding_type, motif_alt_id) %>% 
   dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
@@ -311,12 +311,6 @@ dreme_by_binding_unique %>%
   cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
 ```
 
-```{r}
-dreme_by_binding_unique %<>% 
-  force_best_match(c("entopic_CCCAAAM" = "Eip93F_SANGER_10",
-                     "entopic_CCSTCTCC" = "ttk-PF_SANGER_5")) 
-```
-
 
 ```{r}
 dreme_by_binding_unique %>% 
@@ -337,21 +331,6 @@ expressed_genes %>%
     facet_wrap(~symbol, nrow = 1, scales = "free_y") +
     theme_bw()
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ## Motifs in opening vs closing sites
@@ -385,6 +364,7 @@ all_res %>%
   cowplot::plot_grid(plotlist = ., labels = "AUTO")
 ```
 ```{r}
+# use force_best_match to use update the best match info
 all_res %<>% 
   force_best_match(c("m01_CSAAAAM" = "Eip93F_SANGER_10",
                      "m03_AKGG" = "pho_SANGER_10"))
@@ -421,7 +401,7 @@ Because we discover a *de-novo* motif from DREME that matches to E93, it can be 
 
 Although we could also import the motifs from our local .meme database file, it is also possible to use motifs pulled from a [`MotifDb`](https://bioconductor.org/packages/release/bioc/html/MotifDb.html) query as follows. 
 ```{r}
-e93_motif <- MotifDb::MotifDb %>% 
+e93_flyfactor <- MotifDb::MotifDb %>% 
   # Query the database for the E93 motif using it's gene name
   MotifDb::query("Eip93F") %>% 
   # Convert from motifdb format to universalmotif format
@@ -430,9 +410,9 @@ e93_motif <- MotifDb::MotifDb %>%
   .[[1]]
 
 # Rename the motif from it's flybase gene number to a more user-friendly name
-e93_motif["name"] <- "E93"
+e93_flyfactor["name"] <- "E93_FlyFactor"
 
-e93_motif
+e93_flyfactor
 ```
 
 Just like `runDreme()` and `runAme()`, `runFimo()` takes a
@@ -442,7 +422,7 @@ into genomic coordinates by Fimo.
 ```{r}
 fimo_res <- summit_flank %>% 
   get_sequence(dm.genome) %>% 
-  runFimo(motifs = e93_motif, thresh = 1e-3)
+  runFimo(motifs = e93_flyfactor, thresh = 1e-3)
 ```
 
 The results of `runFimo()` are returned as a `GRanges` object containing the
@@ -509,37 +489,64 @@ summit_flank %>%
 Finally, we want to assess whether the quality of E93 motifs is different between sensitivity categories. To examine this, we need to determine which motifs are found in which peaks. We use the `plyranges::join_overlap_intersect` to return motif entries appended with peak-level metadata, like the peak id each motif is found within.
 ```{r}
 # return position of each motif match w/ peak metadata
-intersect <- summit_flank %>% 
-  plyranges::join_overlap_intersect(fimo_res)
+intersect <- fimo_res %>% 
+  plyranges::join_overlap_intersect(summit_flank)
 ```
 
 We use the FIMO `score` as a proxy for quality, where higher scores are better
 matches to the motif. Here we examine only the best match (highest score) motif
 within each peak. 
+```{r}
+best_motifs <- intersect %>% 
+  plyranges::group_by(id) %>% 
+  # Keep only motifs w/ the highest score within a peak
+  plyranges::filter(score == max(score)) %>% 
+  plyranges::ungroup()
+```
 
 ```{r, fig.height=4, fig.width=3}
-intersect %>% 
+best_motifs %>% 
   data.frame %>% 
-  dplyr::group_by(id) %>% 
-  # Keep only motifs w/ the highest score within a peak
-  dplyr::filter(score == max(score)) %>% 
   ggplot(aes(e93_sensitive_behavior, score)) +
     geom_boxplot(aes(fill = e93_sensitive_behavior), notch = T, width = 0.5) +
     guides(fill = "none") +
     labs(x = "Response to E93",
          y = "FIMO Score") +
     theme_bw()
-  
 ```
 
 The [Anderson-Darling test](https://en.wikipedia.org/wiki/Anderson%E2%80%93Darling_test) can be used to test differences in the distribution of FIMO scores across multiple groups. For a pairwise comparison, a [Kolmogorov-Smirnov test](https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test) is commonly used instead.
 ```{r}
-intersect %>% 
+best_motifs %>% 
   data.frame %>% 
-  dplyr::group_by(id) %>% 
-  dplyr::filter(score == max(score)) %>% 
   dplyr::mutate(behavior = factor(e93_sensitive_behavior)) %>% 
   PMCMRplus::adAllPairsTest(score ~ behavior, ., p.adjust.method = "fdr")
+```
+
+We can visualize the differences in E93 motif quality between groups by
+reconstructing PCM's from the matched motif sequences. Here, it is clear that
+although each category contains an E93 motif match, the sequence content of
+those motifs differs between categories, providing a nice visual representation
+of the statistical analysis above.
+```{r, fig.height=6, fig.width=5}
+best_motifs %>% 
+  # Get sequences of each matched motif
+  add_sequence(dm.genome)
+  # Split by E93 response category
+  split(mcols(.)$e93_sensitive_behavior) %>% 
+  # Convert from GRangesList to list() to use `purrr::imap`
+  as.list() %>% 
+  # imap passes the list entry as .x and the name of that object to .y
+  purrr::imap(~{
+    # run create_motif() on each set of sequences
+    create_motif(.x$sequence, 
+                 # Append the response category to the motif name
+                 name = paste0("E93_", .y))
+    }) %>% 
+  # Prepend E93 Fly Factor motif to beginning of motif list
+  c(list("E93_FlyFactor" = e93_flyfactor), .) %>% 
+  # Plot each motif
+  view_motifs()
 ```
 
 
@@ -553,7 +560,6 @@ summit_nearest_e93_motif <- summit_flank %>%
   plyranges::anchor_center() %>% 
   plyranges::mutate(width = 1) %>% 
   plyranges::join_nearest(fimo_res, distance = TRUE)
-
 ```
 
 ```{r}
@@ -566,7 +572,6 @@ summit_nearest_e93_motif %>%
          y = "Fraction of Sites",
          color = "E93 Response") +
     theme_linedraw() 
-  
 ```
 ```{r}
 summit_nearest_e93_motif %>% 
@@ -577,37 +582,3 @@ summit_nearest_e93_motif %>%
   PMCMRplus::adAllPairsTest(distance ~ behavior, ., p.adjust.method = "fdr") 
 
 ```
-
-```{r,include=F}
-summit_nearest_e93_motif %>% 
-  data.frame %>% 
-  dplyr::filter(has_motif == TRUE) %>% 
-  dplyr::mutate(behavior = factor(e93_sensitive_behavior)) %>% 
-  # Anderson-darling test for multiple distributions
-  PMCMRplus::adAllPairsTest(distance ~ behavior, ., p.adjust.method = "fdr") -> x
-
-# Idea: show p-val signif stars on figure legend for ecdf plot?
-
-# Below is spec code for parsing PMCMRplus output for adding to ggplot annotation
-# use levels(x$model$g) to assign levels to c1 & c2 below
-
-# for ECDF plot: consider taking plot as input, then use cowplot to grab legend, etc.
-# for boxplot: grab max values from x$model$x and adjust lines from there, return annotation df
-#  user will have to configure y positions
-x$p.value %>% 
-  data.frame %>% 
-  tibble::rownames_to_column('v') %>% 
-  split(.$v) %>% 
-  purrr::imap(~{
-    .x %>% 
-      dplyr::select(-v) %>% 
-      dplyr::rename_all(function(x){paste0(x, "_", .y)})
-  }) %>% 
-  dplyr::bind_cols() %>% 
-  tidyr::pivot_longer(dplyr::everything(), names_to = "vs", values_to = "pval") %>% 
-  tidyr::separate(vs, c("c1", "c2")) %>% 
-  dplyr::filter(!is.na(pval)) %>% 
-  dplyr::mutate(c1 = factor(c1, levels = levels(x$model$g)),
-                c2 = factor(c2, levels = levels(x$model$g)))
-```
-
