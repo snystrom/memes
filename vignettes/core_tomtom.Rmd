@@ -34,10 +34,14 @@ library(magrittr)
 
 ### Setting a default database 
 
-dremeR can be configured to use a default .meme format file as the query database, which it will use if the user does not provide a value to `database` when calling `runTomTom()`. The following locations will be searched in order.
+dremeR can be configured to use a default .meme format file as the query
+database, which it will use if the user does not provide a value to `database`
+when calling `runTomTom()`. The following locations will be searched in order:
 
 1. The `meme_db` option, defined using `options(meme_db = "path/to/database.meme")`
+ - The `meme_db` option can also be set to an R object, like a universalmotif list.
 2. The `MEME_DB` environment variable defined in `.Renviron`
+ - The `MEME_DB` variable will only accept a path to a .meme file
 
 **NOTE:** if an invalid location is found at one option, `runTomTom()` will fall
 back to the next location if valid (eg if the `meme_db` option is set to an
@@ -69,7 +73,7 @@ data("dreme_example")
 runTomTom(dreme_example) 
 ```
 
-## output data
+## Output data
 ```{r}
 # This is a pre-build dataset packaged with dremeR 
 # that mirrors running:
@@ -92,13 +96,14 @@ the rank-order list of TomTom hits for the motif listed in `name`.
 names(example_tomtom$tomtom[[1]])
 ```
 
-the `best_match_motif` column contains the universalmotif representation of the best match motif.
+The `best_match_motif` column contains the universalmotif representation of the best match motif.
 ```{r, fig.height=2, fig.width=5}
 library(universalmotif)
 view_motifs(example_tomtom$best_match_motif)
 ```
 
-The `match_motif` column of `tomtom` contains the universalmotif format motif from the database corresponding to each match in descending order.
+The `match_motif` column of `tomtom` contains the universalmotif format motif
+from the database corresponding to each match in descending order.
 ```{r, fig.height=3, fig.width=5}
 example_tomtom$tomtom[[1]]$match_motif[1:2] %>% 
   view_motifs()
@@ -112,7 +117,9 @@ example_tomtom %>%
   names
 ```
 
-To unnest the `tomtom` data.frame column, use `tidyr::unnest()`. The `drop_best_match()` function can be useful when doing this to clean up the unnested data.frame.
+To unnest the `tomtom` data.frame column, use `tidyr::unnest()`. The
+`drop_best_match()` function can be useful when doing this to clean up the
+unnested data.frame.
 ```{r}
 unnested <- example_tomtom %>% 
   drop_best_match() %>% 
@@ -120,7 +127,9 @@ unnested <- example_tomtom %>%
 names(unnested)
 ```
 
-To re-nest the tomtom results, use `nest_tomtom()` (Note: that `best_match_` columns will be automatically updated based on the rank-order of the `tomtom` data.frame)
+To re-nest the tomtom results, use `nest_tomtom()` (Note: that `best_match_`
+columns will be automatically updated based on the rank-order of the `tomtom`
+data.frame)
 
 ```{r}
 unnested %>% 
@@ -130,7 +139,11 @@ unnested %>%
 
 ### Manipulating the assigned best match
 
-While TomTom can be useful for limiting the search-space for potential true motif matches, often times the default "best match" is not the correct assignment. Users should use their domain-specific knowledge in conjunction with the data returned by TomTom to make this judgement (see below for more details). dremeR provides a few convenience functions for reassigning these values.
+While TomTom can be useful for limiting the search-space for potential true
+motif matches, often times the default "best match" is not the correct
+assignment. Users should use their domain-specific knowledge in conjunction with
+the data returned by TomTom to make this judgement (see below for more details).
+dremeR provides a few convenience functions for reassigning these values.
 
 First, the `update_best_match()` function will update the values of the
 `best_match*` columns to reflect the values stored in the first row of the
