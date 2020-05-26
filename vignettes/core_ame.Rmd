@@ -57,7 +57,9 @@ database, which it will use if the user does not provide a value to `database`
 when calling `runAme()`. The following locations will be searched in order.
 
 1. The `meme_db` option, defined using `options(meme_db = "path/to/database.meme")`
+ - The `meme_db` option can also be set to an R object, like a universalmotif list.
 2. The `MEME_DB` environment variable defined in `.Renviron`
+ - The `MEME_DB` variable will only accept a path to a .meme file
 
 **NOTE:** if an invalid location is found at one option, `runAme()` will fall
 back to the next location if valid (eg if the `meme_db` option is set to an
