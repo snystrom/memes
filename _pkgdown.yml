@@ -50,12 +50,14 @@ reference:
   contents:
   - check_meme_install
   - get_sequence
+  - add_sequence
   - write_fasta
 
 - title: Data Visualization
   contents:
   - view_tomtom_hits
   - ame_plot_heatmap
+  - ame_compare_heatmap_methods
 
 - title: Motif Manipulation
   contents:
