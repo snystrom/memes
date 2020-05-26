@@ -15,10 +15,10 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+suppressPackageStartupMessages(library(GenomicRanges))
+suppressPackageStartupMessages(library(magrittr))
+suppressPackageStartupMessages(library(universalmotif))
 library(dremeR)
-library(magrittr)
-library(universalmotif)
-library(GenomicRanges)
 ```
 
 ## Inputs

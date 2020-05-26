@@ -104,7 +104,7 @@ options(meme_db = as_universalmotif(meme_db_expressed))
 ame_by_binding <- by_binding %>% 
   runAme
 ```
-```{r, echo=F, eval=T}
+```{r, echo=F, eval=F}
 stop("NEED TO FIX THIS DATASET")
 # Allows vignette to build on systems w/o functioning MEME suite
 data("example_ame_large", package = "dremeR")
