@@ -13,7 +13,8 @@ full_rnaseq <- readxl::read_excel(path) %>%
   dplyr::group_by(symbol) %>%
   dplyr::filter(max(fpkm) != 0)
 
-data("flyFactorMotifs", package = "dremeR")
+#data("flyFactorMotifs", package = "dremeR")
+flyFactorMotifs <- read_meme("inst/extdata/flyFactorSurvey_cleaned.meme")
 
 ff_df <- flyFactorMotifs %>%
   as_universalmotif_dataframe()
@@ -31,4 +32,4 @@ no_tf_rnaseq <- full_rnaseq %>%
 example_rnaseq <- tf_rnaseq %>%
   dplyr::bind_rows(no_tf_rnaseq)
 
-usethis::use_data(example_rnaseq, overwrite = T)
+usethis::use_data(example_rnaseq)
