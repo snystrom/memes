@@ -62,6 +62,70 @@ get_sequence.SimpleGRangesList <- function(regions, genome, score_column = NULL,
   get_sequence.GenomicRangesList(regions = regions, genome = genome, score_column = score_column, ...)
 }
 
+#' Add nucleic acid sequence of regions to metadata column
+#'
+#' @param ranges GRanges object
+#' @param genome BSgenome object or any other valid input to `Biostrings::getSeq()` (Do `showMethods(Biostrings::getSeq)` to show valid types)
+#' @param name name of metadata column to hold sequence information (default: "sequence")
+#'
+#' @return `ranges` with new metadata column named "sequence" (or another value
+#'   passed to `name`) holding the DNA or RNA sequence from `genome`
+#' @export
+#'
+#' @examples
+#' data(example_peaks, package = "dremeR")
+#' dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
+#' add_sequence(example_peaks, dm.genome)
+add_sequence <- function(ranges, genome, name = "sequence"){
+  name <- rlang::enquo(name)
+  seq <- ranges %>%
+    get_sequence(genome)
+
+  seq_ranges <- sequence_as_granges(seq, name = !!name)
+
+  ranges %>%
+    plyranges::join_overlap_left(seq_ranges)
+
+
+}
+
+#' Convert Biostring w/ names of genomic coords to GRanges w/ sequence column
+#'
+#' Not meant to be called directly, used to convert output from get_sequence() to GRanges.
+#'
+#' @param seq Biostrings::BStringSet object
+#' @param name name of column to hold sequence information
+#'
+#' @return
+#'
+#' @noRd
+sequence_as_granges <- function(seq, name = "sequence"){
+  UseMethod("sequence_as_granges")
+}
+
+#' Macro for building sequence_as_granges
+#' @noRd
+build_sequence_as_granges <- function(){
+  fun <- function(seq, name = "sequence") {
+    name <- rlang::enquo(name)
+    seq %>%
+      as.data.frame %>%
+      tibble::rownames_to_column("coords") %>%
+      dplyr::rename(!!name := "x") %>%
+      tidyr::separate(coords, c("seqnames", "start", "end")) %>%
+      GenomicRanges::GRanges(.)
+
+  }
+  return(fun)
+}
+
+#' @noRd
+sequence_as_granges.DNAStringSet <- build_sequence_as_granges()
+#' @noRd
+sequence_as_granges.RNAStringSet <- build_sequence_as_granges()
+#' @noRd
+sequence_as_granges.BStringSet <- build_sequence_as_granges()
+
 #' Write fasta file from stringset
 #'
 #' @param seq `Biostrings::XStringSet`

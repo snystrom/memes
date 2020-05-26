@@ -18,8 +18,8 @@
 #'   otherwise FIMO will count positions from 1 to length of fasta file.
 #' @param skip_matched_sequence `logical(1)` whether or not to include the DNA
 #'   sequence of the match. Default: `FALSE`. Note: jobs will complete faster if
-#'   set to FALSE. `get_sequences()` can be used to lookup the sequence after data import if
-#'   `parse_genomic_coord` is `TRUE`, so setting this flag is not needed except for convenience.
+#'   set to FALSE. `add_sequence()` can be used to lookup the sequence after data import if
+#'   `parse_genomic_coord` is `TRUE`, so setting this flag is not strictly needed.
 #' @param max_strand if match is found on both strands, only report strand with
 #'   best match.
 #' @param text `logical(1)` (default: `TRUE`). No output files will be created on the filesystem.

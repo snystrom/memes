@@ -16,6 +16,9 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(dremeR)
+library(magrittr)
+library(universalmotif)
+library(GenomicRanges)
 ```
 
 ## Inputs
@@ -38,11 +41,16 @@ data("example_chip_summits", package = "dremeR")
 
 dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
 
-sequences <- example_chip_summits %>% 
+# Take 100bp windows around ChIP-seq summits
+summit_flank <- example_chip_summits %>% 
   plyranges::anchor_center() %>% 
-  plyranges::mutate(width = 100) %>% 
+  plyranges::mutate(width = 100) 
+
+# Get sequences in peaks as Biostring::BStringSet
+sequences <- summit_flank %>% 
   get_sequence(dm.genome)
 
+# get_sequence includes genomic coordinate as the fasta header name
 names(sequences)[1:2]
 ```
 
@@ -79,23 +87,75 @@ fimo_results <- runFimo(sequences, e93_motif)
 ```
 
 
-## Join operations {#joins}
+## Data integration with join operations {#joins}
+The `plyranges` package provides an extended framework for performing
+range-based operations in R. While several of its utilities are useful for
+range-based analyses, the `join_` functions are particularly useful for
+integrating FIMO results with input peak information. A few common examples are
+briefly highlighted below:
 
-## Identifying matched sequence {#matched-sequence}
+`plyranges::join_overlap_left()` can be used to add peak-level metadata to motif position information:
 ```{r}
-# ACGT is used as alphabet when using create_motif from sequences
-e93_motif["alphabet"] <- "ACGT"
+fimo_results_with_peak_info <- fimo_results %>% 
+  plyranges::join_overlap_left(summit_flank)
 
-motifs_by_binding <- fimo_results %>% 
-  plyranges::join_overlap_left(summit_flank) %>% 
-  split(mcols(.)$peak_binding_description) %>% 
-  get_sequence(dm.genome) %>% 
-  as.list() %>% 
-  purrr::imap(~{create_motif(.x, name = paste0("E93_", .y))}) %>% 
-  c(list("E93_FlyFactor" = e93_motif), .)
+fimo_results_with_peak_info[1:5]
 ```
 
+`plyranges::intersect_()` can be used to simultaneously subset input peaks to
+the ranges overlapping motif hits while appending motif-level metadata to each
+overlap.
+```{r}
+input_intersect_hits <- summit_flank %>% 
+  plyranges::join_overlap_intersect(fimo_results)
 
+input_intersect_hits[1:5]
+```
+
+## Identifying matched sequence {#matched-sequence}
+
+When setting `skip_match_sequence = TRUE`, FIMO does not automatically return
+the matched sequence within each hit. These sequences can be easily recovered in
+R using `add_sequence()` on the FIMO results `GRanges` object.
+```{r}
+fimo_results_with_seq <- fimo_results %>% 
+  plyranges::join_overlap_left(summit_flank) %>% 
+  add_sequence(dm.genome)
+```
+
+Returning the sequence of the matched regions can be used to re-derive PWMs from different match categories as follows (here done for different binding categories):
+```{r}
+motifs_by_binding <- fimo_results_with_seq %>% 
+  # Split on parameter of interest
+  split(mcols(.)$peak_binding_description) %>% 
+  # Convert GRangesList to regular list() to use `purrr`
+  as.list() %>% 
+  # imap passes the list entry as .x and the name of that object to .y
+  purrr::imap(~{
+    # Pass the sequence column to create_motif to generate a PCM
+    create_motif(.x$sequence, 
+                 # Append the binding description to the motif name
+                 name = paste0("E93_", .y))
+    })
+```
+
+Motifs from each category can be visualized with `universalmotif::view_motifs()`
+```{r}
+motifs_by_binding %>% 
+  view_motifs()
+```
+
+To allow better comparison to the reference motif, we can append it to the list as follows:
+```{r}
+motifs_by_binding <- c(
+  # Add the E93 FlyFactor motif to the list as a reference
+  list("E93_FlyFactor" = e93_motif),
+  motifs_by_binding
+)
+```
+
+Visualizing the motifs as ICMs reveals subtle differences in E93 motif sequence
+between each category.
 ```{r}
 motifs_by_binding %>% 
   view_motifs()
@@ -103,14 +163,25 @@ motifs_by_binding %>%
 
 Visualizing the results as a position-probability matrix (PPM) does a better job
 of demonstrating that the primary differences between each category are coming
-primarily from positions 1-4 in the matched sequences.
+from positions 1-4 in the matched sequences.
 ```{r}
 motifs_by_binding %>% 
   view_motifs(use.type = "PPM")
 ```
 
-## Saving data from FIMO Web Server
-![saving FIMO tsv results](save_fimo.png)
+## Importing Data from previous FIMO Runs
+
+`importFimo()` can be used to import an `fimo.tsv` file from a previous run
+on the MEME server or on the commandline. Details for how to save data from the
+FIMO webserver are below.
+
+### Saving data from FIMO Web Server
+
+To download TSV data from the FIMO Server, right-click the FIMO TSV output link
+and "Save Target As" or "Save Link As" (see example image below), and save as
+`<filename>.tsv`. This file can be read using `importFimo()`. 
+
+![](save_fimo.png)
 
 # Citation
 
