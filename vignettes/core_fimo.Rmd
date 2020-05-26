@@ -19,15 +19,95 @@ library(dremeR)
 ```
 
 ## Inputs
- - sequences (list not supported since no reason to split, instead use plyranges joins after fimo to add metadata)
-  - copy info from Chip-seq example
-  - explain about why `get_sequence()` is good to use, becaues of `parse_genomic_coord`
- - motifs: path or universalmotif
- 
-## Note about settings 
-  - I use nondefault fimo settings to make it work better with R interface and run faster.
-  - text = TRUE
-    - if running on huge sequence, may overflow memory. Link to article about running FIMO on whole genome.
+FIMO searches input sequences for occurrances of a motif. `runFimo()` has two
+required inputs: fasta-format sequences, with optional genomic coordinate
+headers, and a set of motifs to detect within the input sequences.
+
+### Sequence Inputs:
+Sequence input to `runFimo()` can be as a path to a .fasta formatted file, or as
+a `Biostrings::XStringSet` object. Unlike other dremeR functions, `runFimo()`
+**does not** accept a `Biostrings::BStringSetList` as input. This is to simplify
+ranged join operations (see [joins](#joins)) on output data.
+
+By default, `runFimo()` will parse genomic coordinates from sequence entries
+from the fasta headers. These are generated automatically if using
+`get_sequences()` to generate sequences for input from a `GRanges` object.
+
+```{r}
+data("example_chip_summits", package = "dremeR")
+
+dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
+
+sequences <- example_chip_summits %>% 
+  plyranges::anchor_center() %>% 
+  plyranges::mutate(width = 100) %>% 
+  get_sequence(dm.genome)
+
+names(sequences)[1:2]
+```
+
+
+### Motif Inputs:
+Motif input to `runFimo()` can be as a path to a .meme formatted file, a
+list of `universalmotif` objects, or a singular `universalmotif` object.
+`runFimo()` will not use any of the default search path behavior for a motif
+database as in `runAme()` or `runTomTom()`.
+
+```{r}
+e93_motif <- MotifDb::MotifDb %>% 
+  # Query the database for the E93 motif using it's gene name
+  MotifDb::query("Eip93F") %>% 
+  # Convert from motifdb format to universalmotif format
+  universalmotif::convert_motifs() %>% 
+  # The result is a list, to simplify the object, return it as a single universalmotif
+  .[[1]]
+
+# Rename the motif from it's flybase gene number to a more user-friendly name
+e93_motif["name"] <- "E93_FlyFactor"
+```
+
+## Note about default settings 
+`runFimo()` is configured to use different default behavior relative to the
+commandline and MEME-Suite Server versions. By default, `runFimo()` runs using
+`text` mode, which greatly increases speed and allows returning all detected
+matches to the input motifs. `runFimo()` also runs using `skip_matched_sequence
+= FALSE` to further increase speed and decrease output data size. Sequence
+information can be recovered using `get_sequences()`. 
+
+```{r}
+fimo_results <- runFimo(sequences, e93_motif)
+```
+
+
+## Join operations {#joins}
+
+## Identifying matched sequence {#matched-sequence}
+```{r}
+# ACGT is used as alphabet when using create_motif from sequences
+e93_motif["alphabet"] <- "ACGT"
+
+motifs_by_binding <- fimo_results %>% 
+  plyranges::join_overlap_left(summit_flank) %>% 
+  split(mcols(.)$peak_binding_description) %>% 
+  get_sequence(dm.genome) %>% 
+  as.list() %>% 
+  purrr::imap(~{create_motif(.x, name = paste0("E93_", .y))}) %>% 
+  c(list("E93_FlyFactor" = e93_motif), .)
+```
+
+
+```{r}
+motifs_by_binding %>% 
+  view_motifs()
+```
+
+Visualizing the results as a position-probability matrix (PPM) does a better job
+of demonstrating that the primary differences between each category are coming
+primarily from positions 1-4 in the matched sequences.
+```{r}
+motifs_by_binding %>% 
+  view_motifs(use.type = "PPM")
+```
 
 ## Saving data from FIMO Web Server
 ![saving FIMO tsv results](save_fimo.png)
