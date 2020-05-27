@@ -119,7 +119,7 @@ seq_by_behavior <- example_chip_summits %>%
   get_sequence(dm.genome)
 ```
 ```{r, eval=F}
-ame_by_behavior <- runAme.list(seq_by_behavior)
+ame_by_behavior <- runAme(seq_by_behavior)
 ```
 
 #### Discriminative analysis using list input
