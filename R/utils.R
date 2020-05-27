@@ -169,3 +169,22 @@ write_fasta <- function(seq, path = tempfile(fileext = ".fa")){
 check_meme_install <- function(meme_path = NULL){
   dotargs::check_install(handle_meme_path, path = meme_path)
 }
+
+#' Returns logical vector indicating valid MEME-Suite install status
+#'
+#' Checks for a valid meme install using same heirarchy as `handle_meme_path()`.
+#' Returns `TRUE` if all supported utilities are found in the meme install
+#' location, `FALSE` if not.
+#'
+#' @param path optional path to "meme/bin/"
+#'
+#' @return `logical(1)` indicating whether meme is installed with all supported utilities
+#' @export
+#'
+#' @seealso handle_meme_path check_meme_install
+#'
+#' @examples
+#' # Will return TRUE if "meme/bin/" is detected
+#' meme_is_installed()
+#' meme_is_installed("bad/path")
+meme_is_installed <- dotargs::build_is_valid_install(handle_meme_path, util = TRUE)

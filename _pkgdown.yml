@@ -49,6 +49,7 @@ reference:
 - title: Utilities
   contents:
   - check_meme_install
+  - meme_is_installed
   - get_sequence
   - add_sequence
   - write_fasta

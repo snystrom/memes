@@ -13,7 +13,7 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     dplyr,
-    dotargs,
+    dotargs (>= 0.0.9001),
     ggplot2,
     magrittr,
     processx,
