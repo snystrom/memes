@@ -11,3 +11,4 @@ runSingularity.sh
 ^data-raw$
 ^doc$
 ^Meta$
+.Renviron
