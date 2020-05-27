@@ -14,7 +14,7 @@ handle_meme_path <- function(path = NULL, util = NULL){
   f <- dotargs::build_path_handler(environment_var = "MEME_BIN",
                                        option_name = "meme_bin",
                                        default_path = "~/meme/bin",
-                                       utils = c("dreme", "ame", "fimo", "tomtom")
+                                       utils = c("dreme", "ame", "fimo", "tomtom", "meme")
                                        )
   f(path, util)
 }

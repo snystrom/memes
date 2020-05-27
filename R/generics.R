@@ -269,3 +269,28 @@ runAme <- function(input,
        sequences = FALSE, silent = TRUE, ...){
   UseMethod("runAme")
 }
+
+#' Identify motifs with MEME
+#'
+#' NOTE: add note about the hsfrac issue
+#'
+#' @param input
+#' @param control (default: NA), must pass `objfun` to `...` if using a control set
+#' @param outdir
+#' @param alph one of c("dna", "rna", "protein") or path to alphabet file (default: "dna")
+#' @param combined_sites
+#' @param silent
+#' @param meme_path
+#' @param ...
+#'
+#' @return
+#'
+#' @details # Citation
+#'
+#' @export
+#'
+#' @examples
+runMeme <- function(input, control = NA, outdir = "auto", alph = "dna",
+                            combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
+  UseMethod("runMeme")
+}

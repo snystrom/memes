@@ -67,14 +67,6 @@
 #' @format a runDreme results data.frame
 "example_dreme_by_binding"
 
-#' runDreme() output for example_chip_summits split by response behavior
-#'
-#' See `vignette("integrative_analysis", package = "dremeR")` for details
-#'
-#' @format a runDreme results data.frame
-#'
-"example_dreme_by_sens_vs_static"
-
 #' Example runTomTom() output
 #'
 #' Result when running `runTomTom(example_dreme$motif)` using FlyFactorSurvey as database
