@@ -30,6 +30,7 @@ motif_input <- function(x, ...) UseMethod("motif_input")
 #' # Using character string as input
 #' genomeFasta <- "path/to/genome.fa"
 #' get_sequence("chr2L:100-200", genomeFasta)
+#' }
 #'
 #' # using BSgenome object for genome
 #' drosophila.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
@@ -38,10 +39,7 @@ motif_input <- function(x, ...) UseMethod("motif_input")
 #' # using GRanges object for regions
 #' regions <- GRanges(seqnames=Rle(c('chrX', 'chr2L', 'chr3R'), c(3, 3, 4)), IRanges(1:10, width=5))
 #' get_sequence(regions, drosophila.genome)
-#'
-#' }
 get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequence")
-
 
 #' Denovo motif discovery of target regions
 #'
