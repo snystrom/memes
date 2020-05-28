@@ -34,8 +34,9 @@
 #' a detailed description of each argument see
 #' the [MEME Help Page](meme-suite.org/doc/meme.html).
 #'
-#' For use with ChIP-seq data, see
-#' [Using MEME with ChIP-Seq Data Tips](https://groups.google.com/forum/#%21topic/meme-suite/rIbjIHbcpAE)
+#' For use with ChIP-seq data, the suggestion is to set: `revcomp = TRUE, minw = 5, maxw = 20`.
+#' See [using MEME with ChIP-Seq Data Tips](https://groups.google.com/forum/#%21topic/meme-suite/rIbjIHbcpAE)
+#' for additional details.
 #'
 #' @details # Citation
 #'

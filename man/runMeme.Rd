@@ -30,7 +30,9 @@ as background requires an alternative objective function. Users must pass a non-
 
 \item{parse_genomic_coord}{`logical(1)` whether to parse genomic coordinates
 from fasta headers. Requires headers are in the form: "chr:start-end", or
-will result in an error. Automatically set to `FALSE` if `alph = "protein"`}
+will result in an error. Automatically set to `FALSE` if `alph =
+"protein"`. This setting only needs to be changed if using a custom-built
+fasta file without genomic coordinates in the header.}
 
 \item{combined_sites}{`logical(1)` whether to return combined sites information (coerces output to list) (default: FALSE)}
 
@@ -39,7 +41,7 @@ will result in an error. Automatically set to `FALSE` if `alph = "protein"`}
 \item{meme_path}{path to "meme/bin/". If unset, will use default search
 behavior:
 1. `meme_path` setting in `options()`
-2. `MEME_PATH` settin in `.Renviron`}
+2. `MEME_PATH` setting in `.Renviron`}
 
 \item{...}{}
 }
@@ -60,8 +62,9 @@ The arguments passed to MEME often have many interactions with eachother, for
 a detailed description of each argument see
 the [MEME Help Page](meme-suite.org/doc/meme.html).
 
-For use with ChIP-seq data, see
-[Using MEME with ChIP-Seq Data Tips](https://groups.google.com/forum/#%21topic/meme-suite/rIbjIHbcpAE)
+For use with ChIP-seq data, the suggestion is to set: `revcomp = TRUE, minw = 5, maxw = 20`.
+See [using MEME with ChIP-Seq Data Tips](https://groups.google.com/forum/#%21topic/meme-suite/rIbjIHbcpAE)
+for additional details.
 
 # Citation
 
