@@ -8,13 +8,18 @@
 #'   as background requires an alternative objective function. Users must pass a non-default value of
 #'   `objfun` to `...` if using a non-NA control set (default: NA)
 #' @param outdir (default: "auto")
-#' @param alph one of c("dna", "rna", "protein") or path to alphabet file (default: "dna")
+#' @param alph one of c("dna", "rna", "protein") or path to alphabet file (default: "dna").
+#' @param parse_genomic_coord `logical(1)` whether to parse genomic coordinates
+#'   from fasta headers. Requires headers are in the form: "chr:start-end", or
+#'   will result in an error. Automatically set to `FALSE` if `alph =
+#'   "protein"`. This setting only needs to be changed if using a custom-built
+#'   fasta file without genomic coordinates in the header.
 #' @param combined_sites `logical(1)` whether to return combined sites information (coerces output to list) (default: FALSE)
 #' @param silent Whether to suppress printing stdout to terminal (default: TRUE)
 #' @param meme_path path to "meme/bin/". If unset, will use default search
 #'   behavior:
 #'   1. `meme_path` setting in `options()`
-#'   2. `MEME_PATH` settin in `.Renviron`
+#'   2. `MEME_PATH` setting in `.Renviron`
 #' @param ...
 #'
 #' @return
@@ -45,14 +50,14 @@
 #' @export
 #'
 #' @examples
-runMeme <- function(input, control = NA, outdir = "auto", alph = "dna",
+runMeme <- function(input, control = NA, outdir = "auto", alph = "dna", parse_genomic_coord = TRUE,
                             combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
   UseMethod("runMeme")
 }
 
 #' @export
 #' @noRd
-runMeme.list <- function(input, control = NA, outdir = "auto", alph = "dna",
+runMeme.list <- function(input, control = NA, outdir = "auto", alph = "dna", parse_genomic_coord = TRUE,
                             combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
 
   x <- sequence_input_control_list(input, control)
@@ -72,14 +77,14 @@ runMeme.list <- function(input, control = NA, outdir = "auto", alph = "dna",
 
 #' @export
 #' @noRd
-runMeme.BStringSetList <- function(input, control = NA, outdir = "auto", alph = "dna",
+runMeme.BStringSetList <- function(input, control = NA, outdir = "auto", alph = "dna", parse_genomic_coord = TRUE,
                             combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
   runMeme.list(as.list(input), control, outdir, alph, combined_sites, silent, meme_path, ...)
 }
 
 #' @export
 #' @noRd
-runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna",
+runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", parse_genomic_coord = TRUE,
                             combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
 
   input <- sequence_input(input)
@@ -110,7 +115,17 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna",
 
   meme_out <- dotargs::expected_outputs(ext = c("txt", "xml", "html"), prefix = "meme", outdir = outdir)
 
-  importMeme(meme_out$txt, combined_sites = combined_sites)
+  importMeme(meme_out$txt, parse_genomic_coord = alph_parse_coords(alph, parse_genomic_coord), combined_sites = combined_sites)
+}
+
+#' Override parse_genomic_coords setting if alph = protein
+#' @noRd
+alph_parse_coords <- function(alph, parse_coords = TRUE){
+  if (alph %in% c("protein")) {
+    return(FALSE)
+  } else {
+    return(parse_coords)
+  }
 }
 
 #' Return list of alphabet flag values
@@ -165,22 +180,23 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 #' Import MEME results
 #'
 #' @param meme_txt path to "meme.txt" output
-#' @param parse_sequences whether to parse sequence headers into motif position
-#'   information, only works if fasta files were written such that the sequence
-#'   headers are in the form: "chr:start-end", or some variation of this form
-#'   (delimiters can be any of: "[^[:alnum:]]+" (ie non-alphanumeric characters)).
+#' @param parse_genomic_coord whether to parse sequence headers into genomic
+#'   coordinates for motif position information, only works if fasta files were
+#'   written such that the sequence headers are in the form: "chr:start-end", or
+#'   some variation of this form (delimiters can be any of: "[^[:alnum:]]+" (ie
+#'   non-alphanumeric characters)).
 #' @param combined_sites whether to add `combined_sites` output which contains coordinates of each sequence, the motif sequence
 #'
 #' @return
 #' @export
 #'
 #' @examples
-#' # If fasta headers do not have sequence information, parse_sequence must be set to FALSE
+#' # If fasta headers do not have sequence information, parse_genomic_coord must be set to FALSE
 #' example_no_sequence <- system.file("extdata/meme_full.txt", package = "universalmotif", mustwork = TRUE)
-#' importMeme(example_no_sequence, parse_sequences = FALSE)
+#' importMeme(example_no_sequence, parse_genomic_coord = FALSE)
 #'
 #' #TODO: Add example of file w/ sequence headers
-importMeme <- function(meme_txt, parse_sequences = TRUE, combined_sites = FALSE){
+importMeme <- function(meme_txt, parse_genomic_coord = TRUE, combined_sites = FALSE){
   meme_res <- universalmotif::read_meme(meme_txt, readsites = TRUE, readsites.meta = TRUE)
 
   meme_dataframe <- meme_res$motifs %>%
@@ -205,19 +221,27 @@ importMeme <- function(meme_txt, parse_sequences = TRUE, combined_sites = FALSE)
 
   meme_dataframe %<>%
     dplyr::left_join(meme_sites_hits, by = "name")
-  # ----
-  if (parse_sequences){
+
+  ##
+  # Coerce sites hits info to granges
+  # Currently, granges nested inside a data.frame causes printing issues,
+  # so I convert these back to data.frame (*sigh*)
+  if (parse_genomic_coord){
     meme_dataframe %<>%
-      dplyr::mutate(sites_hits = purrr::map2(sites_hits, width, meme_sites_meta_to_granges),
+      dplyr::mutate(sites_hits = purrr::map2(sites_hits,
+                                             width, ~{
+                                               meme_sites_meta_to_granges(.x, .y) %>%
                     # temporary until come up with a fix for printing data.frames with nested Granges
-                    sites_hits = purrr::map(sites_hits, data.frame))
+                                                 data.frame
+                                               })
+                    )
   }
 
   if (!combined_sites){
     return(meme_dataframe)
   } else {
 
-    if (!parse_sequences){
+    if (!parse_genomic_coord){
       meme_sites_combined <- meme_res$sites.meta.combined %>%
         meme_sites_meta_combined_to_df()
     } else {
@@ -264,12 +288,18 @@ meme_help_flags <- function(command){
     dotargs::get_help_flag_names(processx = FALSE)
 }
 
+#' @param sites the .$sites.meta output of
+#'   universalmotif::read_meme(readsites = T, readsites.meta = T)
+#' @noRd
 meme_sites_meta_to_df <- function(sites){
   sites %>%
     as.data.frame %>%
     dplyr::rename_all(tolower)
 }
 
+#' @param sites the .$sites.meta.combined output of
+#'   universalmotif::read_meme(readsites = T, readsites.meta = T)
+#' @noRd
 meme_sites_meta_combined_to_df <- function(sites){
   sites %>%
     as.data.frame %>%
