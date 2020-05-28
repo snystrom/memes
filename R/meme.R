@@ -1,3 +1,55 @@
+#' Identify motifs with MEME
+#'
+#' NOTE: add note about the hsfrac issue
+#'
+#' @param input path to fasta, Biostrings::BStringSet list, or list of Biostrings::BStringSet (can generate using `get_sequence()`)
+#' @param control any data type as in `input`, or a character vector of
+#'   `names(input)` to use those regions as control sequences. Using sequences
+#'   as background requires an alternative objective function. Users must pass a non-default value of
+#'   `objfun` to `...` if using a non-NA control set (default: NA)
+#' @param outdir (default: "auto")
+#' @param alph one of c("dna", "rna", "protein") or path to alphabet file (default: "dna")
+#' @param combined_sites `logical(1)` whether to return combined sites information (coerces output to list) (default: FALSE)
+#' @param silent Whether to suppress printing stdout to terminal (default: TRUE)
+#' @param meme_path path to "meme/bin/". If unset, will use default search
+#'   behavior:
+#'   1. `meme_path` setting in `options()`
+#'   2. `MEME_PATH` settin in `.Renviron`
+#' @param ...
+#'
+#' @return
+#'
+#' @details Additional arguments
+#'
+#' `runMeme()` accepts all valid arguments to meme as arguments passed to `...`.
+#' For flags without values, pass them as `flag = TRUE`. The `dna`, `rna`, and
+#' `protein` flags should instead be passed to the `alph` argument of
+#' `runMeme()`.
+#' The arguments passed to MEME often have many interactions with eachother, for
+#' a detailed description of each argument see
+#' the [MEME Help Page](meme-suite.org/doc/meme.html).
+#'
+#' For use with ChIP-seq data, see
+#' [Using MEME with ChIP-Seq Data Tips](https://groups.google.com/forum/#%21topic/meme-suite/rIbjIHbcpAE)
+#'
+#' @details # Citation
+#'
+#' If you use `runMeme()` in your analysis, please cite:
+#'
+#' Timothy L. Bailey and Charles Elkan, "Fitting a mixture model by expectation
+#' maximization to discover motifs in biopolymers", Proceedings of the Second
+#' International Conference on Intelligent Systems for Molecular Biology, pp.
+#' 28-36, AAAI Press, Menlo Park, California, 1994.
+#' [pdf](https://tlbailey.bitbucket.io/papers/ismb94.pdf)
+#'
+#' @export
+#'
+#' @examples
+runMeme <- function(input, control = NA, outdir = "auto", alph = "dna",
+                            combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
+  UseMethod("runMeme")
+}
+
 #' @export
 #' @noRd
 runMeme.list <- function(input, control = NA, outdir = "auto", alph = "dna",
@@ -41,8 +93,6 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna",
   if (outdir == "auto"){
     outdir <- outdir_name(input, control)
   }
-
-
 
   user_flags <- prepareMemeFlags(control, outdir,
                                  alph = alph, ...)
