@@ -187,40 +187,49 @@ importMeme <- function(meme_txt, parse_sequences = TRUE, combined_sites = FALSE)
     as_universalmotif_dataframe() %>%
     dplyr::mutate(width = nchar(consensus))
 
-  if (parse_sequences) {
-    if (class(meme_res$sites.meta) == "data.frame"){
-      meme_res$sites.meta <- list(meme_res$sites.meta)
-      names(meme_res$sites.meta) <- meme_dataframe$name
-    }
+  ##
+  # Add sites info as data.frame
+  if (class(meme_res$sites.meta) == "data.frame"){
+    meme_res$sites.meta <- list(meme_res$sites.meta)
+    names(meme_res$sites.meta) <- meme_dataframe$name
+  }
 
-    meme_sites_hits <- purrr::map2(meme_res$sites.meta,
-                                   meme_dataframe$width,
-                                   meme_sites_meta_to_granges
-                                   ) %>%
-      purrr::map(data.frame) %>%
-      dplyr::bind_rows(.id = "name") %>%
-      dplyr::group_by(name) %>%
-      tidyr::nest() %>%
-      dplyr::rename(sites_hits = data)
+  meme_sites_hits <- purrr::map(meme_res$sites.meta,
+                                 #meme_dataframe$width,
+                                 meme_sites_meta_to_df
+                                 ) %>%
+    dplyr::bind_rows(.id = "name") %>%
+    dplyr::group_by(name) %>%
+    tidyr::nest() %>%
+    dplyr::rename(sites_hits = data)
 
+  meme_dataframe %<>%
+    dplyr::left_join(meme_sites_hits, by = "name")
+  # ----
+  if (parse_sequences){
     meme_dataframe %<>%
-      dplyr::left_join(meme_sites_hits, by = "name")
+      dplyr::mutate(sites_hits = purrr::map2(sites_hits, width, meme_sites_meta_to_granges),
+                    # temporary until come up with a fix for printing data.frames with nested Granges
+                    sites_hits = purrr::map(sites_hits, data.frame))
+  }
 
-    if (!combined_sites){
-      return(meme_dataframe)
-    } else {
+  if (!combined_sites){
+    return(meme_dataframe)
+  } else {
 
+    if (!parse_sequences){
       meme_sites_combined <- meme_res$sites.meta.combined %>%
+        meme_sites_meta_combined_to_df()
+    } else {
+      meme_sites_combined <- meme_res$sites.meta.combined %>%
+        meme_sites_meta_combined_to_df() %>%
         meme_sites_meta_combined_to_granges()
-
-      results_list <- list("meme_data" = meme_dataframe,
-                           "combined_sites" = meme_sites_combined)
-      return(results_list)
-
     }
 
-  } else {
-    return(meme_dataframe)
+    results_list <- list("meme_data" = meme_dataframe,
+                         "combined_sites" = meme_sites_combined)
+    return(results_list)
+
   }
 }
 
@@ -255,18 +264,31 @@ meme_help_flags <- function(command){
     dotargs::get_help_flag_names(processx = FALSE)
 }
 
+meme_sites_meta_to_df <- function(sites){
+  sites %>%
+    as.data.frame %>%
+    dplyr::rename_all(tolower)
+}
+
+meme_sites_meta_combined_to_df <- function(sites){
+  sites %>%
+    as.data.frame %>%
+    dplyr::rename_all(tolower) %>%
+    dplyr::rename_all(~{gsub("\\.", "_", .x)})
+}
+
 #' convert site metadata into motif positions in GRanges
 #'
-#' @param sites the .$sites.meta output of universalmotif::read_meme(readsites = T, readsites.meta = T)
+#' @param sites_df the .$sites.meta output of
+#'   universalmotif::read_meme(readsites = T, readsites.meta = T) after pasing
+#'   to `meme_sites_meta_to_df()`
 #' @param motif_length length of the motif (used to shift position of coordinates)
 #'
 #' @return
 #'
 #' @noRd
-meme_sites_meta_to_granges <- function(sites, motif_length){
-  sites %>%
-    as.data.frame %>%
-    dplyr::rename_all(tolower) %>%
+meme_sites_meta_to_granges <- function(sites_df, motif_length){
+  sites_df %>%
     tidyr::separate(sequence, c("seqnames", "start", "end")) %>%
     GenomicRanges::GRanges(.) %>%
     plyranges::anchor_5p() %>%
@@ -277,13 +299,12 @@ meme_sites_meta_to_granges <- function(sites, motif_length){
 
 #' return genomic positions of sites w/ combined pvalues & diagram information
 #'
-#' @param sites the .$sites.meta.combined output of universalmotif::read_meme(readsites = T, readsites.meta = T)
+#' @param sites_df the .$sites.meta.combined output of
+#'   universalmotif::read_meme(readsites = T, readsites.meta = T) after passing
+#'   to `meme_sites_meta_combined_to_df()`
 #' @noRd
-meme_sites_meta_combined_to_granges <- function(sites){
-  sites %>%
-    as.data.frame %>%
-    dplyr::rename_all(tolower) %>%
-    dplyr::rename_all(~{gsub("\\.", "_", .x)}) %>%
+meme_sites_meta_combined_to_granges <- function(sites_df){
+  sites_df %>%
     tidyr::separate(sequence, c("seqnames", "start", "end")) %>%
     GenomicRanges::GRanges(.)
 }
