@@ -528,7 +528,7 @@ of the statistical analysis above.
 ```{r, fig.height=6, fig.width=5}
 best_motifs %>% 
   # Get sequences of each matched motif
-  add_sequence(dm.genome)
+  add_sequence(dm.genome) %>% 
   # Split by E93 response category
   split(mcols(.)$e93_sensitive_behavior) %>% 
   # Convert from GRangesList to list() to use `purrr::imap`
