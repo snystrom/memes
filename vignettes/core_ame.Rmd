@@ -275,10 +275,13 @@ although there are differences in motif content across the three categories,
 they may be largely similar in motif makeup. We will investigate this question
 in more detail in the "Denovo motif similarity" section.
 ```{r, fig.height=3, fig.width=25}
+library(ggplot2)
+
 (normalize_heatmap <- ame_res %>% 
   dplyr::group_by(binding_type, motif_alt_id) %>% 
   dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
   ame_plot_heatmap(group = binding_type, id = motif_alt_id, value = "normalize") +
+    # All ggplot functions can be used to extend or edit the heatmap plots
     ggtitle("value = \"normalize\""))
 ```
 
