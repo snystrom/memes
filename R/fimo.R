@@ -65,6 +65,10 @@
 #' Scanning for occurrences of a given motif", Bioinformatics, 27(7):1017-1018,
 #' 2011. [full text](http://bioinformatics.oxfordjournals.org/content/early/2011/02/16/bioinformatics.btr064.full)
 #'
+#' @details ## Licensing
+#' The MEME Suite is free for non-profit use, but for-profit users should purchase a
+#' license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
+#'
 #' @md
 #'
 #' @examples

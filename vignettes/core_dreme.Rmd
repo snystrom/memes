@@ -254,3 +254,7 @@ Suite tools corresponding to the tools you use.
 If you use `runDreme()` in your analysis, please cite:
 
 Timothy L. Bailey, "DREME: Motif discovery in transcription factor ChIP-seq data", Bioinformatics, 27(12):1653-1659, 2011. [full text](https://academic.oup.com/bioinformatics/article/27/12/1653/257754)
+
+## Licensing Restrictions
+The MEME Suite is free for non-profit use, but for-profit users should purchase a
+license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.

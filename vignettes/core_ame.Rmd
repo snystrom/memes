@@ -184,8 +184,15 @@ ame_by_behavior_vs_static %>%
 
 # NEW SECTION RE: HEATMAP complexity
 moving this here because chip-seq example now integrates RNAseq filtering, so hits are more limited
+```{r}
+seq_by_binding <- example_chip_summits %>% 
+  plyranges::mutate(width = 100) %>% 
+  split(mcols(.)$peak_binding_description) %>% 
+  get_sequence(dm.genome)
+```
+
 ```{r, eval=F}
-ame_by_binding <- by_binding %>% 
+ame_by_binding <- seq_by_binding %>% 
   runAme
 ```
 ```{r, echo=F}
@@ -390,3 +397,7 @@ Suite tools corresponding to the tools you use.
 If you use `runAme()` in your analysis, please cite:
 
 Robert McLeay and Timothy L. Bailey, "Motif Enrichment Analysis: A unified framework and method evaluation", BMC Bioinformatics, 11:165, 2010, doi:10.1186/1471-2105-11-165. [full text](http://www.biomedcentral.com/1471-2105/11/165)
+
+## Licensing Restrictions
+The MEME Suite is free for non-profit use, but for-profit users should purchase a
+license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.

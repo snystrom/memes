@@ -52,6 +52,10 @@
 #' Noble, "Quantifying similarity between motifs", Genome Biology, 8(2):R24,
 #' 2007. [full text](http://genomebiology.com/2007/8/2/R24)
 #'
+#' @details ## Licensing
+#' The MEME Suite is free for non-profit use, but for-profit users should purchase a
+#' license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
+#'
 #' @export
 #'
 #' @md

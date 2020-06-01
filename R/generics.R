@@ -153,6 +153,10 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' data", Bioinformatics, 27(12):1653-1659, 2011.
 #' [full text](https://academic.oup.com/bioinformatics/article/27/12/1653/257754)
 #'
+#' @details ## Licensing
+#' The MEME Suite is free for non-profit use, but for-profit users should purchase a
+#' license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
+#'
 #' @importFrom magrittr %>%
 #'
 #' @export
@@ -246,6 +250,11 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #' Robert McLeay and Timothy L. Bailey, "Motif Enrichment Analysis: A unified
 #' framework and method evaluation", BMC Bioinformatics, 11:165, 2010,
 #' doi:10.1186/1471-2105-11-165. [full text](http://www.biomedcentral.com/1471-2105/11/165)
+#'
+#' @details ## Licensing
+#' The MEME Suite is free for non-profit use, but for-profit users should purchase a
+#' license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
+#'
 #'
 #' @export
 #'

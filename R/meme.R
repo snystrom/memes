@@ -48,6 +48,10 @@
 #' 28-36, AAAI Press, Menlo Park, California, 1994.
 #' [pdf](https://tlbailey.bitbucket.io/papers/ismb94.pdf)
 #'
+#' @details ## Licensing
+#' The MEME Suite is free for non-profit use, but for-profit users should purchase a
+#' license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
+#'
 #' @export
 #'
 #' @examples
