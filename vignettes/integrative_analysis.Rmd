@@ -102,11 +102,10 @@ by_binding <- summit_flank %>%
 ```
 
 ```{r}
-#options(meme_db = meme_db_path)
 options(meme_db = as_universalmotif(meme_db_expressed))
 ```
 
-```{r, eval=F}
+```{r}
 ame_by_binding <- by_binding %>% 
   runAme
 ```
@@ -120,7 +119,6 @@ further modify the plot.
 By default, it uses the -log10(adjusted p-value) as the heat values. See the
 documentation for additional notes on customization.
 ```{r, fig.height=3.5, fig.width=7}
-
 ame_by_binding$ectopic %>% 
   dplyr::filter(rank %in% 1:10) %>% 
   ame_plot_heatmap(group_name = "Ectopic Sites")  +

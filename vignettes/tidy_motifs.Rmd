@@ -141,7 +141,7 @@ to shorten up the motif names. This also makes the motif name more comparable to
 the original motif names from the [FlyFactor Survey](https://mccb.umassmed.edu/ffs/).
 ```{r}
 flyFactor_data %<>% 
-  mutate(name = gsub("_FBgn\\d+", "", name))
+  dplyr::mutate(name = gsub("_FBgn\\d+", "", name))
 ```
 
 
