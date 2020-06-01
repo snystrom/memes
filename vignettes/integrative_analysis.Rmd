@@ -188,9 +188,8 @@ ame_res %>%
 ### AME Heatmap Visualization
 If you have read `vignette("core_ame")`, the "normalized rank" heatmap was
 introduced as an alternative visualization method useful when AME produces very
-large numbers of hits. In contrast to the `vignette("core_ame")` example, the
-`-log10(adj.pvalue)` visualization in this context will be more informative. The
-`ame_compare_heatmap_methods()` function can be used to visualize why.
+large numbers of hits, or when p-values are on very different scales between groups. 
+The `ame_compare_heatmap_methods()` function can be used to visualize why.
 
 Below is a comparison of the distribution of values when using
 `-log10(adj.pvalue)` (A) vs normalized ranks (B). Because there are relatively
@@ -200,14 +199,39 @@ heatmap relative to the `-log10(p-value)` map.
 
 ```{r, fig.height=3, fig.width=7.5}
 ame_res %>% 
+  dplyr::group_by(binding_type, motif_alt_id) %>% 
+  dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
   ame_compare_heatmap_methods(group = binding_type)
 ```
 
-```{r, fig.height=3, fig.width=9.5}
-ame_res %>% 
+```{r, fig.height=3, fig.width=12}
+best_ame_hits <- ame_res %>% 
   dplyr::group_by(binding_type, motif_alt_id) %>% 
-  dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
-  ame_plot_heatmap(group = binding_type, id = motif_alt_id, value = "normalize")
+  dplyr::filter(adj.pvalue == min(adj.pvalue))
+  
+pval_heatmap <- best_ame_hits %>% 
+  ame_plot_heatmap(group = binding_type, id = motif_alt_id) +
+    labs(x = NULL,
+         title = "-log10(adj.pvalue)")
+  
+
+norm_heatmap <- best_ame_hits %>% 
+  ame_plot_heatmap(group = binding_type, id = motif_alt_id, value = "normalize") +
+    labs(x = NULL,
+         title = "normalize")
+
+pval_scaled_heatmap <- best_ame_hits %>% 
+  ame_plot_heatmap(group = binding_type, id = motif_alt_id, scale_max = 10) +
+    labs(x = NULL,
+         title = "-log10(adj.pvalue) (scale capped at 10)")
+```
+
+```{r, fig.height=9, fig.width=12}
+cowplot::plot_grid(pval_heatmap,
+                   norm_heatmap,
+                   pval_scaled_heatmap,
+                   ncol = 1,
+                   labels = "AUTO")
 ```
 
 ## Denovo motif similarity by binding
