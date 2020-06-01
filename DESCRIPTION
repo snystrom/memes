@@ -34,7 +34,9 @@ Suggests:
     plyranges (>= 1.9.1),
     rmarkdown
 RoxygenNote: 7.0.2
+SystemRequirements: Meme Suite (v5.1.1 or above)
 Remotes: 
     snystrom/dotargs
 VignetteBuilder: knitr
 URL: https://snystrom.github.io/dremeR/, https://github.com/snystrom/dremeR
+BugReports: https://github.com/snystrom/dremeR
