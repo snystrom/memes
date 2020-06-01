@@ -89,12 +89,13 @@ check_meme_install(meme_path = 'bad/path')
 
 ## The Core Tools
 
-| Function Name |       Use        | Sequence Input | Motif Input | Output                                                  |
-| :-----------: | :--------------: | :------------: | :---------: | :------------------------------------------------------ |
-| `runDreme()`  | Motif Discovery  |      Yes       |     No      | data.frame w/ `motifs` column                           |
-|  `runAme()`   | Motif Enrichment |      Yes       |     Yes     | data.frame (optional: `sequences` column)               |
-|  `runFimo()`  |  Motif Scanning  |      Yes       |     Yes     | GRanges of motif positions                              |
-| `runTomTom()` | Motif Comparison |       No       |     Yes     | data.frame w/ `best_match_motif` and `tomtom` columns\* |
+| Function Name |              Use               | Sequence Input | Motif Input | Output                                                  |
+| :-----------: | :----------------------------: | :------------: | :---------: | :------------------------------------------------------ |
+| `runDreme()`  | Motif Discovery (short motifs) |      Yes       |     No      | data.frame w/ `motifs` column                           |
+|  `runAme()`   |        Motif Enrichment        |      Yes       |     Yes     | data.frame (optional: `sequences` column)               |
+|  `runFimo()`  |         Motif Scanning         |      Yes       |     Yes     | GRanges of motif positions                              |
+| `runTomTom()` |        Motif Comparison        |       No       |     Yes     | data.frame w/ `best_match_motif` and `tomtom` columns\* |
+|  `runMeme()`  | Motif Discovery (long motifs)  |      Yes       |     No      | data.frame w/ `motifs` column                           |
 
 \* **Note:** if `runTomTom()` is run using the results of `runDreme()`,
 the results will be joined with the `runDreme()` results as extra
@@ -312,7 +313,8 @@ outside of R (for example, running jobs on
 |   Dreme   | `importDremeXML()`  | dreme.xml  |
 |  TomTom   | `importTomTomXML()` | tomtom.xml |
 |    AME    |    `importAme()`    | ame.tsv\*  |
-|   FIMO    |   `importFIMO()`    |  fimo.tsv  |
+|   FIMO    |   `importFimo()`    |  fimo.tsv  |
+|   Meme    |   `importMeme()`    |  meme.txt  |
 
   - `importAME()` can also use the “sequences.tsv” output when AME used
     `method = "fisher"`, this is optional.
