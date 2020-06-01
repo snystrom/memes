@@ -171,8 +171,18 @@ to the results by setting `sequences = TRUE`. This will be added as a list
 column named `sequences` that can be unnested using `tidyr::unnest()`.
 
 ## Visualizing Results as Heatmap
- - move heatmap information here
- 
+
+The `ame_plot_heatmap()` function provides a method to easily generate
+visualizations of AME results.
+
+To plot results from multiple runs together, they must first be joined into 1
+data frame. The `ame_by_behavior_vs_static` object is a list whose names correspond to the
+E93 response (Increasing or Decreasing). The list can be combined into a data.frame using
+`dplyr::bind_rows`. Setting `.id = "behavior` creates a new column
+`behavior` that contains the names from the `ame_by_behavior_vs_static` list. In this
+way, the resulting data.frame contains all AME results for each run, which can
+be distinguished by the `behavior` column.
+
 ```{r}
 ame_by_behavior_vs_static %>% 
   # AME results in list format are easily combined using dplyr::bind_rows
@@ -182,8 +192,13 @@ ame_by_behavior_vs_static %>%
   ame_plot_heatmap(group = behavior)
 ```
 
-# NEW SECTION RE: HEATMAP complexity
-moving this here because chip-seq example now integrates RNAseq filtering, so hits are more limited
+### Complex Heatmap Example
+
+There are several nuances when making heatmap visualizations of these data. The
+following examples highlight some of these issues and provide alternative
+approaches and solutions.
+
+We start by using different binding site categories as input.
 ```{r}
 seq_by_binding <- example_chip_summits %>% 
   plyranges::mutate(width = 100) %>% 
@@ -195,40 +210,16 @@ seq_by_binding <- example_chip_summits %>%
 ame_by_binding <- seq_by_binding %>% 
   runAme
 ```
+
 ```{r, echo=F}
 # Allows vignette to build on systems w/o functioning MEME suite
 data("example_ame_large", package = "dremeR")
 ame_by_binding <- example_ame_large
 ```
 
-### Visualizing AME results 
-
-The `ame_plot_heatmap()` function provides a quick way to visualize AME results.
-It is built on top of `ggplot2`, so all `ggplot2` functions can be used to
-further modify the plot.
-
-By default, it uses the -log10(adjusted p-value) as the heat values. See the
-documentation for additional notes on customization.
-```{r, fig.height=3.5, fig.width=7}
-library(ggplot2)
-
-ame_by_binding$entopic %>% 
-  dplyr::filter(rank %in% 1:10) %>% 
-  ame_plot_heatmap(group_name = "Entopic Sites")  +
-    ggtitle("Top 10 AME Hits in Entopic Sites")
-```
-
-To plot results from multiple runs together, they must first be joined into 1
-data frame. The `ame_by_binding` object is a list whose names correspond to the
-E93 binding category. The list can be combined into a data.frame using
-`dplyr::bind_rows`. Setting `.id = "binding_type` creates a new column
-`binding_type` that contains the names from the `ame_by_binding` list. In this
-way, the `ame_res` data.frame contains all AME results for each run, which can
-be distinguished by the `binding_type` column.
 ```{r}
 ame_res <- ame_by_binding %>% 
   dplyr::bind_rows(.id = "binding_type")
-  
 ```
 
 It is possible to aggregate results from multiple runs into a heatmap by setting
@@ -243,14 +234,13 @@ ame_res %>%
 ```
 
 ## Issues with Heatmap Visualization
-When visualizing data as a heatmap, 
-Finally, because the data for each binding type are generated from different AME
-runs, it is not the best idea to compare p-values across experiments (ie between
-heatmap rows), because the dynamic range of p-values will vary between groups. Here you
-can see that, for example, the orphan sites will have a very different scale of
--log10(adjusted pvalues) than ectopic and entopic sites. In other words, because
-the dynamic range of values are different between experiments, placing them on
-the default scale for comparison may not always be the most optimal visualization.
+
+The dynamic range of p-values in these data varies between groups. For this
+reason, a simple heatmap scaled using all data values will make it more
+difficult to interpret within groups with a lower dynamic range of values. In
+other words, because the dynamic range of values are different between
+experiments, placing them on the default scale for comparison may not always be
+the most optimal visualization.
 
 We can partially overcome this limitation by filling the heatmap with the
 normalized rank value for each TF, which accounts for differences in total number of
