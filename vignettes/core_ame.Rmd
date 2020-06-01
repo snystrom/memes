@@ -10,7 +10,7 @@ vignette: >
 ```{r, include=FALSE}
 NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
 
-eval_vignette <- NOT_CRAN & has_meme_install()
+eval_vignette <- NOT_CRAN & meme_is_installed()
 
 knitr::opts_chunk$set(
   collapse = TRUE,
