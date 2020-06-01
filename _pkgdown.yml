@@ -15,7 +15,7 @@ navbar:
         href: articles/install_guide.html
       - text: De-Novo Motif Discovery
         href: articles/core_dreme.html
-      - text: Motif Matching
+      - text: Motif Comparison
         href: articles/core_tomtom.html
       - text: Motif Enrichment
         href: articles/core_ame.html
@@ -42,6 +42,7 @@ reference:
 - title: Core Tools
   contents:
   - runDreme
+  - runMeme
   - runTomTom
   - runAme
   - runFimo
@@ -79,6 +80,7 @@ reference:
   - importTomTomXML
   - importAme
   - importFimo
+  - importMeme
 
 - title: Example Datasets
   contents:
