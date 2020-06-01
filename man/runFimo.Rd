@@ -85,6 +85,12 @@ Additional arguments passed to \code{...}\tabular{cccl}{
    qv_thresh \tab \code{logical(1)} \tab FALSE \tab use q-values for the output threshold \cr
    thresh \tab \code{numeric(1)} \tab \code{1e-4} \tab output threshold for returning a match, only matches with values less than \code{thresh} are returned. \cr
 }
+
+\subsection{Licensing}{
+
+The MEME Suite is free for non-profit use, but for-profit users should purchase a
+license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
+}
 }
 \examples{
 \dontrun{

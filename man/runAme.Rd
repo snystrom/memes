@@ -91,6 +91,12 @@ below:\tabular{cccl}{
    inc \tab \code{character(1)} \tab \code{NULL} \tab use only motifs with names matching this regex \cr
    exc \tab \code{character(1)} \tab \code{NULL} \tab exclude motifs with names matching this regex \cr
 }
+
+\subsection{Licensing}{
+
+The MEME Suite is free for non-profit use, but for-profit users should purchase a
+license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
+}
 }
 \examples{
 \dontrun{

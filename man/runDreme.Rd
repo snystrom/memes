@@ -124,6 +124,12 @@ Additional DREME parameters which can be passed to \code{...}\tabular{ccc}{
    rna \tab use RNA alphabet \tab FALSE \cr
    protein \tab use protein alphabet (NOT RECCOMENDED) \tab FALSE \cr
 }
+
+\subsection{Licensing}{
+
+The MEME Suite is free for non-profit use, but for-profit users should purchase a
+license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
+}
 }
 \examples{
 \dontrun{

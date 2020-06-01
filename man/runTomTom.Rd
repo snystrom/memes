@@ -71,6 +71,12 @@ their description.\tabular{cccl}{
    min_overlap \tab \code{integer} \tab 1 \tab only report matches that overlap by this number of positions or more. If query motif is smaller than this value, its width is used as the min overlap for that query \cr
    time \tab \code{integer} \tab \code{NULL} \tab Maximum runtime in CPU seconds (default: no limit) \cr
 }
+
+\subsection{Licensing}{
+
+The MEME Suite is free for non-profit use, but for-profit users should purchase a
+license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
+}
 }
 \examples{
 \dontrun{
