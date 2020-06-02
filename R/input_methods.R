@@ -113,7 +113,7 @@ split_input_control <- function(input, control){
   # input = list
   # control = character vector
   input_minus_control <- input %>%
-    cmdlr::drop_list_by_name(control)
+    cmdlr::cmd_drop_list_by_name(control)
 
   control_seq <- input %>%
     cmdlr::keep_list_by_name(control) %>%

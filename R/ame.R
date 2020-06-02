@@ -129,7 +129,7 @@ prepareAmeFlags <- function(control, outdir, method, ...){
   }
 
   flagList %>%
-    cmdlr::crystallize_flags(prefix = "--")
+    cmdlr::cmd_crystallize_flags(prefix = "--")
 }
 
 #' Parse ame output

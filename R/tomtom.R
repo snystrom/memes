@@ -161,7 +161,7 @@ prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
 
   flags <- cmdlr::getAllArgs() %>%
     cmdlr::cmd_args_to_flags(argsDict) %>%
-    cmdlr::crystallize_flags()
+    cmdlr::cmd_crystallize_flags()
 
   return(flags)
 }

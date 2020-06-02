@@ -177,7 +177,7 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
     cmdlr::cmd_args_to_flags(argsDict)
 
   flags <- c(flagsList, alph_flags) %>%
-    cmdlr::crystallize_flags()
+    cmdlr::cmd_crystallize_flags()
 
   return(flags)
 }

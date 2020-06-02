@@ -83,8 +83,8 @@ prepareDremeFlags <- function(input, control, outdir, ...){
 
   flags <- cmdlr::getAllArgs() %>%
     cmdlr::cmd_args_to_flags(argDict) %>%
-    cmdlr::drop_flags(c("n" = "shuffle")) %>%
-    cmdlr::crystallize_flags()
+    cmdlr::cmd_drop_flags(c("n" = "shuffle")) %>%
+    cmdlr::cmd_crystallize_flags()
 
   return(flags)
 

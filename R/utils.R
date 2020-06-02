@@ -167,7 +167,7 @@ write_fasta <- function(seq, path = tempfile(fileext = ".fa")){
 #' @examples
 #' check_meme_install()
 check_meme_install <- function(meme_path = NULL){
-  cmdlr::check_install(handle_meme_path, path = meme_path)
+  cmdlr::cmd_check_install(handle_meme_path, path = meme_path)
 }
 
 #' Returns logical vector indicating valid MEME-Suite install status

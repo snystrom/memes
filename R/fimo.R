@@ -171,7 +171,7 @@ prepareFimoFlags <- function(bfile, parse_genomic_coord, skip_matched_sequence, 
   }
 
   flags %>%
-    cmdlr::crystallize_flags(prefix = "--")
+    cmdlr::cmd_crystallize_flags(prefix = "--")
 
 }
 
