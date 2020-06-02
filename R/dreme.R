@@ -48,7 +48,7 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
 
   if (n_motifs == 0) {return(NULL)}
 
-  dreme_out <- cmdlr::expected_outputs(c("txt", "html", "xml"), "dreme", outdir = outdir)
+  dreme_out <- cmdlr::cmd_expected_outputs(c("txt", "html", "xml"), "dreme", outdir = outdir)
 
   dreme_out %>%
     cmdlr::cmd_check_files_exist()
@@ -81,7 +81,7 @@ prepareDremeFlags <- function(input, control, outdir, ...){
                outdir = "oc",
                ngen = "g")
 
-  flags <- cmdlr::getAllArgs() %>%
+  flags <- cmdlr::cmd_args_all() %>%
     cmdlr::cmd_args_to_flags(argDict) %>%
     cmdlr::cmd_drop_flags(c("n" = "shuffle")) %>%
     cmdlr::cmd_crystallize_flags()

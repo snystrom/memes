@@ -30,7 +30,7 @@ mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
   stopifnot(.motif %in% names(.data))
   stopifnot(is_universalmotif_list(.data[[.motif]]))
 
-  dots <- cmdlr::getDotArgs()
+  dots <- cmdlr::cmd_args_dots()
 
   if (!is.null(.override)){
     dots <- as.list(.override)

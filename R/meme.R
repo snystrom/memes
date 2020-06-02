@@ -118,7 +118,7 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", 
 
   print_process_stdout(ps_out, silent = silent)
 
-  meme_out <- cmdlr::expected_outputs(ext = c("txt", "xml", "html"), prefix = "meme", outdir = outdir)
+  meme_out <- cmdlr::cmd_expected_outputs(ext = c("txt", "xml", "html"), prefix = "meme", outdir = outdir)
 
   importMeme(meme_out$txt, parse_genomic_coord = alph_parse_coords(alph, parse_genomic_coord), combined_sites = combined_sites)
 }
@@ -173,7 +173,7 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
   alph_flags <- meme_alph_to_args(alph) %>%
     cmdlr::cmd_args_to_flags()
 
-  flagsList <- cmdlr::getAllArgs(drop = "alph") %>%
+  flagsList <- cmdlr::cmd_args_all(drop = "alph") %>%
     cmdlr::cmd_args_to_flags(argsDict)
 
   flags <- c(flagsList, alph_flags) %>%

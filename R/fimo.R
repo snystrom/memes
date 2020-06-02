@@ -132,7 +132,7 @@ runFimo <- function(sequences, motifs, bfile = "motif",
   }
 
 
-  fimo_out <- cmdlr::expected_outputs("tsv", "fimo", outdir = outdir)
+  fimo_out <- cmdlr::cmd_expected_outputs("tsv", "fimo", outdir = outdir)
 
   fimo_out$tsv %>%
     parseFimo() %>%
@@ -156,7 +156,7 @@ prepareFimoFlags <- function(bfile, parse_genomic_coord, skip_matched_sequence, 
 
   argsDict <- c("outdir" = "oc")
 
-  flags <- cmdlr::getAllArgs() %>%
+  flags <- cmdlr::cmd_args_all() %>%
     cmdlr::cmd_args_to_flags(argsDict) %>%
     purrr::set_names(~{gsub("_", "-", .x)})
 

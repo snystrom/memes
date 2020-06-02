@@ -80,9 +80,9 @@ runAme.default <- function(input,
   print_process_stderr(ps_out, silent = silent)
 
   # NOTE: sequences.tsv is only created when method == "fisher"
-  ame_out <- cmdlr::expected_outputs(c("tsv", "html"), "ame", outdir)
+  ame_out <- cmdlr::cmd_expected_outputs(c("tsv", "html"), "ame", outdir)
   if (method == "fisher"){
-    ame_seq <- cmdlr::expected_outputs("tsv", "sequences", outdir)
+    ame_seq <- cmdlr::cmd_expected_outputs("tsv", "sequences", outdir)
     ame_out$sequences <- ame_seq[[1]]
   }
 
@@ -112,7 +112,7 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 
   argsDict <- c("outdir" = "oc")
 
-  flagList <- cmdlr::getAllArgs() %>%
+  flagList <- cmdlr::cmd_args_all() %>%
     cmdlr::cmd_args_to_flags(argsDict) %>%
     purrr::set_names(~{gsub("_", "-", .x)})
 

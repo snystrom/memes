@@ -101,7 +101,7 @@ runTomTom <- function(input, database = NULL,
                         flags_fun = ~{gsub("-", "_", .)}
                         )
 
-  tomtom_out <- cmdlr::expected_outputs(c("tsv", "xml", "html"), "tomtom", outdir = outdir)
+  tomtom_out <- cmdlr::cmd_expected_outputs(c("tsv", "xml", "html"), "tomtom", outdir = outdir)
 
   tomtom_out %>%
     cmdlr::cmd_check_files_exist()
@@ -159,7 +159,7 @@ prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
                "no_ssc" = "no-ssc",
                "incomplete_scores" = "incomplete-scores")
 
-  flags <- cmdlr::getAllArgs() %>%
+  flags <- cmdlr::cmd_args_all() %>%
     cmdlr::cmd_args_to_flags(argsDict) %>%
     cmdlr::cmd_crystallize_flags()
 
