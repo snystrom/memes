@@ -2,7 +2,7 @@ sequence_input.character <- function(input){
   # character input should be file path unless input == "shuffle"
   if (input == "shuffle") return(input)
 
-  cmdlr::check_files_exist(input)
+  cmdlr::cmd_check_files_exist(input)
   return(input)
 }
 
@@ -33,7 +33,7 @@ motif_input.character <- function(input, path = NULL){
     }
   }
 
-  cmdlr::check_files_exist(input)
+  cmdlr::cmd_check_files_exist(input)
 
   out <- list(metadata = NULL,
               path = input)

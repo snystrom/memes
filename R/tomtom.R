@@ -104,7 +104,7 @@ runTomTom <- function(input, database = NULL,
   tomtom_out <- cmdlr::expected_outputs(c("tsv", "xml", "html"), "tomtom", outdir = outdir)
 
   tomtom_out %>%
-    cmdlr::check_files_exist()
+    cmdlr::cmd_check_files_exist()
 
   tomtom_results <- parseTomTom(tomtom_out$xml)
 

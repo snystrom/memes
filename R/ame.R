@@ -87,7 +87,7 @@ runAme.default <- function(input,
   }
 
   ame_out %>%
-    cmdlr::check_files_exist()
+    cmdlr::cmd_check_files_exist()
 
   import_sequences <- FALSE
   if (method == "fisher" & sequences == TRUE){

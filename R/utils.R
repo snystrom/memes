@@ -187,4 +187,4 @@ check_meme_install <- function(meme_path = NULL){
 #' # Will return TRUE if "meme/bin/" is detected
 #' meme_is_installed()
 #' meme_is_installed("bad/path")
-meme_is_installed <- cmdlr::build_is_valid_install(handle_meme_path, util = TRUE)
+meme_is_installed <- cmdlr::cmd_build_is_valid_install(handle_meme_path, util = TRUE)

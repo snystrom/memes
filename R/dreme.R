@@ -51,7 +51,7 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
   dreme_out <- cmdlr::expected_outputs(c("txt", "html", "xml"), "dreme", outdir = outdir)
 
   dreme_out %>%
-    cmdlr::check_files_exist()
+    cmdlr::cmd_check_files_exist()
 
   dreme_results <- parseDreme(dreme_out$xml)
 
