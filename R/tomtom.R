@@ -17,7 +17,7 @@
 #' @param meme_path path to "meme/bin/" (optional). If unset, will check R
 #'   environment variable "MEME_DB (set in `.Renviron`), or option
 #'   "meme_db" (set with `option(meme_db = "path/to/meme/bin")`)
-#' @param ... additional flags passed to tomtom using {dotargs} formating (see table below for details)
+#' @param ... additional flags passed to tomtom using {cmdlr} formating (see table below for details)
 #'
 #' @details Additional arguments
 #'
@@ -97,14 +97,14 @@ runTomTom <- function(input, database = NULL,
   ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
   ps_out %>%
     process_check_error(help_fun = ~{tomtom_help(command)},
-                        user_flags = dotargs::get_help_flag_names(user_flags),
+                        user_flags = cmdlr::get_help_flag_names(user_flags),
                         flags_fun = ~{gsub("-", "_", .)}
                         )
 
-  tomtom_out <- dotargs::expected_outputs(c("tsv", "xml", "html"), "tomtom", outdir = outdir)
+  tomtom_out <- cmdlr::expected_outputs(c("tsv", "xml", "html"), "tomtom", outdir = outdir)
 
   tomtom_out %>%
-    dotargs::check_files_exist()
+    cmdlr::check_files_exist()
 
   tomtom_results <- parseTomTom(tomtom_out$xml)
 
@@ -141,7 +141,7 @@ runTomTom <- function(input, database = NULL,
 #' @param min_overlap minimum overlap
 #' @param dist distance function
 #' @param evalue evalue
-#' @param ... interpreted as {dotargs}
+#' @param ... interpreted as {cmdlr}
 #'
 #' @return
 #'
@@ -159,9 +159,9 @@ prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
                "no_ssc" = "no-ssc",
                "incomplete_scores" = "incomplete-scores")
 
-  flags <- dotargs::getAllArgs() %>%
-    dotargs::argsToFlags(argsDict) %>%
-    dotargs::crystallize_flags()
+  flags <- cmdlr::getAllArgs() %>%
+    cmdlr::cmd_args_to_flags(argsDict) %>%
+    cmdlr::crystallize_flags()
 
   return(flags)
 }

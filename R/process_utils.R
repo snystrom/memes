@@ -36,8 +36,8 @@ print_process_stderr <- function(processx_out, silent = TRUE){
 #'
 #' @param processx_out output of processx::run(error_on_status = F)
 #' @param help_fun function to produce --help lines (processx call, for example). Can be rlang formula like ~{.x}.
-#' @param user_flags flags from argsToFlags %>% crystalizeFlags
-#' @param flags_fun passed to dotargs::suggest_flag_names(.fun)
+#' @param user_flags flags from cmd_args_to_flags %>% crystalizeFlags
+#' @param flags_fun passed to cmdlr::suggest_flag_names(.fun)
 #' @param default_help_fun `logical(1)` whether to use default
 #'   get_help_flag_names behavior, or simply evaluate help_fun fully to suggest
 #'   names. Set to TRUE when help_fun returns vector of flag names to suggest against.
@@ -64,16 +64,16 @@ process_check_error <- function(processx_out, help_fun = NULL, user_flags = NULL
 
     if (default_help_fun){
       help_fun() %>%
-        dotargs::get_help_flag_names(processx = T) %>%
-        dotargs::suggest_flag_names(user_flags, .fun = flags_fun) %>%
+        cmdlr::get_help_flag_names(processx = T) %>%
+        cmdlr::suggest_flag_names(user_flags, .fun = flags_fun) %>%
         #suggest_flag_names(user_flags, .fun = flags_fun) -> o
         #return(o)
-        dotargs::error_suggest_flag_names()
+        cmdlr::error_suggest_flag_names()
 
     } else {
       help_fun() %>%
-        dotargs::suggest_flag_names(user_flags, .fun = flags_fun) %>%
-        dotargs::error_suggest_flag_names()
+        cmdlr::suggest_flag_names(user_flags, .fun = flags_fun) %>%
+        cmdlr::error_suggest_flag_names()
     }
 
     usethis::ui_stop("Shell process had non-zero exit status.")

@@ -40,7 +40,7 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
 
   ps_out %>%
     process_check_error(help_fun = ~{dreme_help(command)},
-                        user_flags = dotargs::get_help_flag_names(flags))
+                        user_flags = cmdlr::get_help_flag_names(flags))
 
   print_process_stdout(ps_out, silent = silent)
 
@@ -48,10 +48,10 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
 
   if (n_motifs == 0) {return(NULL)}
 
-  dreme_out <- dotargs::expected_outputs(c("txt", "html", "xml"), "dreme", outdir = outdir)
+  dreme_out <- cmdlr::expected_outputs(c("txt", "html", "xml"), "dreme", outdir = outdir)
 
   dreme_out %>%
-    dotargs::check_files_exist()
+    cmdlr::check_files_exist()
 
   dreme_results <- parseDreme(dreme_out$xml)
 
@@ -81,10 +81,10 @@ prepareDremeFlags <- function(input, control, outdir, ...){
                outdir = "oc",
                ngen = "g")
 
-  flags <- dotargs::getAllArgs() %>%
-    dotargs::argsToFlags(argDict) %>%
-    dotargs::drop_flags(c("n" = "shuffle")) %>%
-    dotargs::crystallize_flags()
+  flags <- cmdlr::getAllArgs() %>%
+    cmdlr::cmd_args_to_flags(argDict) %>%
+    cmdlr::drop_flags(c("n" = "shuffle")) %>%
+    cmdlr::crystallize_flags()
 
   return(flags)
 

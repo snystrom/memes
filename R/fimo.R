@@ -110,7 +110,7 @@ runFimo <- function(sequences, motifs, bfile = "motif",
 
   ps_out %>%
     process_check_error(help_fun = ~{fimoHelp(command)},
-                        user_flags = dotargs::get_help_flag_names(user_flags) %>%
+                        user_flags = cmdlr::get_help_flag_names(user_flags) %>%
                           # filter out special inputs to bfile
                           grep("--$", ., invert = TRUE, value = TRUE),
                         flags_fun = ~{gsub("-", "_", .x)}
@@ -132,7 +132,7 @@ runFimo <- function(sequences, motifs, bfile = "motif",
   }
 
 
-  fimo_out <- dotargs::expected_outputs("tsv", "fimo", outdir = outdir)
+  fimo_out <- cmdlr::expected_outputs("tsv", "fimo", outdir = outdir)
 
   fimo_out$tsv %>%
     parseFimo() %>%
@@ -156,8 +156,8 @@ prepareFimoFlags <- function(bfile, parse_genomic_coord, skip_matched_sequence, 
 
   argsDict <- c("outdir" = "oc")
 
-  flags <- dotargs::getAllArgs() %>%
-    dotargs::argsToFlags(argsDict) %>%
+  flags <- cmdlr::getAllArgs() %>%
+    cmdlr::cmd_args_to_flags(argsDict) %>%
     purrr::set_names(~{gsub("_", "-", .x)})
 
   if (!is.null(bfile)){
@@ -171,7 +171,7 @@ prepareFimoFlags <- function(bfile, parse_genomic_coord, skip_matched_sequence, 
   }
 
   flags %>%
-    dotargs::crystallize_flags(prefix = "--")
+    cmdlr::crystallize_flags(prefix = "--")
 
 }
 

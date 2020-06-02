@@ -113,12 +113,12 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", 
 
   ps_out %>%
     process_check_error(help_fun = ~{meme_help_flags(command)},
-        user_flags = dotargs::get_help_flag_names(user_flags),
+        user_flags = cmdlr::get_help_flag_names(user_flags),
         default_help_fun = FALSE)
 
   print_process_stdout(ps_out, silent = silent)
 
-  meme_out <- dotargs::expected_outputs(ext = c("txt", "xml", "html"), prefix = "meme", outdir = outdir)
+  meme_out <- cmdlr::expected_outputs(ext = c("txt", "xml", "html"), prefix = "meme", outdir = outdir)
 
   importMeme(meme_out$txt, parse_genomic_coord = alph_parse_coords(alph, parse_genomic_coord), combined_sites = combined_sites)
 }
@@ -171,13 +171,13 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 
   # handle alphabet assignment
   alph_flags <- meme_alph_to_args(alph) %>%
-    dotargs::argsToFlags()
+    cmdlr::cmd_args_to_flags()
 
-  flagsList <- dotargs::getAllArgs(drop = "alph") %>%
-    dotargs::argsToFlags(argsDict)
+  flagsList <- cmdlr::getAllArgs(drop = "alph") %>%
+    cmdlr::cmd_args_to_flags(argsDict)
 
   flags <- c(flagsList, alph_flags) %>%
-    dotargs::crystallize_flags()
+    cmdlr::crystallize_flags()
 
   return(flags)
 }
@@ -290,7 +290,7 @@ meme_help_flags <- function(command){
     gsub("\t", " ", .) %>%
     gsub("\\[", "", .) %>%
     gsub("\\]", "", .) %>%
-    dotargs::get_help_flag_names(processx = FALSE)
+    cmdlr::get_help_flag_names(processx = FALSE)
 }
 
 #' @param sites the .$sites.meta output of
