@@ -110,7 +110,7 @@ runFimo <- function(sequences, motifs, bfile = "motif",
 
   ps_out %>%
     process_check_error(help_fun = ~{fimoHelp(command)},
-                        user_flags = cmdlr::get_help_flag_names(user_flags) %>%
+                        user_flags = cmdlr::cmd_help_flag_names(user_flags) %>%
                           # filter out special inputs to bfile
                           grep("--$", ., invert = TRUE, value = TRUE),
                         flags_fun = ~{gsub("-", "_", .x)}

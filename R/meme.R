@@ -113,7 +113,7 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", 
 
   ps_out %>%
     process_check_error(help_fun = ~{meme_help_flags(command)},
-        user_flags = cmdlr::get_help_flag_names(user_flags),
+        user_flags = cmdlr::cmd_help_flag_names(user_flags),
         default_help_fun = FALSE)
 
   print_process_stdout(ps_out, silent = silent)
@@ -290,7 +290,7 @@ meme_help_flags <- function(command){
     gsub("\t", " ", .) %>%
     gsub("\\[", "", .) %>%
     gsub("\\]", "", .) %>%
-    cmdlr::get_help_flag_names(processx = FALSE)
+    cmdlr::cmd_help_flag_names(processx = FALSE)
 }
 
 #' @param sites the .$sites.meta output of

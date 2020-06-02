@@ -40,7 +40,7 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
 
   ps_out %>%
     process_check_error(help_fun = ~{dreme_help(command)},
-                        user_flags = cmdlr::get_help_flag_names(flags))
+                        user_flags = cmdlr::cmd_help_flag_names(flags))
 
   print_process_stdout(ps_out, silent = silent)
 

@@ -97,7 +97,7 @@ runTomTom <- function(input, database = NULL,
   ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
   ps_out %>%
     process_check_error(help_fun = ~{tomtom_help(command)},
-                        user_flags = cmdlr::get_help_flag_names(user_flags),
+                        user_flags = cmdlr::cmd_help_flag_names(user_flags),
                         flags_fun = ~{gsub("-", "_", .)}
                         )
 

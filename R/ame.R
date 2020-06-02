@@ -72,7 +72,7 @@ runAme.default <- function(input,
   # help_fun must be anonymous function to delay evaluating ame_help unless it's needed
   ps_out %>%
     process_check_error(help_fun = ~{ame_help(command)},
-                        user_flags = cmdlr::get_help_flag_names(user_flags) %>%
+                        user_flags = cmdlr::cmd_help_flag_names(user_flags) %>%
                           grep("shuffle", ., invert = TRUE, value = TRUE),
                         flags_fun = ~{gsub("-", "_", .x)})
 

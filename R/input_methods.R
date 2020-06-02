@@ -116,7 +116,7 @@ split_input_control <- function(input, control){
     cmdlr::cmd_drop_list_by_name(control)
 
   control_seq <- input %>%
-    cmdlr::keep_list_by_name(control) %>%
+    cmdlr::cmd_keep_list_by_name(control) %>%
     Biostrings::BStringSetList(., use.names = FALSE) %>%
     unlist
 
