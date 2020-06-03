@@ -40,7 +40,7 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
 
   ps_out %>%
     process_check_error(help_fun = ~{dreme_help(command)},
-                        user_flags = cmdlr::cmd_help_parse_flags(flags))
+                        user_flags = cmdr::cmd_help_parse_flags(flags))
 
   print_process_stdout(ps_out, silent = silent)
 
@@ -48,10 +48,10 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
 
   if (n_motifs == 0) {return(NULL)}
 
-  dreme_out <- cmdlr::cmd_output_expect(c("txt", "html", "xml"), "dreme", outdir = outdir)
+  dreme_out <- cmdr::cmd_output_expect(c("txt", "html", "xml"), "dreme", outdir = outdir)
 
   dreme_out %>%
-    cmdlr::cmd_files_exist()
+    cmdr::cmd_files_exist()
 
   dreme_results <- parseDreme(dreme_out$xml)
 
@@ -81,10 +81,10 @@ prepareDremeFlags <- function(input, control, outdir, ...){
                outdir = "oc",
                ngen = "g")
 
-  flags <- cmdlr::cmd_args_all() %>%
-    cmdlr::cmd_args_to_flags(argDict) %>%
-    cmdlr::cmd_list_drop(c("n" = "shuffle")) %>%
-    cmdlr::cmd_list_crystallize()
+  flags <- cmdr::cmd_args_all() %>%
+    cmdr::cmd_args_to_flags(argDict) %>%
+    cmdr::cmd_list_drop(c("n" = "shuffle")) %>%
+    cmdr::cmd_list_crystallize()
 
   return(flags)
 
