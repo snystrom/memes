@@ -97,14 +97,14 @@ runTomTom <- function(input, database = NULL,
   ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
   ps_out %>%
     process_check_error(help_fun = ~{tomtom_help(command)},
-                        user_flags = cmdlr::cmd_help_flag_names(user_flags),
+                        user_flags = cmdlr::cmd_help_parse_flags(user_flags),
                         flags_fun = ~{gsub("-", "_", .)}
                         )
 
-  tomtom_out <- cmdlr::cmd_expected_outputs(c("tsv", "xml", "html"), "tomtom", outdir = outdir)
+  tomtom_out <- cmdlr::cmd_output_expect(c("tsv", "xml", "html"), "tomtom", outdir = outdir)
 
   tomtom_out %>%
-    cmdlr::cmd_check_files_exist()
+    cmdlr::cmd_files_exist()
 
   tomtom_results <- parseTomTom(tomtom_out$xml)
 
@@ -161,7 +161,7 @@ prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
 
   flags <- cmdlr::cmd_args_all() %>%
     cmdlr::cmd_args_to_flags(argsDict) %>%
-    cmdlr::cmd_crystallize_flags()
+    cmdlr::cmd_list_crystallize()
 
   return(flags)
 }

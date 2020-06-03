@@ -113,12 +113,12 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", 
 
   ps_out %>%
     process_check_error(help_fun = ~{meme_help_flags(command)},
-        user_flags = cmdlr::cmd_help_flag_names(user_flags),
+        user_flags = cmdlr::cmd_help_parse_flags(user_flags),
         default_help_fun = FALSE)
 
   print_process_stdout(ps_out, silent = silent)
 
-  meme_out <- cmdlr::cmd_expected_outputs(ext = c("txt", "xml", "html"), prefix = "meme", outdir = outdir)
+  meme_out <- cmdlr::cmd_output_expect(ext = c("txt", "xml", "html"), prefix = "meme", outdir = outdir)
 
   importMeme(meme_out$txt, parse_genomic_coord = alph_parse_coords(alph, parse_genomic_coord), combined_sites = combined_sites)
 }
@@ -177,7 +177,7 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
     cmdlr::cmd_args_to_flags(argsDict)
 
   flags <- c(flagsList, alph_flags) %>%
-    cmdlr::cmd_crystallize_flags()
+    cmdlr::cmd_list_crystallize()
 
   return(flags)
 }
@@ -290,7 +290,7 @@ meme_help_flags <- function(command){
     gsub("\t", " ", .) %>%
     gsub("\\[", "", .) %>%
     gsub("\\]", "", .) %>%
-    cmdlr::cmd_help_flag_names(processx = FALSE)
+    cmdlr::cmd_help_parse_flags(processx = FALSE)
 }
 
 #' @param sites the .$sites.meta output of
