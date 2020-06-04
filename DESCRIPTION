@@ -36,7 +36,7 @@ Suggests:
 RoxygenNote: 7.0.2
 SystemRequirements: Meme Suite (v5.1.1 or above)
 Remotes: 
-    snystrom/dotargs
+    snystrom/cmdr
 VignetteBuilder: knitr
 URL: https://snystrom.github.io/dremeR/, https://github.com/snystrom/dremeR
 BugReports: https://github.com/snystrom/dremeR
