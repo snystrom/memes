@@ -42,7 +42,7 @@ Default: \code{pearson}.}
 environment variable "MEME_DB (set in \code{.Renviron}), or option
 "meme_db" (set with \code{option(meme_db = "path/to/meme/bin")})}
 
-\item{...}{additional flags passed to tomtom using {cmdlr} formating (see table below for details)}
+\item{...}{additional flags passed to tomtom using {cmdr} formating (see table below for details)}
 }
 \value{
 data.frame of match results. Contains \code{match_motif} column of
