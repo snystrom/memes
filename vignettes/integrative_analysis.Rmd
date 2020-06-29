@@ -49,8 +49,6 @@ summit_flank <- example_chip_summits %>%
 
 ## Determinants of ectopic and orphan binding
 
-### Motif scanning with AME (by binding)
-
 ### Pre-filtering database for expressed transcription factors
 ```{r}
 meme_db_path <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "dremeR")
@@ -66,7 +64,7 @@ meme_db <- read_meme(meme_db_path) %>%
 data("example_rnaseq", package = "dremeR")
 ```
 
-```{r}
+```{r, fig.height=5, fig.width=5}
 library(ggplot2)
 
 example_rnaseq %>% 
@@ -74,26 +72,33 @@ example_rnaseq %>%
   dplyr::filter(fpkm == max(fpkm)) %>% 
   ggplot(aes(fpkm)) +
     geom_histogram(binwidth = 1) +
-    coord_cartesian(xlim = c(0, 25))
-    
+    coord_cartesian(xlim = c(0, 25)) +
+    theme_bw() +
+    labs(title = "Largest FPKM value in RNAseq dataset for each gene",
+         y = "Number of genes",
+         x = "Largest FPKM Value")
 ```
 
 ```{r}
 expressed_genes <- example_rnaseq %>% 
+  # For each gene, keep only those with max(FPKM) greater or equal to 5.
   dplyr::group_by(symbol) %>% 
   dplyr::filter(max(fpkm) >= 5)
 ```
 
 ```{r}
 meme_db_expressed <- meme_db %>% 
+  # the altname slot of meme_db contains the gene symbol
+  # (this is database-specific)
   dplyr::filter(altname %in% expressed_genes$symbol)
 ```
 
-We've decreased our multiple-testing penalty by about 50%.
-```{r}
-nrow(meme_db)
-nrow(meme_db_expressed)
-```
+Number of motifs pre-filtering: `r nrow(meme_db)`
+
+Number of motifs post-filter: `r nrow(meme_db_expressed)`
+
+We've decreased our multiple-testing penalty by ~55%.
+
 ### Examination of binding categories with AME
 ```{r}
 by_binding <- summit_flank %>% 
@@ -332,28 +337,6 @@ dreme_by_binding_unique %>%
   view_tomtom_hits(3) %>% 
   cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
 ```
-
-
-```{r}
-dreme_by_binding_unique %>% 
-tidyr::separate(name, c("binding_type"), remove = FALSE, extra = "drop") %>% 
-  ggplot(aes(best_match_altname, pos_frac/neg_frac)) +
-    geom_col(aes(fill = binding_type)) +
-    theme_bw() +
-    scale_y_continuous(expand = expand_scale(mult = c(0, 0.1))) +
-    theme(axis.text = element_text(size = 12, color = "black"))
-```
-
-```{r, fig.height=2, fig.width=7.5}
-expressed_genes %>% 
-  dplyr::filter(symbol %in% dreme_by_binding_unique$best_match_altname) %>% 
-  ggplot(aes(time, fpkm)) +
-    geom_point() +
-    geom_line(aes(group = symbol)) +
-    facet_wrap(~symbol, nrow = 1, scales = "free_y") +
-    theme_bw()
-```
-
 
 ## Motifs in opening vs closing sites
 ```{r}
