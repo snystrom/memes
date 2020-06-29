@@ -1,28 +1,21 @@
-skip_if(T, "not developed yet")
-dreme_file <- dotargs::expected_outputs(c("txt", "xml", "html"), "dreme", "inst/extdata/fasta_ex/fa1_vs_shuffle/")
+skip_if(T, "unfinished")
+skip_if(!meme_is_installed(), "MEME is not installed")
 
-tt_files <- runTomTom(dreme_file$txt, database = "inst/extdata/db/fly_factor_survey_id.meme", thresh = 10)
+setup({
 
+  db <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "dremeR")
+  fa <- system.file("extdata/fasta_ex/fa1.fa", package = "dremeR")
+  dreme_out <- runDreme(fa, "shuffle", e = 39, outdir = tempdir())
 
+})
 
-#####
-# RETURN
-# use this to walk through get_tomtom_target_data line-by line
-tt_xml <- "tt_drememerge_dev/tomtom.xml" %>%
-  xml2::read_xml()
-
-###########
 test_that("tomtom target PWM and target metadata correctly assigned to eachother", {
-  # move below to setup chunk
-  fa <- duplicate_file("inst/extdata/fasta_ex/fa1.fa")
-  dreme_out <- runDreme(fa, "shuffle", e = 39)
-  options(meme_db = "inst/extdata/db/fly_factor_survey_id.meme")
-  tt_out <- runTomTom(dreme_out)
+  tt_out <- runTomTom(dreme_out, database = db)
 
   expect_equal(tt_out$best_match_motif[[2]]@name, tt_out$best_match_name[[2]])
 })
 
-test_that("tomtom error checking suggets alternatives", {
+test_that("tomtom error checking suggests alternatives", {
   expect_error(
     suppressMessages(runTomTom(dreme_out, intternal = T)),
     "internal", class = "error")
@@ -30,6 +23,42 @@ test_that("tomtom error checking suggets alternatives", {
     suppressMessages(runTomTom(dreme_out, incomplete_score = T)),
     "incomplete_scores", class = "error")
 })
+
+test_that("tomtom returns correct data types", {
+  motifs <- dreme_out$motif
+  expect_message(nomatch <- runTomTom(motifs[[1]], database = db))
+  expect_true(is.na(nomatch$tomtom))
+  expect_true(is.na(nomatch$best_match_motif))
+
+})
+
+test_that("view_tomtom_hits works", {
+  # correctly returns "noMatch" instead of error msg
+  # Just check for list output, since it's easier...
+  tt_out <- runTomTom(dreme_out, database = db)
+  expect_type(view_tomtom_hits(tt_out), "list")
+
+})
+
+# no warning when no motifs match but input is >1 length
+tt_out$best_match_motif[c(1,3)]
+
+# Test return vals
+## Test that returns NA cols if all motifs no match
+## Test that returns NA + real value if some motifs no match
+## best_match_motif list has names?
+## motif list has names
+
+# Input tests
+## dreme out
+## meme out
+## .meme file
+## universalmotif
+## universalmotif list
+
+
+## Works when altid not set for input motifs
+
 
 dreme_file <- dotargs::expected_outputs(c("txt"), "dreme", "inst/extdata/fasta_ex/fa1_vs_shuffle/")
 dreme_file <- dremeR:::duplicate_file(dreme_file$txt)
