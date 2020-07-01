@@ -119,7 +119,6 @@ runTomTom <- function(input, database = NULL,
   if (!is.null(input$metadata) & !is.null(tomtom_results)){
 
     nest_tomtom <- nest_tomtom_results(tomtom_results)
-
     merge_res <- dplyr::left_join(input$metadata, nest_tomtom, by = c("name", "altname"))
     return(merge_res)
   }
@@ -325,7 +324,7 @@ parseTomTom <- function(tomtom_xml_path){
 
   query_data <- tt_xml %>%
     get_tomtom_query_data() %>%
-    dplyr::select("query_idx", "id", "alt")
+    dplyr::select(dplyr::any_of(c("query_idx", "id", "alt")))
 
   match_data <- tt_xml %>%
     get_tomtom_match_data()
@@ -347,12 +346,20 @@ parseTomTom <- function(tomtom_xml_path){
     dplyr::left_join(match_data, by = "query_idx") %>%
     dplyr::left_join(target_data, by = "target_idx") %>%
     dplyr::select(-dplyr::contains("idx")) %>%
-    dplyr::select("id", "alt", "match_id", "match_alt", dplyr::contains("value"), "db_name", "match_motif") %>%
+    # any_of() protects against alt not existing
+    dplyr::select(dplyr::any_of(c("id", "alt")), "match_id", "match_alt", dplyr::contains("value"), "db_name", "match_motif") %>%
     # Rename columns for max compatibility with universalmotif
     dplyr::rename("name" = "id",
-                  "altname" = "alt",
                   "match_name" = "match_id",
-                  "match_altname" = "match_alt")
+                  "match_altname" = "match_alt") %>%
+    # allows renaming alt column only if exists
+    dplyr::rename_all(dplyr::recode, alt = "altname")
+
+  if (!("altname" %in% names(tomtom_results))) {
+    # Instantiate altname column w/ NA values if not exists
+    tomtom_results %<>%
+      dplyr::mutate(altname = NA_character_)
+  }
 
   return(tomtom_results)
 
@@ -368,6 +375,7 @@ parseTomTom <- function(tomtom_xml_path){
 #'
 #' @noRd
 nest_tomtom_results <- function(tomtom_results){
+
   tomtom_results %>%
     dplyr::group_by(name, altname) %>%
     tidyr::nest() %>%
