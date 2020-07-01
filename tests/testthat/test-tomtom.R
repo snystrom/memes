@@ -1,4 +1,3 @@
-skip_if(T, "unfinished")
 skip_if(!meme_is_installed(), "MEME is not installed")
 
 setup({
@@ -9,9 +8,17 @@ setup({
 
 })
 
-test_that("tomtom target PWM and target metadata correctly assigned to eachother", {
-  tt_out <- runTomTom(dreme_out, database = db)
+teardown({
 
+  rm(db)
+  rm(fa)
+  rm(dreme_out)
+  rm(tt_out)
+
+})
+
+test_that("tomtom target PWM and target metadata correctly assigned to eachother", {
+  tt_out <<- runTomTom(dreme_out, database = db)
   expect_equal(tt_out$best_match_motif[[2]]@name, tt_out$best_match_name[[2]])
 })
 
@@ -24,106 +31,47 @@ test_that("tomtom error checking suggests alternatives", {
     "incomplete_scores", class = "error")
 })
 
+# Test return vals
+## best_match_motif list has names?
+## motif list has names
 test_that("tomtom returns correct data types", {
   motifs <- dreme_out$motif
+  ## Test that returns NA cols if all motifs no match
   expect_message(nomatch <- runTomTom(motifs[[1]], database = db))
   expect_true(is.na(nomatch$tomtom))
   expect_true(is.na(nomatch$best_match_motif))
 
+  expect_message(nomatch_multi <- runTomTom(motifs[c(1,3)], database = db))
+  expect_true(all(is.na(nomatch_multi$tomtom)))
+  expect_true(all(is.na(nomatch_multi$best_match_motif)))
+
+  ## Test that returns NULL + real value if some motifs no match
+  classes <- unique(vapply(tt_out$best_match_motif, class, character(1)))
+  expect_true(identical(c("NULL", "universalmotif"), classes))
 })
 
 test_that("view_tomtom_hits works", {
   # correctly returns "noMatch" instead of error msg
   # Just check for list output, since it's easier...
-  tt_out <- runTomTom(dreme_out, database = db)
   expect_type(view_tomtom_hits(tt_out), "list")
+
+  # warning when no motifs match but input is >1 length
+  x <- runTomTom(dreme_out$motif[c(1,3)], database = db)
+  # should succeed making "no match" plots as well
+  expect_type(view_tomtom_hits(x), "list")
 
 })
 
-# no warning when no motifs match but input is >1 length
-tt_out$best_match_motif[c(1,3)]
-
-# Test return vals
-## Test that returns NA cols if all motifs no match
-## Test that returns NA + real value if some motifs no match
-## best_match_motif list has names?
-## motif list has names
-
 # Input tests
-## dreme out
-## meme out
-## .meme file
-## universalmotif
-## universalmotif list
-
-
-## Works when altid not set for input motifs
-
-
-dreme_file <- dotargs::expected_outputs(c("txt"), "dreme", "inst/extdata/fasta_ex/fa1_vs_shuffle/")
-dreme_file <- dremeR:::duplicate_file(dreme_file$txt)
-runTomTom(dreme_file, "inst/extdata/db/fly_factor_survey_id.meme")
-runTomTom(dreme_out, "inst/extdata/db/fly_factor_survey_id.meme")
-
-mList <- dreme_out$motif
-m <- mList[[1]]
-options(meme_db = "inst/extdata/db/fly_factor_survey_id.meme")
-runTomTom(mList)
-
-# FAILS because no motif detected, Need method to skip if NA
-runTomTom(m)
-# Works because m2 is the only one that gets matched
-runTomTom(mList[[2]])
-
-#ume <- as.environment("package:universalmotif")
-#eval(my_write_meme(dreme_out$motifs, "myMeme.meme"), envir = ume)
-#universalmotif::write_meme(dreme_out$motifs, "hisMeme.meme")
-
-###
-# dealing w/ empty tomtom results (ie no match ever)
-fa <- duplicate_file("inst/extdata/fasta_ex/fa1.fa")
-dreme_out <- runDreme(fa, "shuffle", e = 39)
-# this first motif matches nothing
-m <- dremeR:::write_meme_list(dreme_out$motif[[1]])
-
-options(tomtom_db = "inst/extdata/db/fly_factor_survey_id.meme")
-runTomTom(m, outdir = "tt_nomatch_dev")
-
-nomatch_xml <- "tt_nomatch_dev/tomtom.xml" %>%
-  xml2::read_xml()
-
-###
-
-
-
-#########
-tomtom_xml_path <- "inst/extdata/dreme_example/tomtom/tomtom.xml"
-
-tt <- parseTomTom(tomtom_xml_path)
-
-tt %>%
-  dplyr::group_by(id, alt) %>%
-  tidyr::nest() %>%
-  dplyr::mutate(best_match = purrr::map(data, ~{
-    .x %>%
-      dplyr::filter(match_evalue == min(match_evalue)) %>%
-      .$match_motif
-  })) -> r
-
-r %>%
-  tidyr::unnest(best_match)
-
-get_best_match_motif <- function(res, by = "match_evalue", motif_colname = "match_motif"){
-  by = rlang::quo_name(by)
-
-  res %>%
-    dplyr::filter(!!by == min(!!by)) %>%
-    .[motif_colname]
-}
-
-tt %>%
-  dplyr::group_by(id, alt) %>%
-  tidyr::nest() %>%
-  dplyr::mutate(best_match = purrr::map(data, get_best_match_motif)) %>%
-  tidyr::unnest(best_match) -> rr
-
+test_that("all input types are accepted", {
+  expect_success(tt_out <- runTomTom(dreme_out, database = db))
+  expect_success(tt_meme_file <- runTomTom(system.file("extdata/example.meme", package = "dremeR"), database = db))
+  # universalmotif
+  expect_success(tt_um <- runTomTom(create_motif("CCAAAA", altname = "alt"), database = db))
+  # universalmotif (no alt name)
+  expect_success(tt_um_noalt <- runTomTom(create_motif("CCAAAA"), database = db))
+  motifs <- c(create_motif("CCAAAA"), create_motif("TTTAAAA"))
+  expect_success(runTomTom(motifs, database = db))
+  # NEED TO USE MEME data also
+  expect_true(FALSE)
+})
