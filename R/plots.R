@@ -50,6 +50,12 @@ view_tomtom_hits <- function(results, top_n = "all"){
       return(view_tomtom_nomatch(.x))
     }
 
+    # Needed to handle when tomtom discovers no hits for any motifs, in which case
+    # tomtom is NA instead of NULL so the column is kept in the dataframe
+    if (all(is.na(.y))) {
+      return(view_tomtom_nomatch(.x))
+    }
+
     if (top_n == "all") {select <- 1:length(.y$match_motif)}
     else if (is.numeric(top_n)) {select <- 1:top_n}
     else {
