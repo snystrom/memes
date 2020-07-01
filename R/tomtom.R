@@ -81,6 +81,17 @@ runTomTom <- function(input, database = NULL,
 
   input <- motif_input(input)
 
+  if (is.null(input$metadata)){
+    # Allows .meme input files to
+    # import query motif metadata
+    # I use this solution instead of modifying motif_input
+    # to allow motif_input on databases to not require importing the file
+    # since these can be large
+    input$metadata <- input$path %>%
+      universalmotif::read_meme() %>%
+      as_universalmotif_dataframe()
+  }
+
   command <- handle_meme_path(path = meme_path, util = "tomtom")
 
   if (outdir == "auto") {outdir <- file.path(dirname(input$path), "tomtom")}
