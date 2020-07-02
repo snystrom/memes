@@ -1,22 +1,5 @@
 skip_if(!meme_is_installed(), "MEME is not installed")
 
-setup({
-
-  db <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "dremeR")
-  fa <- system.file("extdata/fasta_ex/fa1.fa", package = "dremeR")
-  dreme_out <- runDreme(fa, "shuffle", e = 39, outdir = tempdir())
-
-})
-
-teardown({
-
-  rm(db)
-  rm(fa)
-  rm(dreme_out)
-  rm(tt_out)
-
-})
-
 test_that("tomtom target PWM and target metadata correctly assigned to eachother", {
   tt_out <<- runTomTom(dreme_out, database = db)
   expect_equal(tt_out$best_match_motif[[2]]@name, tt_out$best_match_name[[2]])
@@ -24,10 +7,10 @@ test_that("tomtom target PWM and target metadata correctly assigned to eachother
 
 test_that("tomtom error checking suggests alternatives", {
   expect_error(
-    suppressMessages(runTomTom(dreme_out, intternal = T)),
+    suppressMessages(runTomTom(dreme_out, database = db, intternal = T)),
     "internal", class = "error")
   expect_error(
-    suppressMessages(runTomTom(dreme_out, incomplete_score = T)),
+    suppressMessages(runTomTom(dreme_out, database = db, incomplete_score = T)),
     "incomplete_scores", class = "error")
 })
 
@@ -67,11 +50,11 @@ test_that("all input types are accepted", {
   expect_success(tt_out <- runTomTom(dreme_out, database = db))
   expect_success(tt_meme_file <- runTomTom(system.file("extdata/example.meme", package = "dremeR"), database = db))
   # universalmotif
-  expect_success(tt_um <- runTomTom(create_motif("CCAAAA", altname = "alt"), database = db))
+  expect_success(tt_um <- runTomTom(universalmotif::create_motif("CCAAAA", altname = "alt"), database = db))
   # universalmotif (no alt name)
-  expect_success(tt_um_noalt <- runTomTom(create_motif("CCAAAA"), database = db))
-  motifs <- c(create_motif("CCAAAA"), create_motif("TTTAAAA"))
+  expect_success(tt_um_noalt <- runTomTom(universalmotif::create_motif("CCAAAA"), database = db))
+  motifs <- c(universalmotif::create_motif("CCAAAA"), universalmotif::create_motif("TTTAAAA"))
   expect_success(runTomTom(motifs, database = db))
-  # NEED TO USE MEME data also
-  expect_true(FALSE)
+  # runMeme output as input
+  expect_success(runTomTom(meme_out, database = db))
 })
