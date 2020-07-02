@@ -76,6 +76,23 @@ is_dreme_results <- function(res){
   is_universalmotif_list(res$motif)
 }
 
+#' Check whether input is a universalmotif data.frame
+#'
+#' @param res data.frame
+#'
+#' @return TRUE or FALSE
+#'
+is_universalmotif_dataframe <- function(res){
+  spec_df <- universalmotif::create_motif() %>%
+    as_universalmotif_dataframe()
+
+  if (!all(names(spec_df) %in% names(res))) {
+    return(FALSE)
+  }
+
+  is_universalmotif_list(res$motif)
+}
+
 #' Bool is/isnot list of universalmotif objects
 #'
 #' @param list a list

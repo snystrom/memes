@@ -41,8 +41,14 @@ motif_input.character <- function(input, path = NULL){
 }
 
 motif_input.data.frame <- function(input, path = tempfile(fileext = ".meme")){
-  # check data.frame is dreme_out object
-  if (!is_dreme_results(input)) warn_dreme_results(input)
+
+  if (!("motif" %in% names(input))) {
+    stop("input data.frame must contain \"motif\" column")
+  }
+
+  if (!is_universalmotif_list(input$motif)) {
+    stop("motif column is not in universalmotif format")
+  }
 
   path <- input$motif %>%
     write_meme_input_path(path = path)
