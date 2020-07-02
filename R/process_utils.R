@@ -66,14 +66,12 @@ process_check_error <- function(processx_out, help_fun = NULL, user_flags = NULL
       help_fun() %>%
         cmdr::cmd_help_parse_flags(processx = T) %>%
         cmdr::cmd_help_flags_similar(user_flags, .fun = flags_fun) %>%
-        #cmd_help_flags_similar(user_flags, .fun = flags_fun) -> o
-        #return(o)
-        cmdr::cmd_error_cmd_help_flags_similar()
+        cmdr::cmd_help_flags_suggest()
 
     } else {
       help_fun() %>%
         cmdr::cmd_help_flags_similar(user_flags, .fun = flags_fun) %>%
-        cmdr::cmd_error_cmd_help_flags_similar()
+        cmdr::cmd_help_flags_suggest()
     }
 
     usethis::ui_stop("Shell process had non-zero exit status.")
