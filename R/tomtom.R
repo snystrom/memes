@@ -109,7 +109,8 @@ runTomTom <- function(input, database = NULL,
   ps_out %>%
     process_check_error(help_fun = ~{tomtom_help(command)},
                         user_flags = cmdr::cmd_help_parse_flags(user_flags),
-                        flags_fun = ~{gsub("-", "_", .)}
+                        flags_fun = ~{gsub("-", "_", .)},
+                        default_help_fun = TRUE
                         )
 
   tomtom_out <- cmdr::cmd_output_expect(c("tsv", "xml", "html"), "tomtom", outdir = outdir)
