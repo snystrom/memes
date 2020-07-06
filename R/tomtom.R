@@ -121,9 +121,10 @@ runTomTom <- function(input, database = NULL,
   tomtom_results <- parseTomTom(tomtom_out$xml)
 
   if (!is.null(input$metadata) & is.null(tomtom_results)) {
-    message("TomTom returned no matches")
+    warning("TomTom returned no matches")
     # TODO: add every tomtom results column w/ NA values?
     input$metadata$best_match_motif <- rep(NA, nrow(input$metadata))
+    input$metadata$best_match_name <- rep(NA_character_, nrow(input$metadata))
     input$metadata$tomtom <- rep(NA, nrow(input$metadata))
     return(input$metadata)
   }

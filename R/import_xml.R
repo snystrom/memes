@@ -40,7 +40,7 @@ importTomTomXML <- function(tomtom_xml_path){
     get_tomtom_match_data()
 
   if (is.null(match_data)) {
-    warning("TomTom detected no matches")
+    message("TomTom detected no matches")
     #TODO: handle NULL w/ return data w/ NA for all tomtom columns,
     # this way hopefully it will break fewer pipelines
     null_match <- query_data %>%
