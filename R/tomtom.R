@@ -307,6 +307,8 @@ get_tomtom_target_data <- function(tomtom_xml_data){
 #' Return tomtom stat information and PWMs for matched motifs
 #'
 #' @param tomtom_xml_path path to tomtom.xml output
+#' @param use_query_data whether to use the query motif metadata stored in the .xml file in tomtom_results
+#'     used only when user-supplied motif metadata doesn't exist (ie during import from external .xml)
 #'
 #' @return data.frame:
 #'     - id: name of query PWM
@@ -332,12 +334,41 @@ get_tomtom_target_data <- function(tomtom_xml_data){
 #' parseTomTom("tomtom.xml")
 #' }
 #' @noRd
-parseTomTom <- function(tomtom_xml_path){
+parseTomTom <- function(tomtom_xml_path, use_query_data = FALSE){
+  # NOTE/TODO:
+  # This probably needs another refactor to split into a few functions
+  # In particular to get some of the logic of joining metadata w/ tomtom results a little cleaner
+  # (especially cleaning up the if-else logic in this function).
+  # This would require moving some of the logic from runTomTom to one of these new functions.
   tt_xml <- xml2::read_xml(tomtom_xml_path)
 
-  query_data <- tt_xml %>%
-    get_tomtom_query_data() %>%
-    dplyr::select(dplyr::any_of(c("query_idx", "id", "alt")))
+  if (!use_query_data){
+    query_data <- tt_xml %>%
+      get_tomtom_query_data() %>%
+      dplyr::select(dplyr::any_of(c("query_idx", "id", "alt")))
+  } else {
+    query_data <- tt_xml %>%
+      tomtom_query_motif_dfs()
+
+    # NULL needs to be handled differently if not joining with external data
+    if (is.null(match_data)) {
+      warning("TomTom detected no matches")
+      #TODO: handle NULL w/ return data w/ NA for all tomtom columns,
+      # this way hopefully it will break fewer pipelines?
+      null_match <- query_data %>%
+        dplyr::mutate(
+          best_match_name = NA,
+          best_motifs = NA,
+          tomtom = NA)
+
+      return(null_match)
+    }
+
+    query_data %<>%
+      # Have to undo the universalmotif_df names so joins will work downstream,
+      # don't do sooner so null_match logic works out of the box
+      dplyr::rename_all(dplyr::recode, altname = "alt", name = "id")
+  }
 
   match_data <- tt_xml %>%
     get_tomtom_match_data()
@@ -375,6 +406,74 @@ parseTomTom <- function(tomtom_xml_path){
   }
 
   return(tomtom_results)
+
+}
+
+get_tomtom_hits <- function(tomtom_xml){
+
+  match_data <- tomtom_xml %>%
+    get_tomtom_match_data()
+
+  if (is.null(match_data)) {
+    message("TomTom detected no matches")
+    return(NULL)
+  }
+
+  target_db_lookup <- tomtom_xml %>%
+    get_tomtom_db_data %>%
+    dplyr::select(db_idx, db_name)
+
+  target_data <- get_tomtom_target_data(tomtom_xml) %>%
+      dplyr::left_join(target_db_lookup, by = "db_idx")
+
+  return(target_data)
+
+}
+
+external_tt_import <- function(tomtom_xml){
+  # RETURN
+  hits <- get_tomtom_hits(tomtom_xml)
+  # Import queries as universalmotif_df
+  query <- tomtom_query_motif_dfs(tomtom_xml)
+  match_data <- tomtom_xml %>%
+    get_tomtom_match_data()
+
+  tomtom_results <- query_data %>%
+    dplyr::left_join(match_data, by = "query_idx") %>%
+    dplyr::left_join(target_data, by = "target_idx") %>%
+    dplyr::select(-dplyr::contains("idx")) %>%
+    # Rename columns for max compatibility with universalmotif
+    dplyr::rename("match_name" = "match_id",
+                  "match_altname" = "match_alt")
+
+  res <- dplyr::left_join(query_data, nest_tomtom_results(tomtom_results), by = c("name", "altname"))
+}
+
+internal_tt_import <- function(tomtom_xml){
+  # RETURN
+  hits <- get_tomtom_hits(tomtom_xml)
+  query <- get_tomtom_query_data(tomtom_xml)
+
+
+
+  tomtom_results <- query_data %>%
+    dplyr::left_join(match_data, by = "query_idx") %>%
+    dplyr::left_join(target_data, by = "target_idx") %>%
+    dplyr::select(-dplyr::contains("idx")) %>%
+    # any_of() protects against alt not existing
+    dplyr::select(dplyr::any_of(c("id", "alt")), "match_id", "match_alt", dplyr::contains("value"), "db_name", "match_motif") %>%
+    # Rename columns for max compatibility with universalmotif
+    dplyr::rename("name" = "id",
+                  "match_name" = "match_id",
+                  "match_altname" = "match_alt") %>%
+    # allows renaming alt column only if exists
+    dplyr::rename_all(dplyr::recode, alt = "altname")
+
+  if (!("altname" %in% names(tomtom_results))) {
+    # Instantiate altname column w/ NA values if not exists
+    tomtom_results %<>%
+      dplyr::mutate(altname = NA_character_)
+  }
 
 }
 
