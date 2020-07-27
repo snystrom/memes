@@ -1,5 +1,5 @@
 ffdb <- universalmotif::read_meme("inst/extdata/db/fly_factor_survey_id.meme")
-df <- dremeR:::universalmotif_to_meme_df(ffdb)
+df <- memes:::universalmotif_to_meme_df(ffdb)
 df %<>%
   dplyr::filter(grepl("Eip93F", id))
 e93_motif <- ffdb %>%

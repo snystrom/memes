@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# dremeR
+# memes
 
 <!-- badges: start -->
 
@@ -14,7 +14,7 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 
 An R interface to the [MEME Suite](http://meme-suite.org/) family of
 tools, which provides several utilities for performing motif analysis on
-DNA, RNA, and protein sequences. dremeR works by detecting a local
+DNA, RNA, and protein sequences. memes works by detecting a local
 install of the MEME suite, running the commands, then importing the
 results directly into R.
 
@@ -22,50 +22,50 @@ results directly into R.
 
 ### Development Version
 
-You can install the development version of dremeR from
-[GitHub](https://github.com/snystrom/dremeR) with:
+You can install the development version of memes from
+[GitHub](https://github.com/snystrom/memes) with:
 
 ``` r
 if (!requireNamespace("remotes", quietly=TRUE))
   install.packages("remotes")
-# dremeR currently requires the development version of universalmotif:
+# memes currently requires the development version of universalmotif:
 remotes::install_github("bjmt/universalmotif")
-remotes::install_github("snystrom/dremeR")
+remotes::install_github("snystrom/memes")
 ```
 
 ## Detecting the MEME Suite
 
-dremeR relies on a local install of the [MEME
+memes relies on a local install of the [MEME
 Suite](http://meme-suite.org/). For installation instructions for the
 MEME suite, see the [MEME Suite Installation
 Guide](http://meme-suite.org/doc/install.html?man_type=web).
 
-dremeR needs to know the location of the `meme/bin/` directory on your
-local machine. You can tell dremeR the location of your MEME suite
-install in 4 ways. dremeR will always prefer the more specific
-definition if it is a valid path. Here they are ranked from most- to
+memes needs to know the location of the `meme/bin/` directory on your
+local machine. You can tell memes the location of your MEME suite
+install in 4 ways. memes will always prefer the more specific definition
+if it is a valid path. Here they are ranked from most- to
 least-specific:
 
 1.  Manually passing the install path to the `meme_path` argument of all
-    dremeR functions
+    memes functions
 2.  Setting the path using `options(meme_bin = "/path/to/meme/bin/")`
     inside your R script
 3.  Setting `MEME_BIN=/path/to/meme/bin/` in your `.Renviron` file
-4.  dremeR will try the default MEME install location `~/meme/bin/`
+4.  memes will try the default MEME install location `~/meme/bin/`
 
-If dremeR fails to detect your install at the specified location, it
-will fall back to the next option.
+If memes fails to detect your install at the specified location, it will
+fall back to the next option.
 
-To verify dremeR can detect your MEME install, use
-`check_meme_install()` which uses the search herirarchy above to find a
-valid MEME install. It will report whether any tools are missing, and
-print the path to MEME that it sees. This can be useful for
-troubleshooting issues with your install.
+To verify memes can detect your MEME install, use `check_meme_install()`
+which uses the search herirarchy above to find a valid MEME install. It
+will report whether any tools are missing, and print the path to MEME
+that it sees. This can be useful for troubleshooting issues with your
+install.
 
 ``` r
-library(dremeR)
+library(memes)
 
-# Verify that dremeR detects your meme install
+# Verify that memes detects your meme install
 # (returns all green checks if so)
 # (I have MEME installed to the default location)
 check_meme_install()
@@ -139,7 +139,7 @@ stored in the `motif` column. Be careful about changing these values.
   - qval
   - eval
 
-dremeR is built around the [universalmotif
+memes is built around the [universalmotif
 package](https://www.bioconductor.org/packages/release/bioc/html/universalmotif.html)
 which provides a framework for manipulating motifs in R. The `motif`
 columns from `runDreme()` and `runTomTom()` can be used natively with
@@ -159,7 +159,7 @@ suppressPackageStartupMessages(library(magrittr))
 suppressPackageStartupMessages(library(GenomicRanges))
 
 # Example transcription factor peaks as GRanges
-data("example_peaks", package = "dremeR")
+data("example_peaks", package = "memes")
 
 # Genome object
 dm.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
@@ -190,7 +190,7 @@ dreme_results <- runDreme(sequences, control = "shuffle", e = 50)
 #>   root.phylo ape
 ```
 
-dremeR is built around the
+memes is built around the
 [universalmotif](https://www.bioconductor.org/packages/release/bioc/html/universalmotif.html)
 package. The `motif` column of the runDreme results object contains
 `universalmotif` objects which can be used natively in all
@@ -215,12 +215,12 @@ TomTom uses a database of known motifs which can be passed to the
 
 Optionally, you can set the environment variable `MEME_DB` in
 `.Renviron`, or the `meme_db` value in `options` to a valid .meme format
-file and dremeR will use that file as the database. dremeR will always
+file and memes will use that file as the database. memes will always
 prefer user input to the function
 call.
 
 ``` r
-options(meme_db = system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR"))
+options(meme_db = system.file("extdata/db/fly_factor_survey_id.meme", package = "memes"))
 m <- create_motif("CMATTACN", altname = "testMotif")
 tomtom_results <- runTomTom(m)
 ```
@@ -304,7 +304,7 @@ ame_results %>%
 
 ## Importing Data from previous runs
 
-dremeR also supports importing results generated using the MEME suite
+memes also supports importing results generated using the MEME suite
 outside of R (for example, running jobs on
 [meme-suite.org](meme-suite.org), or running on the commandline).
 
@@ -321,18 +321,18 @@ outside of R (for example, running jobs on
 
 # FAQs
 
-### How do I use dremeR/MEME on Windows?
+### How do I use memes/MEME on Windows?
 
 The MEME Suite does not currently support Windows, although it can be
 installed under [Cygwin](https://www.cygwin.com/) or the [Windows Linux
 Subsytem](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
 (WSL). Please note that if MEME is installed on Cygwin or WSL, you must
-also run R inside Cygwin or WSL to use dremeR.
+also run R inside Cygwin or WSL to use memes.
 
 # Citation
 
-dremeR is a wrapper for a select few tools from the MEME Suite, which
-were developed by another group. In addition to citing dremeR, please
+memes is a wrapper for a select few tools from the MEME Suite, which
+were developed by another group. In addition to citing memes, please
 cite the MEME Suite tools corresponding to the tools you use.
 
 If you use `runDreme()` in your analysis, please cite:

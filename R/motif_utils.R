@@ -4,7 +4,7 @@
 #'
 #' **NOTE** This feature is experimental and subject to change based on
 #' user-feedback. Please provide feedback at
-#' \link{https://github.com/snystrom/dremeR/issues/31}
+#' \link{https://github.com/snystrom/memes/issues/31}
 #'
 #' @param .data data.frame of results
 #' @param ... quoted name-value pairs of columns to edit. format: "motif_column_name" = "data_column_name"

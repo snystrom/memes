@@ -48,7 +48,7 @@ test_that("view_tomtom_hits works", {
 # Input tests
 test_that("all input types are accepted", {
   expect_success(tt_out <- runTomTom(dreme_out, database = db))
-  expect_success(tt_meme_file <- runTomTom(system.file("extdata/example.meme", package = "dremeR"), database = db))
+  expect_success(tt_meme_file <- runTomTom(system.file("extdata/example.meme", package = "memes"), database = db))
   # universalmotif
   expect_success(tt_um <- runTomTom(universalmotif::create_motif("CCAAAA", altname = "alt"), database = db))
   # universalmotif (no alt name)

@@ -9,6 +9,6 @@
 example_dreme_by_binding
 }
 \description{
-See vignette("integrative_analysis", package = "dremeR") for details
+See vignette("integrative_analysis", package = "memes") for details
 }
 \keyword{datasets}

@@ -10,7 +10,7 @@ vignette: >
 ```{r, include=FALSE}
 NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
 
-eval_vignette <- NOT_CRAN & dremeR::meme_is_installed()
+eval_vignette <- NOT_CRAN & memes::meme_is_installed()
 
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -21,17 +21,17 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(dremeR)
+library(memes)
 ```
 
 ```{r}
-# Verify that dremeR detects your meme install
+# Verify that memes detects your meme install
 # should return all green checks if so.
 check_meme_install()
 ```
 
 ```{r}
-fa <- system.file("extdata/fasta_ex/fa1.fa", package = "dremeR")
+fa <- system.file("extdata/fasta_ex/fa1.fa", package = "memes")
 ```
 
 ```{r}
@@ -45,7 +45,7 @@ dreme_out <- runDreme(fa, "shuffle", evalue = 39, outdir = tempdir())
 [DREME Commandline Documentation](http://meme-suite.org/doc/dreme.html)
 
 ### Aliased flags
-| dremeR alias | DREME Flag | description                               |
+| memes alias | DREME Flag | description                               |
 |:------------:|:----------:|:------------------------------------------|
 | nmotifs      | m*         | max number of motifs to discover          |
 | sec          | t          | max number of seconds to run              |
@@ -96,7 +96,7 @@ dreme_out$motif %>%
 
 #### Updating motif information
 Occasionally, it can be useful to update the metadata associated with a
-dicovered motif (for example, to assign a new name to a denovo motif). dremeR
+dicovered motif (for example, to assign a new name to a denovo motif). memes
 provides a few utilities to accomplish this.
 
 `update_motifs()` will search for specific column names which describe
@@ -161,7 +161,7 @@ accessibility, Decrease accessibility, or remain Static following E93 binding.
 suppressPackageStartupMessages(library(GenomicRanges))
 suppressPackageStartupMessages(library(plyranges))
 
-peaks <- system.file("extdata/peaks/e93_chr3.csv", package = "dremeR") %>% 
+peaks <- system.file("extdata/peaks/e93_chr3.csv", package = "memes") %>% 
   readr::read_csv() %>% 
   GRanges
 ```
@@ -247,8 +247,8 @@ and "Save Target As" or "Save Link As" (see example image below), and save as
 
 # Citation
 
-dremeR is a wrapper for a select few tools from the MEME Suite, which were
-developed by another group. In addition to citing dremeR, please cite the MEME
+memes is a wrapper for a select few tools from the MEME Suite, which were
+developed by another group. In addition to citing memes, please cite the MEME
 Suite tools corresponding to the tools you use.
 
 If you use `runDreme()` in your analysis, please cite:

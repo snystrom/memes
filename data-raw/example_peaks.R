@@ -1,5 +1,5 @@
 ## code to prepare `example_peaks` dataset goes here
-example_peaks <- system.file("extdata/peaks/peaks.tsv", package = "dremeR") %>%
+example_peaks <- system.file("extdata/peaks/peaks.tsv", package = "memes") %>%
   readr::read_tsv() %>%
   GenomicRanges::GRanges()
 

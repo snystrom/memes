@@ -73,7 +73,7 @@ get_sequence.SimpleGRangesList <- function(regions, genome, score_column = NULL,
 #' @export
 #'
 #' @examples
-#' data(example_peaks, package = "dremeR")
+#' data(example_peaks, package = "memes")
 #' dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
 #' add_sequence(example_peaks, dm.genome)
 add_sequence <- function(ranges, genome, name = "sequence"){

@@ -69,7 +69,7 @@ error('need test here')
 
 
 ## test error checking
-fa <- dremeR:::duplicate_file("inst/extdata/fasta_ex/fa1.fa")
+fa <- memes:::duplicate_file("inst/extdata/fasta_ex/fa1.fa")
 expect_error(suppressMessages(runDreme(fa, "shuffle", et = 39)),
              "\"e\" instead of", class = "error")
 ## Ensure error catch works with list input also

@@ -1,4 +1,4 @@
-library(dremeR)
+library(memes)
 # Use FlyFactor database
 db <- here::here("inst/extdata/flyFactorSurvey_cleaned.meme")
 

@@ -10,7 +10,7 @@ vignette: >
 ```{r, include=FALSE}
 NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
 
-eval_vignette <- NOT_CRAN & dremeR::meme_is_installed()
+eval_vignette <- NOT_CRAN & memes::meme_is_installed()
 
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(dremeR)
+library(memes)
 library(magrittr)
 suppressPackageStartupMessages(library(GenomicRanges))
 ```
@@ -34,7 +34,7 @@ check_meme_install()
 
 ### Prepare peaks for analysis
 ```{r, message=F}
-data("example_chip_summits", package = "dremeR")
+data("example_chip_summits", package = "memes")
 ```
 
 ```{r}
@@ -51,7 +51,7 @@ summit_flank <- example_chip_summits %>%
 
 ### Pre-filtering database for expressed transcription factors
 ```{r}
-meme_db_path <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "dremeR")
+meme_db_path <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
 ```
 
 ```{r}
@@ -61,7 +61,7 @@ meme_db <- read_meme(meme_db_path) %>%
 ```
 
 ```{r}
-data("example_rnaseq", package = "dremeR")
+data("example_rnaseq", package = "memes")
 ```
 
 ```{r, fig.height=5, fig.width=5}
@@ -246,9 +246,9 @@ dreme_by_binding <- by_binding %>%
 
 ```{r}
 # The above code chunk takes a long time to run.
-# dremeR is packaged with the results of this run in the "example_dreme_by_binding" dataset
+# memes is packaged with the results of this run in the "example_dreme_by_binding" dataset
 # which can be loaded as follows:
-data("example_dreme_by_binding", package = "dremeR")
+data("example_dreme_by_binding", package = "memes")
 dreme_by_binding <- example_dreme_by_binding %>% 
   dplyr::bind_rows(.id = "binding_type")
 ```
