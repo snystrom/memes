@@ -61,7 +61,7 @@
 
 #' runDreme() output for example_chip_summits split by binding description
 #'
-#' See vignette("integrative_analysis", package = "dremeR") for details
+#' See vignette("integrative_analysis", package = "memes") for details
 #'
 #'
 #' @format a runDreme results data.frame
@@ -96,7 +96,7 @@
 #'
 #' AME was run for "ectopic", "entopic", and "orphan" sites using shuffled background.
 #'
-#' see `vignette("integrative_analysis", package = "dremeR")` for details.
+#' see `vignette("integrative_analysis", package = "memes")` for details.
 #'
 #' @format a list of runAme() results data.frames
 #' @examples

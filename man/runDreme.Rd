@@ -42,7 +42,7 @@ be reproducible between systems using python2.7 vs 3.
 input fasta in dir named "\<input\>\emph{vs}\<control\>". If input is
 DNAstringset, will be temporary path. This means that if you want to save
 the raw output files, you must use fasta files as input or use an
-informative (and unique) outdir name. dremeR will \strong{not check} if it
+informative (and unique) outdir name. memes will \strong{not check} if it
 overwrites files in a directory. Directories will be recursively created if needed.}
 
 \item{meme_path}{optional, path to "meme/bin/" on your local machine.
@@ -103,7 +103,7 @@ setting evalue = 1. For additional details about each DREME flag, see the
 \href{http://meme-suite.org/doc/dreme.html}{DREME Manual Webpage}.
 
 List of aliased values which can be passed to \code{...}\tabular{cclc}{
-   dremeR alias \tab DREME Flag \tab description \tab default \cr
+   memes alias \tab DREME Flag \tab description \tab default \cr
    nmotifs \tab m \tab max number of motifs to discover \tab NULL \cr
    sec \tab t \tab max number of seconds to run \tab NULL \cr
    evalue \tab e \tab max E-value cutoff \tab 0.05 \cr

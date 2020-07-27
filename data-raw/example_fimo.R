@@ -1,8 +1,8 @@
-library(dremeR)
+library(memes)
 library(GenomicRanges)
 library(magrittr)
 
-peaks <- system.file("extdata/peaks/e93_chr3.csv", package = "dremeR") %>%
+peaks <- system.file("extdata/peaks/e93_chr3.csv", package = "memes") %>%
   readr::read_csv() %>%
   GRanges
 

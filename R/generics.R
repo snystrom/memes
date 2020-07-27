@@ -72,7 +72,7 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #'   input fasta in dir named "\<input\>_vs_\<control\>". If input is
 #'   DNAstringset, will be temporary path. This means that if you want to save
 #'   the raw output files, you must use fasta files as input or use an
-#'   informative (and unique) outdir name. dremeR will **not check** if it
+#'   informative (and unique) outdir name. memes will **not check** if it
 #'   overwrites files in a directory. Directories will be recursively created if needed.
 #' @param meme_path optional, path to "meme/bin/" on your local machine.
 #'   runDreme will search 3 places in order for meme if this flag is unset:
@@ -102,7 +102,7 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #'
 #' List of aliased values which can be passed to `...`
 #'
-#' | dremeR alias | DREME Flag | description                               | default |
+#' | memes alias | DREME Flag | description                               | default |
 #' |:------------:|:----------:|:------------------------------------------|:-------:|
 #' | nmotifs      | m          | max number of motifs to discover          | NULL    |
 #' | sec          | t          | max number of seconds to run              | NULL    |
@@ -214,7 +214,7 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #'
 #' @details Additional AME arguments
 #'
-#' dremeR allows passing any valid flag to it's target programs via `...`. For
+#' memes allows passing any valid flag to it's target programs via `...`. For
 #' additional details for all valid AME arguments, see the [AME
 #' Manual](http://meme-suite.org/doc/ame.html) webpage. For convenience, a table
 #' of valid parameters, and brief descriptions of their function are provided

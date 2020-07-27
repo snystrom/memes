@@ -21,7 +21,7 @@ add_sequence(ranges, genome, name = "sequence")
 Add nucleic acid sequence of regions to metadata column
 }
 \examples{
-data(example_peaks, package = "dremeR")
+data(example_peaks, package = "memes")
 dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
 add_sequence(example_peaks, dm.genome)
 }

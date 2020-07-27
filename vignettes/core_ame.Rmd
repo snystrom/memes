@@ -10,7 +10,7 @@ vignette: >
 ```{r, include=FALSE}
 NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
 
-eval_vignette <- NOT_CRAN & dremeR::meme_is_installed()
+eval_vignette <- NOT_CRAN & memes::meme_is_installed()
 
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(dremeR)
+library(memes)
 suppressPackageStartupMessages(library(GenomicRanges))
 library(magrittr)
 ```
@@ -38,7 +38,7 @@ AME requires a series of input sequences to scan for motif enrichment.
 GRanges object using the `get_sequence()` function
 
 ```{r}
-data("example_peaks", package = "dremeR")
+data("example_peaks", package = "memes")
 
 dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
 
@@ -58,7 +58,7 @@ the following formats:
 
 ### Setting a default database 
 
-dremeR can be configured to use a default .meme format file as the query
+memes can be configured to use a default .meme format file as the query
 database, which it will use if the user does not provide a value to `database`
 when calling `runAme()`. The following locations will be searched in order.
 
@@ -73,7 +73,7 @@ invalid file, but the `MEME_DB` environment variable is a valid file, the
 `MEME_DB` path will be used.
 
 ```{r}
-options(meme_db = system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR"))
+options(meme_db = system.file("extdata/db/fly_factor_survey_id.meme", package = "memes"))
 ```
 
 ## Running AME
@@ -117,7 +117,7 @@ If using a list input to `runAme()`, it will dispatch multiple AME runs for each
 object in the list.
 
 ```{r}
-data("example_chip_summits", package = "dremeR")
+data("example_chip_summits", package = "memes")
 
 seq_by_behavior <- example_chip_summits %>% 
   plyranges::mutate(width = 100) %>% 
@@ -149,7 +149,7 @@ in only running 1 comparison: Increasing vs Static+Decreasing.
 runAme(seq_by_behavior, control = c("Static", "Decreasing"))
 ```
 ```{r, echo=F}
-data("example_ame", package = "dremeR")
+data("example_ame", package = "memes")
 ame_by_behavior_vs_static <- example_ame
 ```
 
@@ -213,7 +213,7 @@ ame_by_binding <- seq_by_binding %>%
 
 ```{r, echo=F}
 # Allows vignette to build on systems w/o functioning MEME suite
-data("example_ame_large", package = "dremeR")
+data("example_ame_large", package = "memes")
 ame_by_binding <- example_ame_large
 ```
 
@@ -343,8 +343,8 @@ and "Save Target As" or "Save Link As" (see example image below), and save as
 
 # Citation
 
-dremeR is a wrapper for a select few tools from the MEME Suite, which were
-developed by another group. In addition to citing dremeR, please cite the MEME
+memes is a wrapper for a select few tools from the MEME Suite, which were
+developed by another group. In addition to citing memes, please cite the MEME
 Suite tools corresponding to the tools you use.
 
 If you use `runAme()` in your analysis, please cite:

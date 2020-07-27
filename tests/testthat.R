@@ -1,5 +1,5 @@
 library(testthat)
-library(dremeR)
+library(memes)
 
-test_check("dremeR")
+test_check("memes")
 

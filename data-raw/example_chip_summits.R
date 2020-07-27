@@ -1,7 +1,7 @@
 library(dplyr)
 library(plyranges)
 
-example_chip_summits <- system.file("extdata/peaks/e93_chr3.csv", package = "dremeR") %>%
+example_chip_summits <- system.file("extdata/peaks/e93_chr3.csv", package = "memes") %>%
   readr::read_csv() %>%
   GRanges() %>%
   anchor_start() %>%

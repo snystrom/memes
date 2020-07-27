@@ -20,7 +20,7 @@ the significance of the match between the input and known motifs. TomTom can be
 run using the `runTomTom()` function.
 
 ```{r setup}
-library(dremeR)
+library(memes)
 library(magrittr)
 ```
 
@@ -34,7 +34,7 @@ library(magrittr)
 
 ### Setting a default database 
 
-dremeR can be configured to use a default .meme format file as the query
+memes can be configured to use a default .meme format file as the query
 database, which it will use if the user does not provide a value to `database`
 when calling `runTomTom()`. The following locations will be searched in order:
 
@@ -49,7 +49,7 @@ invalid file, but the `MEME_DB` environment variable is a valid file, the
 `MEME_DB` path will be used.
 
 ```{r}
-options(meme_db = system.file("extdata/db/fly_factor_survey_id.meme", package = "dremeR"))
+options(meme_db = system.file("extdata/db/fly_factor_survey_id.meme", package = "memes"))
 ```
  
  
@@ -75,9 +75,9 @@ runTomTom(dreme_example)
 
 ## Output data
 ```{r}
-# This is a pre-build dataset packaged with dremeR 
+# This is a pre-build dataset packaged with memes 
 # that mirrors running:
-# options(meme_db = system.file("inst/extdata/db/fly_factor_survey_id.meme", package = "dremeR"))
+# options(meme_db = system.file("inst/extdata/db/fly_factor_survey_id.meme", package = "memes"))
 # example_motif <- create_motif("CCRAAAW")
 # example_tomtom <- runTomTom(example_motif)
 data("example_tomtom")
@@ -143,7 +143,7 @@ While TomTom can be useful for limiting the search-space for potential true
 motif matches, often times the default "best match" is not the correct
 assignment. Users should use their domain-specific knowledge in conjunction with
 the data returned by TomTom to make this judgement (see below for more details).
-dremeR provides a few convenience functions for reassigning these values.
+memes provides a few convenience functions for reassigning these values.
 
 First, the `update_best_match()` function will update the values of the
 `best_match*` columns to reflect the values stored in the first row of the
@@ -209,8 +209,8 @@ and "Save Target As" or "Save Link As" (see example image below), and save as
 
 # Citation
 
-dremeR is a wrapper for a select few tools from the MEME Suite, which were
-developed by another group. In addition to citing dremeR, please cite the MEME
+memes is a wrapper for a select few tools from the MEME Suite, which were
+developed by another group. In addition to citing memes, please cite the MEME
 Suite tools corresponding to the tools you use.
 
 If you use `runTomTom()` in your analysis, please cite:

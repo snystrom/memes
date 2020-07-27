@@ -14,14 +14,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-dremeR is an R interface to the [MEME Suite](http://meme-suite.org/) family of tools,
+memes is an R interface to the [MEME Suite](http://meme-suite.org/) family of tools,
 which provides several utilities for performing motif analysis on DNA, RNA, and
 protein sequences. It works by detecting a local install of the MEME suite,
 running the commands, then importing the results directly into R.
 
 ## Installing the MEME Suite
 
-dremeR relies on a local install of the [MEME Suite](http://meme-suite.org/).
+memes relies on a local install of the [MEME Suite](http://meme-suite.org/).
 For installation instructions for the MEME suite, see the [MEME Suite Installation Guide](http://meme-suite.org/doc/install.html?man_type=web).
 
 Briefly, the MEME suite can be installed to a default location (`~/meme/`) on
@@ -45,28 +45,28 @@ For additional troubleshooting or to learn more about install configuration, ple
 
 ## Detecting the MEME Suite
 
-dremeR needs to know the location of the `meme/bin/` directory on your local machine.
-You can tell dremeR the location of your MEME suite install in 4 ways. dremeR
+memes needs to know the location of the `meme/bin/` directory on your local machine.
+You can tell memes the location of your MEME suite install in 4 ways. memes
 will always prefer the more specific definition if it is a valid path. Here they
 are ranked from most- to least-specific:
 
-1. Manually passing the install path to the `meme_path` argument of all dremeR functions
+1. Manually passing the install path to the `meme_path` argument of all memes functions
 2. Setting the path using `options(meme_bin = "/path/to/meme/bin/")` inside your R script
 3. Setting `MEME_BIN=/path/to/meme/bin/` in your `.Renviron` file
-4. dremeR will try the default MEME install location `~/meme/bin/`
+4. memes will try the default MEME install location `~/meme/bin/`
 
-If dremeR fails to detect your install at the specified location, it will fall
+If memes fails to detect your install at the specified location, it will fall
 back to the next option.
 
-To verify dremeR can detect your MEME install, use `check_meme_install()` which
+To verify memes can detect your MEME install, use `check_meme_install()` which
 uses the search herirarchy above to find a valid MEME install. It will report
 whether any tools are missing, and print the path to MEME that it sees. This can
 be useful for troubleshooting issues with your install.
 
 ```{r check_install_works}
-library(dremeR)
+library(memes)
 
-# Verify that dremeR detects your meme install
+# Verify that memes detects your meme install
 # (returns all green checks if so)
 # (I have MEME installed to the default location)
 check_meme_install()
@@ -84,5 +84,5 @@ check_meme_install(meme_path = 'bad/path')
 I get the following error: installation of package 'R.oo' had non-zero exit status
 
  - Problem: Your R installation likely lacks the `R.css` file
- - Solution: when installing the package, set `remotes::install_github("snystrom/dremeR", INSTALL_opts = c("--no-html"))`
- - NOTE: all help documents for dremeR will be parsed as plain-text so will lack links or other formatting.
+ - Solution: when installing the package, set `remotes::install_github("snystrom/memes", INSTALL_opts = c("--no-html"))`
+ - NOTE: all help documents for memes will be parsed as plain-text so will lack links or other formatting.

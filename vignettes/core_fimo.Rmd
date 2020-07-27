@@ -10,7 +10,7 @@ vignette: >
 ```{r, include=FALSE}
 NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
 
-eval_vignette <- NOT_CRAN & dremeR::meme_is_installed()
+eval_vignette <- NOT_CRAN & memes::meme_is_installed()
 
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages(library(GenomicRanges))
 suppressPackageStartupMessages(library(magrittr))
 suppressPackageStartupMessages(library(universalmotif))
-library(dremeR)
+library(memes)
 ```
 
 ## Inputs
@@ -34,7 +34,7 @@ headers, and a set of motifs to detect within the input sequences.
 
 ### Sequence Inputs:
 Sequence input to `runFimo()` can be as a path to a .fasta formatted file, or as
-a `Biostrings::XStringSet` object. Unlike other dremeR functions, `runFimo()`
+a `Biostrings::XStringSet` object. Unlike other memes functions, `runFimo()`
 **does not** accept a `Biostrings::BStringSetList` as input. This is to simplify
 ranged join operations (see [joins](#joins)) on output data.
 
@@ -43,7 +43,7 @@ from the fasta headers. These are generated automatically if using
 `get_sequences()` to generate sequences for input from a `GRanges` object.
 
 ```{r}
-data("example_chip_summits", package = "dremeR")
+data("example_chip_summits", package = "memes")
 
 dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
 
@@ -191,8 +191,8 @@ and "Save Target As" or "Save Link As" (see example image below), and save as
 
 # Citation
 
-dremeR is a wrapper for a select few tools from the MEME Suite, which were
-developed by another group. In addition to citing dremeR, please cite the MEME
+memes is a wrapper for a select few tools from the MEME Suite, which were
+developed by another group. In addition to citing memes, please cite the MEME
 Suite tools corresponding to the tools you use.
 
 If you use `runFimo()` in your analysis, please cite:

@@ -1,4 +1,4 @@
-library(dremeR)
+library(memes)
 library(dplyr)
 
 link <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE97956&format=file&file=GSE97956%5FgeneFPKMs%5FL3%5F24hr%5F44hr%2Exlsx"
@@ -13,7 +13,7 @@ full_rnaseq <- readxl::read_excel(path) %>%
   dplyr::group_by(symbol) %>%
   dplyr::filter(max(fpkm) != 0)
 
-#data("flyFactorMotifs", package = "dremeR")
+#data("flyFactorMotifs", package = "memes")
 flyFactorMotifs <- read_meme("inst/extdata/flyFactorSurvey_cleaned.meme")
 
 ff_df <- flyFactorMotifs %>%

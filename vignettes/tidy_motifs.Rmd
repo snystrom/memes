@@ -14,23 +14,23 @@ knitr::opts_chunk$set(
 )
 ```
 
-dremeR contains several experimental features to simplify working with motif
+memes contains several experimental features to simplify working with motif
 metadata. These can be used to manipulate motifs detected from MEME Suite tools,
 or to deal with motifs from other sources.
 
 **Note:** These features are experimental and will be influenced by user
-feedback. Please provide comments, issues, or other feedback at the [dremeR
-issues page](https://github.com/snystrom/dremeR/issues).
+feedback. Please provide comments, issues, or other feedback at the [memes
+issues page](https://github.com/snystrom/memes/issues).
 
 ```{r setup}
-library(dremeR)
+library(memes)
 library(magrittr)
 library(universalmotif)
 ```
 
 The `MotifDb` package makes it easy to query thousands of motifs from public
 databases. Here, I will describe how to use one of these queries as input to
-dremeR functions, and how to manipulate the resulting motifs to prepare them for
+memes functions, and how to manipulate the resulting motifs to prepare them for
 MEME suite tools.
 
 I will use the motifs from the [FlyFactorSurvey](https://mccb.umassmed.edu/ffs/)
@@ -42,7 +42,7 @@ flyFactorDb <- MotifDb::MotifDb %>%
 
 Use `universalmotif::convert_motifs()` to convert a `MotifDb` query into motif
 objects. In many cases, the resulting list can be used directly as input to
-dremeR functions, like `runTomTom`, or `runAme`.
+memes functions, like `runTomTom`, or `runAme`.
 ```{r}
 flyFactorMotifs <- flyFactorDb %>% 
   convert_motifs()
@@ -56,7 +56,7 @@ flyFactorMotifs %>%
   head(1)
 ```
 
-dremeR provides the `as_universalmotif_dataframe()` method for converting
+memes provides the `as_universalmotif_dataframe()` method for converting
 universalmotif lists into special data.frames which can be used to update motif
 entries. This is particularly useful when dealing with several motifs at once.
 ```{r}
@@ -69,10 +69,10 @@ update motif entries. Any additional columns added to the data.frame will be
 ignored. The `motif` column is a list column that holds the original
 universalmotif objects.
 
-**Note:** If the `motif` column is altered by non-dremeR methods, the following
+**Note:** If the `motif` column is altered by non-memes methods, the following
 approaches are not guaranteed to work. These features are experimental and will
 be influenced by user feedback. Please provide comments, issues, or other
-feedback at the [dremeR issues page](https://github.com/snystrom/dremeR/issues).
+feedback at the [memes issues page](https://github.com/snystrom/memes/issues).
 ```{r}
 # The following columns can be used to update motif metadata
 flyFactor_data %>% 
@@ -158,8 +158,8 @@ The resulting universalmotif list object now reflects the changes we made to the
 flyFactorMotifs_final %>% 
   head(1)
 ```
-This cleaned-up version of the FlyFactorSurvey data is packaged with dremeR in
-`system.file("extdata/flyFactorSurvey_cleaned.meme", package = "dremeR")`.
+This cleaned-up version of the FlyFactorSurvey data is packaged with memes in
+`system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")`.
 ```{r,eval=F,include=T}
 write_meme(flyFactorMotifs_final, "flyFactorSurvey_cleaned.meme")
 ```

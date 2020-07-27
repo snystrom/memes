@@ -12,7 +12,7 @@ example_ame_large
 AME was run for "ectopic", "entopic", and "orphan" sites using shuffled background.
 }
 \details{
-see `vignette("integrative_analysis", package = "dremeR")` for details.
+see `vignette("integrative_analysis", package = "memes")` for details.
 }
 \examples{
 # Data can be combined into 1 large data.frame using:

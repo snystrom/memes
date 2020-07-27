@@ -69,7 +69,7 @@ Motif enrichment using AME
 \details{
 Additional AME arguments
 
-dremeR allows passing any valid flag to it's target programs via \code{...}. For
+memes allows passing any valid flag to it's target programs via \code{...}. For
 additional details for all valid AME arguments, see the \href{http://meme-suite.org/doc/ame.html}{AME Manual} webpage. For convenience, a table
 of valid parameters, and brief descriptions of their function are provided
 below:\tabular{cccl}{

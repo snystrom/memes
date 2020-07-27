@@ -1,4 +1,4 @@
-library(dremeR)
+library(memes)
 library(universalmotif)
 library(magrittr)
 
