@@ -72,7 +72,7 @@ runAme.default <- function(input,
   # help_fun must be anonymous function to delay evaluating ame_help unless it's needed
   ps_out %>%
     process_check_error(help_fun = ~{ame_help(command)},
-                        user_flags = cmdr::cmd_help_parse_flags(user_flags) %>%
+                        user_flags = cmdfun::cmd_help_parse_flags(user_flags) %>%
                           grep("shuffle", ., invert = TRUE, value = TRUE),
                         flags_fun = ~{gsub("-", "_", .x)})
 
@@ -80,14 +80,14 @@ runAme.default <- function(input,
   print_process_stderr(ps_out, silent = silent)
 
   # NOTE: sequences.tsv is only created when method == "fisher"
-  ame_out <- cmdr::cmd_output_expect(c("tsv", "html"), "ame", outdir)
+  ame_out <- cmdfun::cmd_output_expect(c("tsv", "html"), "ame", outdir)
   if (method == "fisher"){
-    ame_seq <- cmdr::cmd_output_expect("tsv", "sequences", outdir)
+    ame_seq <- cmdfun::cmd_output_expect("tsv", "sequences", outdir)
     ame_out$sequences <- ame_seq[[1]]
   }
 
   ame_out %>%
-    cmdr::cmd_files_exist()
+    cmdfun::cmd_files_exist()
 
   import_sequences <- FALSE
   if (method == "fisher" & sequences == TRUE){
@@ -112,8 +112,8 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 
   argsDict <- c("outdir" = "oc")
 
-  flagList <- cmdr::cmd_args_all() %>%
-    cmdr::cmd_args_to_flags(argsDict) %>%
+  flagList <- cmdfun::cmd_args_all() %>%
+    cmdfun::cmd_args_to_flags(argsDict) %>%
     purrr::set_names(~{gsub("_", "-", .x)})
 
   if (exists("control", flagList)) {
@@ -129,7 +129,7 @@ prepareAmeFlags <- function(control, outdir, method, ...){
   }
 
   flagList %>%
-    cmdr::cmd_list_crystallize(prefix = "--")
+    cmdfun::cmd_list_crystallize(prefix = "--")
 }
 
 #' Parse ame output
