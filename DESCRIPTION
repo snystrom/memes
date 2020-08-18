@@ -6,7 +6,7 @@ Authors@R: person("Spencer", "Nystrom",
     email = "snystrom@email.unc.edu", 
     role = c("aut", "cre", "cph"),
     comment = c(ORCID = "0000-0003-1000-1579"))
-Description: Provides functions for performing motif analysis in R using the MEME suite as a backend.
+Description: Provides functions for performing motif analysis using the MEME suite as a backend.
     Functions & outputs are designed for easy integration into tidy workflows for rapid iteration. 
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -32,7 +32,8 @@ Suggests:
     pheatmap,
     PMCMRplus,
     plyranges (>= 1.9.1),
-    rmarkdown
+    rmarkdown,
+    covr
 RoxygenNote: 7.0.2
 SystemRequirements: Meme Suite (v5.1.1 or above)
 Remotes: 
