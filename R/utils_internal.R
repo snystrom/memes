@@ -36,8 +36,10 @@ handle_meme_database_path <- function(path = NULL){
   # names will be used as file names for non file-path entries
 
   if (!is.null(path)){
-    if (path == ""){
-      stop("path cannot be an empty string")
+    if (class(path) == "character"){
+      if (path == ""){
+        stop("path cannot be an empty string")
+      }
     }
   }
 
