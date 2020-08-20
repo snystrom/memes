@@ -37,7 +37,7 @@ Suggests:
 RoxygenNote: 7.0.2
 SystemRequirements: Meme Suite (v5.1.1 or above)
 Remotes: 
-    snystrom/cmdfun
+    snystrom/cmdfun@0.1.90002
 VignetteBuilder: knitr
 URL: https://snystrom.github.io/memes/, https://github.com/snystrom/memes
 BugReports: https://github.com/snystrom/memes

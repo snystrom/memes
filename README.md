@@ -10,6 +10,10 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Codecov test
+coverage](https://codecov.io/gh/snystrom/dremeR/branch/master/graph/badge.svg)](https://codecov.io/gh/snystrom/dremeR?branch=master)
+[![R build
+status](https://github.com/snystrom/dremeR/workflows/R-CMD-check/badge.svg)](https://github.com/snystrom/dremeR/actions)
 <!-- badges: end -->
 
 An R interface to the [MEME Suite](http://meme-suite.org/) family of
@@ -70,13 +74,13 @@ library(memes)
 # (I have MEME installed to the default location)
 check_meme_install()
 #> checking main install
-#> ✔ /nas/longleaf/home/snystrom/meme/bin
+#> ✓ /nas/longleaf/home/snystrom/meme/bin
 #> checking util installs
-#> ✔ /nas/longleaf/home/snystrom/meme/bin/dreme
-#> ✔ /nas/longleaf/home/snystrom/meme/bin/ame
-#> ✔ /nas/longleaf/home/snystrom/meme/bin/fimo
-#> ✔ /nas/longleaf/home/snystrom/meme/bin/tomtom
-#> ✔ /nas/longleaf/home/snystrom/meme/bin/meme
+#> ✓ /nas/longleaf/home/snystrom/meme/bin/dreme
+#> ✓ /nas/longleaf/home/snystrom/meme/bin/ame
+#> ✓ /nas/longleaf/home/snystrom/meme/bin/fimo
+#> ✓ /nas/longleaf/home/snystrom/meme/bin/tomtom
+#> ✓ /nas/longleaf/home/snystrom/meme/bin/meme
 ```
 
 ``` r
@@ -84,7 +88,7 @@ check_meme_install()
 # If no meme/bin is detected, will return a red X
 check_meme_install(meme_path = 'bad/path')
 #> checking main install
-#> ✖ bad/path
+#> x bad/path
 ```
 
 ## The Core Tools

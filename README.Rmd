@@ -18,6 +18,8 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Codecov test coverage](https://codecov.io/gh/snystrom/dremeR/branch/master/graph/badge.svg)](https://codecov.io/gh/snystrom/dremeR?branch=master)
+[![R build status](https://github.com/snystrom/dremeR/workflows/R-CMD-check/badge.svg)](https://github.com/snystrom/dremeR/actions)
 <!-- badges: end -->
 
 An R interface to the [MEME Suite](http://meme-suite.org/) family of tools,
