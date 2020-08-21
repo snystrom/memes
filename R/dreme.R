@@ -35,7 +35,7 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
 
   flags <- prepareDremeFlags(input = input, control = control, outdir = outdir, ...)
 
-  command <- handle_meme_path(path = meme_path, util = "dreme")
+  command <- search_meme_path(path = meme_path, util = "dreme")
   ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
 
   ps_out %>%
@@ -107,7 +107,7 @@ parseDreme <- function(xml){
 
 #' Returns Dreme help lines
 #'
-#' @param command path to ame. output of handle_meme_path(util = "ame")
+#' @param command path to ame. output of search_meme_path(util = "ame")
 #'
 #' @return
 #'

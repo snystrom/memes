@@ -10,7 +10,7 @@ utils::globalVariables(".")
 #' @examples
 #'
 #' @noRd
-handle_meme_path <- function(path = NULL, util = NULL){
+search_meme_path <- function(path = NULL, util = NULL){
   f <- cmdfun::cmd_path_search(environment_var = "MEME_BIN",
                                        option_name = "meme_bin",
                                        default_path = "~/meme/bin",
@@ -31,7 +31,7 @@ handle_meme_path <- function(path = NULL, util = NULL){
 #' @examples
 #'
 #' @noRd
-handle_meme_database_path <- function(path = NULL){
+search_meme_database_path <- function(path = NULL){
   # database can be path, or universalmotif list, (or vector: c(motifList, path))
   # names will be used as file names for non file-path entries
 

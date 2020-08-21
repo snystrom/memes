@@ -92,11 +92,11 @@ runTomTom <- function(input, database = NULL,
       as_universalmotif_dataframe()
   }
 
-  command <- handle_meme_path(path = meme_path, util = "tomtom")
+  command <- search_meme_path(path = meme_path, util = "tomtom")
 
   if (outdir == "auto") {outdir <- file.path(dirname(input$path), "tomtom")}
 
-  database <- handle_meme_database_path(path = database)
+  database <- search_meme_database_path(path = database)
 
   user_flags <- prepareTomTomFlags(outdir = outdir,
                                    thresh = thresh,
@@ -176,7 +176,7 @@ prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
 
 #' Returns tomtom help lines
 #'
-#' @param command path to tomtom. output of handle_meme_path(util = "tomtom")
+#' @param command path to tomtom. output of search_meme_path(util = "tomtom")
 #'
 #' @return
 #'

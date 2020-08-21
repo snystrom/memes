@@ -1,4 +1,4 @@
-context("input methods & meme_database_path handler")
+context("input methods & meme_database_path search_function")
 
 #####
 # MOVE THIS TO HELPER

@@ -61,8 +61,8 @@ runAme.default <- function(input,
   if (outdir == "auto") {outdir <- outdir_name(input, control)}
 
   user_flags <- prepareAmeFlags(control, outdir, method, ...)
-  database <- handle_meme_database_path(database)
-  command <- handle_meme_path(path = meme_path, util = "ame")
+  database <- search_meme_database_path(database)
+  command <- search_meme_path(path = meme_path, util = "ame")
 
   flags <- c(user_flags, input, database)
 
@@ -99,7 +99,7 @@ runAme.default <- function(input,
 
 #' Returns ame help lines
 #'
-#' @param command path to ame. output of handle_meme_path(util = "ame")
+#' @param command path to ame. output of search_meme_path(util = "ame")
 #'
 #' @return
 #'

@@ -104,7 +104,7 @@ runFimo <- function(sequences, motifs, bfile = "motif",
 
   flags <- c(user_flags, motifs$path, sequences)
 
-  command <- handle_meme_path(path = meme_path, util = "fimo")
+  command <- search_meme_path(path = meme_path, util = "fimo")
 
   ps_out <- processx::run(command, flags, error_on_status = FALSE)
 

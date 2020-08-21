@@ -1,7 +1,7 @@
 Package: memes
 Type: Package
 Title: An R Interface to the MEME Suite
-Version: 0.0.1.9002
+Version: 0.0.1.9003
 Authors@R: person("Spencer", "Nystrom", 
     email = "snystrom@email.unc.edu", 
     role = c("aut", "cre", "cph"),
@@ -37,7 +37,7 @@ Suggests:
 RoxygenNote: 7.0.2
 SystemRequirements: Meme Suite (v5.1.1 or above)
 Remotes: 
-    snystrom/cmdfun@0.1.90003
+    snystrom/cmdfun@0.1.9004
 VignetteBuilder: knitr
 URL: https://snystrom.github.io/memes/, https://github.com/snystrom/memes
 BugReports: https://github.com/snystrom/memes

@@ -107,7 +107,7 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", 
   user_flags <- prepareMemeFlags(control, outdir,
                                  alph = alph, ...)
 
-  command <- handle_meme_path(path = meme_path, util = "meme")
+  command <- search_meme_path(path = meme_path, util = "meme")
 
   ps_out <- processx::run(command, c(user_flags, input), error_on_status = FALSE, spinner = TRUE)
 
@@ -264,7 +264,7 @@ importMeme <- function(meme_txt, parse_genomic_coord = TRUE, combined_sites = FA
 
 #' Returns MEME help lines
 #'
-#' @param command path to meme. output of handle_meme_path(util = "meme")
+#' @param command path to meme. output of search_meme_path(util = "meme")
 #'
 #' @return
 #'
@@ -278,7 +278,7 @@ meme_help <- function(command){
 #' Because meme commandline help is prefixed with [] and contains tabs, need a
 #' custom implementation of flag parser.
 #'
-#' @param command path to meme. output of handle_meme_path(util = "meme")
+#' @param command path to meme. output of search_meme_path(util = "meme")
 #'
 #' @return vector of flag arguments for meme
 #' @export
