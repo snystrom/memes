@@ -92,11 +92,11 @@ runTomTom <- function(input, database = NULL,
       as_universalmotif_dataframe()
   }
 
-  command <- handle_meme_path(path = meme_path, util = "tomtom")
+  command <- search_meme_path(path = meme_path, util = "tomtom")
 
   if (outdir == "auto") {outdir <- file.path(dirname(input$path), "tomtom")}
 
-  database <- handle_meme_database_path(path = database)
+  database <- search_meme_database_path(path = database)
 
   user_flags <- prepareTomTomFlags(outdir = outdir,
                                    thresh = thresh,
@@ -113,10 +113,7 @@ runTomTom <- function(input, database = NULL,
                         default_help_fun = TRUE
                         )
 
-  tomtom_out <- cmdfun::cmd_output_expect(c("tsv", "xml", "html"), "tomtom", outdir = outdir)
-
-  tomtom_out %>%
-    cmdfun::cmd_files_exist()
+  tomtom_out <- cmdfun::cmd_file_expect("tomtom", c("tsv", "xml", "html"), outdir = outdir)
 
   tomtom_results <- parseTomTom(tomtom_out$xml)
 
@@ -172,15 +169,15 @@ prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
                "incomplete_scores" = "incomplete-scores")
 
   flags <- cmdfun::cmd_args_all() %>%
-    cmdfun::cmd_args_to_flags(argsDict) %>%
-    cmdfun::cmd_list_crystallize()
+    cmdfun::cmd_list_interp(argsDict) %>%
+    cmdfun::cmd_list_to_flags()
 
   return(flags)
 }
 
 #' Returns tomtom help lines
 #'
-#' @param command path to tomtom. output of handle_meme_path(util = "tomtom")
+#' @param command path to tomtom. output of search_meme_path(util = "tomtom")
 #'
 #' @return
 #'

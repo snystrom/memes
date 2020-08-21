@@ -107,7 +107,7 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", 
   user_flags <- prepareMemeFlags(control, outdir,
                                  alph = alph, ...)
 
-  command <- handle_meme_path(path = meme_path, util = "meme")
+  command <- search_meme_path(path = meme_path, util = "meme")
 
   ps_out <- processx::run(command, c(user_flags, input), error_on_status = FALSE, spinner = TRUE)
 
@@ -118,7 +118,7 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", 
 
   print_process_stdout(ps_out, silent = silent)
 
-  meme_out <- cmdfun::cmd_output_expect(ext = c("txt", "xml", "html"), prefix = "meme", outdir = outdir)
+  meme_out <- cmdfun::cmd_file_expect(prefix = "meme", ext = c("txt", "xml", "html"), outdir = outdir)
 
   importMeme(meme_out$txt, parse_genomic_coord = alph_parse_coords(alph, parse_genomic_coord), combined_sites = combined_sites)
 }
@@ -171,13 +171,13 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 
   # handle alphabet assignment
   alph_flags <- meme_alph_to_args(alph) %>%
-    cmdfun::cmd_args_to_flags()
+    cmdfun::cmd_list_interp()
 
   flagsList <- cmdfun::cmd_args_all(drop = "alph") %>%
-    cmdfun::cmd_args_to_flags(argsDict)
+    cmdfun::cmd_list_interp(argsDict)
 
   flags <- c(flagsList, alph_flags) %>%
-    cmdfun::cmd_list_crystallize()
+    cmdfun::cmd_list_to_flags()
 
   return(flags)
 }
@@ -264,7 +264,7 @@ importMeme <- function(meme_txt, parse_genomic_coord = TRUE, combined_sites = FA
 
 #' Returns MEME help lines
 #'
-#' @param command path to meme. output of handle_meme_path(util = "meme")
+#' @param command path to meme. output of search_meme_path(util = "meme")
 #'
 #' @return
 #'
@@ -278,7 +278,7 @@ meme_help <- function(command){
 #' Because meme commandline help is prefixed with [] and contains tabs, need a
 #' custom implementation of flag parser.
 #'
-#' @param command path to meme. output of handle_meme_path(util = "meme")
+#' @param command path to meme. output of search_meme_path(util = "meme")
 #'
 #' @return vector of flag arguments for meme
 #' @export

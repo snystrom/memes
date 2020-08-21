@@ -61,8 +61,8 @@ runAme.default <- function(input,
   if (outdir == "auto") {outdir <- outdir_name(input, control)}
 
   user_flags <- prepareAmeFlags(control, outdir, method, ...)
-  database <- handle_meme_database_path(database)
-  command <- handle_meme_path(path = meme_path, util = "ame")
+  database <- search_meme_database_path(database)
+  command <- search_meme_path(path = meme_path, util = "ame")
 
   flags <- c(user_flags, input, database)
 
@@ -80,14 +80,14 @@ runAme.default <- function(input,
   print_process_stderr(ps_out, silent = silent)
 
   # NOTE: sequences.tsv is only created when method == "fisher"
-  ame_out <- cmdfun::cmd_output_expect(c("tsv", "html"), "ame", outdir)
+  ame_out <- cmdfun::cmd_file_combn("ame", c("tsv", "html"), outdir)
   if (method == "fisher"){
-    ame_seq <- cmdfun::cmd_output_expect("tsv", "sequences", outdir)
+    ame_seq <- cmdfun::cmd_file_combn("sequences", "tsv", outdir)
     ame_out$sequences <- ame_seq[[1]]
   }
 
   ame_out %>%
-    cmdfun::cmd_files_exist()
+    cmdfun::cmd_error_if_missing()
 
   import_sequences <- FALSE
   if (method == "fisher" & sequences == TRUE){
@@ -99,7 +99,7 @@ runAme.default <- function(input,
 
 #' Returns ame help lines
 #'
-#' @param command path to ame. output of handle_meme_path(util = "ame")
+#' @param command path to ame. output of search_meme_path(util = "ame")
 #'
 #' @return
 #'
@@ -113,7 +113,7 @@ prepareAmeFlags <- function(control, outdir, method, ...){
   argsDict <- c("outdir" = "oc")
 
   flagList <- cmdfun::cmd_args_all() %>%
-    cmdfun::cmd_args_to_flags(argsDict) %>%
+    cmdfun::cmd_list_interp(argsDict) %>%
     purrr::set_names(~{gsub("_", "-", .x)})
 
   if (exists("control", flagList)) {
@@ -129,7 +129,7 @@ prepareAmeFlags <- function(control, outdir, method, ...){
   }
 
   flagList %>%
-    cmdfun::cmd_list_crystallize(prefix = "--")
+    cmdfun::cmd_list_to_flags(prefix = "--")
 }
 
 #' Parse ame output

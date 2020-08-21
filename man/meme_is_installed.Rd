@@ -13,7 +13,7 @@ meme_is_installed(path = NULL)
 `logical(1)` indicating whether meme is installed with all supported utilities
 }
 \description{
-Checks for a valid meme install using same heirarchy as `handle_meme_path()`.
+Checks for a valid meme install using same heirarchy as `search_meme_path()`.
 Returns `TRUE` if all supported utilities are found in the meme install
 location, `FALSE` if not.
 }
@@ -23,5 +23,5 @@ meme_is_installed()
 meme_is_installed("bad/path")
 }
 \seealso{
-handle_meme_path check_meme_install
+search_meme_path check_meme_install
 }

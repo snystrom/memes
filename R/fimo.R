@@ -104,7 +104,7 @@ runFimo <- function(sequences, motifs, bfile = "motif",
 
   flags <- c(user_flags, motifs$path, sequences)
 
-  command <- handle_meme_path(path = meme_path, util = "fimo")
+  command <- search_meme_path(path = meme_path, util = "fimo")
 
   ps_out <- processx::run(command, flags, error_on_status = FALSE)
 
@@ -132,7 +132,7 @@ runFimo <- function(sequences, motifs, bfile = "motif",
   }
 
 
-  fimo_out <- cmdfun::cmd_output_expect("tsv", "fimo", outdir = outdir)
+  fimo_out <- cmdfun::cmd_file_combn("fimo", "tsv", outdir = outdir)
 
   fimo_out$tsv %>%
     parseFimo() %>%
@@ -157,7 +157,7 @@ prepareFimoFlags <- function(bfile, parse_genomic_coord, skip_matched_sequence, 
   argsDict <- c("outdir" = "oc")
 
   flags <- cmdfun::cmd_args_all() %>%
-    cmdfun::cmd_args_to_flags(argsDict) %>%
+    cmdfun::cmd_list_interp(argsDict) %>%
     purrr::set_names(~{gsub("_", "-", .x)})
 
   if (!is.null(bfile)){
@@ -171,7 +171,7 @@ prepareFimoFlags <- function(bfile, parse_genomic_coord, skip_matched_sequence, 
   }
 
   flags %>%
-    cmdfun::cmd_list_crystallize(prefix = "--")
+    cmdfun::cmd_list_to_flags(prefix = "--")
 
 }
 

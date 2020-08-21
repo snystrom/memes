@@ -2,7 +2,7 @@ sequence_input.character <- function(input){
   # character input should be file path unless input == "shuffle"
   if (input == "shuffle") return(input)
 
-  cmdfun::cmd_files_exist(input)
+  cmdfun::cmd_error_if_missing(input)
   return(input)
 }
 
@@ -33,7 +33,7 @@ motif_input.character <- function(input, path = NULL){
     }
   }
 
-  cmdfun::cmd_files_exist(input)
+  cmdfun::cmd_error_if_missing(input)
 
   out <- list(metadata = NULL,
               path = input)
@@ -119,10 +119,10 @@ split_input_control <- function(input, control){
   # input = list
   # control = character vector
   input_minus_control <- input %>%
-    cmdfun::cmd_list_drop_named(control)
+    cmdfun::cmd_list_drop(control)
 
   control_seq <- input %>%
-    cmdfun::cmd_list_keep_named(control) %>%
+    cmdfun::cmd_list_keep(control) %>%
     Biostrings::BStringSetList(., use.names = FALSE) %>%
     unlist
 

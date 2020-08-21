@@ -167,12 +167,12 @@ write_fasta <- function(seq, path = tempfile(fileext = ".fa")){
 #' @examples
 #' check_meme_install()
 check_meme_install <- function(meme_path = NULL){
-  cmdfun::cmd_install_check(handle_meme_path, path = meme_path)
+  cmdfun::cmd_install_check(search_meme_path, path = meme_path)
 }
 
 #' Returns logical vector indicating valid MEME-Suite install status
 #'
-#' Checks for a valid meme install using same heirarchy as `handle_meme_path()`.
+#' Checks for a valid meme install using same heirarchy as `search_meme_path()`.
 #' Returns `TRUE` if all supported utilities are found in the meme install
 #' location, `FALSE` if not.
 #'
@@ -181,10 +181,10 @@ check_meme_install <- function(meme_path = NULL){
 #' @return `logical(1)` indicating whether meme is installed with all supported utilities
 #' @export
 #'
-#' @seealso handle_meme_path check_meme_install
+#' @seealso search_meme_path check_meme_install
 #'
 #' @examples
 #' # Will return TRUE if "meme/bin/" is detected
 #' meme_is_installed()
 #' meme_is_installed("bad/path")
-meme_is_installed <- cmdfun::cmd_install_is_valid(handle_meme_path, util = TRUE)
+meme_is_installed <- cmdfun::cmd_install_is_valid(search_meme_path, util = TRUE)

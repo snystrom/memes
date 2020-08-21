@@ -36,7 +36,7 @@ print_process_stderr <- function(processx_out, silent = TRUE){
 #'
 #' @param processx_out output of processx::run(error_on_status = F)
 #' @param help_fun function to produce --help lines (processx call, for example). Can be rlang formula like ~{.x}.
-#' @param user_flags flags from cmd_args_to_flags %>% crystalizeFlags
+#' @param user_flags flags from cmd_list_interp %>% cmd_list_to_flags
 #' @param flags_fun passed to cmdfun::cmd_help_flags_similar(.fun)
 #' @param default_help_fun `logical(1)` whether to use default
 #'   cmd_help_parse_flags behavior, or simply evaluate help_fun fully to suggest

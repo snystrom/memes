@@ -10,8 +10,8 @@ utils::globalVariables(".")
 #' @examples
 #'
 #' @noRd
-handle_meme_path <- function(path = NULL, util = NULL){
-  f <- cmdfun::cmd_path_handle(environment_var = "MEME_BIN",
+search_meme_path <- function(path = NULL, util = NULL){
+  f <- cmdfun::cmd_path_search(environment_var = "MEME_BIN",
                                        option_name = "meme_bin",
                                        default_path = "~/meme/bin",
                                        utils = c("dreme", "ame", "fimo", "tomtom", "meme")
@@ -31,13 +31,15 @@ handle_meme_path <- function(path = NULL, util = NULL){
 #' @examples
 #'
 #' @noRd
-handle_meme_database_path <- function(path = NULL){
+search_meme_database_path <- function(path = NULL){
   # database can be path, or universalmotif list, (or vector: c(motifList, path))
   # names will be used as file names for non file-path entries
 
   if (!is.null(path)){
-    if (path == ""){
-      stop("path cannot be an empty string")
+    if (class(path) == "character"){
+      if (path == ""){
+        stop("path cannot be an empty string")
+      }
     }
   }
 
@@ -83,7 +85,7 @@ handle_meme_database_path <- function(path = NULL){
   }
 
   # Otherwise search envrionment variable / option definition
-  f <- cmdfun::cmd_path_handle(environment_var = "MEME_DB",
+  f <- cmdfun::cmd_path_search(environment_var = "MEME_DB",
                                    option_name = "meme_db")
   f(path = path)
 }
@@ -145,7 +147,7 @@ write_meme_list <- function(list, path = tempfile(fileext = ".meme"), version = 
   list %>%
     universalmotif::write_meme(path, append = F, overwrite = T, version = version)
 
-  cmdfun::cmd_files_exist(path)
+  cmdfun::cmd_error_if_missing(path)
 
   return(path)
 }

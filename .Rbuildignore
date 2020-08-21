@@ -12,3 +12,5 @@ runSingularity.sh
 ^doc$
 ^Meta$
 .Renviron
+^codecov\.yml$
+^\.github$

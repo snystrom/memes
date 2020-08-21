@@ -35,7 +35,7 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
 
   flags <- prepareDremeFlags(input = input, control = control, outdir = outdir, ...)
 
-  command <- handle_meme_path(path = meme_path, util = "dreme")
+  command <- search_meme_path(path = meme_path, util = "dreme")
   ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
 
   ps_out %>%
@@ -48,10 +48,7 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
 
   if (n_motifs == 0) {return(NULL)}
 
-  dreme_out <- cmdfun::cmd_output_expect(c("txt", "html", "xml"), "dreme", outdir = outdir)
-
-  dreme_out %>%
-    cmdfun::cmd_files_exist()
+  dreme_out <- cmdfun::cmd_file_expect("dreme", c("txt", "html", "xml"), outdir = outdir)
 
   dreme_results <- parseDreme(dreme_out$xml)
 
@@ -82,9 +79,9 @@ prepareDremeFlags <- function(input, control, outdir, ...){
                ngen = "g")
 
   flags <- cmdfun::cmd_args_all() %>%
-    cmdfun::cmd_args_to_flags(argDict) %>%
+    cmdfun::cmd_list_interp(argDict) %>%
     cmdfun::cmd_list_drop(c("n" = "shuffle")) %>%
-    cmdfun::cmd_list_crystallize()
+    cmdfun::cmd_list_to_flags()
 
   return(flags)
 
@@ -110,7 +107,7 @@ parseDreme <- function(xml){
 
 #' Returns Dreme help lines
 #'
-#' @param command path to ame. output of handle_meme_path(util = "ame")
+#' @param command path to ame. output of search_meme_path(util = "ame")
 #'
 #' @return
 #'

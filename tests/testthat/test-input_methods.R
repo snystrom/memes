@@ -1,8 +1,8 @@
-context("input methods & meme_database_path handler")
+context("input methods & meme_database_path search_function")
 
 #####
 # MOVE THIS TO HELPER
-fa <- duplicate_file("inst/extdata/fasta_ex/fa1.fa")
+fa <- memes:::duplicate_file("inst/extdata/fasta_ex/fa1.fa")
 dreme_out <- runDreme(fa, "shuffle", e = 39)
 ####
 
@@ -48,9 +48,9 @@ test_that("motif input method dispatch works",{
 
   # universalmotif list
   motifList <- purrr::map(1:2, universalmotif::create_motif)
-  expect_equal(motif_input(motifList, path), list(metadata = universalmotif_to_meme_df(motifList), path = path))
+  expect_equal(motif_input(motifList, path), list(metadata = as_universalmotif_dataframe(motifList), path = path))
 
   # universalmotif
   motif <- universalmotif::create_motif()
-  expect_equal(motif_input(motif, path), list(metadata = universalmotif_to_meme_df(motif), path = path))
+  expect_equal(motif_input(motif, path), list(metadata = as_universalmotif_dataframe(motif), path = path))
 })
