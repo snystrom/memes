@@ -157,7 +157,7 @@ prepareFimoFlags <- function(bfile, parse_genomic_coord, skip_matched_sequence, 
   argsDict <- c("outdir" = "oc")
 
   flags <- cmdfun::cmd_args_all() %>%
-    cmdfun::cmd_args_to_flags(argsDict) %>%
+    cmdfun::cmd_list_interp(argsDict) %>%
     purrr::set_names(~{gsub("_", "-", .x)})
 
   if (!is.null(bfile)){
@@ -171,7 +171,7 @@ prepareFimoFlags <- function(bfile, parse_genomic_coord, skip_matched_sequence, 
   }
 
   flags %>%
-    cmdfun::cmd_list_crystallize(prefix = "--")
+    cmdfun::cmd_list_to_flags(prefix = "--")
 
 }
 

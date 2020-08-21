@@ -113,7 +113,7 @@ prepareAmeFlags <- function(control, outdir, method, ...){
   argsDict <- c("outdir" = "oc")
 
   flagList <- cmdfun::cmd_args_all() %>%
-    cmdfun::cmd_args_to_flags(argsDict) %>%
+    cmdfun::cmd_list_interp(argsDict) %>%
     purrr::set_names(~{gsub("_", "-", .x)})
 
   if (exists("control", flagList)) {
@@ -129,7 +129,7 @@ prepareAmeFlags <- function(control, outdir, method, ...){
   }
 
   flagList %>%
-    cmdfun::cmd_list_crystallize(prefix = "--")
+    cmdfun::cmd_list_to_flags(prefix = "--")
 }
 
 #' Parse ame output

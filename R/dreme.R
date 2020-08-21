@@ -79,9 +79,9 @@ prepareDremeFlags <- function(input, control, outdir, ...){
                ngen = "g")
 
   flags <- cmdfun::cmd_args_all() %>%
-    cmdfun::cmd_args_to_flags(argDict) %>%
+    cmdfun::cmd_list_interp(argDict) %>%
     cmdfun::cmd_list_drop(c("n" = "shuffle")) %>%
-    cmdfun::cmd_list_crystallize()
+    cmdfun::cmd_list_to_flags()
 
   return(flags)
 

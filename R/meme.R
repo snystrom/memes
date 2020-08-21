@@ -171,13 +171,13 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 
   # handle alphabet assignment
   alph_flags <- meme_alph_to_args(alph) %>%
-    cmdfun::cmd_args_to_flags()
+    cmdfun::cmd_list_interp()
 
   flagsList <- cmdfun::cmd_args_all(drop = "alph") %>%
-    cmdfun::cmd_args_to_flags(argsDict)
+    cmdfun::cmd_list_interp(argsDict)
 
   flags <- c(flagsList, alph_flags) %>%
-    cmdfun::cmd_list_crystallize()
+    cmdfun::cmd_list_to_flags()
 
   return(flags)
 }

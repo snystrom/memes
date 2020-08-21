@@ -11,7 +11,7 @@ utils::globalVariables(".")
 #'
 #' @noRd
 handle_meme_path <- function(path = NULL, util = NULL){
-  f <- cmdfun::cmd_path_handle(environment_var = "MEME_BIN",
+  f <- cmdfun::cmd_path_search(environment_var = "MEME_BIN",
                                        option_name = "meme_bin",
                                        default_path = "~/meme/bin",
                                        utils = c("dreme", "ame", "fimo", "tomtom", "meme")
@@ -85,7 +85,7 @@ handle_meme_database_path <- function(path = NULL){
   }
 
   # Otherwise search envrionment variable / option definition
-  f <- cmdfun::cmd_path_handle(environment_var = "MEME_DB",
+  f <- cmdfun::cmd_path_search(environment_var = "MEME_DB",
                                    option_name = "meme_db")
   f(path = path)
 }

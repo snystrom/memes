@@ -168,8 +168,8 @@ prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
                "incomplete_scores" = "incomplete-scores")
 
   flags <- cmdfun::cmd_args_all() %>%
-    cmdfun::cmd_args_to_flags(argsDict) %>%
-    cmdfun::cmd_list_crystallize()
+    cmdfun::cmd_list_interp(argsDict) %>%
+    cmdfun::cmd_list_to_flags()
 
   return(flags)
 }
