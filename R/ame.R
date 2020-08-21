@@ -80,14 +80,14 @@ runAme.default <- function(input,
   print_process_stderr(ps_out, silent = silent)
 
   # NOTE: sequences.tsv is only created when method == "fisher"
-  ame_out <- cmdfun::cmd_output_expect(c("tsv", "html"), "ame", outdir)
+  ame_out <- cmdfun::cmd_file_combn("ame", c("tsv", "html"), outdir)
   if (method == "fisher"){
-    ame_seq <- cmdfun::cmd_output_expect("tsv", "sequences", outdir)
+    ame_seq <- cmdfun::cmd_file_combn("sequences", "tsv", outdir)
     ame_out$sequences <- ame_seq[[1]]
   }
 
   ame_out %>%
-    cmdfun::cmd_files_exist()
+    cmdfun::cmd_error_if_missing()
 
   import_sequences <- FALSE
   if (method == "fisher" & sequences == TRUE){

@@ -147,7 +147,7 @@ write_meme_list <- function(list, path = tempfile(fileext = ".meme"), version = 
   list %>%
     universalmotif::write_meme(path, append = F, overwrite = T, version = version)
 
-  cmdfun::cmd_files_exist(path)
+  cmdfun::cmd_error_if_missing(path)
 
   return(path)
 }

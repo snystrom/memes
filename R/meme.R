@@ -118,7 +118,7 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", 
 
   print_process_stdout(ps_out, silent = silent)
 
-  meme_out <- cmdfun::cmd_output_expect(ext = c("txt", "xml", "html"), prefix = "meme", outdir = outdir)
+  meme_out <- cmdfun::cmd_file_expect(prefix = "meme", ext = c("txt", "xml", "html"), outdir = outdir)
 
   importMeme(meme_out$txt, parse_genomic_coord = alph_parse_coords(alph, parse_genomic_coord), combined_sites = combined_sites)
 }

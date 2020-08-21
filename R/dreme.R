@@ -48,10 +48,7 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
 
   if (n_motifs == 0) {return(NULL)}
 
-  dreme_out <- cmdfun::cmd_output_expect(c("txt", "html", "xml"), "dreme", outdir = outdir)
-
-  dreme_out %>%
-    cmdfun::cmd_files_exist()
+  dreme_out <- cmdfun::cmd_file_expect("dreme", c("txt", "html", "xml"), outdir = outdir)
 
   dreme_results <- parseDreme(dreme_out$xml)
 

@@ -132,7 +132,7 @@ runFimo <- function(sequences, motifs, bfile = "motif",
   }
 
 
-  fimo_out <- cmdfun::cmd_output_expect("tsv", "fimo", outdir = outdir)
+  fimo_out <- cmdfun::cmd_file_combn("fimo", "tsv", outdir = outdir)
 
   fimo_out$tsv %>%
     parseFimo() %>%
