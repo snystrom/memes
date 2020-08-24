@@ -64,7 +64,7 @@ process_check_error <- function(processx_out, help_fun = NULL, user_flags = NULL
 
     if (default_help_fun){
       help_fun() %>%
-        cmdfun::cmd_help_parse_flags(processx = T) %>%
+        cmdfun::cmd_help_parse_flags(split_newline = TRUE) %>%
         cmdfun::cmd_help_flags_similar(user_flags, .fun = flags_fun) %>%
         cmdfun::cmd_help_flags_suggest()
 
