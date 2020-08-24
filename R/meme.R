@@ -290,7 +290,7 @@ meme_help_flags <- function(command){
     gsub("\t", " ", .) %>%
     gsub("\\[", "", .) %>%
     gsub("\\]", "", .) %>%
-    cmdfun::cmd_help_parse_flags(processx = FALSE)
+    cmdfun::cmd_help_parse_flags(split_newline = FALSE)
 }
 
 #' @param sites the .$sites.meta output of
