@@ -1,7 +1,7 @@
 Package: memes
 Type: Package
 Title: An R Interface to the MEME Suite
-Version: 0.0.1.9003
+Version: 0.0.1.9004
 Authors@R: person("Spencer", "Nystrom", 
     email = "snystrom@email.unc.edu", 
     role = c("aut", "cre", "cph"),
@@ -13,7 +13,8 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     dplyr,
-    cmdfun (>= 0.0.9001),
+    cmdfun (>= 1.0.1),
+    GenomicRanges,
     ggplot2,
     magrittr,
     processx,
@@ -26,6 +27,8 @@ Imports:
     xml2
 Suggests:
     cowplot,
+    BSgenome.Dmelanogaster.UCSC.dm3,
+    BSgenome.Dmelanogaster.UCSC.dm6,
     testthat (>= 2.1.0),
     knitr,
     MotifDb,
@@ -37,7 +40,7 @@ Suggests:
 RoxygenNote: 7.0.2
 SystemRequirements: Meme Suite (v5.1.1 or above)
 Remotes: 
-    snystrom/cmdfun@0.1.9004
+    snystrom/cmdfun@1.0.1
 VignetteBuilder: knitr
 URL: https://snystrom.github.io/memes/, https://github.com/snystrom/memes
 BugReports: https://github.com/snystrom/memes
