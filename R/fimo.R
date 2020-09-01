@@ -209,7 +209,7 @@ parseFimo <- function(fimo_tsv){
 
 #' Import FIMO results
 #'
-#' @param fimo_tsv
+#' @param fimo_tsv path to fimo.tsv output file
 #'
 #' @return
 #' @export
