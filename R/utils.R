@@ -106,6 +106,7 @@ sequence_as_granges <- function(seq, name = "sequence"){
 }
 
 #' Macro for building sequence_as_granges
+#' @importFrom rlang :=
 #' @noRd
 build_sequence_as_granges <- function(){
   fun <- function(seq, name = "sequence") {
@@ -114,7 +115,7 @@ build_sequence_as_granges <- function(){
       as.data.frame %>%
       tibble::rownames_to_column("coords") %>%
       dplyr::rename(!!name := "x") %>%
-      tidyr::separate(coords, c("seqnames", "start", "end")) %>%
+      tidyr::separate("coords", c("seqnames", "start", "end")) %>%
       GenomicRanges::GRanges(.)
 
   }
