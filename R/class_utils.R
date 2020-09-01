@@ -166,9 +166,9 @@ as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
 #' @export
 #'
 #' @examples
-#' df <- universalmotif::create_motif() %>%
-#'   as_universalmotif_dataframe() %>%
-#'   dplyr::mutate(altname = "new_alt_name")
+#' motif <- universalmotif::create_motif()
+#' df <- as_universalmotif_dataframe(motif)
+#' df <- dplyr::mutate(motif_df, altname = "new_alt_name)
 #'
 #' motifs <- as_universalmotif(df)
 as_universalmotif <- function(data){

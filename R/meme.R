@@ -207,7 +207,7 @@ importMeme <- function(meme_txt, parse_genomic_coord = TRUE, combined_sites = FA
 
   meme_dataframe <- meme_res$motifs %>%
     as_universalmotif_dataframe() %>%
-    dplyr::mutate(width = nchar(consensus))
+    dplyr::mutate("width" = nchar(consensus))
 
   ##
   # Add sites info as data.frame
@@ -223,7 +223,7 @@ importMeme <- function(meme_txt, parse_genomic_coord = TRUE, combined_sites = FA
     dplyr::bind_rows(.id = "name") %>%
     dplyr::group_by(name) %>%
     tidyr::nest() %>%
-    dplyr::rename(sites_hits = data)
+    dplyr::rename("sites_hits" = "data")
 
   meme_dataframe %<>%
     dplyr::left_join(meme_sites_hits, by = "name")
