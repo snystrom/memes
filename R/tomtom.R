@@ -217,7 +217,7 @@ add_query_metadata <- function(query, metadata){
   }
 
   query %<>%
-    dplyr::select(name, altname, db_idx, query_idx)
+    dplyr::select("name", "altname", "db_idx", "query_idx")
 
   query_with_metadata <- metadata %>%
     dplyr::left_join(query, by = c("name", "altname"))
@@ -409,6 +409,8 @@ join_tomtom_tables <- function(query, hits){
 #' @return data.frame with columns w/ all data for "best" match (defined by top
 #'   hit, lowest pvalue). All other matches are nested into 'tomtom' column.
 #'   Which is list of data.frames for each match too the given id.
+#'
+#' @importFrom tidyr nest
 #'
 #' @noRd
 nest_tomtom_results <- function(tomtom_results){

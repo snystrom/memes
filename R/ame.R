@@ -147,6 +147,7 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 #'   data.frame.
 #'
 #' @importFrom magrittr %<>%
+#' @importFrom tidyr nest
 #' @export
 #'
 #' @family import
@@ -258,6 +259,7 @@ importAmeSequences <- function(path){
 #'   "dmhg4", "pearson", "spearman")).
 #'
 #' @return readr::cols object w/ names & datatypes for given method
+#' @importFrom readr cols
 #'
 #' @noRd
 get_ame_coltypes <- function(method){

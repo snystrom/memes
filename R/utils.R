@@ -97,6 +97,8 @@ add_sequence <- function(ranges, genome, name = "sequence"){
 #' @param name name of column to hold sequence information
 #'
 #' @return
+#' @importFrom tibble rownames_to_column
+#' @importFrom tidyr separate
 #'
 #' @noRd
 sequence_as_granges <- function(seq, name = "sequence"){

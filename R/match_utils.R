@@ -41,6 +41,8 @@ force_best_match <- function(res, matches){
 #' @return `res` with updated best_* columns
 #' @export
 #'
+#' @importFrom tidyr unnest
+#'
 #' @examples
 #' data("example_dreme_tomtom")
 #' # best match is "CG2052_SANGER_2.5"
@@ -102,6 +104,7 @@ drop_best_match <- function(res){
 #' @export
 #'
 #' @importFrom magrittr %<>%
+#' @importFrom tidyr nest
 #' @examples
 #' \dontrun{
 #' #TODO: add better example

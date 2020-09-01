@@ -194,6 +194,7 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 #'
 #' @return
 #' @export
+#' @importFrom tidyr nest
 #'
 #' @examples
 #' # If fasta headers do not have sequence information, parse_genomic_coord must be set to FALSE
@@ -321,6 +322,8 @@ meme_sites_meta_combined_to_df <- function(sites){
 #'
 #' @return
 #'
+#' @importFrom tidyr separate
+#'
 #' @noRd
 meme_sites_meta_to_granges <- function(sites_df, motif_length){
   sites_df %>%
@@ -337,6 +340,7 @@ meme_sites_meta_to_granges <- function(sites_df, motif_length){
 #' @param sites_df the .$sites.meta.combined output of
 #'   universalmotif::read_meme(readsites = T, readsites.meta = T) after passing
 #'   to `meme_sites_meta_combined_to_df()`
+#' @importFrom tidyr separate
 #' @noRd
 meme_sites_meta_combined_to_granges <- function(sites_df){
   sites_df %>%

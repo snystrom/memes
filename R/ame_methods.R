@@ -11,6 +11,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom rlang enquo
 #' @importFrom rlang !!
+#' @importFrom tibble rowid_to_column
 #'
 #' @noRd
 ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){

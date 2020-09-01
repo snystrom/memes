@@ -131,6 +131,7 @@ nomatch_matrix <- function(){
 #' @return
 
 #' @importFrom ggplot2 element_text
+#' @importFrom ggseqlogo make_col_scheme ggseqlogo
 #' @noRd
 nomatch_logo <- function(){
   mat <- nomatch_matrix()
