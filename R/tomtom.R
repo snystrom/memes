@@ -115,23 +115,7 @@ runTomTom <- function(input, database = NULL,
 
   tomtom_out <- cmdfun::cmd_file_expect("tomtom", c("tsv", "xml", "html"), outdir = outdir)
 
-  tomtom_results <- parseTomTom(tomtom_out$xml)
-
-  if (!is.null(input$metadata) & is.null(tomtom_results)) {
-    warning("TomTom returned no matches")
-    # TODO: add every tomtom results column w/ NA values?
-    input$metadata$best_match_motif <- rep(NA, nrow(input$metadata))
-    input$metadata$best_match_name <- rep(NA_character_, nrow(input$metadata))
-    input$metadata$tomtom <- rep(NA, nrow(input$metadata))
-    return(input$metadata)
-  }
-
-  if (!is.null(input$metadata) & !is.null(tomtom_results)){
-
-    nest_tomtom <- nest_tomtom_results(tomtom_results)
-    merge_res <- dplyr::left_join(input$metadata, nest_tomtom, by = c("name", "altname"))
-    return(merge_res)
-  }
+  tomtom_results <- parseTomTom(tomtom_out$xml, query_metadata = input$metadata)
 
   return(tomtom_results)
 }
@@ -202,16 +186,53 @@ get_tomtom_query_data <- function(tomtom_xml_data){
     xml2::xml_children() %>%
     attrs_to_df(stringsAsFactors = FALSE) %>%
     dplyr::mutate(query_idx = (1:nrow(.) - 1)) %>%
-    dplyr::rename("db_idx" = "db")
+    dplyr::rename("db_idx" = "db",
+                  "name" = "id") %>%
+    # allows renaming alt column only if exists
+    dplyr::rename_all(dplyr::recode, alt = "altname")
 }
+
+#' Add tomtom query lookup table info to the optional query metadata data.frame
+#'
+#' @param query result from get_tomtom_query_data
+#' @param metadata a universalmotif_dataframe of the query motifs
+#'
+#' @return
+#' @noRd
+#'
+add_query_metadata <- function(query, metadata){
+
+  if (any(c("query_idx", "db_idx") %in% names(metadata))) {
+    # these colnames are privleged use in tomtom, so reserve any original values & convert back later
+    # so they don't perturb join logic
+    #metadata %<>%
+    #  dplyr::rename_with(~{paste0(.x, ".original")}, dplyr::matches("query_idx$|db_idx$"))
+    stop("input contains query_idx or db_idx colnames")
+  }
+
+  if (!("altname" %in% names(query))) {
+    # Instantiate altname column w/ NA values if not exists
+    query %<>%
+      dplyr::mutate(altname = NA_character_)
+  }
+
+  query %<>%
+    dplyr::select(name, altname, db_idx, query_idx)
+
+  query_with_metadata <- metadata %>%
+    dplyr::left_join(query, by = c("name", "altname"))
+    # return user-input idx cols if any
+    #dplyr::rename_with(~{gsub("\\.original", "", .x)}, dplyr::matches("query_idx.original$|db_idx.original$"))
+
+  return(query_with_metadata)
+}
+
 
 #' Get match table from tomtom xml
 #'
 #' @param tomtom_xml_data result from xml2::read_xml(tomtom_xml_path)
 #'
 #' @return data.frame of match data or NULL if no matches found
-#'
-#' @examples
 #'
 #' @importFrom magrittr %>%
 #'
@@ -233,7 +254,9 @@ get_tomtom_match_data <- function(tomtom_xml_data){
                   "evalue" = "ev",
                   "qvalue" = "qv",
                   "target_idx" = "idx") %>%
-    dplyr::mutate(strand = ifelse(rc == "y", "-", "+"))
+    dplyr::mutate(strand = ifelse(rc == "y", "-", "+")) %>%
+    dplyr::rename_at(c("offset", "pvalue", "evalue", "qvalue", "strand"), ~{paste0("match_", .x)}) %>%
+    dplyr::select(-"rc")
 
   return(match_df)
 }
@@ -301,6 +324,134 @@ get_tomtom_target_data <- function(tomtom_xml_data){
 
 }
 
+#' Return db/target/match data as merged dataframe
+#'
+#' @param tomtom_xml_data result from read_xml(tomtom_xml)
+#'
+#' @return hits lookup table or NULL if no matches detected (will pass message)
+#' @noRd
+get_tomtom_hits <- function(tomtom_xml_data){
+
+  match_data <- tomtom_xml_data %>%
+    get_tomtom_match_data()
+
+  # TODO: revise this logic
+  if (is.null(match_data)) {
+    message("TomTom detected no matches")
+    return(NULL)
+  }
+
+  target_db_lookup <- tomtom_xml_data %>%
+    get_tomtom_db_data %>%
+    dplyr::select(db_idx, db_name)
+
+  hits <- get_tomtom_target_data(tomtom_xml_data) %>%
+    dplyr::left_join(target_db_lookup, by = "db_idx") %>%
+    dplyr::left_join(match_data, by = "target_idx")
+
+  return(hits)
+
+}
+
+#' Merge query data w/ hits data
+#'
+#' @param query tomtom query data
+#' @param hits get_tomtom_hits() output
+#'
+#' @return
+#' @noRd
+join_tomtom_tables <- function(query, hits){
+  if (is.null(hits)){
+    tomtom_results <- query %>%
+      dplyr::mutate(best_match_name = NA_character_,
+                    best_match_altname = NA_character_,
+                    best_match_offset = NA_integer_,
+                    best_match_pvalue = NA_real_,
+                    best_match_evalue = NA_real_,
+                    best_match_qvalue = NA_real_,
+                    best_match_strand = NA_character_,
+                    best_match_motif = NA,
+                    tomtom = NA) %>%
+      dplyr::select(-query_idx, -db_idx)
+  } else {
+    tomtom_results <- query %>%
+      dplyr::left_join(hits, by = c("query_idx", "db_idx")) %>%
+      # Rename columns for max compatibility with universalmotif
+      dplyr::rename("match_name" = "match_id",
+                    "match_altname" = "match_alt") %>%
+      dplyr::select(-query_idx, -db_idx, -target_idx)
+
+  }
+
+  if (!("altname" %in% names(tomtom_results))) {
+    # Instantiate altname column w/ NA values if not exists
+    tomtom_results %<>%
+      dplyr::mutate(altname = NA_character_)
+  }
+
+  # Nest full match data & add best_match_ columns if hits exist
+  if (!is.null(hits)){
+    tomtom_results %<>%
+      nest_tomtom_results()
+  } else {
+    return(tomtom_results)
+  }
+
+  # Join w/ query metadata
+  tomtom_results %>%
+    dplyr::left_join(query, ., by = c("name", "altname"))
+}
+
+#' Nest tomtom results & show only best match, store all others in `tomtom` list column
+#'
+#' @param tomtom_results
+#'
+#' @return data.frame with columns w/ all data for "best" match (defined by top
+#'   hit, lowest pvalue). All other matches are nested into 'tomtom' column.
+#'   Which is list of data.frames for each match too the given id.
+#'
+#' @noRd
+nest_tomtom_results <- function(tomtom_results){
+
+  tomtom_results %>%
+    dplyr::group_by(name, altname) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(best_match_info = purrr::map(data, ~{
+      .x %>%
+        dplyr::filter(match_evalue == min(match_evalue)) %>%
+        head(1) %>%
+        dplyr::rename_all(~{paste0("best_", .x)})
+    })) %>%
+    tidyr::unnest(best_match_info) %>%
+    dplyr::rename("tomtom" = "data") %>%
+    dplyr::mutate(tomtom = purrr::map(tomtom, data.frame)) %>%
+    dplyr::select("name", "altname", dplyr::contains("best_"), dplyr::everything())
+}
+
+#' Return best_match data for top row of `tomtom`
+#'
+#' @param tomtom_results tomtom results object
+#'
+#' @return data.frame with columns w/ all data for "best" match (defined by first row of `tomtom` data).
+#'   All other matches are nested into 'tomtom' column.
+#'   Which is list of data.frames for each match too the given id.
+#'
+#' @noRd
+nest_tomtom_results_best_top_row <- function(tomtom_results){
+  tomtom_results %>%
+    dplyr::group_by(name, altname) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(best_match_info = purrr::map(data, ~{
+      .x[1,] %>%
+        dplyr::rename_all(~{paste0("best_", .x)})
+    })) %>%
+    tidyr::unnest(best_match_info) %>%
+    dplyr::rename("tomtom" = "data") %>%
+    dplyr::mutate(tomtom = purrr::map(tomtom, data.frame)) %>%
+    dplyr::select("name", "altname", dplyr::contains("best_"), dplyr::everything())
+}
+
+
 #' Return tomtom stat information and PWMs for matched motifs
 #'
 #' @param tomtom_xml_path path to tomtom.xml output
@@ -331,195 +482,27 @@ get_tomtom_target_data <- function(tomtom_xml_data){
 #' parseTomTom("tomtom.xml")
 #' }
 #' @noRd
-parseTomTom <- function(tomtom_xml_path, use_query_data = FALSE){
-  # NOTE/TODO:
-  # This probably needs another refactor to split into a few functions
-  # In particular to get some of the logic of joining metadata w/ tomtom results a little cleaner
-  # (especially cleaning up the if-else logic in this function).
-  # This would require moving some of the logic from runTomTom to one of these new functions.
-  tt_xml <- xml2::read_xml(tomtom_xml_path)
+parseTomTom <- function(tomtom_xml, query_metadata = NULL){
+  #tomtom_xml <- "inst/extdata/dreme_example/tomtom/tomtom.xml"
+  tomtom_xml_data <- xml2::read_xml(tomtom_xml)
 
-  if (!use_query_data){
-    query_data <- tt_xml %>%
-      get_tomtom_query_data() %>%
-      dplyr::select(dplyr::any_of(c("query_idx", "id", "alt")))
+  hits <- get_tomtom_hits(tomtom_xml_data)
+
+  if (is.null(query_metadata)){
+    # TODO:
+    # CHECK DATA TYPE?
+
+    # get query as universalmotif_df since no external metadata
+    query <- tomtom_query_motif_dfs(tomtom_xml_data)
   } else {
-    query_data <- tt_xml %>%
-      tomtom_query_motif_dfs()
-
-    # NULL needs to be handled differently if not joining with external data
-    if (is.null(match_data)) {
-      warning("TomTom detected no matches")
-      #TODO: handle NULL w/ return data w/ NA for all tomtom columns,
-      # this way hopefully it will break fewer pipelines?
-      null_match <- query_data %>%
-        dplyr::mutate(
-          best_match_name = NA,
-          best_motifs = NA,
-          tomtom = NA)
-
-      return(null_match)
-    }
-
-    query_data %<>%
-      # Have to undo the universalmotif_df names so joins will work downstream,
-      # don't do sooner so null_match logic works out of the box
-      dplyr::rename_all(dplyr::recode, altname = "alt", name = "id")
+    # get query lookup table, then join back into the metadata so query metadata
+    # will be propagated during downstream joins
+    query <- get_tomtom_query_data(tomtom_xml_data) %>%
+      add_query_metadata(query_metadata)
   }
 
-  match_data <- tt_xml %>%
-    get_tomtom_match_data()
-
-  if (is.null(match_data)) {return(NULL)}
-
-  match_data %<>%
-    dplyr::rename_at(c("offset", "pvalue", "evalue", "qvalue", "strand"), ~{paste0("match_", .x)}) %>%
-    dplyr::select(-"rc")
-
-  target_db_lookup <- tt_xml %>%
-    get_tomtom_db_data %>%
-    dplyr::select(db_idx, db_name)
-
-  target_data <- get_tomtom_target_data(tt_xml) %>%
-      dplyr::left_join(target_db_lookup, by = "db_idx")
-
-  tomtom_results <- query_data %>%
-    dplyr::left_join(match_data, by = "query_idx") %>%
-    dplyr::left_join(target_data, by = "target_idx") %>%
-    dplyr::select(-dplyr::contains("idx")) %>%
-    # any_of() protects against alt not existing
-    dplyr::select(dplyr::any_of(c("id", "alt")), "match_id", "match_alt", dplyr::contains("value"), "db_name", "match_motif") %>%
-    # Rename columns for max compatibility with universalmotif
-    dplyr::rename("name" = "id",
-                  "match_name" = "match_id",
-                  "match_altname" = "match_alt") %>%
-    # allows renaming alt column only if exists
-    dplyr::rename_all(dplyr::recode, alt = "altname")
-
-  if (!("altname" %in% names(tomtom_results))) {
-    # Instantiate altname column w/ NA values if not exists
-    tomtom_results %<>%
-      dplyr::mutate(altname = NA_character_)
-  }
+  tomtom_results <- join_tomtom_tables(query, hits)
 
   return(tomtom_results)
-
 }
 
-get_tomtom_hits <- function(tomtom_xml){
-
-  match_data <- tomtom_xml %>%
-    get_tomtom_match_data()
-
-  if (is.null(match_data)) {
-    message("TomTom detected no matches")
-    return(NULL)
-  }
-
-  target_db_lookup <- tomtom_xml %>%
-    get_tomtom_db_data %>%
-    dplyr::select(db_idx, db_name)
-
-  target_data <- get_tomtom_target_data(tomtom_xml) %>%
-      dplyr::left_join(target_db_lookup, by = "db_idx")
-
-  return(target_data)
-
-}
-
-external_tt_import <- function(tomtom_xml){
-  # RETURN
-  hits <- get_tomtom_hits(tomtom_xml)
-  # Import queries as universalmotif_df
-  query <- tomtom_query_motif_dfs(tomtom_xml)
-  match_data <- tomtom_xml %>%
-    get_tomtom_match_data()
-
-  tomtom_results <- query_data %>%
-    dplyr::left_join(match_data, by = "query_idx") %>%
-    dplyr::left_join(target_data, by = "target_idx") %>%
-    dplyr::select(-dplyr::contains("idx")) %>%
-    # Rename columns for max compatibility with universalmotif
-    dplyr::rename("match_name" = "match_id",
-                  "match_altname" = "match_alt")
-
-  res <- dplyr::left_join(query_data, nest_tomtom_results(tomtom_results), by = c("name", "altname"))
-}
-
-internal_tt_import <- function(tomtom_xml){
-  # RETURN
-  hits <- get_tomtom_hits(tomtom_xml)
-  query <- get_tomtom_query_data(tomtom_xml)
-
-
-
-  tomtom_results <- query_data %>%
-    dplyr::left_join(match_data, by = "query_idx") %>%
-    dplyr::left_join(target_data, by = "target_idx") %>%
-    dplyr::select(-dplyr::contains("idx")) %>%
-    # any_of() protects against alt not existing
-    dplyr::select(dplyr::any_of(c("id", "alt")), "match_id", "match_alt", dplyr::contains("value"), "db_name", "match_motif") %>%
-    # Rename columns for max compatibility with universalmotif
-    dplyr::rename("name" = "id",
-                  "match_name" = "match_id",
-                  "match_altname" = "match_alt") %>%
-    # allows renaming alt column only if exists
-    dplyr::rename_all(dplyr::recode, alt = "altname")
-
-  if (!("altname" %in% names(tomtom_results))) {
-    # Instantiate altname column w/ NA values if not exists
-    tomtom_results %<>%
-      dplyr::mutate(altname = NA_character_)
-  }
-
-}
-
-#' Nest tomtom results & show only best match, store all others in `tomtom` list column
-#'
-#' @param tomtom_results
-#'
-#' @return data.frame with columns w/ all data for "best" match (defined by top
-#'   hit, lowest pvalue). All other matches are nested into 'tomtom' column.
-#'   Which is list of data.frames for each match too the given id.
-#'
-#' @noRd
-nest_tomtom_results <- function(tomtom_results){
-
-  tomtom_results %>%
-    dplyr::group_by(name, altname) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(best_match_info = purrr::map(data, ~{
-      .x %>%
-        dplyr::filter(match_evalue == min(match_evalue)) %>%
-        head(1) %>%
-        dplyr::rename_all(~{paste0("best_", .x)})
-    })) %>%
-    tidyr::unnest(best_match_info) %>%
-    dplyr::rename("tomtom" = "data") %>%
-    dplyr::mutate(tomtom = purrr::map(tomtom, data.frame)) %>%
-    dplyr::select("name", "altname", dplyr::contains("best_"), dplyr::everything())
-}
-
-
-#' Return best_match data for top row of `tomtom`
-#'
-#' @param tomtom_results tomtom results object
-#'
-#' @return data.frame with columns w/ all data for "best" match (defined by first row of `tomtom` data).
-#'   All other matches are nested into 'tomtom' column.
-#'   Which is list of data.frames for each match too the given id.
-#'
-#' @noRd
-nest_tomtom_results_best_top_row <- function(tomtom_results){
-  tomtom_results %>%
-    dplyr::group_by(name, altname) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(best_match_info = purrr::map(data, ~{
-      .x[1,] %>%
-        dplyr::rename_all(~{paste0("best_", .x)})
-    })) %>%
-    tidyr::unnest(best_match_info) %>%
-    dplyr::rename("tomtom" = "data") %>%
-    dplyr::mutate(tomtom = purrr::map(tomtom, data.frame)) %>%
-    dplyr::select("name", "altname", dplyr::contains("best_"), dplyr::everything())
-}
