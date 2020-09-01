@@ -64,9 +64,10 @@ runAme.default <- function(input,
   database <- search_meme_database_path(database)
   command <- search_meme_path(path = meme_path, util = "ame")
 
+  # format: ame <flags> <input.fa> <db.meme>
   flags <- c(user_flags, input, database)
 
-  ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
+  ps_out <- processx::run(command, flags, spinner = TRUE, error_on_status = FALSE)
 
   # Handles printing argument suggestions if process has non-zero exit status
   # help_fun must be anonymous function to delay evaluating ame_help unless it's needed
@@ -234,7 +235,7 @@ importAmeSequences <- function(path){
 
   sequences <- readr::read_tsv(path,
                                col_types = readr::cols("c", "c", "c", "d", "d", "c"),
-                               col_names = T,
+                               col_names = TRUE,
                                comment = "#")
   if (nrow(sequences) == 0){
     message("Sequences output is empty")

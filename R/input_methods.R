@@ -119,10 +119,10 @@ split_input_control <- function(input, control){
   # input = list
   # control = character vector
   input_minus_control <- input %>%
-    cmdfun::cmd_list_drop(control)
+    cmdfun:::cmd_list_drop_named(control)
 
   control_seq <- input %>%
-    cmdfun::cmd_list_keep(control) %>%
+    cmdfun:::cmd_list_keep_named(control) %>%
     Biostrings::BStringSetList(., use.names = FALSE) %>%
     unlist
 
