@@ -372,14 +372,14 @@ join_tomtom_tables <- function(query, hits){
                     best_match_strand = NA_character_,
                     best_match_motif = NA,
                     tomtom = NA) %>%
-      dplyr::select(-query_idx, -db_idx)
+      dplyr::select(-"query_idx", -"db_idx")
   } else {
     tomtom_results <- query %>%
       dplyr::left_join(hits, by = c("query_idx", "db_idx")) %>%
       # Rename columns for max compatibility with universalmotif
       dplyr::rename("match_name" = "match_id",
                     "match_altname" = "match_alt") %>%
-      dplyr::select(-query_idx, -db_idx, -target_idx)
+      dplyr::select(-"query_idx", -"db_idx", -"target_idx")
 
   }
 
@@ -399,7 +399,8 @@ join_tomtom_tables <- function(query, hits){
 
   # Join w/ query metadata
   tomtom_results %>%
-    dplyr::left_join(query, ., by = c("name", "altname"))
+    dplyr::left_join(query, ., by = c("name", "altname")) %>%
+    dplyr::select(-"query_idx", -"db_idx")
 }
 
 #' Nest tomtom results & show only best match, store all others in `tomtom` list column
