@@ -1,24 +1,42 @@
-skip_if(T, "delete when done building tests")
+test_that("get_sequence works", {
 
-peaks <- "inst/extdata/peaks/peaks.tsv" %>%
-  readr::read_tsv() %>%
-  GRanges
+  peaks <- system.file("extdata/peaks/peaks.tsv", package = "memes") %>%
+    readr::read_tsv(col_types = c("seqnames" = "c", "start" = "i", "end" = "i")) %>%
+    GenomicRanges::GRanges()
 
-dm.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
+  dm.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
 
-regions <- peaks %>%
-  resize(200, "center") %>%
-  data.frame %>%
-  dplyr::mutate(type = c(rep("A", nrow(.)/2), rep("B", nrow(.)/2)),
-                score = sample(1:10, nrow(.))) %>%
-  GRanges
+  regions <- peaks %>%
+    GenomicRanges::resize(10, "center") %>%
+    data.frame %>%
+    dplyr::mutate(type = c(rep("A", nrow(.)/2), rep("B", nrow(.)/2)),
+                  score = sample(1:10, nrow(.))) %>%
+    GenomicRanges::GRanges()
 
-regions_list <- regions %>%
-  split(mcols(.)$type)
+  regions_list <- regions %>%
+    split(mcols(.)$type)
 
-get_sequence(regions, dm.genome)
-get_sequence(regions, dm.genome, score_column = "score")
+  seqs <- get_sequence(regions, dm.genome)
+  expect_equal(unique(Biostrings::width(seqs)), 10)
+  expect_equal(class(seqs), "DNAStringSet")
 
-get_sequence(regions_list, dm.genome)
-get_sequence(regions_list, dm.genome, score_column = "score") -> z
-names(z$A)
+  context("score is added correctly")
+  seqs_score <- get_sequence(regions, dm.genome, score_column = "score")
+
+  expect_equal(seqs[1][[1]], seqs_score[1][[1]])
+  expect_equal(names(seqs_score)[1], paste(names(seqs)[1], regions[1]$score))
+
+  context("list dispatch works")
+  seqs_list <- get_sequence(regions_list, dm.genome)
+
+  expect_true(all(seqs_list$A == seqs[seq(1, length(seqs)/2)]))
+  expect_true(all(names(seqs_list$A) %in% names(seqs)))
+  expect_true(all(names(seqs_list$B) %in% names(seqs)))
+
+  context("add_sequence works")
+  regions_with_seq <- regions %>%
+    add_sequence(dm.genome)
+
+  expect_true(all(regions_with_seq$sequence == seqs))
+})
+
