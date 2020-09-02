@@ -1,5 +1,29 @@
 # Functions for validating/creating/etc. custom internal classes
 
+#' Unfinished constructor for a tomtom_results data.frame
+#'
+#' NOTE: `motif` is only a list() not universalmotif list when it's empty.
+#'
+#' @return a minimal empty tomtom_results valid data.frame
+#'
+#' @noRd
+new_tomtom_results <- function(){
+  data.frame(name = NA_character_,
+             altname = NA_character_,
+             motif = NA,
+             best_match_name = NA_character_,
+             best_match_altname = NA_character_,
+             best_match_offset = NA_integer_,
+             best_match_pvalue = NA_real_,
+             best_match_evalue = NA_real_,
+             best_match_qvalue = NA_real_,
+             best_match_strand = NA_character_,
+             best_match_motif = NA,
+             tomtom = NA,
+             stringsAsFactors = FALSE
+             )
+
+}
 
 #' Unfinished constructor for a dreme_results data.frame
 #'
@@ -25,7 +49,7 @@ new_dreme_results <- function(){
              pos_frac = numeric(),
              neg_frac = numeric(),
              motif = list(),
-             stringsAsFactors = F
+             stringsAsFactors = FALSE
              )
 }
 
@@ -69,6 +93,25 @@ is_dreme_results <- function(res){
 
   # all names exist
   if (!(all(names(spec_dreme_res) %in% names(res)))) {
+    return(FALSE)
+  }
+
+  # motif column is universalmotif type
+  is_universalmotif_list(res$motif)
+}
+
+#' Bool is/isnot valid tomtom_results
+#'
+#' @param res data.frame
+#'
+#' @return TRUE or FALSE
+#'
+#' @noRd
+is_tomtom_results <- function(res){
+  spec_tomtom_res <- new_tomtom_results()
+
+  # all names exist
+  if (!(all(names(spec_tomtom_res) %in% names(res)))) {
     return(FALSE)
   }
 
