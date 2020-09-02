@@ -62,6 +62,12 @@ get_sequence.SimpleGRangesList <- function(regions, genome, score_column = NULL,
   get_sequence.GenomicRangesList(regions = regions, genome = genome, score_column = score_column, ...)
 }
 
+#' @export
+#' @noRd
+get_sequence.list <- function(regions, genome, score_column = NULL, ...){
+  get_sequence.GenomicRangesList(regions = regions, genome = genome, score_column = score_column, ...)
+}
+
 #' Add nucleic acid sequence of regions to metadata column
 #'
 #' @param ranges GRanges object

@@ -145,7 +145,7 @@ attrs_to_df <- function(xml, ...) {
 #' @noRd
 write_meme_list <- function(list, path = tempfile(fileext = ".meme"), version = 5){
   list %>%
-    universalmotif::write_meme(path, append = F, overwrite = T, version = version)
+    universalmotif::write_meme(path, append = FALSE, overwrite = TRUE, version = version)
 
   cmdfun::cmd_error_if_missing(path)
 
