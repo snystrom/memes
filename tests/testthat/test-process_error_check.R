@@ -38,3 +38,15 @@ test_that("process_check_error suggests correctly", {
   )
 
 })
+
+test_that("dreme help check works", {
+  expect_true(FALSE)
+})
+
+test_that("tomtom help check works", {
+  expect_true(FALSE)
+})
+
+test_that("fimo help check works", {
+  expect_true(FALSE)
+})
