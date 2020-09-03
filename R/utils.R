@@ -5,6 +5,7 @@
 get_sequence.GRanges <- function(regions, genome, score_column = NULL, ...){
 
   chrNames <- seqnames(regions)
+  # NOTE: parse_genomic_coords uses 1-based coordinates, so no need to shift here.
   startPos <- start(regions)
   endPos <- end(regions)
 
@@ -89,10 +90,11 @@ add_sequence <- function(ranges, genome, name = "sequence"){
 
   seq_ranges <- sequence_as_granges(seq, name = !!name)
 
-  ranges %>%
-    plyranges::join_overlap_left(seq_ranges)
+  # Ensure seq_ranges and ranges are in the same order
+  #stopifnot(identical(granges(seq_ranges), granges(plyranges::set_strand(ranges, "*"))))
 
-
+  mcols(ranges)[rlang::quo_name(name)] <- mcols(seq_ranges)[rlang::quo_name(name)]
+  return(ranges)
 }
 
 #' Convert Biostring w/ names of genomic coords to GRanges w/ sequence column

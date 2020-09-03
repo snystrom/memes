@@ -78,7 +78,7 @@ mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
 #' @details
 #'
 #' **NOTE** that `consensus`, `alphabet`, `multifreq`, and `icscore` are protected columns and
-#' cannot be updated.
+#' cannot be updated. Any changes to these columns will be ignored when updating motifs.
 #'
 #' ## Table of values updated
 #'

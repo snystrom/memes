@@ -198,9 +198,22 @@ fimoHelp <- function(command){
 #' @noRd
 parseFimo <- function(fimo_tsv){
 
-  fimo_matches <- readr::read_tsv(fimo_tsv, comment = "#") %>%
+  fimo_matches <- readr::read_tsv(fimo_tsv,
+                                  comment = "#",
+                                  col_types = c("motif_id" = "c",
+                                                "motif_alt_id" = "c",
+                                                "sequence_name" = "c",
+                                                "start" = "i",
+                                                "stop" = "i",
+                                                "strand" = "c",
+                                                "score" = "d",
+                                                "p-value" = "d",
+                                                "q-value" = "d",
+                                                "matched_sequence" = "c")
+                                  ) %>%
     dplyr::rename_all(~{gsub("-", "", .)}) %>%
     dplyr::rename("seqnames" = "sequence_name") %>%
+    # NOTE: FIMO uses 1-based coordinates, so no need to shift for GRanges conversion
     GenomicRanges::GRanges()
     # Compute q-value?
     #dplyr::group_by(motif_alt_id) %>%
