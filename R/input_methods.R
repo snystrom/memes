@@ -156,6 +156,9 @@ sequence_input_control_list <- function(input, control){
 
       input <- x$input
       control <- x$control
+    } else {
+      missing <- control[!(control %in% names(input))]
+      stop(paste0("The following names passed to control do not exist in the input names: ", missing))
     }
   }
 
