@@ -17,10 +17,3 @@ universalmotif list from motifs, updated to reflect the data.frame
 \description{
 Convert universalmotif data.frames back into universalmotifs
 }
-\examples{
-df <- universalmotif::create_motif() \%>\%
-  as_universalmotif_dataframe() \%>\%
-  dplyr::mutate(altname = "new_alt_name")
-
-motifs <- as_universalmotif(df)
-}

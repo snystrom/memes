@@ -7,7 +7,7 @@
 importFimo(fimo_tsv)
 }
 \arguments{
-\item{fimo_tsv}{}
+\item{fimo_tsv}{path to fimo.tsv output file}
 }
 \value{
 

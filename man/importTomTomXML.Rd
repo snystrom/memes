@@ -13,8 +13,8 @@ importTomTomXML(tomtom_xml_path)
 will return data.frame with input motifs & results for best match.
   `tomtom` list column contains full tomtom data for each input motif.
   NOTE: if tomtom detects no matches for any input motif, currently will
-  throw warning & return NA values for `tomtom`, `best_match_name`, and
-  `best_match_motifs`.
+  print a message & return NA values for `tomtom`, `best_match_name`, and
+  `best_match_motif`.
 }
 \description{
 Import tomtom data from previous run

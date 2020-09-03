@@ -19,7 +19,7 @@ Update the `motif` column to data.frame values
 }
 \details{
 **NOTE** that `consensus`, `alphabet`, `multifreq`, and `icscore` are protected columns and
-cannot be updated.
+cannot be updated. Any changes to these columns will be ignored when updating motifs.
 
 ## Table of values updated
 
