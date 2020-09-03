@@ -113,8 +113,8 @@ runFimo <- function(sequences, motifs, bfile = "motif",
                         user_flags = cmdfun::cmd_help_parse_flags(user_flags) %>%
                           # filter out special inputs to bfile
                           grep("--$", ., invert = TRUE, value = TRUE),
-                        flags_fun = ~{gsub("-", "_", .x)}
-                        )
+                        flags_fun = ~{gsub("-", "_", .x)},
+                        default_help_fun = TRUE)
 
   print_process_stdout(ps_out, silent = silent)
   print_process_stderr(ps_out, silent = silent)
