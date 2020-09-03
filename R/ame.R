@@ -75,7 +75,8 @@ runAme.default <- function(input,
     process_check_error(help_fun = ~{ame_help(command)},
                         user_flags = cmdfun::cmd_help_parse_flags(user_flags) %>%
                           grep("shuffle", ., invert = TRUE, value = TRUE),
-                        flags_fun = ~{gsub("-", "_", .x)})
+                        flags_fun = ~{gsub("-", "_", .x)},
+                        default_help_fun = TRUE)
 
   print_process_stdout(ps_out, silent = silent)
   print_process_stderr(ps_out, silent = silent)

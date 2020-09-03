@@ -189,11 +189,13 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #'   shuffle algorithm). If `control` is a Biostrings::BStringSetList (generated
 #'   using `get_sequence`), all sequences in the list will be combined as the
 #'   control set. Set to `NA` for partitioning based on input fasta score (see
-#'   `get_sequence()` for assigning fasta score).
+#'   `get_sequence()` for assigning fasta score). If input sequences are not
+#'   assigned fasta scores but AME is run in partitioning mode, the sequence
+#'   order will be used as the score.
 #' @param outdir Path to output directory location to save data files. If set to "auto",
 #'   will use location of input files if passing file paths, otherwise will
 #'   write to a temporary directory. default: "auto"
-#' @param method default: fisher (allowed values: fisher, ranksum, pearson , spearman, 3dmhg, 4dmhg)
+#' @param method default: fisher (allowed values: fisher, ranksum, pearson, spearman, 3dmhg, 4dmhg)
 #' @param database path to .meme format file, universalmotif list object, dreme
 #'   results data.frame, or list() of multiple of these. If objects are assigned names in the list,
 #'   that name will be used as the database id. It is highly recommended you set
