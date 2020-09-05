@@ -151,12 +151,16 @@ split_input_control <- function(input, control){
 sequence_input_control_list <- function(input, control){
 
   if (is.character(control)){
+
     if (all(control %in% names(input))){
       x <- split_input_control(input, control)
 
       input <- x$input
       control <- x$control
-    } else {
+    } else if (all(!(control %in% names(input))) & !identical(control, "shuffle")){
+      # Handle control = "shuffle"
+      # If input is a list with a "shuffle" entry, use the "shuffle" entry
+      # this may need revision if shuffle behavior is different across tools, or some tools don't have shuffle feature?
       missing <- control[!(control %in% names(input))]
       stop(paste0("The following names passed to control do not exist in the input names: ", missing))
     }
