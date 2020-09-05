@@ -20,3 +20,7 @@ a cowplot 2 panel plot comparing the distribution of `value` to normalized rank 
 This helper function allows the user to visualize the distribution of their AME results data on different scales
 to help understand the implications of using different values in `ame_plot_heatmap()`
 }
+\examples{
+data("example_ame", package = "memes")
+ame_compare_heatmap_methods(example_ame)
+}
