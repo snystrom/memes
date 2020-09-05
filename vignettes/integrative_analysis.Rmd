@@ -276,6 +276,13 @@ dreme_by_binding_renamed %>%
                      annotation_col = anno.df,
                      show_colnames = FALSE) 
 ```
+```{r}
+# GOOGLE: pheatmap error in readRDS
+  pheatmap::pheatmap(d, color = cols, 
+                     breaks = seq(0, 1, by = 1/255), 
+                     annotation_col = anno.df,
+                     show_colnames = FALSE) 
+```
 
 ### Test Denovo motif enrichment using AME
 
@@ -287,7 +294,7 @@ for motif enrichment of the denovo discovered motifs within each binding categor
 passing it within a `list()`. Naming the `list()` entry produces an informative
 `motif_db` name in the results data.frame.
 
-```{r ame_by_binding, cache=TRUE, cache.comments=FALSE}
+```{r ame_by_binding}
 ame_denovo_by_binding <- by_binding %>% 
   runAme(database = list("denovo_binding_motifs" = dreme_by_binding_renamed)) %>% 
   dplyr::bind_rows(.id = "binding_type") 
