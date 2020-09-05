@@ -44,3 +44,5 @@ Remotes:
 VignetteBuilder: knitr
 URL: https://snystrom.github.io/memes/, https://github.com/snystrom/memes
 BugReports: https://github.com/snystrom/memes
+Depends: 
+    R (>= 2.10)

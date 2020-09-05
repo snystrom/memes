@@ -230,6 +230,8 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
 #' @importFrom ggplot2 ggplot stat_ecdf scale_x_continuous labs theme_bw aes theme
 #'
 #' @examples
+#' data("example_ame", package = "memes")
+#' ame_compare_heatmap_methods(example_ame)
 ame_compare_heatmap_methods <- function(ame, group, value = -log10(adj.pvalue)){
 
   group <- enquo(group)

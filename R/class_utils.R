@@ -60,7 +60,6 @@ new_dreme_results <- function(){
 #' @return NULL if successful, otherwise will return one of several errors
 #'   describing why this object is not valid. Tries to be as helpful as possible
 #'   to the user when describing properties that are incompatible with the data type.
-#' @export
 #'
 #' @noRd
 error_dreme_results <- function(res){
@@ -211,7 +210,7 @@ as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
 #' @examples
 #' motif <- universalmotif::create_motif()
 #' df <- as_universalmotif_dataframe(motif)
-#' df <- dplyr::mutate(motif_df, altname = "new_alt_name)
+#' df <- dplyr::mutate(motif_df, altname = "new_alt_name")
 #'
 #' motifs <- as_universalmotif(df)
 as_universalmotif <- function(data){
