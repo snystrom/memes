@@ -157,7 +157,7 @@ sequence_input_control_list <- function(input, control){
 
       input <- x$input
       control <- x$control
-    } else if (all(!(control %in% names(input))) & !identical(control, "shuffle")){
+    } else if (!all(control %in% names(input)) & !identical(control, "shuffle")){
       # Handle control = "shuffle"
       # If input is a list with a "shuffle" entry, use the "shuffle" entry
       # this may need revision if shuffle behavior is different across tools, or some tools don't have shuffle feature?
