@@ -55,6 +55,13 @@
 #' @export
 #'
 #' @examples
+#' if (meme_is_installed()) {
+#' seqs <- universalmotif::create_sequences("CCRAAAW", seqnum = 4)
+#' names(seqs) <- 1:length(seqs)
+#' runMeme(seqs, parse_genomic_coord = FALSE)
+#'
+#' }
+#'
 runMeme <- function(input, control = NA, outdir = "auto", alph = "dna", parse_genomic_coord = TRUE,
                             combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
   UseMethod("runMeme")

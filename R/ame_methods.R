@@ -231,7 +231,7 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
 #'
 #' @examples
 #' data("example_ame", package = "memes")
-#' ame_compare_heatmap_methods(example_ame)
+#' ame_compare_heatmap_methods(example_ame$Decreasing)
 ame_compare_heatmap_methods <- function(ame, group, value = -log10(adj.pvalue)){
 
   group <- enquo(group)
