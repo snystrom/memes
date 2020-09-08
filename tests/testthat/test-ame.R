@@ -17,7 +17,7 @@ prepare_seq <- function(n, seed){
   return(seq)
 }
 
-db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "memes"))
+db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "memes")
 
 n_seq <- 26
 seq <- prepare_seq(n_seq, 123)
