@@ -1,7 +1,7 @@
 Package: memes
 Type: Package
 Title: An R Interface to the MEME Suite
-Version: 0.0.1.9005
+Version: 0.0.1.9006
 Authors@R: person("Spencer", "Nystrom", 
     email = "snystrom@email.unc.edu", 
     role = c("aut", "cre", "cph"),
