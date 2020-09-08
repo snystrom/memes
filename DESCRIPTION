@@ -33,6 +33,7 @@ Suggests:
     cowplot,
     BSgenome.Dmelanogaster.UCSC.dm3,
     BSgenome.Dmelanogaster.UCSC.dm6,
+    ggseqlogo,
     testthat (>= 2.1.0),
     knitr,
     MotifDb,
