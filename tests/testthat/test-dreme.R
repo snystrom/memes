@@ -76,11 +76,13 @@ test_that("runDreme dispatch works", {
   # use "A" as background
   expect_named(runDreme(seq_by_type, "A", e = 70), "B")
   # Use invalid background
-  expect_error(runDreme(seq_by_type, "d", e = 70), "d was not found")
+  expect_error(runDreme(seq_by_type, "d", e = 70), "input names: d")
 
   # test that control names are all inside names of input
   # ie that if name isn't in name, throws error
   expect_error(runDreme(seq_by_type, c("B", "C"), e = 70), "names passed to control do not exist")
+  expect_error(runDreme(seq_by_type, c("shuffle", "C"), e = 70), "names passed to control do not exist")
+  expect_error(runDreme(seq_by_type, c("shuffle", "B"), e = 70), "names passed to control do not exist")
 
 })
 
