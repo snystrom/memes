@@ -185,7 +185,8 @@ get_tomtom_query_data <- function(tomtom_xml_data){
   xml2::xml_find_all(tomtom_xml_data, "//queries") %>%
     xml2::xml_children() %>%
     attrs_to_df(stringsAsFactors = FALSE) %>%
-    dplyr::mutate(query_idx = (1:nrow(.) - 1)) %>%
+    dplyr::mutate(query_idx = (1:nrow(.) - 1),
+                  db = as.integer(db)) %>%
     dplyr::rename("db_idx" = "db",
                   "name" = "id") %>%
     # allows renaming alt column only if exists
