@@ -80,7 +80,7 @@ test_that("List input works", {
   expect_null(unlist(ame_list_shuf))
 
   # Use invalid background
-  expect_error(runAme(seqList2, "c", database = db), "c was not found")
+  expect_error(runAme(seqList2, "c", database = db), "input names: c")
 })
 
 test_that("input error checking works", {

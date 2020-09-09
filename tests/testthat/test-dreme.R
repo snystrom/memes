@@ -84,14 +84,15 @@ test_that("runDreme dispatch works", {
   expect_error(runDreme(seq_by_type, c("shuffle", "C"), e = 70), "names passed to control do not exist")
   expect_error(runDreme(seq_by_type, c("shuffle", "B"), e = 70), "names passed to control do not exist")
 
+  ## Ensure error catch works with list input also
+  expect_error(suppressMessages(runDreme(seq_by_type, "A", et = 70)),
+               "\"e\" instead of", class = "error")
+
 })
 
 test_that("runDreme error checking works", {
   ## test error checking
   expect_error(suppressMessages(runDreme(fa, "shuffle", et = 39)),
-               "\"e\" instead of", class = "error")
-  ## Ensure error catch works with list input also
-  expect_error(suppressMessages(runDreme(seq_by_type, "A", et = 70)),
                "\"e\" instead of", class = "error")
 
 
