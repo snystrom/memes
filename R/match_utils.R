@@ -1,17 +1,21 @@
 #' Force best tomtom match by id
 #'
 #' @param res results from runTomTom
-#' @param matches named vector where name is the input motif id, and value is the match_name to use as the new best match
+#' @param matches named vector where name is the input motif name, and value is
+#'   the match_name to use as the new best match
 #'
-#' @return `res` with new best_* columns and re-ranked tomtom data in the `tomtom` list column for the updated entries.
+#' @return `res` with new best_* columns and re-ranked tomtom data in the
+#'   `tomtom` list column for the updated entries.
 #' @export
 #'
 #' @examples
 #' if (meme_is_installed()){
-#' motif <- universalmotif::create_motif("CCRAAAW")
+#' motif <- universalmotif::create_motif("CCRAAAW", name = "example_motif")
 #' db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "memes")
 #' res <- runTomTom(motif, database = db)
-#' force_best_match(res, c("id" = "update"))
+#' res$best_match_name
+#' res2 <- force_best_match(res, c("example_motif" = "Eip93F_SANGER_10"))
+#' res2$best_match_name
 #' }
 force_best_match <- function(res, matches){
   if (!all(names(matches) %in% res$name)) {
@@ -99,9 +103,9 @@ drop_best_match <- function(res){
 #' columns may not be in the same order, so operations like `identical()` may
 #' fail even though the column values are unchanged.
 #'
-#' @param data
+#' @param data tomtom results data.frame after unnesting the `tomtom` column
 #'
-#' @return
+#' @return the input data.frame with the match_* columns nested into a column named `tomtom`
 #' @export
 #'
 #' @importFrom magrittr %<>%

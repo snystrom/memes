@@ -224,12 +224,15 @@ parseFimo <- function(fimo_tsv){
 #'
 #' @param fimo_tsv path to fimo.tsv output file
 #'
-#' @return
+#' @return GenomicRanges object for each match position. Note unless coordinates
+#'   are genomic positions, each `seqnames` entry will be the fasta header, and
+#'   start/end will be the position within that sequence of the match.
 #' @export
 #'
 #' @examples
 #'
 #' \dontrun{
+#' # TODO: example fimo.tsv shipped in extdata
 #' importFimo("fimo.tsv")
 #' }
 importFimo <- function(fimo_tsv){

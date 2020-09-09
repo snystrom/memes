@@ -196,7 +196,7 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 #'   coordinates for motif position information, only works if fasta files were
 #'   written such that the sequence headers are in the form: "chr:start-end", or
 #'   some variation of this form (delimiters can be any of: "[^[:alnum:]]+" (ie
-#'   non-alphanumeric characters)).
+#'   non-alphanumeric characters)), (default = FALSE).
 #' @param combined_sites whether to add `combined_sites` output which contains coordinates of each sequence, the motif sequence
 #'
 #' @return
@@ -204,12 +204,9 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 #' @importFrom tidyr nest
 #'
 #' @examples
-#' # If fasta headers do not have sequence information, parse_genomic_coord must be set to FALSE
-#' example_no_sequence <- system.file("extdata/meme_full.txt", package = "universalmotif", mustwork = TRUE)
-#' importMeme(example_no_sequence, parse_genomic_coord = FALSE)
-#'
-#' #TODO: Add example of file w/ sequence headers
-importMeme <- function(meme_txt, parse_genomic_coord = TRUE, combined_sites = FALSE){
+#' example_meme_txt <- system.file("extdata/meme_full.txt", package = "universalmotif")
+#' importMeme(example_meme_txt)
+importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = FALSE){
   meme_res <- universalmotif::read_meme(meme_txt, readsites = TRUE, readsites.meta = TRUE)
 
   meme_dataframe <- meme_res$motifs %>%

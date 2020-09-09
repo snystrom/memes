@@ -112,7 +112,7 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
 #' will return: "Error: Discrete value supplied to continuous scale". To use a
 #' column by name, do not quote the column name.
 #'
-#' @return
+#' @return `ggplot` object
 #' @export
 #'
 #' @importFrom ggplot2 ggplot geom_tile theme aes theme_bw labs scale_fill_gradient2 element_text .pt

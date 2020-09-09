@@ -69,6 +69,12 @@ get_sequence.list <- function(regions, genome, score_column = NULL, ...){
   get_sequence.GenomicRangesList(regions = regions, genome = genome, score_column = score_column, ...)
 }
 
+#' @export
+#' @noRd
+get_sequence.character <- function(regions, genome, score_column = NULL, ...){
+  get_sequence.data.frame(regions = regions, genome = genome, score_column = score_column, ...)
+}
+
 #' Add nucleic acid sequence of regions to metadata column
 #'
 #' @param ranges GRanges object
@@ -197,5 +203,8 @@ check_meme_install <- function(meme_path = NULL){
 #' @examples
 #' # Will return TRUE if "meme/bin/" is detected
 #' meme_is_installed()
+#' \dontrun{
+#' # will throw error if path to meme is invalid
 #' meme_is_installed("bad/path")
+#' }
 meme_is_installed <- cmdfun::cmd_install_is_valid(search_meme_path, util = TRUE)

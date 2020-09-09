@@ -9,7 +9,9 @@ motif_input <- function(x, ...) UseMethod("motif_input")
 #' A light wrapper around Biostrings::getSeq to return named DNAStringSets.
 #'
 #' @param regions GRanges, or GRangesList object. Will also accept a data.frame
-#'   as long as it can be coerced to a GRanges object.
+#'   as long as it can be coerced to a GRanges object, or a string in the
+#'   format: "chr:start-end" (NOTE: use 1-based closed
+#'   intervals, not BED format 0-based half-open intervals).
 #' @param genome object of any valid type in showMethods(Biostrings::getSeq).
 #'   Commonly a BSgenome object, or fasta file. Used to lookup sequences in regions.
 #' @param score_column optional name of column (in mcols() of `regions`)
@@ -37,8 +39,8 @@ motif_input <- function(x, ...) UseMethod("motif_input")
 #' get_sequence("chr2L:100-200", drosophila.genome)
 #'
 #' # using GRanges object for regions
-#' regions <- GRanges(seqnames=Rle(c('chrX', 'chr2L', 'chr3R'), c(3, 3, 4)), IRanges(1:10, width=5))
-#' get_sequence(regions, drosophila.genome)
+#' data(example_peaks, package = "memes")
+#' get_sequence(example_peaks, drosophila.genome)
 get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequence")
 
 #' Denovo motif discovery of target regions
