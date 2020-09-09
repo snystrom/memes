@@ -210,7 +210,7 @@ as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
 #' @examples
 #' motif <- universalmotif::create_motif()
 #' df <- as_universalmotif_dataframe(motif)
-#' df <- dplyr::mutate(motif_df, altname = "new_alt_name")
+#' df <- dplyr::mutate(df, altname = "new_alt_name")
 #'
 #' motifs <- as_universalmotif(df)
 as_universalmotif <- function(data){
