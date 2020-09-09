@@ -164,12 +164,13 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' @md
 #'
 #' @examples
+#' # TODO: runnable example
 #' \dontrun{
 #' # Runs dreme with default settings, shuffles input as background
 #' runDreme("input.fa", "shuffle")
 #'
 #' # Runs searching for max 2 motifs, e-value cutoff = 0.1, explicitly using the DNA alphabet
-#' runDreme("input.fa", "shuffle", nmotifs = 2, e = 0.1, dna = T)
+#' runDreme("input.fa", "shuffle", nmotifs = 2, e = 0.1, dna = TRUE)
 #' }
 runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...) {
   UseMethod("runDreme")
