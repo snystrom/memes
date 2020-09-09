@@ -413,23 +413,48 @@ join_tomtom_tables <- function(query, hits){
 #'   Which is list of data.frames for each match too the given id.
 #'
 #' @importFrom tidyr nest
+#' @importFrom rlang .data
 #'
 #' @noRd
 nest_tomtom_results <- function(tomtom_results){
 
+  nest_cols <- c("match_name",
+                 "match_altname",
+                 "match_motif",
+                 "db_name",
+                 "match_offset",
+                 "match_pvalue",
+                 "match_evalue",
+                 "match_qvalue",
+                 "match_strand")
+
+  # Need to remove "motif" S4 column & rejoin unique entries because `tibble` or
+  # `tidyr` doesn't play nice with S4. S4 is allowed in the nested column, but
+  # S4 is not allowed in a parent df column... *sigh*
+  tomtom_motifs <- tomtom_results %>%
+    dplyr::select(dplyr::any_of(c("name", "altname", "motif"))) %>%
+    unique
+
   tomtom_results %>%
-    dplyr::group_by(name, altname) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(best_match_info = purrr::map(data, ~{
+    dplyr::select(-.data$motif) %>%
+    dplyr::group_by(.data$name, .data$altname) %>%
+    tidyr::nest(data = (dplyr::any_of(nest_cols))) %>%
+    dplyr::mutate(best_match_info = purrr::map(.data$data, ~{
       .x %>%
-        dplyr::filter(match_evalue == min(match_evalue)) %>%
+        dplyr::filter("match_evalue" == min("match_evalue")) %>%
         head(1) %>%
         dplyr::rename_all(~{paste0("best_", .x)})
     })) %>%
-    tidyr::unnest(best_match_info) %>%
+    tidyr::unnest("best_match_info") %>%
     dplyr::rename("tomtom" = "data") %>%
-    dplyr::mutate(tomtom = purrr::map(tomtom, data.frame)) %>%
-    dplyr::select("name", "altname", dplyr::contains("best_"), dplyr::everything())
+    dplyr::mutate("tomtom" = purrr::map(.data$tomtom, data.frame)) %>%
+    # Add back motif column
+    dplyr::left_join(tomtom_motifs, by = c("name", "altname")) %>%
+    dplyr::select("name", "altname",
+                  dplyr::matches("[^best_|^tomtom]"),
+                  dplyr::matches("motif"),
+                  dplyr::contains("best_"),
+                  "tomtom")
 }
 
 #' Return best_match data for top row of `tomtom`
