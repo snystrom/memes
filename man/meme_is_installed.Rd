@@ -20,7 +20,10 @@ location, `FALSE` if not.
 \examples{
 # Will return TRUE if "meme/bin/" is detected
 meme_is_installed()
+\dontrun{
+# will throw error if path to meme is invalid
 meme_is_installed("bad/path")
+}
 }
 \seealso{
 search_meme_path check_meme_install

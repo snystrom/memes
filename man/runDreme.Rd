@@ -132,12 +132,13 @@ license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copy
 }
 }
 \examples{
+# TODO: runnable example
 \dontrun{
 # Runs dreme with default settings, shuffles input as background
 runDreme("input.fa", "shuffle")
 
 # Runs searching for max 2 motifs, e-value cutoff = 0.1, explicitly using the DNA alphabet
-runDreme("input.fa", "shuffle", nmotifs = 2, e = 0.1, dna = T)
+runDreme("input.fa", "shuffle", nmotifs = 2, e = 0.1, dna = TRUE)
 }
 }
 \section{Citation}{

@@ -9,19 +9,23 @@ force_best_match(res, matches)
 \arguments{
 \item{res}{results from runTomTom}
 
-\item{matches}{named vector where name is the input motif id, and value is the match_name to use as the new best match}
+\item{matches}{named vector where name is the input motif name, and value is
+the match_name to use as the new best match}
 }
 \value{
-`res` with new best_* columns and re-ranked tomtom data in the `tomtom` list column for the updated entries.
+`res` with new best_* columns and re-ranked tomtom data in the
+  `tomtom` list column for the updated entries.
 }
 \description{
 Force best tomtom match by id
 }
 \examples{
 if (meme_is_installed()){
-motif <- universalmotif::create_motif()
+motif <- universalmotif::create_motif("CCRAAAW", name = "example_motif")
 db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "memes")
 res <- runTomTom(motif, database = db)
-force_best_match(res, c("id" = "update"))
+res$best_match_name
+res2 <- force_best_match(res, c("example_motif" = "Eip93F_SANGER_10"))
+res2$best_match_name
 }
 }

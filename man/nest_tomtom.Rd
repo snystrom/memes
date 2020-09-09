@@ -19,9 +19,10 @@ columns may not be in the same order, so operations like `identical()` may
 fail even though the column values are unchanged.
 }
 \examples{
-\dontrun{
-#TODO: add better example
-res <- runTomTom(motifs)
+if (meme_is_installed()){
+motif <- universalmotif::create_motif("CCRAAAW")
+db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "memes")
+res <- runTomTom(motif, database = db)
 data <- tidyr::unnest(res, "tomtom")
 identical(nest_tomtom(data), res)
 }
