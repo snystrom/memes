@@ -354,7 +354,7 @@ get_tomtom_hits <- function(tomtom_xml_data){
 
 }
 
-#' Merge query data w/ hits data
+#' Merge query data w/ hits data, nesting full tomtom results
 #'
 #' @param query tomtom query data
 #' @param hits get_tomtom_hits() output
@@ -394,14 +394,9 @@ join_tomtom_tables <- function(query, hits){
   if (!is.null(hits)){
     tomtom_results %<>%
       nest_tomtom_results()
-  } else {
-    return(tomtom_results)
   }
 
-  # Join w/ query metadata
-  tomtom_results %>%
-    dplyr::left_join(query, ., by = c("name", "altname")) %>%
-    dplyr::select(-"query_idx", -"db_idx")
+  return(data.frame(tomtom_results))
 }
 
 #' Nest tomtom results & show only best match, store all others in `tomtom` list column
@@ -450,6 +445,7 @@ nest_tomtom_results <- function(tomtom_results){
     dplyr::mutate("tomtom" = purrr::map(.data$tomtom, data.frame)) %>%
     # Add back motif column
     dplyr::left_join(tomtom_motifs, by = c("name", "altname")) %>%
+    # Reorder columns
     dplyr::select("name", "altname",
                   dplyr::matches("[^best_|^tomtom]"),
                   dplyr::matches("motif"),
