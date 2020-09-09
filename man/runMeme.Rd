@@ -80,3 +80,12 @@ International Conference on Intelligent Systems for Molecular Biology, pp.
 The MEME Suite is free for non-profit use, but for-profit users should purchase a
 license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
 }
+\examples{
+if (meme_is_installed()) {
+seqs <- universalmotif::create_sequences("CCRAAAW", seqnum = 4)
+names(seqs) <- 1:length(seqs)
+runMeme(seqs, parse_genomic_coord = FALSE)
+
+}
+
+}

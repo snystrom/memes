@@ -16,6 +16,6 @@ data.frame with all motif metadata + `motif` column containing the universalmoti
 Convert universalmotif to data.frame with motif column
 }
 \examples{
-universalmotif::create_motif() \%>\%
-  as_universalmotif_dataframe()
+motif <- universalmotif::create_motif()
+motif_df <- as_universalmotif_dataframe(motif)
 }

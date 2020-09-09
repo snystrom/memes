@@ -22,5 +22,5 @@ to help understand the implications of using different values in `ame_plot_heatm
 }
 \examples{
 data("example_ame", package = "memes")
-ame_compare_heatmap_methods(example_ame)
+ame_compare_heatmap_methods(example_ame$Decreasing)
 }
