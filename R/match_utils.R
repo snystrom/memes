@@ -7,11 +7,12 @@
 #' @export
 #'
 #' @examples
-#' # TODO: UPDATE THIS TO A WORKING EXAMPLE
+#' if (meme_is_installed()){
 #' motif <- universalmotif::create_motif()
-#' db <- system.file("extdata/db/fly_factor_survey_id.meme")
-#' res <- runTomTom(motif)
+#' db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "memes")
+#' res <- runTomTom(motif, database = db)
 #' force_best_match(res, c("id" = "update"))
+#' }
 force_best_match <- function(res, matches){
   if (!all(names(matches) %in% res$name)) {
     bad <- names(matches)[!names(matches) %in% res$name]

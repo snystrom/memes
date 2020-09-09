@@ -185,8 +185,8 @@ error_universalmotif_list <- function(list){
 #' @export
 #'
 #' @examples
-#' universalmotif::create_motif() %>%
-#'   as_universalmotif_dataframe()
+#' motif <- universalmotif::create_motif()
+#' motif_df <- as_universalmotif_dataframe(motif)
 as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
   data <- universalmotif::summarise_motifs(motif, na.rm = na.rm)
 
