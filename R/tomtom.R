@@ -399,20 +399,42 @@ join_tomtom_tables <- function(query, hits){
   return(data.frame(tomtom_results))
 }
 
-#' Nest tomtom results & show only best match, store all others in `tomtom` list column
+#' Helper function selecting best match by lowest evalue
 #'
-#' @param tomtom_results
+#' @param df
 #'
-#' @return data.frame with columns w/ all data for "best" match (defined by top
-#'   hit, lowest pvalue). All other matches are nested into 'tomtom' column.
-#'   Which is list of data.frames for each match too the given id.
-#'
-#' @importFrom tidyr nest
-#' @importFrom rlang .data
-#'
+#' @return
 #' @noRd
-nest_tomtom_results <- function(tomtom_results){
+#'
+#' @examples
+#' nest_tomtom_fun(tomtom_data, tomtom_best_match_min_evalue)
+tomtom_best_match_min_evalue <- function(df){
+    df %>%
+      dplyr::filter("match_evalue" == min("match_evalue")) %>%
+      head(1) %>%
+      dplyr::rename_all(~{paste0("best_", .x)})
+}
 
+#' Return tomtom best match by taking top column in tomtom df
+#'
+#' @param df
+#'
+#' @return
+#' @noRd
+tomtom_best_match_top_row <- function(df){
+  df[1,] %>%
+    dplyr::rename_all(~{paste0("best_", .x)})
+}
+
+#' Nest tomtom using `fun` to return best match
+#'
+#' @param tomtom_results unnested tomtom results
+#' @param fun function to apply to tomtom best match
+#'
+#' @return tomtom_results data.frame with nested `tomtom` column
+#' @noRd
+#'
+nest_tomtom_fun <- function(tomtom_results, fun){
   nest_cols <- c("match_name",
                  "match_altname",
                  "match_motif",
@@ -430,16 +452,12 @@ nest_tomtom_results <- function(tomtom_results){
     dplyr::select(dplyr::any_of(c("name", "altname", "motif"))) %>%
     unique
 
+
   tomtom_results %>%
     dplyr::select(-.data$motif) %>%
     dplyr::group_by(.data$name, .data$altname) %>%
     tidyr::nest(data = (dplyr::any_of(nest_cols))) %>%
-    dplyr::mutate(best_match_info = purrr::map(.data$data, ~{
-      .x %>%
-        dplyr::filter("match_evalue" == min("match_evalue")) %>%
-        head(1) %>%
-        dplyr::rename_all(~{paste0("best_", .x)})
-    })) %>%
+    dplyr::mutate(best_match_info = purrr::map(.data$data, fun)) %>%
     tidyr::unnest("best_match_info") %>%
     dplyr::rename("tomtom" = "data") %>%
     dplyr::mutate("tomtom" = purrr::map(.data$tomtom, data.frame)) %>%
@@ -453,6 +471,24 @@ nest_tomtom_results <- function(tomtom_results){
                   "tomtom")
 }
 
+
+#' Nest tomtom results & show only best match, store all others in `tomtom` list column
+#'
+#' @param tomtom_results
+#'
+#' @return data.frame with columns w/ all data for "best" match (defined by top
+#'   hit, lowest pvalue). All other matches are nested into 'tomtom' column.
+#'   Which is list of data.frames for each match too the given id.
+#'
+#' @importFrom tidyr nest
+#' @importFrom rlang .data
+#'
+#' @noRd
+nest_tomtom_results <- function(tomtom_results){
+  nest_tomtom_fun(tomtom_results, tomtom_best_match_min_evalue)
+}
+
+
 #' Return best_match data for top row of `tomtom`
 #'
 #' @param tomtom_results tomtom results object
@@ -463,17 +499,7 @@ nest_tomtom_results <- function(tomtom_results){
 #'
 #' @noRd
 nest_tomtom_results_best_top_row <- function(tomtom_results){
-  tomtom_results %>%
-    dplyr::group_by(name, altname) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(best_match_info = purrr::map(data, ~{
-      .x[1,] %>%
-        dplyr::rename_all(~{paste0("best_", .x)})
-    })) %>%
-    tidyr::unnest(best_match_info) %>%
-    dplyr::rename("tomtom" = "data") %>%
-    dplyr::mutate(tomtom = purrr::map(tomtom, data.frame)) %>%
-    dplyr::select("name", "altname", dplyr::contains("best_"), dplyr::everything())
+  nest_tomtom_fun(tomtom_results, tomtom_best_match_top_row)
 }
 
 
