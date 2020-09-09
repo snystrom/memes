@@ -202,6 +202,7 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 #' @return
 #' @export
 #' @importFrom tidyr nest
+#' @importFrom rlang .data
 #'
 #' @examples
 #' example_meme_txt <- system.file("extdata/meme_full.txt", package = "universalmotif")
@@ -211,7 +212,7 @@ importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = F
 
   meme_dataframe <- meme_res$motifs %>%
     as_universalmotif_dataframe() %>%
-    dplyr::mutate("width" = nchar(consensus))
+    dplyr::mutate("width" = nchar(.data$consensus))
 
   ##
   # Add sites info as data.frame
@@ -225,7 +226,7 @@ importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = F
                                  meme_sites_meta_to_df
                                  ) %>%
     dplyr::bind_rows(.id = "name") %>%
-    dplyr::group_by(name) %>%
+    dplyr::group_by(.data$name) %>%
     tidyr::nest() %>%
     dplyr::rename("sites_hits" = "data")
 
@@ -238,8 +239,8 @@ importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = F
   # so I convert these back to data.frame (*sigh*)
   if (parse_genomic_coord){
     meme_dataframe %<>%
-      dplyr::mutate(sites_hits = purrr::map2(sites_hits,
-                                             width, ~{
+      dplyr::mutate("sites_hits" = purrr::map2(.data$sites_hits,
+                                               .data$width, ~{
                                                meme_sites_meta_to_granges(.x, .y) %>%
                     # temporary until come up with a fix for printing data.frames with nested Granges
                                                  data.frame
