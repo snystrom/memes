@@ -149,6 +149,7 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 #'
 #' @importFrom magrittr %<>%
 #' @importFrom tidyr nest
+#' @importFrom rlang .data
 #' @export
 #'
 #' @family import
@@ -184,7 +185,7 @@ importAme <- function(path, method = "fisher", sequences = FALSE){
     }
 
     seq %<>%
-      dplyr::group_by(motif_id, motif_db) %>%
+      dplyr::group_by(.data$motif_id, .data$motif_db) %>%
       tidyr::nest() %>%
       dplyr::rename("sequences" = "data") %>%
       data.frame

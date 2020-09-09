@@ -186,7 +186,7 @@ get_tomtom_query_data <- function(tomtom_xml_data){
     xml2::xml_children() %>%
     attrs_to_df(stringsAsFactors = FALSE) %>%
     dplyr::mutate(query_idx = (1:nrow(.) - 1),
-                  db = as.integer(db)) %>%
+                  db = as.integer(.data$db)) %>%
     dplyr::rename("db_idx" = "db",
                   "name" = "id") %>%
     # allows renaming alt column only if exists
@@ -236,6 +236,7 @@ add_query_metadata <- function(query, metadata){
 #' @return data.frame of match data or NULL if no matches found
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 #' @noRd
 get_tomtom_match_data <- function(tomtom_xml_data){
@@ -255,7 +256,7 @@ get_tomtom_match_data <- function(tomtom_xml_data){
                   "evalue" = "ev",
                   "qvalue" = "qv",
                   "target_idx" = "idx") %>%
-    dplyr::mutate(strand = ifelse(rc == "y", "-", "+")) %>%
+    dplyr::mutate(strand = ifelse(.data$rc == "y", "-", "+")) %>%
     dplyr::rename_at(c("offset", "pvalue", "evalue", "qvalue", "strand"), ~{paste0("match_", .x)}) %>%
     dplyr::select(-"rc")
 
@@ -291,6 +292,7 @@ get_tomtom_db_data <- function(tomtom_xml_data){
 #' @examples
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 #' @noRd
 get_tomtom_target_data <- function(tomtom_xml_data){
@@ -310,7 +312,7 @@ get_tomtom_target_data <- function(tomtom_xml_data){
   target_df$pfm <- target_pfms
 
   target_data <- target_df %>%
-    dplyr::mutate(match_motif = purrr::pmap(list(pfm, id, alt, nsites), ~{
+    dplyr::mutate(match_motif = purrr::pmap(list(.data$pfm, .data$id, .data$alt, .data$nsites), ~{
       universalmotif::create_motif(..1,
                                    type = "PCM",
                                    name = ..2,
@@ -344,7 +346,7 @@ get_tomtom_hits <- function(tomtom_xml_data){
 
   target_db_lookup <- tomtom_xml_data %>%
     get_tomtom_db_data %>%
-    dplyr::select(db_idx, db_name)
+    dplyr::select("db_idx", "db_name")
 
   hits <- get_tomtom_target_data(tomtom_xml_data) %>%
     dplyr::left_join(target_db_lookup, by = "db_idx") %>%
