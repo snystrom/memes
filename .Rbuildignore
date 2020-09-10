@@ -14,3 +14,5 @@ runSingularity.sh
 .Renviron
 ^codecov\.yml$
 ^\.github$
+^_pkgdown\.yml$
+^docs$
