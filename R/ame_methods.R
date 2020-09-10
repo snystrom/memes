@@ -156,7 +156,7 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
   if (value_eval){
     # Default behavior is to do tidyeval on value
     plot <-  res %>%
-      ggplot(aes(reorder(!!id, order), as.factor(type))) +
+      ggplot(aes(reorder(!!id, order), as.factor(.data$type))) +
         geom_tile(aes(fill = !!value), color = 'black', size = 0.3) +
         heatmap_theme +
         labs(x = substitute(id),

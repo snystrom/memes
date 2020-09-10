@@ -206,7 +206,7 @@ dreme_get_background_freq <- function(dreme_run_info){
 
   background_df <- background_entry %>%
     attrs_to_df() %>%
-    dplyr::select(-from) %>%
+    dplyr::select(-"from") %>%
     lapply(function(x) as.character(x) %>% as.numeric) %>%
     dplyr::bind_cols()
 

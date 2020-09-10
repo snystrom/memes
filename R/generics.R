@@ -215,7 +215,7 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #'   [AME outputs](http://alternate.meme-suite.org/doc/ame-output-format.html)
 #'   webpage for more information.
 #' @param silent whether to suppress stdout (default: TRUE), useful for debugging.
-#' @param ...
+#' @param ... additional arguments passed to AME (see AME Flag table below)
 #'
 #' @details Additional AME arguments
 #'

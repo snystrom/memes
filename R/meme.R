@@ -20,7 +20,7 @@
 #'   behavior:
 #'   1. `meme_path` setting in `options()`
 #'   2. `MEME_PATH` setting in `.Renviron`
-#' @param ...
+#' @param ... additional arguments passed to MEME (see below)
 #'
 #' @return
 #'
@@ -337,7 +337,7 @@ meme_sites_meta_to_granges <- function(sites_df, motif_length){
     plyranges::anchor_5p() %>%
     plyranges::mutate(width = motif_length) %>%
     plyranges::shift_right(mcols(.)$position) %>%
-    plyranges::select(-position)
+    plyranges::select(-"position")
 }
 
 #' return genomic positions of sites w/ combined pvalues & diagram information

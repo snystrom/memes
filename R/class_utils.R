@@ -179,6 +179,7 @@ error_universalmotif_list <- function(list){
 #' Convert universalmotif to data.frame with motif column
 #'
 #' @param motif universalmotif object or list of universalmotifs
+#' @param na.rm whether to drop NA columns (default: FALSE).
 #'
 #' @return data.frame with all motif metadata + `motif` column containing the universalmotif object
 #'

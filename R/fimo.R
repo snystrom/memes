@@ -32,7 +32,7 @@
 #'   will print all FIMO matches to terminal if the run is successful. Can be
 #'   useful for troubleshooting.
 #' @param ... additional commandline arguments to fimo see:
-#'   \code{\link{http://meme-suite.org/doc/fimo.html?man_type=web}}
+#'   [Fimo web manual](http://meme-suite.org/doc/fimo.html?man_type=web) and the FIMO Flag table below
 #'
 #' @return GenomicRanges object contining positions of each match. Note: if
 #'   `parse_genomic_coords = FALSE`, each `seqnames` entry will be the fasta

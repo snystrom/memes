@@ -57,7 +57,7 @@ force_best_match <- function(res, matches){
 #'                                                    dplyr::desc(match_evalue))
 #' # update_best_match will use the new order of rows, taking the top row as the new best match
 #' new_res <- update_best_match(example_dreme_tomtom)
-#' # new best match is now "CG3407_SOLEXA_2.5"
+#' # best match is now altered:
 #' new_res$best_match_name[1]
 update_best_match <- function(res){
   # This initial drop step is required because S4 not allowed in parent
@@ -67,7 +67,7 @@ update_best_match <- function(res){
     drop_best_match()
 
   new_tomtom <- res_nobest %>%
-    tidyr::unnest(tomtom) %>%
+    tidyr::unnest("tomtom") %>%
     nest_tomtom_results_best_top_row()
 }
 
