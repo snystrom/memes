@@ -140,6 +140,7 @@ dreme_help <- function(command){
 #'
 #' @importFrom magrittr %>%
 #' @importFrom magrittr %<>%
+#' @importFrom rlang .data
 #'
 #' @noRd
 dreme_motif_stats <- function(dreme_xml_path) {
@@ -151,12 +152,12 @@ dreme_motif_stats <- function(dreme_xml_path) {
   pos_info <- xml2::xml_children(dreme_xml)[1] %>%
     xml2::xml_find_all("//positives") %>%
     attrs_to_df() %>%
-    dplyr::mutate(count = as.numeric(as.character(count)))
+    dplyr::mutate(count = as.numeric(as.character(.data$count)))
 
   neg_info <- xml2::xml_children(dreme_xml)[1] %>%
     xml2::xml_find_all("//negatives") %>%
     attrs_to_df() %>%
-    dplyr::mutate(count = as.numeric(as.character(count)))
+    dplyr::mutate(count = as.numeric(as.character(.data$count)))
 
   # Extract statistics & motif counts for each dreme motif
   motif_stats <- xml2::xml_children(dreme_xml)[2] %>%
@@ -176,11 +177,11 @@ dreme_motif_stats <- function(dreme_xml_path) {
                   "negative_hits" = "n") %>%
     dplyr::mutate("positive_total" = pos_info$count %>% as.integer,
                   "negative_total" = neg_info$count %>% as.integer,
-                  "pos_frac" = positive_hits/positive_total,
-                  "neg_frac" = negative_hits/negative_total) %>%
-    dplyr::mutate(rank = gsub("^m", "", id) %>% as.integer(),
-                  id = paste0(id, "_", seq)) %>%
-    dplyr::select(rank, dplyr::everything()) %>%
+                  "pos_frac" = .data$positive_hits/.data$positive_total,
+                  "neg_frac" = .data$negative_hits/.data$negative_total) %>%
+    dplyr::mutate(rank = gsub("^m", "", .data$id) %>% as.integer(),
+                  id = paste0(.data$id, "_", .data$seq)) %>%
+    dplyr::select("rank", dplyr::everything()) %>%
     # Finally, change id and alt to "name" and "altname"
     # for compatibility with universalmotif
     dplyr::rename("name" = "id",
