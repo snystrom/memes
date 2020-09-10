@@ -195,7 +195,7 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
 
     plot <- res %>%
       dplyr::mutate("scale_data" = ifelse(!!value > scale_max, scale_max, !!value)) %>%
-      ggplot(aes(reorder(!!id, order), as.factor(type))) +
+      ggplot(aes(reorder(!!id, order), as.factor(.data$type))) +
         geom_tile(aes(fill = .data$scale_data), color = 'black', size = 0.3) +
         heatmap_theme +
         labs(x = substitute(id),

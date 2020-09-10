@@ -325,7 +325,6 @@ dreme_nmotifs <- function(line){
 #' @param processx_out output of processx run
 #'
 #' @return `integer(1)` of number of motifs passing threshold
-#' @export
 #'
 #' @noRd
 dreme_nmotifs_found <- function(processx_out){

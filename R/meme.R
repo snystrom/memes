@@ -287,7 +287,6 @@ meme_help <- function(command){
 #' @param command path to meme. output of search_meme_path(util = "meme")
 #'
 #' @return vector of flag arguments for meme
-#' @export
 #'
 #' @noRd
 meme_help_flags <- function(command){
