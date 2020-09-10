@@ -165,7 +165,7 @@ meme_alph_to_args <- function(alph){
     return(flags)
   } else {
     message(paste0(alph, " is not a valid file path on disk (file does not exist)"))
-    error("alph value is invalid. Must be one of dna/rna/protein or a path to a valid file.")
+    stop("alph value is invalid. Must be one of dna/rna/protein or a path to a valid file.")
   }
 }
 
