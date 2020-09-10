@@ -11,6 +11,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom rlang enquo
 #' @importFrom rlang !!
+#' @importFrom rlang .data
 #' @importFrom tibble rowid_to_column
 #'
 #' @noRd
@@ -52,7 +53,7 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
     if (is.null(name)){name <- "All Regions"}
 
     res <- ame %>%
-      dplyr::mutate(type = factor(name)) %>%
+      dplyr::mutate(type = factor(.data$name)) %>%
       tibble::rowid_to_column("order")
 
     return(res)
@@ -60,13 +61,13 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
 
   ame %>%
     dplyr::mutate(type = factor(!!group),
-                  type_rank = as.integer(type)) %>%
+                  type_rank = as.integer(.data$type)) %>%
     dplyr::group_by(!!id) %>%
     dplyr::mutate(nType = dplyr::n(),
-                  minType = min(type_rank),
-                  maxType = max(type_rank)) %>%
+                  minType = min(.data$type_rank),
+                  maxType = max(.data$type_rank)) %>%
     dplyr::ungroup() %>%
-    dplyr::arrange(nType, minType, maxType) %>%
+    dplyr::arrange("nType", "minType", "maxType") %>%
     tibble::rowid_to_column("order")
 
 }
@@ -118,8 +119,9 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
 #' @importFrom ggplot2 ggplot geom_tile theme aes theme_bw labs scale_fill_gradient2 element_text .pt
 #' @importFrom ggplot2 ggplot scale_fill_continuous
 #' @importFrom magrittr %>%
-#' @importFrom rlang enquo
+#' @importFrom rlang enquo .data
 #' @importFrom rlang !!
+#' @importFrom stats reorder
 #'
 #' @examples
 #' \dontrun{
@@ -174,8 +176,8 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
     plot <-  res %>%
       dplyr::group_by(!!group) %>%
       dplyr::mutate(norm_rank = rank_normalize(rank)) %>%
-      ggplot(aes(reorder(!!id, order), as.factor(type))) +
-        geom_tile(aes(fill = norm_rank), color = 'black', size = 0.3) +
+      ggplot(aes(stats::reorder(!!id, order), as.factor(.data$type))) +
+        geom_tile(aes(fill = .data$norm_rank), color = 'black', size = 0.3) +
         heatmap_theme +
         labs(x = substitute(id),
              y = substitute(group),
@@ -194,7 +196,7 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
     plot <- res %>%
       dplyr::mutate("scale_data" = ifelse(!!value > scale_max, scale_max, !!value)) %>%
       ggplot(aes(reorder(!!id, order), as.factor(type))) +
-        geom_tile(aes(fill = scale_data), color = 'black', size = 0.3) +
+        geom_tile(aes(fill = .data$scale_data), color = 'black', size = 0.3) +
         heatmap_theme +
         labs(x = substitute(id),
              y = substitute(group),
@@ -234,8 +236,8 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
 #' ame_compare_heatmap_methods(example_ame$Decreasing)
 ame_compare_heatmap_methods <- function(ame, group, value = -log10(adj.pvalue)){
 
-  group <- enquo(group)
-  value <- enquo(value)
+  group <- rlang::enquo(group)
+  value <- rlang::enquo(value)
 
   value_dist <- ame %>%
     ggplot(aes(!!value)) +
