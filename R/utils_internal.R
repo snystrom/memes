@@ -1,5 +1,3 @@
-utils::globalVariables(".")
-
 #' Returns valid path to meme bin directory or supported meme utility
 #'
 #' @param path user override path to meme bin (optional)

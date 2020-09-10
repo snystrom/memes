@@ -147,6 +147,8 @@ split_input_control <- function(input, control){
 #'
 #' @return list w/ correct input & controls
 #'
+#' @importFrom methods is
+#'
 #' @noRd
 sequence_input_control_list <- function(input, control){
 
@@ -171,7 +173,7 @@ sequence_input_control_list <- function(input, control){
     control <- unlist(ctrl)
   }
 
-  if (is(control, "BStringSetList")){
+  if (methods::is(control, "BStringSetList")){
     control <- unlist(control)
   }
 
