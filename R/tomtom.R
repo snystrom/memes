@@ -407,13 +407,14 @@ join_tomtom_tables <- function(query, hits){
 #'
 #' @return
 #' @noRd
+#' @importFrom utils head
 #'
 #' @examples
 #' nest_tomtom_fun(tomtom_data, tomtom_best_match_min_evalue)
 tomtom_best_match_min_evalue <- function(df){
     df %>%
       dplyr::filter("match_evalue" == min("match_evalue")) %>%
-      head(1) %>%
+      utils::head(1) %>%
       dplyr::rename_all(~{paste0("best_", .x)})
 }
 
