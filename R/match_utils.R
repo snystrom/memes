@@ -60,19 +60,15 @@ force_best_match <- function(res, matches){
 #' # new best match is now "CG3407_SOLEXA_2.5"
 #' new_res$best_match_name[1]
 update_best_match <- function(res){
+  # This initial drop step is required because S4 not allowed in parent
+  # data.frame when nesting, and `best_match_motif` would propagate. (`motif`
+  # already removed by nest_tomtom)
   res_nobest <- res %>%
     drop_best_match()
 
   new_tomtom <- res_nobest %>%
     tidyr::unnest(tomtom) %>%
-    dplyr::select("name", "altname", dplyr::contains("match_"), "db_name") %>%
     nest_tomtom_results_best_top_row()
-
-  res_nobest %>%
-    dplyr::select(-"tomtom") %>%
-    dplyr::left_join(new_tomtom, by = c("name", "altname")) %>%
-    dplyr::select("name", "altname", dplyr::everything(),
-                  dplyr::contains("best_"), "tomtom")
 }
 
 #' Drop best match info from tomtom results
