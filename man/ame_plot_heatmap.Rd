@@ -39,7 +39,7 @@ to pick a value which captures the largest fraction of hits across all
 groups while excluding outliers.}
 }
 \value{
-
+`ggplot` object
 }
 \description{
 Plot AME heatmap clustered by similarity in detected motifs

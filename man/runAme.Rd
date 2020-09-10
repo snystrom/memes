@@ -60,7 +60,7 @@ webpage for more information.}
 
 \item{silent}{whether to suppress stdout (default: TRUE), useful for debugging.}
 
-\item{...}{}
+\item{...}{additional arguments passed to AME (see AME Flag table below)}
 }
 \value{
 

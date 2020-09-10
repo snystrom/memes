@@ -7,10 +7,10 @@
 nest_tomtom(data)
 }
 \arguments{
-\item{data}{}
+\item{data}{tomtom results data.frame after unnesting the `tomtom` column}
 }
 \value{
-
+the input data.frame with the match_* columns nested into a column named `tomtom`
 }
 \description{
 This will also update the best_match information automatically to avoid any

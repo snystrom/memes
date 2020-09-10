@@ -8,6 +8,8 @@ as_universalmotif_dataframe(motif, na.rm = FALSE)
 }
 \arguments{
 \item{motif}{universalmotif object or list of universalmotifs}
+
+\item{na.rm}{whether to drop NA columns (default: FALSE).}
 }
 \value{
 data.frame with all motif metadata + `motif` column containing the universalmotif object

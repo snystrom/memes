@@ -43,7 +43,7 @@ behavior:
 1. `meme_path` setting in `options()`
 2. `MEME_PATH` setting in `.Renviron`}
 
-\item{...}{}
+\item{...}{additional arguments passed to MEME (see below)}
 }
 \value{
 
