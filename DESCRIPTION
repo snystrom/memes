@@ -18,6 +18,7 @@ Imports:
     ggplot2,
     ggseqlogo,
     magrittr,
+    methods,
     processx,
     purrr,
     rlang,
