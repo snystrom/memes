@@ -53,7 +53,7 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
     if (is.null(name)){name <- "All Regions"}
 
     res <- ame %>%
-      dplyr::mutate(type = factor(.data$name)) %>%
+      dplyr::mutate(type = factor(name)) %>%
       tibble::rowid_to_column("order")
 
     return(res)
