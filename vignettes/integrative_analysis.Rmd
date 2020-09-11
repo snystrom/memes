@@ -239,8 +239,11 @@ cowplot::plot_grid(pval_heatmap,
 
 ## Denovo motif similarity by binding
 ```{r dreme_by_binding, eval=F}
+# TODO: decide whether to keep this chunk or not, depends on build-time of vignettes
 dreme_by_binding <- by_binding %>% 
-  runDreme("shuffle") %>% 
+  #TODO: work out this chunk
+  #runDreme("shuffle", nmotifs = 5) %>% 
+  runDreme("shuffle", nmotifs = 5) %>% 
   dplyr::bind_rows(.id = "binding_type")
 ```
 
@@ -261,8 +264,24 @@ dreme_by_binding_renamed <- dreme_by_binding %>%
   update_motifs()
 ```
 
+```{r, eval=F}
+stop("RETURN HERE. pheatmap causes a: readRDS(pfile) : error reading the file") 
+# d <- dreme_by_binding_renamed %>% 
+#   {universalmotif::compare_motifs(.$motif, method = "PCC")} 
 
-```{r, fig.height=7, fig.width=10}
+#>   pheatmap::pheatmap(d, color = cols, 
+#+                      breaks = seq(0, 1, by = 1/255), 
+#+                      annotation_col = anno.df,
+#+                      show_colnames = FALSE) 
+#error reading the fileError in readRDS(pfile) : error reading from connection
+#In addition: Warning messages:
+#1: In readRDS(pfile) : error reading the file
+#2: In readRDS(pfile) : error reading the file
+#3: In readRDS(pfile) : error reading the file
+#4: In readRDS(pfile) : error reading the file
+```
+
+```{r, fig.height=5, fig.width=8}
 cols <- colorRampPalette(c("white", "dodgerblue4"))(255)
 
 anno.df <- dreme_by_binding_renamed %>% 
@@ -273,14 +292,9 @@ dreme_by_binding_renamed %>%
   {universalmotif::compare_motifs(.$motif, method = "PCC")} %>% 
   pheatmap::pheatmap(color = cols, 
                      breaks = seq(0, 1, by = 1/255), 
-                     annotation_col = anno.df,
-                     show_colnames = FALSE) 
-```
-```{r}
-# GOOGLE: pheatmap error in readRDS
-  pheatmap::pheatmap(d, color = cols, 
-                     breaks = seq(0, 1, by = 1/255), 
-                     annotation_col = anno.df,
+                     annotation_col = anno.df, 
+                     cutree_rows = 6,
+                     cutree_cols = 6,
                      show_colnames = FALSE) 
 ```
 
@@ -294,7 +308,7 @@ for motif enrichment of the denovo discovered motifs within each binding categor
 passing it within a `list()`. Naming the `list()` entry produces an informative
 `motif_db` name in the results data.frame.
 
-```{r ame_by_binding}
+```{r ame_by_binding, cache = TRUE}
 ame_denovo_by_binding <- by_binding %>% 
   runAme(database = list("denovo_binding_motifs" = dreme_by_binding_renamed)) %>% 
   dplyr::bind_rows(.id = "binding_type") 
