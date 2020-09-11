@@ -12,6 +12,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
+    Biostrings,
     dplyr,
     cmdfun (>= 1.0.1),
     GenomicRanges,
