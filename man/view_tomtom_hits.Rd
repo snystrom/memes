@@ -10,8 +10,6 @@ view_tomtom_hits(results, top_n = "all")
 \item{results}{results data.frame from runTomTom}
 
 \item{top_n}{number of matched motifs to return in plot (default: "all")}
-
-\item{...}{passed to [universalmotif::view_motifs()]}
 }
 \value{
 plot of input motif vs the top n number of tomtom matched motifs. If
