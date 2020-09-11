@@ -19,8 +19,8 @@ test_that("TomTom Import works",{
   expect_message(importTomTomXML(tomtom_bad_xml), "TomTom detected no matches")
 
   # Ensure "query_idx", "target_idx", or "db_idx" cols don't appear in results
-  expect_false(grepl("_idx", names(tomtom_good)))
-  expect_false(grepl("_idx", names(tomtom_bad)))
+  expect_false(all(grepl("_idx", names(tomtom_good))))
+  expect_false(all(grepl("_idx", names(tomtom_bad))))
 
   # TODO:
   # Check valid tomtom objects
