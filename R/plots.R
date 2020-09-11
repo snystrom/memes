@@ -28,7 +28,6 @@ cowplot_title <- function(plot, title, ...){
 #'
 #' @param results results data.frame from runTomTom
 #' @param top_n number of matched motifs to return in plot (default: "all")
-#' @param ... passed to [universalmotif::view_motifs()]
 #'
 #' @return plot of input motif vs the top n number of tomtom matched motifs. If
 #'   no match found, will plot "No Match". Note: the "No Match" plots are not
