@@ -36,6 +36,7 @@ Suggests:
     cowplot,
     BSgenome.Dmelanogaster.UCSC.dm3,
     BSgenome.Dmelanogaster.UCSC.dm6,
+    forcats,
     testthat (>= 2.1.0),
     knitr,
     MotifDb,
