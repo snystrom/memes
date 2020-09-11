@@ -148,6 +148,7 @@ split_input_control <- function(input, control){
 #' @return list w/ correct input & controls
 #'
 #' @importFrom methods is
+#' @importFrom Biostrings BStringSetList
 #'
 #' @noRd
 sequence_input_control_list <- function(input, control){

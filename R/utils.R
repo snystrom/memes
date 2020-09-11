@@ -1,5 +1,6 @@
 #' See generic get_sequence docs for details on inputs
 #' @importFrom GenomicRanges seqnames start end mcols
+#' @importFrom Biostrings getSeq
 #' @export
 #' @noRd
 get_sequence.GRanges <- function(regions, genome, score_column = NULL, ...){
@@ -150,6 +151,7 @@ sequence_as_granges.BStringSet <- build_sequence_as_granges()
 #'
 #' @return path to created fasta file
 #' @export
+#' @importFrom Biostrings writeXStringSet
 #'
 #' @examples
 #' seq <- universalmotif::create_sequences()
