@@ -24,7 +24,6 @@ Imports:
     purrr,
     rlang,
     readr,
-    R.utils,
     tools,
     tibble,
     tidyr,
