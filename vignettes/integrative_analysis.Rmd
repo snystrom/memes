@@ -93,9 +93,12 @@ meme_db_expressed <- meme_db %>%
   dplyr::filter(altname %in% expressed_genes$symbol)
 ```
 
-Number of motifs pre-filtering: `r nrow(meme_db)`
-
-Number of motifs post-filter: `r nrow(meme_db_expressed)`
+```{r}
+#Number of motifs pre-filtering: 
+nrow(meme_db)
+#Number of motifs post-filter: 
+nrow(meme_db_expressed)
+```
 
 We've decreased our multiple-testing penalty by ~55%.
 
@@ -308,7 +311,7 @@ for motif enrichment of the denovo discovered motifs within each binding categor
 passing it within a `list()`. Naming the `list()` entry produces an informative
 `motif_db` name in the results data.frame.
 
-```{r ame_by_binding, cache = TRUE}
+```{r ame_by_binding}
 ame_denovo_by_binding <- by_binding %>% 
   runAme(database = list("denovo_binding_motifs" = dreme_by_binding_renamed)) %>% 
   dplyr::bind_rows(.id = "binding_type") 
@@ -318,7 +321,7 @@ Plotting the heatmap of results reveals that indeed a majority of the Denovo
 motifs discovered within a single category are detected in all 3 categories,
 supporting the conclusion that orphan, ectopic, and entopic sites are highly
 similar in sequence content.
-```{r, dependson=ame_by_binding, fig.height=4, fig.width=10}
+```{r, fig.height=4, fig.width=10}
 ame_denovo_by_binding %>% 
   ame_plot_heatmap(group = binding_type)
 ```
