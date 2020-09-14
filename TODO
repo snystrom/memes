@@ -1,0 +1,144 @@
+* Checking for remote package usage...
+    * ERROR: Package dependencies must be on CRAN or Bioconductor. Remove 'Remotes:' from DESCRIPTION
+    
+* Checking version number...
+* Checking for version number mismatch...
+* Checking version number validity...
+    * ERROR: Invalid package Version, see http://www.bioconductor.org/developers/how-to/version-numbering/
+    
+* Checking biocViews...
+* Checking that biocViews are present...
+    * ERROR: No biocViews terms found.
+See http://bioconductor.org/developers/how-to/biocViews/
+
+* Checking coding practice...
+    * NOTE: Avoid 1:...; use seq_len() or seq_along()
+      Found in files:
+        dreme.R (line 284, column 7)
+        import_xml_utils.R (line 16, column 32)
+        plots.R (line 58, column 36)
+        plots.R (line 59, column 44)
+        tomtom.R (line 188, column 32)
+        tomtom.R (line 281, column 29)
+        tomtom.R (line 306, column 33)
+    * WARNING: Use TRUE/FALSE instead of T/F
+      Found in R/ directory functions:
+        dreme_motif_stats()
+        dreme_nmotifs_line()
+        get_probability_matrix()
+        get_tomtom_db_data()
+        get_tomtom_match_data()
+        get_tomtom_target_data()
+        runDreme.default()
+        runTomTom()
+    * WARNING: Avoid class() == or class() != ; use is() or !is()
+      Found in files:
+        R/class_utils.R (line 74)
+        R/class_utils.R (line 148)
+        R/class_utils.R (line 164)
+        R/class_utils.R (line 194)
+        R/class_utils.R (line 196)
+        R/meme.R (line 219)
+        R/process_utils.R (line 55)
+        R/process_utils.R (line 56)
+        R/utils_internal.R (line 37)
+        
+* Checking parsed R code in R directory, examples, vignettes...
+    Found <<- in R/ame.R (line 212, column 16)
+    Found <<- in R/match_utils.R (line 145, column 7)
+    Found <<- in R/motif_utils.R (line 60, column 9)
+    * NOTE: Avoid '<<-' if possible (found in 3 files)
+    
+* Checking function lengths...............................................
+    * NOTE: Recommended function length <= 50 lines.
+      There are 8 functions > 50 lines.
+      The longest 5 functions are:
+        ame_plot_heatmap() (R/ame_methods.R, line 131): 87 lines
+        importMeme() (R/meme.R, line 210): 60 lines
+        runFimo() (R/fimo.R, line 82): 59 lines
+        search_meme_database_path() (R/utils_internal.R, line 32): 58 lines
+        ame_order_by_cluster() (R/ame_methods.R, line 18): 56 lines
+        
+* Checking man page documentation...
+    * WARNING: Add non-empty \value sections to the following man pages: man/importMeme.Rd, man/runAme.Rd,
+      man/runMeme.Rd
+    * ERROR: At least 80% of man pages documenting exported objects must have runnable examples. The
+      following pages do not:
+      ame_plot_heatmap.Rd, importAme.Rd, importDremeXML.Rd, importFimo.Rd, importTomTomXML.Rd, runAme.Rd,
+  runDreme.Rd, runFimo.Rd, runTomTom.Rd, view_tomtom_hits.Rd
+    * NOTE: Usage of dontrun{} / donttest{} found in man page examples.
+      35% of man pages use one of these cases.
+      Found in the following files:
+        ame_plot_heatmap.Rd
+        get_sequence.Rd
+        importAme.Rd
+        importDremeXML.Rd
+        importFimo.Rd
+        importTomTomXML.Rd
+        meme_is_installed.Rd
+        runAme.Rd
+        runDreme.Rd
+        runFimo.Rd
+        runTomTom.Rd
+        view_tomtom_hits.Rd
+        write_fasta.Rd
+        
+* Checking package NEWS...
+    * NOTE: Consider adding a NEWS file, so your package news will be included in Bioconductor release
+      announcements.
+      
+* Checking unit tests...
+    * NOTE: Consider adding unit tests. We strongly encourage them. See
+      http://bioconductor.org/developers/how-to/unitTesting-guidelines/.
+      
+* Checking formatting of DESCRIPTION, NAMESPACE, man pages, R source, and vignette source...
+    * NOTE: Consider shorter lines; 474 lines (6%) are > 80 characters long.
+    First 6 lines:
+      R/ame_methods.R:3 #' Reorders ame results from one or more runs for plotting heatmap showing unique/shared motifs...
+      R/ame_methods.R:7 #' @param group column to group samples by. To control order, this column must be a factor.
+      R/ame_methods.R:20   # then by motifs shared between types such that tfs are shown by unique, pairwise, 3-wise, etc.
+      R/ame_methods.R:79 #' @param group grouping column if comparing across multiple ame runs (optional, default: NULL).
+      R/ame_methods.R:97 #' number of hits is very large (>100). Both visualizations can be useful and reveal
+      R/ame_methods.R:98 #' different properties of the data to the user.  Use `ame_compare_heatmap_methods()` to
+    * NOTE: Consider multiples of 4 spaces for line indents, 1413 lines(19%) are not.
+    First 6 lines:
+      R/ame_methods.R:19   # orders data in "order" column first by TFs unique to each type,
+      R/ame_methods.R:20   # then by motifs shared between types such that tfs are shown by unique, pairwise, 3-wise, etc.
+      R/ame_methods.R:21   # starting from the first type upwards.
+      R/ame_methods.R:23   # consider a factor: F with 3 levels (j), and 6 rows (i)
+      R/ame_methods.R:24   # for a heatmap of the following:
+      R/ame_methods.R:25   #
+    See http://bioconductor.org/developers/how-to/coding-style/
+    See styler package: https://cran.r-project.org/package=styler as described in the BiocCheck vignette.
+
+
+Summary:
+ERROR count: 4
+WARNING count: 5
+NOTE count: 9
+For detailed information about these checks, see the BiocCheck vignette, available at
+https://bioconductor.org/packages/3.12/bioc/vignettes/BiocCheck/inst/doc/BiocCheck.html#interpreting-bioccheck-output
+BiocCheck FAILED.
+$error
+[1] "Package dependencies must be on CRAN or Bioconductor. Remove 'Remotes:' from DESCRIPTION"                       
+[2] "Invalid package Version, see http://www.bioconductor.org/developers/how-to/version-numbering/"                  
+[3] "No biocViews terms found."                                                                                      
+[4] "At least 80% of man pages documenting exported objects must have runnable examples. The following pages do not:"
+
+$warning
+[1] "Import R.utils in NAMESPACE as well as DESCRIPTION."                                                        
+[2] "Import stats in DESCRIPTION as well as NAMESPACE."                                                          
+[3] " Use TRUE/FALSE instead of T/F"                                                                             
+[4] " Avoid class() == or class() != ; use is() or !is()"                                                        
+[5] "Add non-empty \\value sections to the following man pages: man/importMeme.Rd, man/runAme.Rd, man/runMeme.Rd"
+
+$note
+[1] "The Description field in the DESCRIPTION is made up by less than 3 sentences. Please consider expanding this\nfield, and structure it as a full paragraph"
+[2] " Avoid 1:...; use seq_len() or seq_along()"                                                                                                               
+[3] "Avoid '<<-' if possible (found in 3 files)"                                                                                                               
+[4] "Recommended function length <= 50 lines."                                                                                                                 
+[5] "Usage of dontrun{} / donttest{} found in man page examples."                                                                                              
+[6] "Consider adding a NEWS file, so your package news will be included in Bioconductor release announcements."                                                
+[7] "Consider adding unit tests. We strongly encourage them. See\n  http://bioconductor.org/developers/how-to/unitTesting-guidelines/."                        
+[8] "Consider shorter lines; 474 lines (6%) are > 80 characters long."                                                                                         
+[9] "Consider multiples of 4 spaces for line indents, 1413 lines(19%) are not."                                                                                
