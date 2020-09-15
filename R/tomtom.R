@@ -185,7 +185,7 @@ get_tomtom_query_data <- function(tomtom_xml_data){
   xml2::xml_find_all(tomtom_xml_data, "//queries") %>%
     xml2::xml_children() %>%
     attrs_to_df(stringsAsFactors = FALSE) %>%
-    dplyr::mutate(query_idx = (seq_len(nrow(.) - 1)),
+    dplyr::mutate(query_idx = (seq_len(nrow(.)) - 1),
                   db = as.integer(.data$db)) %>%
     dplyr::rename("db_idx" = "db",
                   "name" = "id") %>%
@@ -303,7 +303,7 @@ get_tomtom_target_data <- function(tomtom_xml_data){
     attrs_to_df(stringsAsFactors = FALSE) %>%
     dplyr::rename("db_idx" = "db") %>%
     dplyr::mutate_at(c("length", "nsites", "db_idx"), as.integer) %>%
-    dplyr::mutate(target_idx = (seq_len(nrow(.) - 1))
+    dplyr::mutate(target_idx = (seq_len(nrow(.)) - 1))
 
   target_pfms <- targets %>%
     purrr::map(get_probability_matrix) %>%
