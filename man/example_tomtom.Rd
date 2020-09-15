@@ -4,7 +4,9 @@
 \name{example_tomtom}
 \alias{example_tomtom}
 \title{Example runTomTom() output}
-\format{a data.frame}
+\format{
+a data.frame
+}
 \usage{
 example_tomtom
 }

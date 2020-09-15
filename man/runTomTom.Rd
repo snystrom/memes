@@ -11,7 +11,7 @@ runTomTom(
   thresh = 10,
   min_overlap = 5,
   dist = "pearson",
-  evalue = T,
+  evalue = TRUE,
   meme_path = NULL,
   ...
 )
@@ -78,16 +78,16 @@ The MEME Suite is free for non-profit use, but for-profit users should purchase 
 license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
 }
 }
-\examples{
-\dontrun{
-runTomTom("searchmotifs.meme", "jasparMotifs.meme")
-}
-}
 \section{Citation}{
-
 If you use \code{runTomTom()} in your analysis, please cite:
 
 Shobhit Gupta, JA Stamatoyannopolous, Timothy Bailey and William Stafford
 Noble, "Quantifying similarity between motifs", Genome Biology, 8(2):R24,
 2007. \href{http://genomebiology.com/2007/8/2/R24}{full text}
+}
+
+\examples{
+\dontrun{
+runTomTom("searchmotifs.meme", "jasparMotifs.meme")
+}
 }

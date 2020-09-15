@@ -4,7 +4,9 @@
 \name{example_ame_large}
 \alias{example_ame_large}
 \title{runAme() output for example_chip_summits split by binding description}
-\format{a list of runAme() results data.frames}
+\format{
+a list of runAme() results data.frames
+}
 \usage{
 example_ame_large
 }

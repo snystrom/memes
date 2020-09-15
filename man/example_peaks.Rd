@@ -4,7 +4,9 @@
 \name{example_peaks}
 \alias{example_peaks}
 \title{Example ChIP-seq peaks}
-\format{An object of class \code{GRanges} of length 10.}
+\format{
+An object of class \code{GRanges} of length 10.
+}
 \source{
 https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE141738&format=file&file=GSE141738%5Funion%5Fchip%5Fpeaks%5Fannotated%2Ecsv%2Egz
 }

@@ -4,7 +4,7 @@
 \name{memes-package}
 \alias{memes}
 \alias{memes-package}
-\title{memes: An R Interface to the MEME Suite}
+\title{memes: Motif discovery, matching, and comparison using the MEME Suite}
 \description{
 Provides functions for performing motif analysis using the MEME suite as a backend.
     Functions & outputs are designed for easy integration into tidy workflows for rapid iteration.
@@ -14,7 +14,7 @@ Useful links:
 \itemize{
   \item \url{https://snystrom.github.io/memes/}
   \item \url{https://github.com/snystrom/memes}
-  \item Report bugs at \url{https://github.com/snystrom/memes}
+  \item Report bugs at \url{https://github.com/snystrom/memes/issues}
 }
 
 }

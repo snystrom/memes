@@ -4,7 +4,9 @@
 \name{example_dreme_by_binding}
 \alias{example_dreme_by_binding}
 \title{runDreme() output for example_chip_summits split by binding description}
-\format{a runDreme results data.frame}
+\format{
+a runDreme results data.frame
+}
 \usage{
 example_dreme_by_binding
 }

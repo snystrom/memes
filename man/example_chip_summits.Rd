@@ -4,14 +4,16 @@
 \name{example_chip_summits}
 \alias{example_chip_summits}
 \title{Annotated Transcription Factor ChIP-seq summits}
-\format{A GRanges object of ChIP summit position with 2 metadata columns
+\format{
+A GRanges object of ChIP summit position with 2 metadata columns
  \describe{
 \item{peak_binding_description}{Binding profiles between Early and Late E93
 were compared. Peaks are annotated as whether they are bound in Early wings
 only ("ectopic"), both Early and Late wings ("entopic"), or only bound in
 Late wings ("orphan").}
   \item{e93_sensitive_behavior}{change in chromatin accessibility in response to E93 binding: Increasing, Decreasing, or Static}
- }}
+ }
+}
 \source{
 https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE141738&format=file&file=GSE141738%5Funion%5Fchip%5Fpeaks%5Fannotated%2Ecsv%2Egz
 }

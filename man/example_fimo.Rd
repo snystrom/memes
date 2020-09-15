@@ -4,7 +4,9 @@
 \name{example_fimo}
 \alias{example_fimo}
 \title{Example runFimo() output}
-\format{A GRanges object of E93 motif positions within 100bp windows of `example_chip_summits`}
+\format{
+A GRanges object of E93 motif positions within 100bp windows of `example_chip_summits`
+}
 \usage{
 example_fimo
 }

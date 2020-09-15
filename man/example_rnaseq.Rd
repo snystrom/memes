@@ -4,12 +4,14 @@
 \name{example_rnaseq}
 \alias{example_rnaseq}
 \title{RNAseq data from Early and Late Drosophila wings}
-\format{A data.frame of RNAseq FPKM data
+\format{
+A data.frame of RNAseq FPKM data
 \describe{
  \item{symbol}{The FlyBase gene symbol}
  \item{time}{Developmental stage of RNAseq experiment}
  \item{fpkm}{RNAseq count in Fragments per Kilobase Million (FPKM)}
-}}
+}
+}
 \source{
 "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE97956&format=file&file=GSE97956%5FgeneFPKMs%5FL3%5F24hr%5F44hr%2Exlsx"
 }

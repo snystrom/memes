@@ -4,7 +4,9 @@
 \name{example_dreme}
 \alias{example_dreme}
 \title{Example runDreme() output}
-\format{a runDreme results data.frame}
+\format{
+a runDreme results data.frame
+}
 \usage{
 example_dreme
 }

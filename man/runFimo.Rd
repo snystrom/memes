@@ -92,6 +92,14 @@ The MEME Suite is free for non-profit use, but for-profit users should purchase 
 license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
 }
 }
+\section{Citation}{
+If you use \code{runFimo()} in your analysis, please cite:
+
+Charles E. Grant, Timothy L. Bailey, and William Stafford Noble, "FIMO:
+Scanning for occurrences of a given motif", Bioinformatics, 27(7):1017-1018,
+2011. \href{http://bioinformatics.oxfordjournals.org/content/early/2011/02/16/bioinformatics.btr064.full}{full text}
+}
+
 \examples{
 \dontrun{
 seq <- universalmotif::create_sequences()
@@ -100,12 +108,4 @@ names(seq) <- seq_along(seq)
 motif <- universalmotif::create_motif()
 runFimo(seq, motif, parse_genomic_coord = FALSE)
 }
-}
-\section{Citation}{
-
-If you use \code{runFimo()} in your analysis, please cite:
-
-Charles E. Grant, Timothy L. Bailey, and William Stafford Noble, "FIMO:
-Scanning for occurrences of a given motif", Bioinformatics, 27(7):1017-1018,
-2011. \href{http://bioinformatics.oxfordjournals.org/content/early/2011/02/16/bioinformatics.btr064.full}{full text}
 }

@@ -4,11 +4,13 @@
 \name{example_ame}
 \alias{example_ame}
 \title{Example runAme() output}
-\format{A list object of AME results data.frames
+\format{
+A list object of AME results data.frames
 \describe{
  \item{Increasing}{`runAme()` Results object for Increasing sites vs Static sites}
  \item{Decreasing}{`runAme()` Results object for Decreasing sites vs Static sites}
-}}
+}
+}
 \usage{
 example_ame
 }

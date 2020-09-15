@@ -46,7 +46,7 @@ Suggests:
     rmarkdown,
     covr
 biocViews: DataImport, FunctionalGenomics, GeneRegulation, MotifAnnotation, MotifDiscovery, SequenceMatching, Software
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 SystemRequirements: Meme Suite (v5.1.1 or above)
 Remotes: 
     snystrom/cmdfun

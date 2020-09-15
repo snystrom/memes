@@ -100,18 +100,18 @@ The MEME Suite is free for non-profit use, but for-profit users should purchase 
 license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
 }
 }
+\section{Citation}{
+If you use \code{runAme()} in your analysis, please cite:
+
+Robert McLeay and Timothy L. Bailey, "Motif Enrichment Analysis: A unified
+framework and method evaluation", BMC Bioinformatics, 11:165, 2010,
+doi:10.1186/1471-2105-11-165. \href{http://www.biomedcentral.com/1471-2105/11/165}{full text}
+}
+
 \examples{
 \dontrun{
 dreme_out <- runDreme("input.fa")
 runAme("input.fa", database = "jasparmotifs.meme")
 runAme("input.fa", database = list("jasparmotifs.meme", "my_dreme_motifs" = dreme_out))
 }
-}
-\section{Citation}{
-
-If you use \code{runAme()} in your analysis, please cite:
-
-Robert McLeay and Timothy L. Bailey, "Motif Enrichment Analysis: A unified
-framework and method evaluation", BMC Bioinformatics, 11:165, 2010,
-doi:10.1186/1471-2105-11-165. \href{http://www.biomedcentral.com/1471-2105/11/165}{full text}
 }

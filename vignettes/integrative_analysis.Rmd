@@ -534,7 +534,7 @@ best_motifs <- intersect %>%
 best_motifs %>% 
   data.frame %>% 
   ggplot(aes(e93_sensitive_behavior, score)) +
-    geom_boxplot(aes(fill = e93_sensitive_behavior), notch = T, width = 0.5) +
+    geom_boxplot(aes(fill = e93_sensitive_behavior), notch = TRUE, width = 0.5) +
     guides(fill = "none") +
     labs(x = "Response to E93",
          y = "FIMO Score") +

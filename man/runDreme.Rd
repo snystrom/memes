@@ -131,6 +131,14 @@ The MEME Suite is free for non-profit use, but for-profit users should purchase 
 license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
 }
 }
+\section{Citation}{
+If you use \code{runDreme()} in your analysis, please cite:
+
+Timothy L. Bailey, "DREME: Motif discovery in transcription factor ChIP-seq
+data", Bioinformatics, 27(12):1653-1659, 2011.
+\href{https://academic.oup.com/bioinformatics/article/27/12/1653/257754}{full text}
+}
+
 \examples{
 # TODO: runnable example
 \dontrun{
@@ -140,12 +148,4 @@ runDreme("input.fa", "shuffle")
 # Runs searching for max 2 motifs, e-value cutoff = 0.1, explicitly using the DNA alphabet
 runDreme("input.fa", "shuffle", nmotifs = 2, e = 0.1, dna = TRUE)
 }
-}
-\section{Citation}{
-
-If you use \code{runDreme()} in your analysis, please cite:
-
-Timothy L. Bailey, "DREME: Motif discovery in transcription factor ChIP-seq
-data", Bioinformatics, 27(12):1653-1659, 2011.
-\href{https://academic.oup.com/bioinformatics/article/27/12/1653/257754}{full text}
 }
