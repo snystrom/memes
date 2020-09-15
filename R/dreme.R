@@ -36,7 +36,7 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
   flags <- prepareDremeFlags(input = input, control = control, outdir = outdir, ...)
 
   command <- search_meme_path(path = meme_path, util = "dreme")
-  ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
+  ps_out <- processx::run(command, flags, spinner = TRUE, error_on_status = FALSE)
 
   ps_out %>%
     process_check_error(help_fun = ~{dreme_help(command)},
@@ -163,7 +163,7 @@ dreme_motif_stats <- function(dreme_xml_path) {
   motif_stats <- xml2::xml_children(dreme_xml)[2] %>%
     xml2::xml_children() %>%
     attrs_to_df()
-  dbl_cols <- grep("[^id|alt|seq]", names(motif_stats), value = T)
+  dbl_cols <- grep("[^id|alt|seq]", names(motif_stats), value = TRUE)
   motif_stats %<>%
     dplyr::mutate_if(is.factor, as.character) %>%
     dplyr::mutate_at(dbl_cols, as.numeric) %>%
@@ -273,7 +273,7 @@ get_probability_matrix <- function(motif_xml_entry){
   # need to do the lapply(matrix, function(x)
   # as.character(x) %>% as.numeric()) %>% bind_cols(.)
   # trick for numeric matrix
-  motif_attr <- attrs_to_df(motif_xml_entry, stringsAsFactors = F)
+  motif_attr <- attrs_to_df(motif_xml_entry, stringsAsFactors = FALSE)
 
   nsites <- motif_attr$length %>%
      as.character() %>%
@@ -281,9 +281,9 @@ get_probability_matrix <- function(motif_xml_entry){
 
   freqs <- motif_xml_entry %>%
     xml2::xml_children(.) %>%
-    .[1:nsites]
+    .[seq_len(nsites)]
 
-  freq_table <- lapply(freqs, attrs_to_df, stringsAsFactors = F) %>%
+  freq_table <- lapply(freqs, attrs_to_df, stringsAsFactors = FALSE) %>%
     dplyr::bind_rows()
 
   freq_matrix <- lapply(freq_table, function(x) as.character(x) %>% as.numeric) %>%
@@ -304,7 +304,7 @@ dreme_nmotifs_line <- function(stdout){
   lines <- strsplit(stdout, "\n") %>%
     .[[1]]
 
-  matchLine <- grep("\\d motifs with E-value <", lines, value = T)
+  matchLine <- grep("\\d motifs with E-value <", lines, value = TRUE)
   return(matchLine)
 }
 

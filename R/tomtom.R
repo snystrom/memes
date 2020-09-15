@@ -71,7 +71,7 @@ runTomTom <- function(input, database = NULL,
                       thresh = 10,
                       min_overlap = 5,
                       dist = "pearson",
-                      evalue = T,
+                      evalue = TRUE,
                       meme_path = NULL, ...){
   # use TOMTOM server default values which differ from commandline defaults
   # TODO: email TOMTOM maintainers to ask if this is really a better default?
@@ -105,7 +105,7 @@ runTomTom <- function(input, database = NULL,
                                    evalue = evalue, ...)
   flags <- c(user_flags, input$path, database)
 
-  ps_out <- processx::run(command, flags, spinner = T, error_on_status = F)
+  ps_out <- processx::run(command, flags, spinner = TRUE, error_on_status = FALSE)
   ps_out %>%
     process_check_error(help_fun = ~{tomtom_help(command)},
                         user_flags = cmdfun::cmd_help_parse_flags(user_flags),
@@ -185,7 +185,7 @@ get_tomtom_query_data <- function(tomtom_xml_data){
   xml2::xml_find_all(tomtom_xml_data, "//queries") %>%
     xml2::xml_children() %>%
     attrs_to_df(stringsAsFactors = FALSE) %>%
-    dplyr::mutate(query_idx = (1:nrow(.) - 1),
+    dplyr::mutate(query_idx = (seq_len(nrow(.) - 1)),
                   db = as.integer(.data$db)) %>%
     dplyr::rename("db_idx" = "db",
                   "name" = "id") %>%
@@ -247,7 +247,7 @@ get_tomtom_match_data <- function(tomtom_xml_data){
 
   match_df <- purrr::map(matches, xml2::xml_children) %>%
     purrr::set_names(xml2::xml_attr(matches, "idx")) %>%
-    purrr::map_dfr(attrs_to_df, stringsAsFactors = F, .id = "query_idx") %>%
+    purrr::map_dfr(attrs_to_df, stringsAsFactors = FALSE, .id = "query_idx") %>%
     dplyr::mutate_at(c("pv", "ev", "qv"), as.double) %>%
     dplyr::mutate_at(c("query_idx", "idx", "off"), as.integer) %>%
     dplyr::mutate_at("rc", as.character()) %>%
@@ -277,8 +277,8 @@ get_tomtom_match_data <- function(tomtom_xml_data){
 get_tomtom_db_data <- function(tomtom_xml_data){
   xml2::xml_find_all(tomtom_xml_data, "//target_dbs") %>%
     xml2::xml_children() %>%
-    attrs_to_df(stringsAsFactors = F) %>%
-    dplyr::mutate(db_idx = (1:nrow(.)) - 1) %>%
+    attrs_to_df(stringsAsFactors = FALSE) %>%
+    dplyr::mutate(db_idx = (seq_len(nrow(.)) - 1)) %>%
     dplyr::rename("db_name" = "name")
 }
 
@@ -300,10 +300,10 @@ get_tomtom_target_data <- function(tomtom_xml_data){
     xml2::xml_children()
 
   target_df <- targets %>%
-    attrs_to_df(stringsAsFactors = F) %>%
+    attrs_to_df(stringsAsFactors = FALSE) %>%
     dplyr::rename("db_idx" = "db") %>%
     dplyr::mutate_at(c("length", "nsites", "db_idx"), as.integer) %>%
-    dplyr::mutate(target_idx = (1:nrow(.)) - 1)
+    dplyr::mutate(target_idx = (seq_len(nrow(.) - 1))
 
   target_pfms <- targets %>%
     purrr::map(get_probability_matrix) %>%

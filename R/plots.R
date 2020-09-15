@@ -55,8 +55,8 @@ view_tomtom_hits <- function(results, top_n = "all"){
       return(view_tomtom_nomatch(.x))
     }
 
-    if (top_n == "all") {select <- 1:length(.y$match_motif)}
-    else if (is.numeric(top_n)) {select <- 1:top_n}
+    if (top_n == "all") {select <- seq_len(length(.y$match_motif))}
+    else if (is.numeric(top_n)) {select <- seq_len(top_n)}
     else {
       stop("n must be either 'all' or a number.")
     }
