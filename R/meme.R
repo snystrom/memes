@@ -216,7 +216,7 @@ importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = F
 
   ##
   # Add sites info as data.frame
-  if (class(meme_res$sites.meta) == "data.frame"){
+  if (is(meme_res$sites.meta, "data.frame")){
     meme_res$sites.meta <- list(meme_res$sites.meta)
     names(meme_res$sites.meta) <- meme_dataframe$name
   }

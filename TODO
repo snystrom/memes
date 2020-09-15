@@ -11,38 +11,6 @@
     * ERROR: No biocViews terms found.
 See http://bioconductor.org/developers/how-to/biocViews/
 
-* Checking coding practice...
-    * NOTE: Avoid 1:...; use seq_len() or seq_along()
-      Found in files:
-        dreme.R (line 284, column 7)
-        import_xml_utils.R (line 16, column 32)
-        plots.R (line 58, column 36)
-        plots.R (line 59, column 44)
-        tomtom.R (line 188, column 32)
-        tomtom.R (line 281, column 29)
-        tomtom.R (line 306, column 33)
-    * WARNING: Use TRUE/FALSE instead of T/F
-      Found in R/ directory functions:
-        dreme_motif_stats()
-        dreme_nmotifs_line()
-        get_probability_matrix()
-        get_tomtom_db_data()
-        get_tomtom_match_data()
-        get_tomtom_target_data()
-        runDreme.default()
-        runTomTom()
-    * WARNING: Avoid class() == or class() != ; use is() or !is()
-      Found in files:
-        R/class_utils.R (line 74)
-        R/class_utils.R (line 148)
-        R/class_utils.R (line 164)
-        R/class_utils.R (line 194)
-        R/class_utils.R (line 196)
-        R/meme.R (line 219)
-        R/process_utils.R (line 55)
-        R/process_utils.R (line 56)
-        R/utils_internal.R (line 37)
-        
 * Checking parsed R code in R directory, examples, vignettes...
     Found <<- in R/ame.R (line 212, column 16)
     Found <<- in R/match_utils.R (line 145, column 7)

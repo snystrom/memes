@@ -71,7 +71,7 @@ error_dreme_results <- function(res){
     stop(paste0("object is not a valid dreme results data.frame. Missing columns: ", nameString))
   }
 
-  is_universalmotif <- purrr::map_lgl(res$motif, ~{class(.x) == "universalmotif"}) %>%
+  is_universalmotif <- purrr::map_lgl(res$motif, ~{is(.x, "universalmotif")}) %>%
     purrr::set_names(NULL)
 
   if (length(is_universalmotif) == 0) stop("motif column is empty")
@@ -145,7 +145,7 @@ is_universalmotif_dataframe <- function(res){
 is_universalmotif_list <- function(list){
   if (length(list) == 0) {return(FALSE)}
 
-  purrr::map_lgl(list, ~{class(.x) == "universalmotif"}) %>%
+  purrr::map_lgl(list, ~{is(.x, "universalmotif")}) %>%
     purrr::set_names(NULL) %>%
     all
 }
@@ -161,7 +161,7 @@ error_universalmotif_list <- function(list){
 
   if (is_universalmotif_list(list)) return(NULL)
 
-  check_universalmotif <- purrr::map_lgl(list, ~{class(.x) == "universalmotif"}) %>%
+  check_universalmotif <- purrr::map_lgl(list, ~{is(.x, "universalmotif")}) %>%
     purrr::set_names(NULL)
 
   # warn no objects are motif
@@ -191,9 +191,9 @@ error_universalmotif_list <- function(list){
 as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
   data <- universalmotif::summarise_motifs(motif, na.rm = na.rm)
 
-  if (class(motif) == "universalmotif"){
+  if (is(motif, "universalmotif")){
     data$motif <- list(motif)
-  } else if (class(motif) == "list"){
+  } else if (is(motif, "list")){
     data$motif <- motif
   }
   return(data)

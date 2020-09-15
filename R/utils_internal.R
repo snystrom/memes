@@ -34,7 +34,7 @@ search_meme_database_path <- function(path = NULL){
   # names will be used as file names for non file-path entries
 
   if (!is.null(path)){
-    if (class(path) == "character"){
+    if (is(path, "character")){
       if (path == ""){
         stop("path cannot be an empty string")
       }

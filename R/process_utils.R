@@ -52,8 +52,8 @@ process_check_error <- function(processx_out, help_fun = NULL, user_flags = NULL
     cat(processx_out$stdout)
     stop(processx_out$stderr)
   } else if (processx_out$status != 0) {
-    stopifnot(is.function(help_fun) | class(help_fun) == "formula")
-    stopifnot(is.function(flags_fun) | is.null(flags_fun) | class(flags_fun) == "formula")
+    stopifnot(is.function(help_fun) | is(help_fun, "formula"))
+    stopifnot(is.function(flags_fun) | is.null(flags_fun) | is(flags_fun, "formula"))
 
     # Allows lambda
     help_fun <- rlang::as_function(help_fun)
