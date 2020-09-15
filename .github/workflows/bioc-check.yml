@@ -74,7 +74,8 @@ jobs:
               biocversion="devel"
           fi
           ## Define the image name and print the information
-          imagename="bioconductor/bioconductor_docker:${biocversion}"
+          #imagename="bioconductor/bioconductor_docker:${biocversion}"
+          imagename="snystrom/bioconductor_docker_meme:${biocversion}"
           echo $imagename
           echo $biocversion
 
