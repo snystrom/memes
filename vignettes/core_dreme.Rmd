@@ -110,13 +110,13 @@ values as in `update_motifs()`.
 # update_motifs will update the values in the motif column
 # to values in the data.frame
 dreme_edit <- dreme_out %>% 
-  dplyr::mutate(name = c("one", "two", "three")) %>% 
+  dplyr::mutate(name = c("one", "two", "three", "four", "five")) %>% 
   update_motifs()
 
 # as_universalmotif will first update motif information
 # before returning only the motif column
 edit_motifs <- dreme_out %>% 
-  dplyr::mutate(name = c("one", "two", "three")) %>% 
+  dplyr::mutate(name = c("one", "two", "three", "four", "five")) %>% 
   as_universalmotif()
 
 # The following outputs are identical
@@ -161,9 +161,8 @@ accessibility, Decrease accessibility, or remain Static following E93 binding.
 suppressPackageStartupMessages(library(GenomicRanges))
 suppressPackageStartupMessages(library(plyranges))
 
-peaks <- system.file("extdata/peaks/e93_chr3.csv", package = "memes") %>% 
-  readr::read_csv() %>% 
-  GRanges
+data("example_chip_summits", package = "memes")
+peaks <- example_chip_summits
 ```
 
 To examine whether there are differences in motif content between increasing,
