@@ -40,6 +40,15 @@ remotes::install_github("bjmt/universalmotif")
 remotes::install_github("snystrom/memes")
 ```
 
+### Docker Container
+```{shell}
+# Get development version from dockerhub
+docker pull snystrom/memes_docker:devel
+# the -v flag is used to mount an analysis directory, 
+# it can be excluded for demo purposes
+docker run -e PASSWORD=<password> -p 8787:8787 -v <path>/<to>/<project>:/tmp/<project> snystrom/memes_docker:devel
+```
+
 
 ## Detecting the MEME Suite
 

@@ -171,12 +171,18 @@ example_tomtom %>%
 
 To force "example_motif" to have the best match as "Lag1_Cell", do the following:
 ```{r}
-example_tomtom %>% 
+new_tomtom <- example_tomtom %>% 
   # multiple motifs can be updated at a time by passing additional name-value pairs.
-  force_best_match(c("example_motif" = "Lag1_Cell")) %>% 
-  dplyr::select(name, best_match_name)
+  force_best_match(c("example_motif" = "Lag1_Cell"))
 ```
 
+The `best_match_*` columns will be updated to reflect the modifications.
+```{r}
+# original best match:
+example_tomtom$best_match_name
+# new best match after forcing:
+new_tomtom$best_match_name
+```
  
 ## Visualize data
 

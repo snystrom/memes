@@ -52,7 +52,7 @@ are ranked from most- to least-specific:
 
 1. Manually passing the install path to the `meme_path` argument of all memes functions
 2. Setting the path using `options(meme_bin = "/path/to/meme/bin/")` inside your R script
-3. Setting `MEME_BIN=/path/to/meme/bin/` in your `.Renviron` file
+3. Setting `MEME_BIN=/path/to/meme/bin/` in your `.Renviron` file, or `export MEME_BIN=/path/to/meme/bin` in your `~/.bashrc`
 4. memes will try the default MEME install location `~/meme/bin/`
 
 If memes fails to detect your install at the specified location, it will fall
