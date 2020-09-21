@@ -3,6 +3,12 @@ skip_if(!meme_is_installed(), "MEME is not installed")
 test_that("tomtom target PWM and target metadata correctly assigned to eachother", {
   tt_out <<- runTomTom(dreme_out, database = db)
   expect_equal(tt_out$best_match_motif[[2]]@name, tt_out$best_match_name[[2]])
+  
+  # Ensure that results are correctly sorted by descending p-value
+  expect_true(all(tt_out$tomtom[[2]]$match_pvalue == sort(tt_out$tomtom[[2]]$match_pvalue)))
+  # Ensure that results are correctly sorted by descending q-value
+  expect_true(all(tt_out$tomtom[[2]]$match_qvalue == sort(tt_out$tomtom[[2]]$match_qvalue)))
+  
 })
 
 test_that("tomtom error checking suggests alternatives", {

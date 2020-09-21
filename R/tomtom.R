@@ -362,6 +362,7 @@ get_tomtom_hits <- function(tomtom_xml_data){
 #' @param hits get_tomtom_hits() output
 #'
 #' @return
+#' @importFrom rlang sym
 #' @noRd
 join_tomtom_tables <- function(query, hits){
   if (is.null(hits)){
@@ -382,7 +383,9 @@ join_tomtom_tables <- function(query, hits){
       # Rename columns for max compatibility with universalmotif
       dplyr::rename("match_name" = "match_id",
                     "match_altname" = "match_alt") %>%
-      dplyr::select(-"query_idx", -"db_idx", -"target_idx")
+      dplyr::select(-"query_idx", -"db_idx", -"target_idx") %>% 
+      dplyr::arrange(!!rlang::sym("match_qvalue"),
+                     !!rlang::sym("match_pvalue"))
 
   }
 
@@ -395,7 +398,8 @@ join_tomtom_tables <- function(query, hits){
   # Nest full match data & add best_match_ columns if hits exist
   if (!is.null(hits)){
     tomtom_results %<>%
-      nest_tomtom_results()
+      #nest_tomtom_results()
+      nest_tomtom_results_best_top_row()
   }
 
   return(data.frame(tomtom_results))
