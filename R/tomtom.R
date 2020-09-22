@@ -66,7 +66,41 @@
 #' \dontrun{
 #' runTomTom("searchmotifs.meme", "jasparMotifs.meme")
 #' }
+#' 
 runTomTom <- function(input, database = NULL,
+                      outdir = "auto",
+                      thresh = 10,
+                      min_overlap = 5,
+                      dist = "pearson",
+                      evalue = TRUE,
+                      meme_path = NULL, ...){
+  UseMethod("runTomTom")
+}
+
+#' @export
+#' @noRd
+runTomTom.list <- function(input, database = NULL,
+                    outdir = "auto",
+                    thresh = 10,
+                    min_overlap = 5,
+                    dist = "pearson",
+                    evalue = TRUE,
+                    meme_path = NULL, ...){
+  purrr::map(input, 
+             runTomTom.default, 
+              database = database,
+              outdir = outdir,
+              thresh = thresh,
+              min_overlap = min_overlap,
+              dist = dist,
+              evalue = evalue,
+              meme_path = meme_path, ...)
+  
+}
+
+#' @export
+#' @noRd
+runTomTom.data.frame <- function(input, database = NULL,
                       outdir = "auto",
                       thresh = 10,
                       min_overlap = 5,
