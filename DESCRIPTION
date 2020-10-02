@@ -1,9 +1,9 @@
 Package: memes
 Type: Package
 Title: Motif discovery, matching, and comparison using the MEME Suite
-Version: 0.0.3
+Version: 0.0.4
 Authors@R: person("Spencer", "Nystrom", 
-    email = "snystrom@email.unc.edu", 
+    email = "nystromdev@gmail.com", 
     role = c("aut", "cre", "cph"),
     comment = c(ORCID = "0000-0003-1000-1579"))
 Description: Provides functions for performing motif analysis using the MEME suite as a backend.

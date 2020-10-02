@@ -90,4 +90,5 @@ Noble, "Quantifying similarity between motifs", Genome Biology, 8(2):R24,
 \dontrun{
 runTomTom("searchmotifs.meme", "jasparMotifs.meme")
 }
+
 }

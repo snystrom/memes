@@ -19,7 +19,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Spencer Nystrom \email{snystrom@email.unc.edu} (\href{https://orcid.org/0000-0003-1000-1579}{ORCID}) [copyright holder]
+\strong{Maintainer}: Spencer Nystrom \email{nystromdev@gmail.com} (\href{https://orcid.org/0000-0003-1000-1579}{ORCID}) [copyright holder]
 
 }
 \keyword{internal}
