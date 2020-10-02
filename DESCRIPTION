@@ -47,7 +47,7 @@ Suggests:
     covr
 biocViews: DataImport, FunctionalGenomics, GeneRegulation, MotifAnnotation, MotifDiscovery, SequenceMatching, Software
 RoxygenNote: 7.1.1
-SystemRequirements: Meme Suite (v5.1.1 or above)
+SystemRequirements: Meme Suite (v5.1.1 or above) <http://meme-suite.org/doc/download.html>
 Remotes: 
     snystrom/cmdfun
 VignetteBuilder: knitr
