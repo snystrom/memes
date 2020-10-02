@@ -44,7 +44,7 @@
 #'   `universalmotif` objects with the matched PWM from the database. If no
 #'   matches are returned, `tomtom` and `best_match_motif` columns will be set
 #'   to `NA` and a message indicating this will print.
-#'
+#' 
 #' @details # Citation
 #' If you use `runTomTom()` in your analysis, please cite:
 #'
@@ -100,14 +100,14 @@ runTomTom.list <- function(input, database = NULL,
 
 #' @export
 #' @noRd
-runTomTom.data.frame <- function(input, database = NULL,
+runTomTom.default <- function(input, database = NULL,
                       outdir = "auto",
                       thresh = 10,
                       min_overlap = 5,
                       dist = "pearson",
                       evalue = TRUE,
                       meme_path = NULL, ...){
-  # use TOMTOM server default values which differ from commandline defaults
+  # use TOMTOM server default values which differ from commandline defaults?
   # TODO: email TOMTOM maintainers to ask if this is really a better default?
 
   # save dreme results & join w/ tomtom results at end.
