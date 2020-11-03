@@ -6,16 +6,18 @@ motif_input <- function(x, ...) UseMethod("motif_input")
 
 #' Get sequence from GRanges
 #'
-#' A light wrapper around Biostrings::getSeq to return named DNAStringSets.
+#' A light wrapper around Biostrings::getSeq to return named DNAStringSets, from
+#' input genomic coordinates.
 #'
 #' @param regions GRanges, or GRangesList object. Will also accept a data.frame
 #'   as long as it can be coerced to a GRanges object, or a string in the
 #'   format: "chr:start-end" (NOTE: use 1-based closed
 #'   intervals, not BED format 0-based half-open intervals).
 #' @param genome object of any valid type in showMethods(Biostrings::getSeq).
-#'   Commonly a BSgenome object, or fasta file. Used to lookup sequences in regions.
+#'   Commonly a BSgenome object, or fasta file. Used to look up sequences in regions.
 #' @param score_column optional name of column (in mcols() of `regions`)
-#'   containing a fasta score, used in AME in partitioning mode. (default: `NULL`)
+#'   containing a fasta score, which is added to the fasta header of each entry.
+#'   Used when using [runAme()] in partitioning mode. (default: `NULL`)
 #' @param ... additional arguments passed to Biostrings::getSeq.
 #'
 #' @return Biostrings::DNAStringSet object with names corresponding to genomic
@@ -28,12 +30,7 @@ motif_input <- function(x, ...) UseMethod("motif_input")
 #' @importFrom GenomicRanges mcols `mcols<-`
 #'
 #' @examples
-#' \dontrun{
-#' # Using character string as input
-#' genomeFasta <- "path/to/genome.fa"
-#' get_sequence("chr2L:100-200", genomeFasta)
-#' }
-#'
+#' # using character string as coordinates
 #' # using BSgenome object for genome
 #' drosophila.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
 #' get_sequence("chr2L:100-200", drosophila.genome)
@@ -166,13 +163,16 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' @md
 #'
 #' @examples
-#' # TODO: runnable example
-#' \dontrun{
+#' if (meme_is_installed()) {
+#' # Create random named sequences as input for example
+#' seqs <- universalmotif::create_sequences(rng.seed = 123)
+#' names(seqs) <- seq_along(seqs)
+#' 
 #' # Runs dreme with default settings, shuffles input as background
-#' runDreme("input.fa", "shuffle")
+#' runDreme(seqs, "shuffle")
 #'
 #' # Runs searching for max 2 motifs, e-value cutoff = 0.1, explicitly using the DNA alphabet
-#' runDreme("input.fa", "shuffle", nmotifs = 2, e = 0.1, dna = TRUE)
+#' runDreme(seqs, "shuffle", nmotifs = 2, e = 0.1, dna = TRUE)
 #' }
 runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...) {
   UseMethod("runDreme")
@@ -269,10 +269,23 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #' @importFrom magrittr %T>%
 #'
 #' @examples
-#' \dontrun{
-#' dreme_out <- runDreme("input.fa")
-#' runAme("input.fa", database = "jasparmotifs.meme")
-#' runAme("input.fa", database = list("jasparmotifs.meme", "my_dreme_motifs" = dreme_out))
+#' if (meme_is_installed()) {
+#' # Create random named sequences as input for example
+#' seqs <- universalmotif::create_sequences(rng.seed = 123)
+#' names(seqs) <- seq_along(seqs)
+#' 
+#' # An example path to a motif database file in .meme format
+#' motif_file <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
+#' 
+#' runAme(seqs, database = motif_file)
+#' 
+#' 
+#' # Dreme results dataset for example
+#' dreme_xml <- system.file("extdata/dreme.xml", package = "memes")
+#' dreme_results <- importDremeXML(dreme_xml)
+#'
+#' # database can be set to multiple values like so: 
+#' runAme(seqs, database = list(motif_file, "my_dreme_motifs" = dreme_results))
 #' }
 runAme <- function(input,
        control = "shuffle",

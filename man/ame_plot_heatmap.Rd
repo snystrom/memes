@@ -64,8 +64,12 @@ will return: "Error: Discrete value supplied to continuous scale". To use a
 column by name, do not quote the column name.
 }
 \examples{
-\dontrun{
-results <- runAme()
-ame_plot_heatmap(results)
-}
+data("example_ame", package = "memes")
+
+# Plot a single category heatmap
+ame_plot_heatmap(example_ame$Decreasing)
+
+# Plot a multi category heatmap
+grouped_ame <- dplyr::bind_rows(example_ame, .id = "category")
+ame_plot_heatmap(grouped_ame, group = category)
 }

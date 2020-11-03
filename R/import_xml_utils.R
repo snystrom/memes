@@ -69,7 +69,7 @@ tomtom_xml_motif_to_universalmotif <- function(entry, tt_xml){
 #' @return value if defined, empty data type if undefined
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' df_undef <- data.frame(a = NULL)
 #' check_col(df_undef$a)
 #' df_def <- data.frame(a = 1)

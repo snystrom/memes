@@ -72,11 +72,15 @@
 #' @md
 #'
 #' @examples
-#' \dontrun{
+#' if (meme_is_installed()){
+#' # Generate some example input sequences
 #' seq <- universalmotif::create_sequences()
-#' # sequences must have names in their fasta headers
+#' # sequences must have values in their fasta headers
 #' names(seq) <- seq_along(seq)
+#' # Create random example motif to search for
 #' motif <- universalmotif::create_motif()
+#'
+#' # Search for motif in sequences
 #' runFimo(seq, motif, parse_genomic_coord = FALSE)
 #' }
 runFimo <- function(sequences, motifs, bfile = "motif",
@@ -230,11 +234,8 @@ parseFimo <- function(fimo_tsv){
 #' @export
 #'
 #' @examples
-#'
-#' \dontrun{
-#' # TODO: example fimo.tsv shipped in extdata
-#' importFimo("fimo.tsv")
-#' }
+#' fimo_tsv <- system.file("extdata/fimo.tsv", package = "memes")
+#' importFimo(fimo_tsv)
 importFimo <- function(fimo_tsv){
   parseFimo(fimo_tsv)
 }

@@ -124,10 +124,14 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
 #' @importFrom stats reorder
 #'
 #' @examples
-#' \dontrun{
-#' results <- runAme()
-#' ame_plot_heatmap(results)
-#' }
+#' data("example_ame", package = "memes")
+#' 
+#' # Plot a single category heatmap
+#' ame_plot_heatmap(example_ame$Decreasing)
+#' 
+#' # Plot a multi category heatmap
+#' grouped_ame <- dplyr::bind_rows(example_ame, .id = "category")
+#' ame_plot_heatmap(grouped_ame, group = category)
 ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(adj.pvalue), group_name = NULL, scale_max = NA){
   id <- enquo(id)
   group <- enquo(group)

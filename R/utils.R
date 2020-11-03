@@ -155,7 +155,7 @@ sequence_as_granges.BStringSet <- build_sequence_as_granges()
 #'
 #' @examples
 #' seq <- universalmotif::create_sequences()
-#' \dontrun{
+#' \donttest{
 #' write_fasta(seq)
 #' }
 write_fasta <- function(seq, path = tempfile(fileext = ".fa")){
@@ -203,10 +203,5 @@ check_meme_install <- function(meme_path = NULL){
 #' @seealso search_meme_path check_meme_install
 #'
 #' @examples
-#' # Will return TRUE if "meme/bin/" is detected
 #' meme_is_installed()
-#' \dontrun{
-#' # will throw error if path to meme is invalid
-#' meme_is_installed("bad/path")
-#' }
 meme_is_installed <- cmdfun::cmd_install_is_valid(search_meme_path, util = TRUE)

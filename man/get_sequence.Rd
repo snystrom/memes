@@ -13,10 +13,11 @@ format: "chr:start-end" (NOTE: use 1-based closed
 intervals, not BED format 0-based half-open intervals).}
 
 \item{genome}{object of any valid type in showMethods(Biostrings::getSeq).
-Commonly a BSgenome object, or fasta file. Used to lookup sequences in regions.}
+Commonly a BSgenome object, or fasta file. Used to look up sequences in regions.}
 
 \item{score_column}{optional name of column (in mcols() of `regions`)
-containing a fasta score, used in AME in partitioning mode. (default: `NULL`)}
+containing a fasta score, which is added to the fasta header of each entry.
+Used when using [runAme()] in partitioning mode. (default: `NULL`)}
 
 \item{...}{additional arguments passed to Biostrings::getSeq.}
 }
@@ -27,15 +28,11 @@ Biostrings::DNAStringSet object with names corresponding to genomic
   names.
 }
 \description{
-A light wrapper around Biostrings::getSeq to return named DNAStringSets.
+A light wrapper around Biostrings::getSeq to return named DNAStringSets, from
+input genomic coordinates.
 }
 \examples{
-\dontrun{
-# Using character string as input
-genomeFasta <- "path/to/genome.fa"
-get_sequence("chr2L:100-200", genomeFasta)
-}
-
+# using character string as coordinates
 # using BSgenome object for genome
 drosophila.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
 get_sequence("chr2L:100-200", drosophila.genome)

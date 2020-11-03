@@ -63,10 +63,12 @@
 #' @importFrom magrittr %>%
 #'
 #' @examples
-#' \dontrun{
-#' runTomTom("searchmotifs.meme", "jasparMotifs.meme")
-#' }
+#' if (meme_is_installed()) {
+#' motif <- universalmotif::create_motif("CCRAAAW")
+#' database <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
 #' 
+#' runTomTom(motif, database)
+#' }
 runTomTom <- function(input, database = NULL,
                       outdir = "auto",
                       thresh = 10,
@@ -570,9 +572,7 @@ nest_tomtom_results_best_top_row <- function(tomtom_results){
 #' @importFrom magrittr %<>%
 #'
 #' @examples
-#' \dontrun{
-#' parseTomTom("tomtom.xml")
-#' }
+#' parseTomTom("inst/extdata/tomtom.xml")
 #' @noRd
 parseTomTom <- function(tomtom_xml, query_metadata = NULL){
   #tomtom_xml <- "inst/extdata/dreme_example/tomtom/tomtom.xml"

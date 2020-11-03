@@ -25,9 +25,7 @@ data.frame with method-specific results. See [AME
 Parse ame output
 }
 \examples{
-\dontrun{
-importAme("path/to/ame.tsv")
-importAme("path/to/ame.tsv", sequence = "path/to/sequences.tsv")
-}
+ame_tsv <- system.file("extdata/ame.tsv", package = "memes")
+importAme(ame_tsv)
 }
 \concept{import}

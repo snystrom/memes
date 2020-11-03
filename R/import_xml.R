@@ -27,9 +27,8 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' importTomTomXML("path/to/tomtom.xml")
-#' }
+#' tomtom_xml <- system.file("extdata/tomtom.xml", package = "memes")
+#' importTomTomXML(tomtom_xml)
 importTomTomXML <- function(tomtom_xml_path){
   parseTomTom(tomtom_xml_path, query_metadata = NULL)
 }
@@ -46,9 +45,8 @@ importTomTomXML <- function(tomtom_xml_path){
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' importDremeXML("dreme.xml")
-#' }
+#' dreme_xml <- system.file("extdata/dreme.xml", package = "memes")
+#' importDremeXML(dreme_xml)
 importDremeXML <- function(dreme_xml_path){
   parseDreme(dreme_xml_path)
 }

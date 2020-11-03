@@ -155,10 +155,8 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 #' @family import
 #'
 #' @examples
-#' \dontrun{
-#' importAme("path/to/ame.tsv")
-#' importAme("path/to/ame.tsv", sequence = "path/to/sequences.tsv")
-#' }
+#' ame_tsv <- system.file("extdata/ame.tsv", package = "memes")
+#' importAme(ame_tsv)
 importAme <- function(path, method = "fisher", sequences = FALSE){
 
   cols <- get_ame_coltypes(method)
@@ -229,7 +227,7 @@ combine_cols <- function(col, cols_list){
 #' @importFrom magrittr %<>%
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' importAmeSequences("path/to/ame/sequences.tsv")
 #' }
 #'
