@@ -148,9 +148,6 @@ jobs:
         run: |
           install.packages('remotes')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
-          message(paste('****', Sys.time(), 'installing cmdfun ****'))
-          # NOTE: remove this line after cmdfun on CRAN
-          remotes::install_github("snystrom/cmdfun")
           message(paste('****', Sys.time(), 'installing BiocManager ****'))
           remotes::install_cran("BiocManager")
         shell: Rscript {0}
