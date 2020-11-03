@@ -21,13 +21,13 @@ ff_df <- flyFactorMotifs %>%
 
 tf_rnaseq <- full_rnaseq %>%
   dplyr::mutate(symbol = case_when(symbol == "Bap" ~ "bap",
-                                   T ~ symbol)) %>%
+                                   TRUE ~ symbol)) %>%
   dplyr::filter(symbol %in% ff_df$altname)
 
 set.seed(123)
 no_tf_rnaseq <- full_rnaseq %>%
   dplyr::filter(!(symbol %in% ff_df$altname)) %>%
-  dplyr::slice(sample(1:nrow(.), size = 200, replace = F))
+  dplyr::slice(sample(1:nrow(.), size = 200, replace = FALSE))
 
 example_rnaseq <- tf_rnaseq %>%
   dplyr::bind_rows(no_tf_rnaseq)

@@ -13,10 +13,10 @@ test_that("tomtom target PWM and target metadata correctly assigned to eachother
 
 test_that("tomtom error checking suggests alternatives", {
   expect_error(
-    suppressMessages(runTomTom(dreme_out, database = db, intternal = T)),
+    suppressMessages(runTomTom(dreme_out, database = db, intternal = TRUE)),
     "internal", class = "error")
   expect_error(
-    suppressMessages(runTomTom(dreme_out, database = db, incomplete_score = T)),
+    suppressMessages(runTomTom(dreme_out, database = db, incomplete_score = TRUE)),
     "incomplete_scores", class = "error")
 })
 
