@@ -182,7 +182,7 @@ runTomTom.default <- function(input, database = NULL,
 prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
   # lookup table converts arguments with - to _ so
   # user doesn't have to escape flags
-  argsDict = c("outdir" = "oc",
+  argsDict <- c("outdir" = "oc",
                "min_overlap" = "min-overlap",
                "motif_pseudo" = "motif-pseudo",
                "no_ssc" = "no-ssc",

@@ -119,10 +119,10 @@ split_input_control <- function(input, control){
   # input = list
   # control = character vector
   input_minus_control <- input %>%
-    cmdfun_cmd_list_drop_named(control)
+    cmdfun::cmd_list_drop_named(control)
 
   control_seq <- input %>%
-    cmdfun_cmd_list_keep_named(control) %>%
+    cmdfun::cmd_list_keep_named(control) %>%
     Biostrings::BStringSetList(., use.names = FALSE) %>%
     unlist
 
@@ -134,40 +134,6 @@ split_input_control <- function(input, control){
          control = control)
         )
 
-}
-
-#' Keep items by name from list
-#'
-#' TODO: export these from `cmdfun` in next release, remove these copied functions
-#'
-#' @param list an R list
-#' @param names vector of names to keep
-#'
-#' @return list keeping only items defined by names
-#'
-#' @noRd
-#'
-#' @examples
-#' cmd_list_keep_named(list("a" = 1, "b" = 2), "a")
-cmdfun_cmd_list_keep_named <- function(list, names){
-  list[(names(list) %in% names)]
-}
-
-#' Drop items by name from list
-#'
-#' TODO: export these from `cmdfun` in next release, remove these copied functions
-#'
-#' @param list an R list
-#' @param names vector of names to drop
-#'
-#' @return list removing items defined by names
-#'
-#' @noRd
-#'
-#' @examples
-#' cmd_list_drop_named(list("a" = 1, "b" = 2), "a")
-cmdfun_cmd_list_drop_named <- function(list, names){
-  list[!(names(list) %in% names)]
 }
 
 #' Correctly handle input/control input logic when input is a list
