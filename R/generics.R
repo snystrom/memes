@@ -262,6 +262,7 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #'
 #'
 #' @export
+#' @rdname runAme
 #'
 #' @md
 #'

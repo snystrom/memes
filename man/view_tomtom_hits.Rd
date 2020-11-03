@@ -29,10 +29,7 @@ return ggseqlogo outputs which can be further manipulated using
 [ggplot2::theme()] calls, but results containing no matches are static plots.
 }
 \examples{
-\dontrun{
-results <- runTomTom(motifs)
+results <- importTomTomXML(system.file("extdata/tomtom.xml", package = "memes"))
 # show top 3 hits
 view_tomtom_hits(results, top_n = 3)
-
-}
 }

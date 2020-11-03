@@ -15,7 +15,8 @@ written such that the sequence headers are in the form: "chr:start-end", or
 some variation of this form (delimiters can be any of: "[^[:alnum:]]+" (ie
 non-alphanumeric characters)), (default = FALSE).}
 
-\item{combined_sites}{whether to add `combined_sites` output which contains coordinates of each sequence, the motif sequence}
+\item{combined_sites}{whether to add `combined_sites` output which contains
+coordinates of each sequence, the motif sequence}
 }
 \value{
 

@@ -140,12 +140,15 @@ data", Bioinformatics, 27(12):1653-1659, 2011.
 }
 
 \examples{
-# TODO: runnable example
-\dontrun{
+if (meme_is_installed()) {
+# Create random named sequences as input for example
+seqs <- universalmotif::create_sequences(rng.seed = 123)
+names(seqs) <- seq_along(seqs)
+
 # Runs dreme with default settings, shuffles input as background
-runDreme("input.fa", "shuffle")
+runDreme(seqs, "shuffle")
 
 # Runs searching for max 2 motifs, e-value cutoff = 0.1, explicitly using the DNA alphabet
-runDreme("input.fa", "shuffle", nmotifs = 2, e = 0.1, dna = TRUE)
+runDreme(seqs, "shuffle", nmotifs = 2, e = 0.1, dna = TRUE)
 }
 }

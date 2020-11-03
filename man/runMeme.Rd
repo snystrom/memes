@@ -2,9 +2,48 @@
 % Please edit documentation in R/meme.R
 \name{runMeme}
 \alias{runMeme}
+\alias{runMeme.list}
+\alias{runMeme.BStringSetList}
+\alias{runMeme.default}
 \title{Identify motifs with MEME}
 \usage{
 runMeme(
+  input,
+  control = NA,
+  outdir = "auto",
+  alph = "dna",
+  parse_genomic_coord = TRUE,
+  combined_sites = FALSE,
+  silent = TRUE,
+  meme_path = NULL,
+  ...
+)
+
+\method{runMeme}{list}(
+  input,
+  control = NA,
+  outdir = "auto",
+  alph = "dna",
+  parse_genomic_coord = TRUE,
+  combined_sites = FALSE,
+  silent = TRUE,
+  meme_path = NULL,
+  ...
+)
+
+\method{runMeme}{BStringSetList}(
+  input,
+  control = NA,
+  outdir = "auto",
+  alph = "dna",
+  parse_genomic_coord = TRUE,
+  combined_sites = FALSE,
+  silent = TRUE,
+  meme_path = NULL,
+  ...
+)
+
+\method{runMeme}{default}(
   input,
   control = NA,
   outdir = "auto",

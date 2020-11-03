@@ -1,5 +1,5 @@
 #' @export
-#' @noRd
+#' @rdname runAme
 runAme.list <- function(input,
                         control = "shuffle",
                         outdir = "auto",
@@ -27,7 +27,7 @@ runAme.list <- function(input,
 }
 
 #' @export
-#' @noRd
+#' @rdname runAme
 runAme.BStringSetList <- function(input,
                         control = "shuffle",
                         outdir = "auto",
@@ -41,7 +41,7 @@ runAme.BStringSetList <- function(input,
 
 #' See runAme Generic for details
 #' @export
-#' @noRd
+#' @rdname runAme
 runAme.default <- function(input,
        control = "shuffle",
        outdir = "auto",

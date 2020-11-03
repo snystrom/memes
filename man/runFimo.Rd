@@ -101,11 +101,15 @@ Scanning for occurrences of a given motif", Bioinformatics, 27(7):1017-1018,
 }
 
 \examples{
-\dontrun{
+if (meme_is_installed()){
+# Generate some example input sequences
 seq <- universalmotif::create_sequences()
-# sequences must have names in their fasta headers
+# sequences must have values in their fasta headers
 names(seq) <- seq_along(seq)
+# Create random example motif to search for
 motif <- universalmotif::create_motif()
+
+# Search for motif in sequences
 runFimo(seq, motif, parse_genomic_coord = FALSE)
 }
 }

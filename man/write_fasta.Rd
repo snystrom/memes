@@ -19,7 +19,7 @@ Write fasta file from stringset
 }
 \examples{
 seq <- universalmotif::create_sequences()
-\dontrun{
+\donttest{
 write_fasta(seq)
 }
 }

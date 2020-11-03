@@ -160,6 +160,18 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
   if (value_eval){
     # Default behavior is to do tidyeval on value
     plot <-  res %>%
+      ## NEW:
+      ## trying to fix reordering weirdness
+      # This works when using groups of 2, but 3+ breaks again...
+      # the issue is that when plotting
+      # something across groups, things are getting ranked based on the lowest
+      # rank in the shared group but this doens't happen for all entries, so I'm
+      # not sure why. Perhaps it's one of the derived numbers used to create
+      # `order`, try removing some of them when making the order vector.
+                                        #dplyr::group_by(!!id) %>%
+                                        #dplyr::mutate(order = max(order)) %>%
+                                        #dplyr::ungroup() %>%
+      ## END NEW
       ggplot(aes(reorder(!!id, order), as.factor(.data$type))) +
         geom_tile(aes(fill = !!value), color = 'black', size = 0.3) +
         heatmap_theme +

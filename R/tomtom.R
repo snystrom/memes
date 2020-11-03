@@ -57,6 +57,7 @@
 #' license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
 #'
 #' @export
+#' @rdname runTomTom
 #'
 #' @md
 #'
@@ -80,7 +81,7 @@ runTomTom <- function(input, database = NULL,
 }
 
 #' @export
-#' @noRd
+#' @rdname runTomTom
 runTomTom.list <- function(input, database = NULL,
                     outdir = "auto",
                     thresh = 10,
@@ -101,7 +102,7 @@ runTomTom.list <- function(input, database = NULL,
 }
 
 #' @export
-#' @noRd
+#' @rdname runTomTom
 runTomTom.default <- function(input, database = NULL,
                       outdir = "auto",
                       thresh = 10,

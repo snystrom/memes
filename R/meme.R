@@ -53,6 +53,7 @@
 #' license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
 #'
 #' @export
+#' @rdname runMeme
 #'
 #' @examples
 #' if (meme_is_installed()) {
@@ -68,7 +69,7 @@ runMeme <- function(input, control = NA, outdir = "auto", alph = "dna", parse_ge
 }
 
 #' @export
-#' @noRd
+#' @rdname runMeme
 runMeme.list <- function(input, control = NA, outdir = "auto", alph = "dna", parse_genomic_coord = TRUE,
                             combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
 
@@ -88,14 +89,14 @@ runMeme.list <- function(input, control = NA, outdir = "auto", alph = "dna", par
 }
 
 #' @export
-#' @noRd
+#' @rdname runMeme
 runMeme.BStringSetList <- function(input, control = NA, outdir = "auto", alph = "dna", parse_genomic_coord = TRUE,
                             combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
   runMeme.list(as.list(input), control, outdir, alph, combined_sites, silent, meme_path, ...)
 }
 
 #' @export
-#' @noRd
+#' @rdname runMeme
 runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", parse_genomic_coord = TRUE,
                             combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
 
