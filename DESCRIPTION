@@ -52,4 +52,4 @@ VignetteBuilder: knitr
 URL: https://snystrom.github.io/memes/, https://github.com/snystrom/memes
 BugReports: https://github.com/snystrom/memes/issues
 Depends: 
-    R (>= 2.10)
+    R (>= 4.0)
