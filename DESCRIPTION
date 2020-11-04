@@ -1,7 +1,7 @@
 Package: memes
 Type: Package
 Title: Motif discovery, matching, and comparison using the MEME Suite
-Version: 0.0.5
+Version: 0.0.6
 Authors@R: person("Spencer", "Nystrom", 
     email = "nystromdev@gmail.com", 
     role = c("aut", "cre", "cph"),

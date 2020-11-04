@@ -1,6 +1,7 @@
 #' Identify motifs with MEME
 #'
 #' NOTE: add note about the hsfrac issue
+#' TODO: Meme does____
 #'
 #' @param input path to fasta, Biostrings::BStringSet list, or list of
 #'   Biostrings::BStringSet (can generate using `get_sequence()`)
