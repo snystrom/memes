@@ -245,7 +245,8 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #' | inc                     | `character(1)` | `NULL`  | use only motifs with names matching this regex |
 #' | exc                     | `character(1)` | `NULL`  | exclude motifs with names matching this regex  |
 #'
-#' @return
+#' @return a data.frame of AME enrichment results. If run using a BStringsSetList
+#'   input, returns a list of data.frames.
 #'
 #'
 #' @details # Citation

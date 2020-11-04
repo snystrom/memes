@@ -102,7 +102,8 @@ webpage for more information.}
 \item{...}{additional arguments passed to AME (see AME Flag table below)}
 }
 \value{
-
+a data.frame of AME enrichment results. If run using a BStringsSetList
+input, returns a list of data.frames.
 }
 \description{
 See runAme Generic for details

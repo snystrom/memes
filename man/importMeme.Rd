@@ -19,7 +19,10 @@ non-alphanumeric characters)), (default = FALSE).}
 coordinates of each sequence, the motif sequence}
 }
 \value{
-
+MEME results in universalmotif data.frame format (see:
+  [as_universalmotif_dataframe()]). `sites_hits` is a nested data.frame
+  column containing the position within each input sequence of matches to the
+  identified motif.
 }
 \description{
 Import MEME results

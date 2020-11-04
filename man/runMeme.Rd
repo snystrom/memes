@@ -56,69 +56,77 @@ runMeme(
 )
 }
 \arguments{
-\item{input}{path to fasta, Biostrings::BStringSet list, or list of Biostrings::BStringSet (can generate using `get_sequence()`)}
+\item{input}{path to fasta, Biostrings::BStringSet list, or list of
+Biostrings::BStringSet (can generate using \code{get_sequence()})}
 
-\item{control}{any data type as in `input`, or a character vector of
-`names(input)` to use those regions as control sequences. Using sequences
+\item{control}{any data type as in \code{input}, or a character vector of
+\code{names(input)} to use those regions as control sequences. Using sequences
 as background requires an alternative objective function. Users must pass a non-default value of
-`objfun` to `...` if using a non-NA control set (default: NA)}
+\code{objfun} to \code{...} if using a non-NA control set (default: NA)}
 
 \item{outdir}{(default: "auto")}
 
 \item{alph}{one of c("dna", "rna", "protein") or path to alphabet file (default: "dna").}
 
-\item{parse_genomic_coord}{`logical(1)` whether to parse genomic coordinates
+\item{parse_genomic_coord}{\code{logical(1)} whether to parse genomic coordinates
 from fasta headers. Requires headers are in the form: "chr:start-end", or
-will result in an error. Automatically set to `FALSE` if `alph =
-"protein"`. This setting only needs to be changed if using a custom-built
+will result in an error. Automatically set to \code{FALSE} if \code{alph = "protein"}. This setting only needs to be changed if using a custom-built
 fasta file without genomic coordinates in the header.}
 
-\item{combined_sites}{`logical(1)` whether to return combined sites information (coerces output to list) (default: FALSE)}
+\item{combined_sites}{\code{logical(1)} whether to return combined sites
+information (coerces output to list) (default: FALSE)}
 
 \item{silent}{Whether to suppress printing stdout to terminal (default: TRUE)}
 
 \item{meme_path}{path to "meme/bin/". If unset, will use default search
 behavior:
-1. `meme_path` setting in `options()`
-2. `MEME_PATH` setting in `.Renviron`}
+\enumerate{
+\item \code{meme_path} setting in \code{options()}
+\item \code{MEME_PATH} setting in \code{.Renviron}
+}}
 
 \item{...}{additional arguments passed to MEME (see below)}
 }
 \value{
-
+MEME results in universalmotif data.frame format (see:
+\code{\link[=as_universalmotif_dataframe]{as_universalmotif_dataframe()}}). \code{sites_hits} is a nested data.frame
+column containing the position within each input sequence of matches to the
+identified motif.
 }
 \description{
 NOTE: add note about the hsfrac issue
 }
 \details{
-Additional arguments
+\subsection{Additional arguments}{
 
-`runMeme()` accepts all valid arguments to meme as arguments passed to `...`.
-For flags without values, pass them as `flag = TRUE`. The `dna`, `rna`, and
-`protein` flags should instead be passed to the `alph` argument of
-`runMeme()`.
-The arguments passed to MEME often have many interactions with eachother, for
-a detailed description of each argument see
-the [MEME Help Page](meme-suite.org/doc/meme.html).
+\code{runMeme()} accepts all valid arguments to meme as arguments passed to \code{...}.
+For flags without values, pass them as \code{flag = TRUE}. The \code{dna}, \code{rna}, and
+\code{protein} flags should instead be passed to the \code{alph} argument of
+\code{runMeme()}.
+The arguments passed to MEME often have many interactions with each other,
+for a detailed description of each argument
+see the \href{meme-suite.org/doc/meme.html}{MEME Help Page}.
 
-For use with ChIP-seq data, the suggestion is to set: `revcomp = TRUE, minw = 5, maxw = 20`.
-See [using MEME with ChIP-Seq Data Tips](https://groups.google.com/forum/#%21topic/meme-suite/rIbjIHbcpAE)
+For use with ChIP-seq data, the suggestion is to set: \verb{revcomp = TRUE, minw = 5, maxw = 20}.
+See using MEME with ChIP-Seq Data Tips: \url{https://groups.google.com/forum/#\%21topic/meme-suite/rIbjIHbcpAE}
 for additional details.
-
-# Citation
-
-If you use `runMeme()` in your analysis, please cite:
+}
+}
+\section{Citation}{
+If you use \code{runMeme()} in your analysis, please cite:
 
 Timothy L. Bailey and Charles Elkan, "Fitting a mixture model by expectation
 maximization to discover motifs in biopolymers", Proceedings of the Second
 International Conference on Intelligent Systems for Molecular Biology, pp.
 28-36, AAAI Press, Menlo Park, California, 1994.
-[pdf](https://tlbailey.bitbucket.io/papers/ismb94.pdf)
-
-## Licensing
-The MEME Suite is free for non-profit use, but for-profit users should purchase a
-license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
+\href{https://tlbailey.bitbucket.io/papers/ismb94.pdf}{pdf}
 }
+
+\section{Licensing}{
+The MEME Suite is free for non-profit use, but for-profit users should purchase a
+license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
+}
+
 \examples{
 if (meme_is_installed()) {
 seqs <- universalmotif::create_sequences("CCRAAAW", seqnum = 4)

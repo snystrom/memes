@@ -9,15 +9,38 @@ as_universalmotif_dataframe(motif, na.rm = FALSE)
 \arguments{
 \item{motif}{universalmotif object or list of universalmotifs}
 
-\item{na.rm}{whether to drop NA columns (default: FALSE).}
+\item{na.rm}{whether to include undefined columns for empty `universalmotif` slots (default: FALSE).}
 }
 \value{
-data.frame with all motif metadata + `motif` column containing the universalmotif object
+data.frame with all motif metadata as columns and a special `motif`
+  column containing the universalmotif object representation of each motif.
 }
 \description{
-Convert universalmotif to data.frame with motif column
+The universalmotif data.frame structure is an R data frame where
+`universalmotif` metadata slots are represented as columns, and individual
+motifs are stored along rows. Additionally, the `universalmotif`
+representation of the motif is stored in a nested column named `motif`. Users
+can perform arbitrary manipulations to these data.frames such as adding,
+removing, or renaming columns. When manipulating columns that correspond to
+slot names of a `universalmotif` object, this stages changes which can be
+propagated to the `universalmotif` object in the `motif` column by calling
+`update_motifs()`. Users can convert the data.frame back to pure
+`universalmotif` format using `as_universalmotif()`.
+}
+\details{
+Columns which are linked to `universalmotif` format are:
+`name`, `altname`, `family`, `organism`, `consensus`, `alphabet`, `strand`,
+`icscore`, `nsites`, `bkgsites`, `pval`, `qval`, `eval`
+
+Note that changing the above columns will result in changes to the
+`universalmotif` representation when calling `update_motifs()` or
+`as_universalmotif()`
 }
 \examples{
 motif <- universalmotif::create_motif()
 motif_df <- as_universalmotif_dataframe(motif)
+}
+\seealso{
+[update_motifs()] for synchronizing the data.frame values with the
+  `motif` column, and [as_universalmotif()] to convert back to `universalmotif` format.
 }

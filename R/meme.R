@@ -2,7 +2,8 @@
 #'
 #' NOTE: add note about the hsfrac issue
 #'
-#' @param input path to fasta, Biostrings::BStringSet list, or list of Biostrings::BStringSet (can generate using `get_sequence()`)
+#' @param input path to fasta, Biostrings::BStringSet list, or list of
+#'   Biostrings::BStringSet (can generate using `get_sequence()`)
 #' @param control any data type as in `input`, or a character vector of
 #'   `names(input)` to use those regions as control sequences. Using sequences
 #'   as background requires an alternative objective function. Users must pass a non-default value of
@@ -14,7 +15,8 @@
 #'   will result in an error. Automatically set to `FALSE` if `alph =
 #'   "protein"`. This setting only needs to be changed if using a custom-built
 #'   fasta file without genomic coordinates in the header.
-#' @param combined_sites `logical(1)` whether to return combined sites information (coerces output to list) (default: FALSE)
+#' @param combined_sites `logical(1)` whether to return combined sites
+#'   information (coerces output to list) (default: FALSE)
 #' @param silent Whether to suppress printing stdout to terminal (default: TRUE)
 #' @param meme_path path to "meme/bin/". If unset, will use default search
 #'   behavior:
@@ -22,23 +24,26 @@
 #'   2. `MEME_PATH` setting in `.Renviron`
 #' @param ... additional arguments passed to MEME (see below)
 #'
-#' @return
+#' @return MEME results in universalmotif data.frame format (see:
+#'   [as_universalmotif_dataframe()]). `sites_hits` is a nested data.frame
+#'   column containing the position within each input sequence of matches to the
+#'   identified motif.
 #'
-#' @details Additional arguments
+#' @details ## Additional arguments
 #'
 #' `runMeme()` accepts all valid arguments to meme as arguments passed to `...`.
 #' For flags without values, pass them as `flag = TRUE`. The `dna`, `rna`, and
 #' `protein` flags should instead be passed to the `alph` argument of
 #' `runMeme()`.
-#' The arguments passed to MEME often have many interactions with eachother, for
-#' a detailed description of each argument see
-#' the [MEME Help Page](meme-suite.org/doc/meme.html).
+#' The arguments passed to MEME often have many interactions with each other,
+#' for a detailed description of each argument 
+#' see the [MEME Help Page](meme-suite.org/doc/meme.html).
 #'
 #' For use with ChIP-seq data, the suggestion is to set: `revcomp = TRUE, minw = 5, maxw = 20`.
-#' See [using MEME with ChIP-Seq Data Tips](https://groups.google.com/forum/#%21topic/meme-suite/rIbjIHbcpAE)
+#' See using MEME with ChIP-Seq Data Tips: \url{https://groups.google.com/forum/#%21topic/meme-suite/rIbjIHbcpAE}
 #' for additional details.
 #'
-#' @details # Citation
+#' # Citation
 #'
 #' If you use `runMeme()` in your analysis, please cite:
 #'
@@ -48,12 +53,14 @@
 #' 28-36, AAAI Press, Menlo Park, California, 1994.
 #' [pdf](https://tlbailey.bitbucket.io/papers/ismb94.pdf)
 #'
-#' @details ## Licensing
+#' 
+#' # Licensing
 #' The MEME Suite is free for non-profit use, but for-profit users should purchase a
 #' license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
 #'
 #' @export
 #' @rdname runMeme
+#' @md
 #'
 #' @examples
 #' if (meme_is_installed()) {
@@ -117,7 +124,8 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", 
 
   command <- search_meme_path(path = meme_path, util = "meme")
 
-  ps_out <- processx::run(command, c(user_flags, input), error_on_status = FALSE, spinner = TRUE)
+  ps_out <- processx::run(command, c(user_flags, input), 
+                          error_on_status = FALSE, spinner = TRUE)
 
   ps_out %>%
     process_check_error(help_fun = ~{meme_help_flags(command)},
@@ -126,9 +134,13 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", 
 
   print_process_stdout(ps_out, silent = silent)
 
-  meme_out <- cmdfun::cmd_file_expect(prefix = "meme", ext = c("txt", "xml", "html"), outdir = outdir)
+  meme_out <- cmdfun::cmd_file_expect(prefix = "meme", 
+                                      ext = c("txt", "xml", "html"), 
+                                      outdir = outdir)
 
-  importMeme(meme_out$txt, parse_genomic_coord = alph_parse_coords(alph, parse_genomic_coord), combined_sites = combined_sites)
+  importMeme(meme_out$txt, 
+             parse_genomic_coord = alph_parse_coords(alph, parse_genomic_coord), 
+             combined_sites = combined_sites)
 }
 
 #' Override parse_genomic_coords setting if alph = protein
@@ -201,7 +213,10 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 #' @param combined_sites whether to add `combined_sites` output which contains
 #'   coordinates of each sequence, the motif sequence
 #'
-#' @return
+#' @return MEME results in universalmotif data.frame format (see:
+#'   [as_universalmotif_dataframe()]). `sites_hits` is a nested data.frame
+#'   column containing the position within each input sequence of matches to the
+#'   identified motif.
 #' @export
 #' @importFrom tidyr nest
 #' @importFrom rlang .data

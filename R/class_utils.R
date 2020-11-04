@@ -177,12 +177,35 @@ error_universalmotif_list <- function(list){
 
 
 #' Convert universalmotif to data.frame with motif column
+#' 
+#' The universalmotif data.frame structure is an R data frame where
+#' `universalmotif` metadata slots are represented as columns, and individual
+#' motifs are stored along rows. Additionally, the `universalmotif`
+#' representation of the motif is stored in a nested column named `motif`. Users
+#' can perform arbitrary manipulations to these data.frames such as adding,
+#' removing, or renaming columns. When manipulating columns that correspond to
+#' slot names of a `universalmotif` object, this stages changes which can be
+#' propagated to the `universalmotif` object in the `motif` column by calling
+#' `update_motifs()`. Users can convert the data.frame back to pure
+#' `universalmotif` format using `as_universalmotif()`.
+#'
+#' Columns which are linked to `universalmotif` format are:
+#' `name`, `altname`, `family`, `organism`, `consensus`, `alphabet`, `strand`,
+#' `icscore`, `nsites`, `bkgsites`, `pval`, `qval`, `eval`
+#' 
+#' Note that changing the above columns will result in changes to the
+#' `universalmotif` representation when calling `update_motifs()` or
+#' `as_universalmotif()`
 #'
 #' @param motif universalmotif object or list of universalmotifs
-#' @param na.rm whether to drop NA columns (default: FALSE).
+#' @param na.rm whether to include undefined columns for empty `universalmotif` slots (default: FALSE).
 #'
-#' @return data.frame with all motif metadata + `motif` column containing the universalmotif object
+#' @return data.frame with all motif metadata as columns and a special `motif`
+#'   column containing the universalmotif object representation of each motif.
 #'
+#' @seealso [update_motifs()] for synchronizing the data.frame values with the
+#'   `motif` column, and [as_universalmotif()] to convert back to `universalmotif` format.
+#' 
 #' @export
 #'
 #' @examples
@@ -200,12 +223,24 @@ as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
 }
 
 #' Convert universalmotif data.frames back into universalmotifs
+#' 
+#' This function converts universalmotif data.frames into `universalmotif`
+#' format, first by updating the `motif` metadata to reflect the current values
+#' of the linked columns, then extracting the updated `universalmotif` objects.
+#' Columns which do not correspond to `universalmotif` slot names are dropped
+#' and not propagated to the `universalmotif` output.
+#' 
+#' Columns which are propagated to `universalmotif` format:
+#' `name`, `altname`, `family`, `organism`, `consensus`, `alphabet`, `strand`,
+#' `icscore`, `nsites`, `bkgsites`, `pval`, `qval`, `eval`
 #'
 #' @param data a universalmotif_dataframe (output from
 #'   `as_universalmotif_dataframe()`, or `runDreme()`)
 #'
 #' @return universalmotif list from motifs, updated to reflect the data.frame
 #'   column values.
+#'   
+#' @seealso [as_universalmotif_dataframe()]
 #' @export
 #'
 #' @examples
