@@ -40,3 +40,7 @@ test_that("get_sequence works", {
   expect_true(all(regions_with_seq$sequence == seqs))
 })
 
+test_that("meme_is_installed works", {
+  # catches if fails when dir not exist
+  expect_false(meme_is_installed("/this/dir/doesnot/exist"))
+})
