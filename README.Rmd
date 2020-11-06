@@ -35,8 +35,6 @@ You can install the development version of memes from [GitHub](https://github.co
 ```{r, eval=F}
 if (!requireNamespace("remotes", quietly=TRUE))
   install.packages("remotes")
-# memes currently requires the development version of universalmotif:
-remotes::install_github("bjmt/universalmotif")
 remotes::install_github("snystrom/memes")
 ```
 
