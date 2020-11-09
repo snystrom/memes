@@ -11,7 +11,7 @@
 #' @examples
 #' if (meme_is_installed()){
 #' motif <- universalmotif::create_motif("CCRAAAW", name = "example_motif")
-#' db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "memes")
+#' db <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
 #' res <- runTomTom(motif, database = db)
 #' res$best_match_name
 #' res2 <- force_best_match(res, c("example_motif" = "Eip93F_SANGER_10"))
@@ -110,7 +110,7 @@ drop_best_match <- function(res){
 #' @examples
 #' if (meme_is_installed()){
 #' motif <- universalmotif::create_motif("CCRAAAW")
-#' db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "memes")
+#' db <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
 #' res <- runTomTom(motif, database = db)
 #' data <- tidyr::unnest(res, "tomtom")
 #' identical(nest_tomtom(data), res)
