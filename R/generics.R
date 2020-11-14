@@ -13,34 +13,42 @@ motif_input <- function(x, ...) UseMethod("motif_input")
 #'   as long as it can be coerced to a GRanges object, or a string in the
 #'   format: "chr:start-end" (NOTE: use 1-based closed
 #'   intervals, not BED format 0-based half-open intervals).
-#' @param genome object of any valid type in showMethods(Biostrings::getSeq).
+#' @param genome object of any valid type in `showMethods(Biostrings::getSeq)`.
 #'   Commonly a BSgenome object, or fasta file. Used to look up sequences in regions.
 #' @param score_column optional name of column (in mcols() of `regions`)
-#'   containing a fasta score, which is added to the fasta header of each entry.
+#'   containing a fasta score that is added to the fasta header of each entry.
 #'   Used when using [runAme()] in partitioning mode. (default: `NULL`)
 #' @param ... additional arguments passed to Biostrings::getSeq.
 #'
-#' @return Biostrings::DNAStringSet object with names corresponding to genomic
+#' @return `Biostrings::DNAStringSet` object with names corresponding to genomic
 #'   coordinates. If input is a list object, output will be a
 #'   `Biostrings::BStringSetList` with list names corresponding to input list
 #'   names.
 #'
 #' @export
-#'
 #' @importFrom GenomicRanges mcols `mcols<-`
-#'
 #' @examples
 #' # using character string as coordinates
 #' # using BSgenome object for genome
 #' drosophila.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
 #' get_sequence("chr2L:100-200", drosophila.genome)
 #'
-#' # using GRanges object for regions
+#' # using GRanges object for coordinates
 #' data(example_peaks, package = "memes")
 #' get_sequence(example_peaks, drosophila.genome)
 get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequence")
 
-#' Denovo motif discovery of target regions
+#' Denovo motif discovery of target regions using DREME
+#'
+#' DREME discovers short, ungapped, *de-novo* motifs that are relatively
+#' enriched relative to a control set of sequences. DREME can be run to discover
+#' motifs relative to a shuffled set of input sequences, or against a separately
+#' provided set of "control" sequences.
+#'
+#' Properly setting the `control` parameter is key to discovering biologically
+#' relevant motifs. Often, using `control = "shuffle"` will produce a suboptimal
+#' set of motifs; however, some discriminative analysis designs don't have
+#' proper "control" regions other than to shuffle.
 #'
 #' @param input regions to scan for motifs. Can be any of:
 #'   - path to fasta file
@@ -99,29 +107,24 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' setting evalue = 1. For additional details about each DREME flag, see the
 #' [DREME Manual Webpage](http://meme-suite.org/doc/dreme.html).
 #'
-#' List of aliased values which can be passed to `...`
+#' List of values which can be passed to `...`:
+#' **NOTE:** values must be referred to using their name in the "memes alias"
+#'   column, not the "DREME Flag" column.
 #'
-#' | memes alias | DREME Flag | description                               | default |
-#' |:------------:|:----------:|:------------------------------------------|:-------:|
-#' | nmotifs      | m          | max number of motifs to discover          | NULL    |
-#' | sec          | t          | max number of seconds to run              | NULL    |
-#' | evalue       | e          | max E-value cutoff                        | 0.05    |
-#' | seed         | s          | random seed if using "shuffle" as control | 1       |
-#' | ngen         | g          | nuber of REs to generalize                | 100     |
-#'
-#' **NOTE:** aliased values must be set using their alias, not the DREME Flag name.
-#'
-#' Additional DREME parameters which can be passed to `...`
-#'
-#' | DREME Flag | description                                | default|
-#' |:----------:|:------------------------------------------:|:------:|
-#' | mink       | minimum motif width to search              | 3      |
-#' | maxk       | maximum motif width to search              | 7      |
-#' | k          | set mink and maxk to this value            | NULL   |
-#' | norc       | search only the input strand for sequences | FALSE  |
-#' | dna        | use DNA alphabet                           | TRUE   |
-#' | rna        | use RNA alphabet                           | FALSE  |
-#' | protein    | use protein alphabet (NOT RECCOMENDED)     | FALSE  |
+#' | memes alias  | DREME Flag | description                                | default |
+#' |:------------:|:----------:|:-------------------------------------------|:-------:|
+#' | nmotifs      | m          | max number of motifs to discover           | NULL    |
+#' | sec          | t          | max number of seconds to run               | NULL    |
+#' | evalue       | e          | max E-value cutoff                         | 0.05    |
+#' | seed         | s          | random seed if using "shuffle" as control  | 1       |
+#' | ngen         | g          | nuber of REs to generalize                 | 100     |
+#' | mink         | mink       | minimum motif width to search              | 3       |
+#' | maxk         | maxk       | maximum motif width to search              | 7       |
+#' | k            | k          | set mink and maxk to this value            | NULL    |
+#' | norc         | norc       | search only the input strand for sequences | FALSE   |
+#' | dna          | dna        | use DNA alphabet                           | TRUE    |
+#' | rna          | rna        | use RNA alphabet                           | FALSE   |
+#' | protein      | protein    | use protein alphabet (NOT RECCOMENDED)     | FALSE   |
 #'
 #'
 #' @return data.frame with statistics for each discovered motif. The `motif`
@@ -157,11 +160,8 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
 #'
 #' @importFrom magrittr %>%
-#'
 #' @export
-#'
 #' @md
-#'
 #' @examples
 #' if (meme_is_installed()) {
 #' # Create random named sequences as input for example
@@ -179,6 +179,16 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 }
 
 #' Motif enrichment using AME
+#'
+#' AME identifies known motifs (provided by the user) that are enriched in your input sequences.
+#'
+#' AME can be run using several modes:
+#'  1. Discriminative mode: to discover motifs enriched relative to shuffled
+#'  input, or a set of provided control sequences
+#'  2. Partitioning mode: in which AME uses some biological signal to identify
+#'  the association between the signal and motif presence.
+#'
+#' To read more about how AME works, see the [AME Tutorial](http://meme-suite.org/doc/ame-tutorial.html)
 #'
 #' @param input path to fasta, or DNAstringset (optional: DNAStringSet object
 #'   names contain fasta score, required for partitioning mode)
@@ -201,19 +211,19 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #' @param method default: fisher (allowed values: fisher, ranksum, pearson, spearman, 3dmhg, 4dmhg)
 #' @param database path to .meme format file, universalmotif list object, dreme
 #'   results data.frame, or list() of multiple of these. If objects are assigned names in the list,
-#'   that name will be used as the database id. It is highly recommended you set
-#'   a name if not using a file path so the database name will be informative,
-#'   otherwise the position in the list will be used as the database id. For
-#'   example, if the input is: list("motifs.meme", list_of_motifs), the database
-#'   id's will be: "motifs.meme" and "2". If the input is list("motifs.meme",
-#'   "customMotifs" = list_of_motifs), the database id's will be "motifs.meme"
-#'   and "customMotifs".
+#'   that name will be used as the database id in the output. It is highly
+#'   recommended you set a name if not using a file path so the database name
+#'   will be informative, otherwise the position in the list will be used as the
+#'   database id. For example, if the input is: list("motifs.meme",
+#'   list_of_motifs), the database id's will be: "motifs.meme" and "2". If the
+#'   input is list("motifs.meme", "customMotifs" = list_of_motifs), the database
+#'   id's will be "motifs.meme" and "customMotifs".
 #' @param meme_path path to "meme/bin/" (default: `NULL`). Will use default
 #'   search behavior as described in `check_meme_install()` if unset.
 #' @param sequences `logical(1)` add results from `sequences.tsv` to `sequences`
 #'   list column to returned data.frame. Valid only if method = "fisher". See
 #'   [AME outputs](http://alternate.meme-suite.org/doc/ame-output-format.html)
-#'   webpage for more information.
+#'   webpage for more information (Default: FALSE).
 #' @param silent whether to suppress stdout (default: TRUE), useful for debugging.
 #' @param ... additional arguments passed to AME (see AME Flag table below)
 #'

@@ -3,7 +3,7 @@
 #' @param input path to .meme format file of motifs or list of universalmotifs
 #' @param database path to .meme format file to use as reference database (or list of universalmotifs)
 #' @param outdir directory to store tomtom results (will be overwritten if
-#'   exists). Default: location of input fasta file, or temporary location if using universalmotif list input.
+#'   exists). Default: location of input fasta file, or temporary location if using BioStrings input.
 #' @param thresh report matches less than or equal to this value. If evalue =
 #'   TRUE (default), set an e-value threshold (default = 10). If evalue = FALSE,
 #'   set a value between 0-1 (default = 0.5).
