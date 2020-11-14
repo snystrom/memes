@@ -1,9 +1,18 @@
 #' Run TomTom on target motifs
 #'
-#' @param input path to .meme format file of motifs or list of universalmotifs
+#' TomTom compares input motifs to a database of known, user-provided motifs to
+#' identify matches.
+#'
+#' runTomTom will rank matches by significance and return a
+#' best match motif for each input (whose properties are stored in the `best_match_*`
+#' columns) as well as a ranked list of all possible matches stored in the
+#' `tomtom` list column.
+#'
+#' @param input path to .meme format file of motifs, a list of universalmotifs,
+#'   or a universalmotif data.frame object (such as the output of `runDreme()`)
 #' @param database path to .meme format file to use as reference database (or list of universalmotifs)
 #' @param outdir directory to store tomtom results (will be overwritten if
-#'   exists). Default: location of input fasta file, or temporary location if using BioStrings input.
+#'   exists). Default: location of input fasta file, or temporary location if using universalmotif input.
 #' @param thresh report matches less than or equal to this value. If evalue =
 #'   TRUE (default), set an e-value threshold (default = 10). If evalue = FALSE,
 #'   set a value between 0-1 (default = 0.5).
@@ -40,10 +49,14 @@
 #' | time              | `integer`      | `NULL`  | Maximum runtime in CPU seconds (default: no limit) |
 #'
 #'
-#' @return data.frame of match results. Contains `match_motif` column of
-#'   `universalmotif` objects with the matched PWM from the database. If no
-#'   matches are returned, `tomtom` and `best_match_motif` columns will be set
-#'   to `NA` and a message indicating this will print.
+#' @return data.frame of match results. Contains `best_match_motif` column of
+#'   `universalmotif` objects with the matched PWM from the database, a series
+#'   of `best_match_*` columns describing the TomTom results of the match, and a
+#'   `tomtom` list column storing the ranked list of possible matches to each
+#'   motif. If a universalmotif data.frame is used as input, these columns are
+#'   appended to the data.frame. If no matches are returned, `tomtom` and
+#'   `best_match_motif` columns will be set to `NA` and a message indicating
+#'   this will print.
 #' 
 #' @details # Citation
 #' If you use `runTomTom()` in your analysis, please cite:
