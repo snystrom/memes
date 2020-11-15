@@ -1,7 +1,27 @@
 #' Identify motifs with MEME
 #'
-#' NOTE: add note about the hsfrac issue
-#' TODO: Meme does____
+#' MEME performs *de-novo* discovery of ungapped motifs present in the input
+#' sequences. It can be used in both discriminative and non-discriminative
+#' modes.
+#'
+#' Note that MEME can take a long time to run. The more input sequences used, the wider the motifs searched for, and
+#' the more motifs MEME is asked to discover will drastically affect runtime.
+#' For this reason, MEME usually performs best on a few (<50) short (100-200
+#' bp) sequences, although this is not a requirement. Additional details on how
+#' data size affects runtime can be found
+#' [here](https://groups.google.com/g/meme-suite/c/7b7PBr6RzJk).
+#'
+#' MEME works best when specifically tuned to the analysis question. The default
+#' settings are unlikely to be ideal. It has several complex arguments
+#' [documented here](http://meme-suite.org/doc/meme.html), which `runMeme()`
+#' accepts as R function arguments (see details below).
+#'
+#' If discovering motifs within ChIP-seq, ATAC-seq, etc. peaks, MEME may perform
+#' best if using sequences flaking the summit (the site of maximum signal) of
+#' each peak rather than the center. ChIP-seq or similar data can also benefit
+#' from setting `revcomp = TRUE, minw = 5, maxw = 20`. For more tips on using
+#' MEME to analyze ChIP-seq data, see the following
+#' [tips page](https://groups.google.com/forum/#%21topic/meme-suite/rIbjIHbcpAE).
 #'
 #' @param input path to fasta, Biostrings::BStringSet list, or list of
 #'   Biostrings::BStringSet (can generate using `get_sequence()`)
@@ -9,7 +29,7 @@
 #'   `names(input)` to use those regions as control sequences. Using sequences
 #'   as background requires an alternative objective function. Users must pass a non-default value of
 #'   `objfun` to `...` if using a non-NA control set (default: NA)
-#' @param outdir (default: "auto")
+#' @param outdir (default: "auto") Directory where output data will be stored.
 #' @param alph one of c("dna", "rna", "protein") or path to alphabet file (default: "dna").
 #' @param parse_genomic_coord `logical(1)` whether to parse genomic coordinates
 #'   from fasta headers. Requires headers are in the form: "chr:start-end", or
@@ -22,7 +42,7 @@
 #' @param meme_path path to "meme/bin/". If unset, will use default search
 #'   behavior:
 #'   1. `meme_path` setting in `options()`
-#'   2. `MEME_PATH` setting in `.Renviron`
+#'   2. `MEME_PATH` setting in `.Renviron` or `.bashrc`
 #' @param ... additional arguments passed to MEME (see below)
 #'
 #' @return MEME results in universalmotif data.frame format (see:
@@ -39,10 +59,6 @@
 #' The arguments passed to MEME often have many interactions with each other,
 #' for a detailed description of each argument 
 #' see the [MEME Help Page](meme-suite.org/doc/meme.html).
-#'
-#' For use with ChIP-seq data, the suggestion is to set: `revcomp = TRUE, minw = 5, maxw = 20`.
-#' See using MEME with ChIP-Seq Data Tips: \url{https://groups.google.com/forum/#%21topic/meme-suite/rIbjIHbcpAE}
-#' for additional details.
 #'
 #' # Citation
 #'

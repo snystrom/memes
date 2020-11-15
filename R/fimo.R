@@ -1,47 +1,56 @@
-#' Run FIMO on input sequences
+#' Find instances of motifs using FIMO
 #'
-#' NOTE: runs best using `text = TRUE`, setting genomic coordinates in fasta
-#' headers, and using `parse_genomic_coord = TRUE`.
+#' FIMO scans input sequences to identify the positions of matches to each input
+#' motif. FIMO has no sequence length or motif number restrictions.
 #'
 #' @param sequences path to fasta file, or stringset input.
 #' @param motifs path to .meme format file, or universalmotif/universalmotif list input.
-#' @param bfile path to background file, or special values: "motif", or
-#'   "uniform" to use 0-order frequencies contained in the motif, or a uniform
+#' @param bfile path to background file, or special values: "motif" to use
+#'   0-order frequencies contained in the motif, or "uniform" to use a uniform
 #'   letter distribution. (default: "motif")
 #' @param outdir output directory location. Only used if text = FALSE. Default:
 #'   "auto" to autogenerate directory name. Note: if not using a fasta path as
 #'   input, this will be a temporary location unless explicity set.
 #' @param parse_genomic_coord `logical(1)` whether to parse genomic position
-#'   from fasta name. Fasta names must be UCSC format positions (ie
-#'   "chr:start-end"). If names of fasta entries are genomic coordinates and
-#'   parse_genomic_coord == TRUE, results will contain positions of motif matches,
-#'   otherwise FIMO will count positions from 1 to length of fasta file.
+#'   from fasta headers. Fasta headers must be UCSC format positions (ie
+#'   "chr:start-end"), but base 1 indexed (GRanges format). If names of fasta
+#'   entries are genomic coordinates and parse_genomic_coord == TRUE, results
+#'   will contain genomic coordinates of motif matches, otherwise FIMO will return
+#'   relative coordinates (i.e. positions from 1 to length of the fasta entry).
 #' @param skip_matched_sequence `logical(1)` whether or not to include the DNA
 #'   sequence of the match. Default: `FALSE`. Note: jobs will complete faster if
 #'   set to FALSE. `add_sequence()` can be used to lookup the sequence after data import if
 #'   `parse_genomic_coord` is `TRUE`, so setting this flag is not strictly needed.
 #' @param max_strand if match is found on both strands, only report strand with
-#'   best match.
-#' @param text `logical(1)` (default: `TRUE`). No output files will be created on the filesystem.
-#'   The results are unsorted and no q-values are computed. This setting allows
-#'   fast searches on very large inputs.
+#'   best match (default: TRUE).
+#' @param text `logical(1)` (default: `TRUE`). No output files will be created
+#'   on the filesystem. The results are unsorted and no q-values are computed.
+#'   This setting allows fast searches on very large inputs. When set to `FALSE`
+#'   FIMO will discard 50% of the lower significance matches if >100,000 matches are
+#'   detected. `text = FALSE` will also incur a performance penalty because it
+#'   must first read a file to disk, then read it into memory. For these reasons,
+#'   I suggest keeping `text = TRUE`.
 #' @param meme_path path to `meme/bin/` (optional). Defaut: `NULL`, searches
-#'   "MEME_PATH" environment variable or "meme_path" option.
+#'   "MEME_PATH" environment variable or "meme_path" option for path to "meme/bin/".
 #' @param silent `logical(1)` whether to suppress stdout/stderr printing to
-#'   terminal (default: TRUE). NOTE: if `text = TRUE`, setting `silent = TRUE`
-#'   will print all FIMO matches to terminal if the run is successful. Can be
-#'   useful for troubleshooting.
-#' @param ... additional commandline arguments to fimo see:
-#'   [Fimo web manual](http://meme-suite.org/doc/fimo.html?man_type=web) and the FIMO Flag table below
+#'   console (default: TRUE). If the command is failing or giving unexpected
+#'   output, setting `silent = FALSE` can aid troubleshooting.
+#' @param ... additional commandline arguments to fimo. See the FIMO Flag table below.
 #'
-#' @return GenomicRanges object contining positions of each match. Note: if
-#'   `parse_genomic_coords = FALSE`, each `seqnames` entry will be the fasta
-#'   header, and start/end will be the position within that sequence of the
-#'   match. It is a good idea to use `parse_genomic_coords = TRUE` if using
-#'   `get_sequence()` to create input sequences.
+#' @return GRanges object containing positions of each match. Note: if
+#'   `parse_genomic_coords = FALSE`, each `seqnames` entry will be the full fasta
+#'   header, and start/end will be the relative position within that sequence of the
+#'   match. The GRanges object has the following additional `mcols`:
+#'     * motif_id = primary name of matched motif
+#'     * motif_alt_id = alternate name of matched motif
+#'     * score = score of match (higher score is a better match)
+#'     * pvalue = pvalue of the match
+#'     * qvalue = qvalue of the match
+#'     * matched_sequence = sequence that matches the motif
 #' @export
 #'
-#' @details Additional arguments passed to `...`
+#' @details Additional arguments passed to `...`. See: [Fimo web manual](http://meme-suite.org/doc/fimo.html?man_type=web)
+#'   for a complete description of FIMO flags.
 #'
 #'
 #' | FIMO Flag         | allowed values | default | description                |
@@ -81,6 +90,7 @@
 #' motif <- universalmotif::create_motif()
 #'
 #' # Search for motif in sequences
+#' # parse_genomic_coord set to FALSE since fasta headers aren't in "chr:start-end" format.
 #' runFimo(seq, motif, parse_genomic_coord = FALSE)
 #' }
 runFimo <- function(sequences, motifs, bfile = "motif",
