@@ -1,5 +1,15 @@
 #' Force best tomtom match by id
 #'
+#' Although TomTom assigns a best match, this is not always the most
+#' biologically relevant match. In these cases, it is useful to "force" the best
+#' match to another lower ranked, but still significant TomTom match. This
+#' function allows users to select a new best match motif from the set of
+#' lower-ranked matches in the `tomtom` list column. This function also reorders
+#' the `tomtom` data.frame such that the forced match is the first row of the
+#' `tomtom` entry.
+#'
+#' @seealso [update_best_match()]
+#'
 #' @param res results from runTomTom
 #' @param matches named vector where name is the input motif name, and value is
 #'   the match_name to use as the new best match
@@ -40,7 +50,13 @@ force_best_match <- function(res, matches){
 
 #' Update best match info by ranking of tomtom data
 #'
-#' This function updates the best_match columns based on the rankings on the tomtom list data.
+#' This function updates the best_match columns based on the rankings on the
+#' tomtom list data. By re-ordering the entries of a `tomtom` object, the
+#' best_match columns can be updated to reflect the new rankings using
+#' [update_best_match()], where the first row of the `tomtom` data.frame is
+#' selected as the best match.
+#'
+#' @seealso [force_best_match()]
 #'
 #' @param res results from runTomTom
 #'
@@ -72,11 +88,12 @@ update_best_match <- function(res){
     nest_tomtom_results_best_top_row()
 }
 
-#' Drop best match info from tomtom results
+#' Drop best match columns from tomtom results
 #'
 #' Convenience function for dropping all columns created by runTomTom prefixed
 #' by "best_match_" and the "best_db_name" column. Keeps the "tomtom" data.frame
-#' column. Can be useful if you want to unnest the `tomtom` data.
+#' column. Can be useful if you want to unnest the `tomtom` data without
+#' propagating these columns.
 #'
 #' @param res results of runTomTom
 #'
@@ -96,10 +113,14 @@ drop_best_match <- function(res){
 
 #' Nest TomTom results columns into a data.frame column named "tomtom"
 #'
-#' This will also update the best_match information automatically to avoid any
-#' ambiguities after manipulating unnested data. **NOTE:** that the resulting
-#' columns may not be in the same order, so operations like `identical()` may
-#' fail even though the column values are unchanged.
+#' This is a convienience function for re-nesting the `tomtom` list column if
+#' the user unnests it. Additionally, it will update the best_match information
+#' based on the ranking of the resulting `tomtom` data.frame. This avoids having
+#' out-of-date best_match information after manipulating the `tomtom` entries.
+#'
+#' **NOTE:** that the resulting columns may not be in the same order, so
+#' operations like `identical()` before & after a nest/renest operation may fail
+#' even though the column values are unchanged.
 #'
 #' @param data tomtom results data.frame after unnesting the `tomtom` column
 #'

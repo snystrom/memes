@@ -134,11 +134,16 @@ prepareAmeFlags <- function(control, outdir, method, ...){
     cmdfun::cmd_list_to_flags(prefix = "--")
 }
 
-#' Parse ame output
+#' Parse AME output
+#'
+#' This imports AME results using the "ame.tsv" output, and optionally the
+#' "sequences.tsv" output if run with "method = fisher". AME results differ
+#' based on the method used, thus this must be set on import or the column
+#' names will be incorrect.
 #'
 #' @param path path to ame results file ("ame.tsv")
 #' @param method ame run method used (one of: c("fisher", "ranksum", "dmhg3",
-#'   "dmhg4", "pearson", "spearman")). Default: "fisher". **NOTE:**
+#'   "dmhg4", "pearson", "spearman")). Default: "fisher".
 #' @param sequences FALSE or path to sequences file (only valid for method = "fisher")
 #'
 #' @return data.frame with method-specific results. See [AME
@@ -146,6 +151,8 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 #'   information. If sequences is set to a path to the sequences.tsv and method
 #'   = "fisher", the list-column `sequences` will be appended to resulting
 #'   data.frame.
+#'
+#' @seealso [runAme()]
 #'
 #' @importFrom magrittr %<>%
 #' @importFrom tidyr nest

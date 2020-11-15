@@ -1,5 +1,3 @@
-# import XML
-
 #' Import tomtom data from previous run
 #'
 #' @param tomtom_xml_path path to tomtom.xml
@@ -9,6 +7,8 @@
 #'   NOTE: if tomtom detects no matches for any input motif, currently will
 #'   print a message & return NA values for `tomtom`, `best_match_name`, and
 #'   `best_match_motif`.
+#'
+#' @seealso [runTomTom()]
 #'
 #' @details tomtom list column format
 #' the `tomtom` list column contains data.frames with the following format:
@@ -42,6 +42,7 @@ importTomTomXML <- function(tomtom_xml_path){
 #'   column contains a universalmotif object representation in PCM format of
 #'   each DREME motif. If no motifs are discovered, returns NULL.
 #'
+#' @seealso [runDreme()]
 #' @export
 #'
 #' @examples

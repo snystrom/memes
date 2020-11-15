@@ -221,6 +221,12 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 
 #' Import MEME results
 #'
+#' This is a light wrapper around [universalmotif::read_meme()] that imports
+#' MEME results as universalmotif data.frame. If MEME is run with genomic
+#' coordinates in the fasta header, in "chr:start-end" format (base 1 indexed),
+#' the genomic coordinates of the motif match from input sequences can be
+#' parsed from the header.
+#'
 #' @param meme_txt path to "meme.txt" output
 #' @param parse_genomic_coord whether to parse sequence headers into genomic
 #'   coordinates for motif position information, only works if fasta files were
@@ -228,12 +234,15 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 #'   some variation of this form (delimiters can be any of: "[^[:alnum:]]+" (ie
 #'   non-alphanumeric characters)), (default = FALSE).
 #' @param combined_sites whether to add `combined_sites` output which contains
-#'   coordinates of each sequence, the motif sequence
+#'   coordinates of each sequence, the motif sequence **TODO:** finish this explanation
 #'
 #' @return MEME results in universalmotif data.frame format (see:
 #'   [as_universalmotif_dataframe()]). `sites_hits` is a nested data.frame
 #'   column containing the position within each input sequence of matches to the
 #'   identified motif.
+#'
+#' @seealso [runMeme()] [universalmotif::read_meme()]
+#'
 #' @export
 #' @importFrom tidyr nest
 #' @importFrom rlang .data
