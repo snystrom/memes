@@ -44,7 +44,7 @@ remotes::install_github("snystrom/memes")
 docker pull snystrom/memes_docker:devel
 # the -v flag is used to mount an analysis directory, 
 # it can be excluded for demo purposes
-docker run -e PASSWORD=<password> -p 8787:8787 -v <path>/<to>/<project>:/tmp/<project> snystrom/memes_docker:devel
+docker run -e PASSWORD=<password> -p 8787:8787 -v <path>/<to>/<project>:/mnt/<project> snystrom/memes_docker:devel
 ```
 
 
@@ -169,6 +169,7 @@ other sequences or shuffled input sequences as the control dataset.
 ```{r}
 # runDreme accepts all arguments that the commandline version of dreme accepts
 # here I set e = 50 to detect motifs in the limited example peak list
+# In a real analysis, e should typically be < 1
 dreme_results <- runDreme(sequences, control = "shuffle", e = 50)
 ```
 memes is built around the
@@ -192,7 +193,7 @@ use that file as the database. memes will always prefer user input to the
 function call.
 
 ```{r}
-options(meme_db = system.file("extdata/db/fly_factor_survey_id.meme", package = "memes"))
+options(meme_db = system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes"))
 m <- create_motif("CMATTACN", altname = "testMotif")
 tomtom_results <- runTomTom(m)
 ```
@@ -215,6 +216,8 @@ will use the `MEME_DB` entry in `.Renviron` or `options(meme_db =
 "path/to/database.meme")` as the motif database. Alternately, it will accept all
 valid inputs as `runTomTom()`.
 ```{r}
+# here I set the evalue_report_threshold = 30 to detect motifs in the limited example sequences
+# In a real analysis, evalue_report_threshold should be carefully selected
 ame_results <- runAme(sequences, control = "shuffle", evalue_report_threshold = 30)
 ame_results
 ```
@@ -255,7 +258,7 @@ memes also supports importing results generated using the MEME suite outside of 
 | FIMO      | `importFimo()`      | fimo.tsv         | 
 | Meme      | `importMeme()`      | meme.txt         | 
 
-* `importAME()` can also use the "sequences.tsv" output when AME used `method = "fisher"`, this is optional.
+\* `importAME()` can also use the "sequences.tsv" output when AME used `method = "fisher"`, this is optional.
 
 
 # FAQs
@@ -264,6 +267,11 @@ The MEME Suite does not currently support Windows, although it can be
 installed under [Cygwin](https://www.cygwin.com/) or the [Windows Linux Subsytem](https://docs.microsoft.com/en-us/windows/wsl/install-win10) (WSL).
 Please note that if MEME is installed on Cygwin or WSL, you must also run R
 inside Cygwin or WSL to use memes.
+
+An alternative solution is to use [Docker](https://www.docker.com/get-started)
+to run a virtual environment with the MEME Suite installed. We provide a [memes docker container](https://github.com/snystrom/memes_docker)  
+that ships with the MEME Suite, R studio, and all `memes` dependencies
+pre-installed. 
 
 # Citation
 
