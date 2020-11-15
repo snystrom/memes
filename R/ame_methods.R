@@ -94,10 +94,11 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
 #' will be a different color value based on their ranked order in the results
 #' list. This also means that using the normalized rank visualization will
 #' be misleading if there are only a few AME hits; it is only worth using if the
-#' number of hits is very large (>100). Both visualizations can be useful and reveal
-#' different properties of the data to the user.  Use `ame_compare_heatmap_methods()` to
-#' help assess differences in the two visualizations. **If in doubt**, prefer
-#' the `-log10(adj.pvalue)` representation.
+#' number of hits is very large (>100). Both visualizations can be useful and
+#' reveal different properties of the data to the user during data
+#' exploration. Use `ame_compare_heatmap_methods()` to help assess
+#' differences in the two visualizations. **If in doubt**, prefer the
+#' `-log10(adj.pvalue)` representation.
 #'
 #' @param group_name when group = NULL, name to use for input regions. Ignored
 #'   if group is set.
@@ -234,10 +235,11 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
 
 #' Compare AME heatmap methods
 #'
-#' This helper function allows the user to visualize the distribution of their AME results data on different scales
-#' to help understand the implications of using different values in `ame_plot_heatmap()`
+#' This helper function allows the user to visualize the distribution of their
+#' AME results data on different scales to help understand the implications of
+#' using different values in `ame_plot_heatmap()`
 #'
-#' @param ame ame results object
+#' @param ame ame results data.frame
 #' @param group optional name of group to split results by
 #' @param value value to compare to "normalize" method (default: -log10(adj.pvalue))
 #'

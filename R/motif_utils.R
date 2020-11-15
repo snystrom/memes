@@ -78,10 +78,10 @@ mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
 #' @details
 #'
 #' **NOTE** that `consensus`, `alphabet`, `multifreq`, and `icscore` are protected columns and
-#' cannot be updated. Any changes to these columns will be ignored when updating motifs.
+#' cannot be updated. Any changes to these columns will be **ignored** when updating motifs.
 #'
 #' ## Table of values updated
-#'
+#' TODO: change this table to be all universalmotif.dataframe names, w/ second column of "updated: yes/no".
 #' | `motif`  | `data.frame` |
 #' |:--------:|:------------:|
 #' | name     | name         |
@@ -95,6 +95,7 @@ mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
 #' | qval     | qval         |
 #' | eval     | eval         |
 #'
+#' @md
 #' @examples
 #' motif <- universalmotif::create_motif()
 #' df <- as_universalmotif_dataframe(motif)

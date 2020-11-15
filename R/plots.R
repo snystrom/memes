@@ -26,7 +26,7 @@ cowplot_title <- function(plot, title, ...){
 #' return ggseqlogo outputs which can be further manipulated using
 #' [ggplot2::theme()] calls, but results containing no matches are static plots.
 #'
-#' @param results results data.frame from runTomTom
+#' @param results results data.frame from [runTomTom()]
 #' @param top_n number of matched motifs to return in plot (default: "all")
 #'
 #' @return plot of input motif vs the top n number of tomtom matched motifs. If

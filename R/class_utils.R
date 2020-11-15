@@ -186,16 +186,16 @@ error_universalmotif_list <- function(list){
 #' removing, or renaming columns. When manipulating columns that correspond to
 #' slot names of a `universalmotif` object, this stages changes which can be
 #' propagated to the `universalmotif` object in the `motif` column by calling
-#' `update_motifs()`. Users can convert the data.frame back to pure
-#' `universalmotif` format using `as_universalmotif()`.
+#' [update_motifs()]. Users can convert the data.frame back to pure
+#' `universalmotif` format using [as_universalmotif()].
 #'
 #' Columns which are linked to `universalmotif` format are:
 #' `name`, `altname`, `family`, `organism`, `consensus`, `alphabet`, `strand`,
 #' `icscore`, `nsites`, `bkgsites`, `pval`, `qval`, `eval`
 #' 
 #' Note that changing the above columns will result in changes to the
-#' `universalmotif` representation when calling `update_motifs()` or
-#' `as_universalmotif()`
+#' `universalmotif` representation when calling [update_motifs()] or
+#' [as_universalmotif()]
 #'
 #' @param motif universalmotif object or list of universalmotifs
 #' @param na.rm whether to include undefined columns for empty `universalmotif` slots (default: FALSE).

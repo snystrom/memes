@@ -79,8 +79,12 @@ get_sequence.character <- function(regions, genome, score_column = NULL, ...){
 #' Add nucleic acid sequence of regions to metadata column
 #'
 #' @param ranges GRanges object
-#' @param genome BSgenome object or any other valid input to `Biostrings::getSeq()` (Do `showMethods(Biostrings::getSeq)` to show valid types)
-#' @param name name of metadata column to hold sequence information (default: "sequence")
+#' @param genome BSgenome object or any other valid input to
+#'   `Biostrings::getSeq()` (Do `showMethods(Biostrings::getSeq)` to show valid
+#'   types)
+#' @param name name of metadata column to hold sequence information (default:
+#'   "sequence"). Note, this will overwrite existing columns without warning if
+#'   the name already exists.
 #'
 #' @return `ranges` with new metadata column named "sequence" (or another value
 #'   passed to `name`) holding the DNA or RNA sequence from `genome`
@@ -146,7 +150,7 @@ sequence_as_granges.BStringSet <- build_sequence_as_granges()
 
 #' Write fasta file from stringset
 #'
-#' @param seq `Biostrings::XStringSet`
+#' @param seq a `Biostrings::XStringSet`
 #' @param path path of fasta file to write (default: temporary file)
 #'
 #' @return path to created fasta file
@@ -217,6 +221,12 @@ check_meme_install <- function(meme_path = NULL){
 #' Checks for a valid meme install using same heirarchy as `check_meme_install()`.
 #' Returns `TRUE` if all supported utilities are found in the meme install
 #' location, `FALSE` if not.
+#'
+#' The search heirarchy is as follows:
+#'  1. the `meme_path` function argument if set
+#'  2. the `meme_bin` option
+#'  3. the `MEME_BIN` environment variable
+#'  4. the default location at `~/meme/bin`
 #'
 #' @param path optional path to "meme/bin/"
 #'

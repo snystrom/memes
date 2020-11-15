@@ -8,6 +8,7 @@
 #'   `tomtom` list column for the updated entries.
 #' @export
 #'
+#' TODO: change example below to use tomtom.xml import?
 #' @examples
 #' if (meme_is_installed()){
 #' motif <- universalmotif::create_motif("CCRAAAW", name = "example_motif")
