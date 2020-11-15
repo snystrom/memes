@@ -13,15 +13,20 @@ nest_tomtom(data)
 the input data.frame with the match_* columns nested into a column named `tomtom`
 }
 \description{
-This will also update the best_match information automatically to avoid any
-ambiguities after manipulating unnested data. **NOTE:** that the resulting
-columns may not be in the same order, so operations like `identical()` may
-fail even though the column values are unchanged.
+This is a convienience function for re-nesting the `tomtom` list column if
+the user unnests it. Additionally, it will update the best_match information
+based on the ranking of the resulting `tomtom` data.frame. This avoids having
+out-of-date best_match information after manipulating the `tomtom` entries.
+}
+\details{
+**NOTE:** that the resulting columns may not be in the same order, so
+operations like `identical()` before & after a nest/renest operation may fail
+even though the column values are unchanged.
 }
 \examples{
 if (meme_is_installed()){
 motif <- universalmotif::create_motif("CCRAAAW")
-db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "memes")
+db <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
 res <- runTomTom(motif, database = db)
 data <- tidyr::unnest(res, "tomtom")
 identical(nest_tomtom(data), res)

@@ -2,28 +2,28 @@
 % Please edit documentation in R/motif_utils.R
 \name{update_motifs}
 \alias{update_motifs}
-\title{Update the `motif` column to data.frame values}
+\title{Update the \code{motif} column to data.frame values}
 \usage{
 update_motifs(.data)
 }
 \arguments{
-\item{.data}{data.frame with `motif` column}
+\item{.data}{data.frame with \code{motif} column}
 }
 \value{
-.data where `motif` column has been updated to reflect the values
-  from columns sharing names with unprotected universalmotif slots. Names of
-  `motif` list are updated to reflect name.
+.data where \code{motif} column has been updated to reflect the values
+from columns sharing names with unprotected universalmotif slots. Names of
+\code{motif} list are updated to reflect name.
 }
 \description{
-Update the `motif` column to data.frame values
+Update the \code{motif} column to data.frame values
 }
 \details{
-**NOTE** that `consensus`, `alphabet`, `multifreq`, and `icscore` are protected columns and
-cannot be updated. Any changes to these columns will be ignored when updating motifs.
+\strong{NOTE} that \code{consensus}, \code{alphabet}, \code{multifreq}, and \code{icscore} are protected columns and
+cannot be updated. Any changes to these columns will be \strong{ignored} when updating motifs.
+\subsection{Table of values updated}{
 
-## Table of values updated
-
-| `motif`  | `data.frame` |
+TODO: change this table to be all universalmotif.dataframe names, w/ second column of "updated: yes/no".
+| \code{motif}  | \code{data.frame} |
 |:--------:|:------------:|
 | name     | name         |
 | altname  | altname      |
@@ -35,6 +35,7 @@ cannot be updated. Any changes to these columns will be ignored when updating mo
 | pval     | pval         |
 | qval     | qval         |
 | eval     | eval         |
+}
 }
 \examples{
 motif <- universalmotif::create_motif()

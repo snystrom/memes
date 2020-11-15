@@ -12,7 +12,7 @@ runTomTom(
   outdir = "auto",
   thresh = 10,
   min_overlap = 5,
-  dist = "pearson",
+  dist = "ed",
   evalue = TRUE,
   meme_path = NULL,
   ...
@@ -24,7 +24,7 @@ runTomTom(
   outdir = "auto",
   thresh = 10,
   min_overlap = 5,
-  dist = "pearson",
+  dist = "ed",
   evalue = TRUE,
   meme_path = NULL,
   ...
@@ -36,19 +36,20 @@ runTomTom(
   outdir = "auto",
   thresh = 10,
   min_overlap = 5,
-  dist = "pearson",
+  dist = "ed",
   evalue = TRUE,
   meme_path = NULL,
   ...
 )
 }
 \arguments{
-\item{input}{path to .meme format file of motifs or list of universalmotifs}
+\item{input}{path to .meme format file of motifs, a list of universalmotifs,
+or a universalmotif data.frame object (such as the output of \code{runDreme()})}
 
 \item{database}{path to .meme format file to use as reference database (or list of universalmotifs)}
 
 \item{outdir}{directory to store tomtom results (will be overwritten if
-exists). Default: location of input fasta file, or temporary location if using universalmotif list input.}
+exists). Default: location of input fasta file, or temporary location if using universalmotif input.}
 
 \item{thresh}{report matches less than or equal to this value. If evalue =
 TRUE (default), set an e-value threshold (default = 10). If evalue = FALSE,
@@ -59,7 +60,7 @@ unless input motif is shorter, in which case the shorter length is used as
 the minimum value}
 
 \item{dist}{distance metric. Valid arguments: \code{allr | ed | kullback | pearson | sandelin | blic1 | blic5 | llr1 | llr5}.
-Default: \code{pearson}.}
+Default: \code{ed}.}
 
 \item{evalue}{whether to use E-value as significance threshold (default:
 \code{TRUE}). If evalue = FALSE, uses \emph{q-value} instead.}
@@ -71,15 +72,25 @@ environment variable "MEME_DB (set in \code{.Renviron}), or option
 \item{...}{additional flags passed to tomtom using {cmdfun} formating (see table below for details)}
 }
 \value{
-data.frame of match results. Contains \code{match_motif} column of
-\code{universalmotif} objects with the matched PWM from the database. If no
-matches are returned, \code{tomtom} and \code{best_match_motif} columns will be set
-to \code{NA} and a message indicating this will print.
+data.frame of match results. Contains \code{best_match_motif} column of
+\code{universalmotif} objects with the matched PWM from the database, a series
+of \verb{best_match_*} columns describing the TomTom results of the match, and a
+\code{tomtom} list column storing the ranked list of possible matches to each
+motif. If a universalmotif data.frame is used as input, these columns are
+appended to the data.frame. If no matches are returned, \code{tomtom} and
+\code{best_match_motif} columns will be set to \code{NA} and a message indicating
+this will print.
 }
 \description{
-Run TomTom on target motifs
+TomTom compares input motifs to a database of known, user-provided motifs to
+identify matches.
 }
 \details{
+runTomTom will rank matches by significance and return a
+best match motif for each input (whose properties are stored in the \verb{best_match_*}
+columns) as well as a ranked list of all possible matches stored in the
+\code{tomtom} list column.
+
 Additional arguments
 
 runTomTom() can accept all valid tomtom arguments passed to \code{...} as described in the
@@ -97,12 +108,6 @@ their description.\tabular{cccl}{
    min_overlap \tab \code{integer} \tab 1 \tab only report matches that overlap by this number of positions or more. If query motif is smaller than this value, its width is used as the min overlap for that query \cr
    time \tab \code{integer} \tab \code{NULL} \tab Maximum runtime in CPU seconds (default: no limit) \cr
 }
-
-\subsection{Licensing}{
-
-The MEME Suite is free for non-profit use, but for-profit users should purchase a
-license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
-}
 }
 \section{Citation}{
 If you use \code{runTomTom()} in your analysis, please cite:
@@ -110,6 +115,11 @@ If you use \code{runTomTom()} in your analysis, please cite:
 Shobhit Gupta, JA Stamatoyannopolous, Timothy Bailey and William Stafford
 Noble, "Quantifying similarity between motifs", Genome Biology, 8(2):R24,
 2007. \href{http://genomebiology.com/2007/8/2/R24}{full text}
+\subsection{Licensing}{
+
+The MEME Suite is free for non-profit use, but for-profit users should purchase a
+license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
+}
 }
 
 \examples{

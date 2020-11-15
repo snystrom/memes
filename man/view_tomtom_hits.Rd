@@ -7,7 +7,7 @@
 view_tomtom_hits(results, top_n = "all")
 }
 \arguments{
-\item{results}{results data.frame from runTomTom}
+\item{results}{results data.frame from [runTomTom()]}
 
 \item{top_n}{number of matched motifs to return in plot (default: "all")}
 }

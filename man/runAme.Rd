@@ -81,13 +81,13 @@ write to a temporary directory. default: "auto"}
 
 \item{database}{path to .meme format file, universalmotif list object, dreme
 results data.frame, or list() of multiple of these. If objects are assigned names in the list,
-that name will be used as the database id. It is highly recommended you set
-a name if not using a file path so the database name will be informative,
-otherwise the position in the list will be used as the database id. For
-example, if the input is: list("motifs.meme", list_of_motifs), the database
-id's will be: "motifs.meme" and "2". If the input is list("motifs.meme",
-"customMotifs" = list_of_motifs), the database id's will be "motifs.meme"
-and "customMotifs".}
+that name will be used as the database id in the output. It is highly
+recommended you set a name if not using a file path so the database name
+will be informative, otherwise the position in the list will be used as the
+database id. For example, if the input is: list("motifs.meme",
+list_of_motifs), the database id's will be: "motifs.meme" and "2". If the
+input is list("motifs.meme", "customMotifs" = list_of_motifs), the database
+id's will be "motifs.meme" and "customMotifs".}
 
 \item{meme_path}{path to "meme/bin/" (default: \code{NULL}). Will use default
 search behavior as described in \code{check_meme_install()} if unset.}
@@ -95,7 +95,7 @@ search behavior as described in \code{check_meme_install()} if unset.}
 \item{sequences}{\code{logical(1)} add results from \code{sequences.tsv} to \code{sequences}
 list column to returned data.frame. Valid only if method = "fisher". See
 \href{http://alternate.meme-suite.org/doc/ame-output-format.html}{AME outputs}
-webpage for more information.}
+webpage for more information (Default: FALSE).}
 
 \item{silent}{whether to suppress stdout (default: TRUE), useful for debugging.}
 
@@ -106,11 +106,19 @@ a data.frame of AME enrichment results. If run using a BStringsSetList
 input, returns a list of data.frames.
 }
 \description{
-See runAme Generic for details
-
-Motif enrichment using AME
+AME identifies known motifs (provided by the user) that are enriched in your input sequences.
 }
 \details{
+AME can be run using several modes:
+\enumerate{
+\item Discriminative mode: to discover motifs enriched relative to shuffled
+input, or a set of provided control sequences
+\item Partitioning mode: in which AME uses some biological signal to identify
+the association between the signal and motif presence.
+}
+
+To read more about how AME works, see the \href{http://meme-suite.org/doc/ame-tutorial.html}{AME Tutorial}
+
 Additional AME arguments
 
 memes allows passing any valid flag to it's target programs via \code{...}. For
@@ -135,12 +143,6 @@ below:\tabular{cccl}{
    inc \tab \code{character(1)} \tab \code{NULL} \tab use only motifs with names matching this regex \cr
    exc \tab \code{character(1)} \tab \code{NULL} \tab exclude motifs with names matching this regex \cr
 }
-
-\subsection{Licensing}{
-
-The MEME Suite is free for non-profit use, but for-profit users should purchase a
-license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
-}
 }
 \section{Citation}{
 If you use \code{runAme()} in your analysis, please cite:
@@ -148,6 +150,11 @@ If you use \code{runAme()} in your analysis, please cite:
 Robert McLeay and Timothy L. Bailey, "Motif Enrichment Analysis: A unified
 framework and method evaluation", BMC Bioinformatics, 11:165, 2010,
 doi:10.1186/1471-2105-11-165. \href{http://www.biomedcentral.com/1471-2105/11/165}{full text}
+\subsection{Licensing}{
+
+The MEME Suite is free for non-profit use, but for-profit users should purchase a
+license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
+}
 }
 
 \examples{

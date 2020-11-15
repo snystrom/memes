@@ -21,3 +21,6 @@ Import Dreme output from previous run
 dreme_xml <- system.file("extdata/dreme.xml", package = "memes")
 importDremeXML(dreme_xml)
 }
+\seealso{
+[runDreme()]
+}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/ame.R
 \name{importAme}
 \alias{importAme}
-\title{Parse ame output}
+\title{Parse AME output}
 \usage{
 importAme(path, method = "fisher", sequences = FALSE)
 }
@@ -10,7 +10,7 @@ importAme(path, method = "fisher", sequences = FALSE)
 \item{path}{path to ame results file ("ame.tsv")}
 
 \item{method}{ame run method used (one of: c("fisher", "ranksum", "dmhg3",
-"dmhg4", "pearson", "spearman")). Default: "fisher". **NOTE:**}
+"dmhg4", "pearson", "spearman")). Default: "fisher".}
 
 \item{sequences}{FALSE or path to sequences file (only valid for method = "fisher")}
 }
@@ -22,10 +22,16 @@ data.frame with method-specific results. See [AME
   data.frame.
 }
 \description{
-Parse ame output
+This imports AME results using the "ame.tsv" output, and optionally the
+"sequences.tsv" output if run with "method = fisher". AME results differ
+based on the method used, thus this must be set on import or the column
+names will be incorrect.
 }
 \examples{
 ame_tsv <- system.file("extdata/ame.tsv", package = "memes")
 importAme(ame_tsv)
+}
+\seealso{
+[runAme()]
 }
 \concept{import}

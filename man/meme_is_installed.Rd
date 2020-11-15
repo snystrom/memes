@@ -13,9 +13,16 @@ meme_is_installed(path = NULL)
 `logical(1)` indicating whether meme is installed with all supported utilities
 }
 \description{
-Checks for a valid meme install using same heirarchy as `search_meme_path()`.
+Checks for a valid meme install using same heirarchy as `check_meme_install()`.
 Returns `TRUE` if all supported utilities are found in the meme install
 location, `FALSE` if not.
+}
+\details{
+The search heirarchy is as follows:
+ 1. the `meme_path` function argument if set
+ 2. the `meme_bin` option
+ 3. the `MEME_BIN` environment variable
+ 4. the default location at `~/meme/bin`
 }
 \examples{
 meme_is_installed()

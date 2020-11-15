@@ -54,10 +54,11 @@ motifs have similar or even identical pvalues, their heatmap representation
 will be a different color value based on their ranked order in the results
 list. This also means that using the normalized rank visualization will
 be misleading if there are only a few AME hits; it is only worth using if the
-number of hits is very large (>100). Both visualizations can be useful and reveal
-different properties of the data to the user.  Use `ame_compare_heatmap_methods()` to
-help assess differences in the two visualizations. **If in doubt**, prefer
-the `-log10(adj.pvalue)` representation.
+number of hits is very large (>100). Both visualizations can be useful and
+reveal different properties of the data to the user during data
+exploration. Use `ame_compare_heatmap_methods()` to help assess
+differences in the two visualizations. **If in doubt**, prefer the
+`-log10(adj.pvalue)` representation.
 
 Common mistake: if `value` is set to a string that is not "normalize", it
 will return: "Error: Discrete value supplied to continuous scale". To use a

@@ -64,7 +64,7 @@ Biostrings::BStringSet (can generate using \code{get_sequence()})}
 as background requires an alternative objective function. Users must pass a non-default value of
 \code{objfun} to \code{...} if using a non-NA control set (default: NA)}
 
-\item{outdir}{(default: "auto")}
+\item{outdir}{(default: "auto") Directory where output data will be stored.}
 
 \item{alph}{one of c("dna", "rna", "protein") or path to alphabet file (default: "dna").}
 
@@ -82,7 +82,7 @@ information (coerces output to list) (default: FALSE)}
 behavior:
 \enumerate{
 \item \code{meme_path} setting in \code{options()}
-\item \code{MEME_PATH} setting in \code{.Renviron}
+\item \code{MEME_PATH} setting in \code{.Renviron} or \code{.bashrc}
 }}
 
 \item{...}{additional arguments passed to MEME (see below)}
@@ -94,23 +94,9 @@ column containing the position within each input sequence of matches to the
 identified motif.
 }
 \description{
-NOTE: add note about the hsfrac issue
-}
-\details{
-\subsection{Additional arguments}{
-
-\code{runMeme()} accepts all valid arguments to meme as arguments passed to \code{...}.
-For flags without values, pass them as \code{flag = TRUE}. The \code{dna}, \code{rna}, and
-\code{protein} flags should instead be passed to the \code{alph} argument of
-\code{runMeme()}.
-The arguments passed to MEME often have many interactions with each other,
-for a detailed description of each argument
-see the \href{meme-suite.org/doc/meme.html}{MEME Help Page}.
-
-For use with ChIP-seq data, the suggestion is to set: \verb{revcomp = TRUE, minw = 5, maxw = 20}.
-See using MEME with ChIP-Seq Data Tips: \url{https://groups.google.com/forum/#\%21topic/meme-suite/rIbjIHbcpAE}
-for additional details.
-}
+MEME performs \emph{de-novo} discovery of ungapped motifs present in the input
+sequences. It can be used in both discriminative and non-discriminative
+modes.
 }
 \section{Citation}{
 If you use \code{runMeme()} in your analysis, please cite:

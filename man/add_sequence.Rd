@@ -9,9 +9,13 @@ add_sequence(ranges, genome, name = "sequence")
 \arguments{
 \item{ranges}{GRanges object}
 
-\item{genome}{BSgenome object or any other valid input to `Biostrings::getSeq()` (Do `showMethods(Biostrings::getSeq)` to show valid types)}
+\item{genome}{BSgenome object or any other valid input to
+`Biostrings::getSeq()` (Do `showMethods(Biostrings::getSeq)` to show valid
+types)}
 
-\item{name}{name of metadata column to hold sequence information (default: "sequence")}
+\item{name}{name of metadata column to hold sequence information (default:
+"sequence"). Note, this will overwrite existing columns without warning if
+the name already exists.}
 }
 \value{
 `ranges` with new metadata column named "sequence" (or another value

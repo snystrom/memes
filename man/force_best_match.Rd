@@ -17,15 +17,24 @@ the match_name to use as the new best match}
   `tomtom` list column for the updated entries.
 }
 \description{
-Force best tomtom match by id
+Although TomTom assigns a best match, this is not always the most
+biologically relevant match. In these cases, it is useful to "force" the best
+match to another lower ranked, but still significant TomTom match. This
+function allows users to select a new best match motif from the set of
+lower-ranked matches in the `tomtom` list column. This function also reorders
+the `tomtom` data.frame such that the forced match is the first row of the
+`tomtom` entry.
 }
 \examples{
 if (meme_is_installed()){
 motif <- universalmotif::create_motif("CCRAAAW", name = "example_motif")
-db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "memes")
+db <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
 res <- runTomTom(motif, database = db)
 res$best_match_name
 res2 <- force_best_match(res, c("example_motif" = "Eip93F_SANGER_10"))
 res2$best_match_name
 }
+}
+\seealso{
+[update_best_match()]
 }

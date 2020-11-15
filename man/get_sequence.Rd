@@ -12,17 +12,17 @@ as long as it can be coerced to a GRanges object, or a string in the
 format: "chr:start-end" (NOTE: use 1-based closed
 intervals, not BED format 0-based half-open intervals).}
 
-\item{genome}{object of any valid type in showMethods(Biostrings::getSeq).
+\item{genome}{object of any valid type in `showMethods(Biostrings::getSeq)`.
 Commonly a BSgenome object, or fasta file. Used to look up sequences in regions.}
 
 \item{score_column}{optional name of column (in mcols() of `regions`)
-containing a fasta score, which is added to the fasta header of each entry.
+containing a fasta score that is added to the fasta header of each entry.
 Used when using [runAme()] in partitioning mode. (default: `NULL`)}
 
 \item{...}{additional arguments passed to Biostrings::getSeq.}
 }
 \value{
-Biostrings::DNAStringSet object with names corresponding to genomic
+`Biostrings::DNAStringSet` object with names corresponding to genomic
   coordinates. If input is a list object, output will be a
   `Biostrings::BStringSetList` with list names corresponding to input list
   names.
@@ -37,7 +37,7 @@ input genomic coordinates.
 drosophila.genome <- BSgenome.Dmelanogaster.UCSC.dm6::BSgenome.Dmelanogaster.UCSC.dm6
 get_sequence("chr2L:100-200", drosophila.genome)
 
-# using GRanges object for regions
+# using GRanges object for coordinates
 data(example_peaks, package = "memes")
 get_sequence(example_peaks, drosophila.genome)
 }

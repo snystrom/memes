@@ -16,7 +16,7 @@ some variation of this form (delimiters can be any of: "[^[:alnum:]]+" (ie
 non-alphanumeric characters)), (default = FALSE).}
 
 \item{combined_sites}{whether to add `combined_sites` output which contains
-coordinates of each sequence, the motif sequence}
+coordinates of each sequence, the motif sequence **TODO:** finish this explanation}
 }
 \value{
 MEME results in universalmotif data.frame format (see:
@@ -25,9 +25,16 @@ MEME results in universalmotif data.frame format (see:
   identified motif.
 }
 \description{
-Import MEME results
+This is a light wrapper around [universalmotif::read_meme()] that imports
+MEME results as universalmotif data.frame. If MEME is run with genomic
+coordinates in the fasta header, in "chr:start-end" format (base 1 indexed),
+the genomic coordinates of the motif match from input sequences can be
+parsed from the header.
 }
 \examples{
 example_meme_txt <- system.file("extdata/meme_full.txt", package = "universalmotif")
 importMeme(example_meme_txt)
+}
+\seealso{
+[runMeme()] [universalmotif::read_meme()]
 }

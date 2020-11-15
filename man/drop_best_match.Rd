@@ -2,7 +2,7 @@
 % Please edit documentation in R/match_utils.R
 \name{drop_best_match}
 \alias{drop_best_match}
-\title{Drop best match info from tomtom results}
+\title{Drop best match columns from tomtom results}
 \usage{
 drop_best_match(res)
 }
@@ -15,7 +15,8 @@ drop_best_match(res)
 \description{
 Convenience function for dropping all columns created by runTomTom prefixed
 by "best_match_" and the "best_db_name" column. Keeps the "tomtom" data.frame
-column. Can be useful if you want to unnest the `tomtom` data.
+column. Can be useful if you want to unnest the `tomtom` data without
+propagating these columns.
 }
 \examples{
 data("example_dreme_tomtom")

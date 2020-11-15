@@ -38,3 +38,6 @@ the `tomtom` list column contains data.frames with the following format:
 tomtom_xml <- system.file("extdata/tomtom.xml", package = "memes")
 importTomTomXML(tomtom_xml)
 }
+\seealso{
+[runTomTom()]
+}

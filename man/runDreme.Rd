@@ -2,7 +2,7 @@
 % Please edit documentation in R/generics.R
 \name{runDreme}
 \alias{runDreme}
-\title{Denovo motif discovery of target regions}
+\title{Denovo motif discovery of target regions using DREME}
 \usage{
 runDreme(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...)
 }
@@ -93,42 +93,39 @@ values are as follows:
 }
 }
 \description{
-Denovo motif discovery of target regions
+DREME discovers short, ungapped, \emph{de-novo} motifs that are relatively
+enriched relative to a control set of sequences. DREME can be run to discover
+motifs relative to a shuffled set of input sequences, or against a separately
+provided set of "control" sequences.
 }
 \details{
+Properly setting the \code{control} parameter is key to discovering biologically
+relevant motifs. Often, using \code{control = "shuffle"} will produce a suboptimal
+set of motifs; however, some discriminative analysis designs don't have
+proper "control" regions other than to shuffle.
+
 In addition to allowing any valid flag of dreme to be passed to \code{...}, we
 provide a few user-friendly aliases for common flags which are more readable (see list below).
 For example, e = 1 will use a max evalue cutoff of 1. This is equivalent to
 setting evalue = 1. For additional details about each DREME flag, see the
 \href{http://meme-suite.org/doc/dreme.html}{DREME Manual Webpage}.
 
-List of aliased values which can be passed to \code{...}\tabular{cclc}{
+List of values which can be passed to \code{...}:
+\strong{NOTE:} values must be referred to using their name in the "memes alias"
+column, not the "DREME Flag" column.\tabular{cclc}{
    memes alias \tab DREME Flag \tab description \tab default \cr
    nmotifs \tab m \tab max number of motifs to discover \tab NULL \cr
    sec \tab t \tab max number of seconds to run \tab NULL \cr
    evalue \tab e \tab max E-value cutoff \tab 0.05 \cr
    seed \tab s \tab random seed if using "shuffle" as control \tab 1 \cr
    ngen \tab g \tab nuber of REs to generalize \tab 100 \cr
-}
-
-
-\strong{NOTE:} aliased values must be set using their alias, not the DREME Flag name.
-
-Additional DREME parameters which can be passed to \code{...}\tabular{ccc}{
-   DREME Flag \tab description \tab default \cr
-   mink \tab minimum motif width to search \tab 3 \cr
-   maxk \tab maximum motif width to search \tab 7 \cr
-   k \tab set mink and maxk to this value \tab NULL \cr
-   norc \tab search only the input strand for sequences \tab FALSE \cr
-   dna \tab use DNA alphabet \tab TRUE \cr
-   rna \tab use RNA alphabet \tab FALSE \cr
-   protein \tab use protein alphabet (NOT RECCOMENDED) \tab FALSE \cr
-}
-
-\subsection{Licensing}{
-
-The MEME Suite is free for non-profit use, but for-profit users should purchase a
-license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
+   mink \tab mink \tab minimum motif width to search \tab 3 \cr
+   maxk \tab maxk \tab maximum motif width to search \tab 7 \cr
+   k \tab k \tab set mink and maxk to this value \tab NULL \cr
+   norc \tab norc \tab search only the input strand for sequences \tab FALSE \cr
+   dna \tab dna \tab use DNA alphabet \tab TRUE \cr
+   rna \tab rna \tab use RNA alphabet \tab FALSE \cr
+   protein \tab protein \tab use protein alphabet (NOT RECCOMENDED) \tab FALSE \cr
 }
 }
 \section{Citation}{
@@ -137,6 +134,11 @@ If you use \code{runDreme()} in your analysis, please cite:
 Timothy L. Bailey, "DREME: Motif discovery in transcription factor ChIP-seq
 data", Bioinformatics, 27(12):1653-1659, 2011.
 \href{https://academic.oup.com/bioinformatics/article/27/12/1653/257754}{full text}
+\subsection{Licensing}{
+
+The MEME Suite is free for non-profit use, but for-profit users should purchase a
+license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copyright Page} for details.
+}
 }
 
 \examples{

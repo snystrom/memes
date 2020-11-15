@@ -2,7 +2,7 @@
 % Please edit documentation in R/fimo.R
 \name{runFimo}
 \alias{runFimo}
-\title{Run FIMO on input sequences}
+\title{Find instances of motifs using FIMO}
 \usage{
 runFimo(
   sequences,
@@ -23,8 +23,8 @@ runFimo(
 
 \item{motifs}{path to .meme format file, or universalmotif/universalmotif list input.}
 
-\item{bfile}{path to background file, or special values: "motif", or
-"uniform" to use 0-order frequencies contained in the motif, or a uniform
+\item{bfile}{path to background file, or special values: "motif" to use
+0-order frequencies contained in the motif, or "uniform" to use a uniform
 letter distribution. (default: "motif")}
 
 \item{outdir}{output directory location. Only used if text = FALSE. Default:
@@ -32,10 +32,11 @@ letter distribution. (default: "motif")}
 input, this will be a temporary location unless explicity set.}
 
 \item{parse_genomic_coord}{\code{logical(1)} whether to parse genomic position
-from fasta name. Fasta names must be UCSC format positions (ie
-"chr:start-end"). If names of fasta entries are genomic coordinates and
-parse_genomic_coord == TRUE, results will contain positions of motif matches,
-otherwise FIMO will count positions from 1 to length of fasta file.}
+from fasta headers. Fasta headers must be UCSC format positions (ie
+"chr:start-end"), but base 1 indexed (GRanges format). If names of fasta
+entries are genomic coordinates and parse_genomic_coord == TRUE, results
+will contain genomic coordinates of motif matches, otherwise FIMO will return
+relative coordinates (i.e. positions from 1 to length of the fasta entry).}
 
 \item{skip_matched_sequence}{\code{logical(1)} whether or not to include the DNA
 sequence of the match. Default: \code{FALSE}. Note: jobs will complete faster if
@@ -43,36 +44,44 @@ set to FALSE. \code{add_sequence()} can be used to lookup the sequence after dat
 \code{parse_genomic_coord} is \code{TRUE}, so setting this flag is not strictly needed.}
 
 \item{max_strand}{if match is found on both strands, only report strand with
-best match.}
+best match (default: TRUE).}
 
-\item{text}{\code{logical(1)} (default: \code{TRUE}). No output files will be created on the filesystem.
-The results are unsorted and no q-values are computed. This setting allows
-fast searches on very large inputs.}
+\item{text}{\code{logical(1)} (default: \code{TRUE}). No output files will be created
+on the filesystem. The results are unsorted and no q-values are computed.
+This setting allows fast searches on very large inputs. When set to \code{FALSE}
+FIMO will discard 50\% of the lower significance matches if >100,000 matches are
+detected. \code{text = FALSE} will also incur a performance penalty because it
+must first read a file to disk, then read it into memory. For these reasons,
+I suggest keeping \code{text = TRUE}.}
 
 \item{meme_path}{path to \verb{meme/bin/} (optional). Defaut: \code{NULL}, searches
-"MEME_PATH" environment variable or "meme_path" option.}
+"MEME_PATH" environment variable or "meme_path" option for path to "meme/bin/".}
 
 \item{silent}{\code{logical(1)} whether to suppress stdout/stderr printing to
-terminal (default: TRUE). NOTE: if \code{text = TRUE}, setting \code{silent = TRUE}
-will print all FIMO matches to terminal if the run is successful. Can be
-useful for troubleshooting.}
+console (default: TRUE). If the command is failing or giving unexpected
+output, setting \code{silent = FALSE} can aid troubleshooting.}
 
-\item{...}{additional commandline arguments to fimo see:
-\href{http://meme-suite.org/doc/fimo.html?man_type=web}{Fimo web manual} and the FIMO Flag table below}
+\item{...}{additional commandline arguments to fimo. See the FIMO Flag table below.}
 }
 \value{
-GenomicRanges object contining positions of each match. Note: if
-\code{parse_genomic_coords = FALSE}, each \code{seqnames} entry will be the fasta
-header, and start/end will be the position within that sequence of the
-match. It is a good idea to use \code{parse_genomic_coords = TRUE} if using
-\code{get_sequence()} to create input sequences.
+GRanges object containing positions of each match. Note: if
+\code{parse_genomic_coords = FALSE}, each \code{seqnames} entry will be the full fasta
+header, and start/end will be the relative position within that sequence of the
+match. The GRanges object has the following additional \code{mcols}:
+* motif_id = primary name of matched motif
+* motif_alt_id = alternate name of matched motif
+* score = score of match (higher score is a better match)
+* pvalue = pvalue of the match
+* qvalue = qvalue of the match
+* matched_sequence = sequence that matches the motif
 }
 \description{
-NOTE: runs best using \code{text = TRUE}, setting genomic coordinates in fasta
-headers, and using \code{parse_genomic_coord = TRUE}.
+FIMO scans input sequences to identify the positions of matches to each input
+motif. FIMO has no sequence length or motif number restrictions.
 }
 \details{
-Additional arguments passed to \code{...}\tabular{cccl}{
+Additional arguments passed to \code{...}. See: \href{http://meme-suite.org/doc/fimo.html?man_type=web}{Fimo web manual}
+for a complete description of FIMO flags.\tabular{cccl}{
    FIMO Flag \tab allowed values \tab default \tab description \cr
    alpha \tab \code{numeric(1)} \tab 1 \tab alpha for calculating position-specific priors. Represents fraction of sites that are binding sites of TF of interest. Used in conjunction with \code{psp} \cr
    bfile \tab "motif", "motif-file", "uniform", file path, \tab "motif" \tab If "motif" or "motif-file", use 0-order letter frequencies from motif. "uniform" sets uniform letter frequencies. \cr
@@ -110,6 +119,7 @@ names(seq) <- seq_along(seq)
 motif <- universalmotif::create_motif()
 
 # Search for motif in sequences
+# parse_genomic_coord set to FALSE since fasta headers aren't in "chr:start-end" format.
 runFimo(seq, motif, parse_genomic_coord = FALSE)
 }
 }

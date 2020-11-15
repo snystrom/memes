@@ -13,7 +13,11 @@ update_best_match(res)
 `res` with updated best_* columns
 }
 \description{
-This function updates the best_match columns based on the rankings on the tomtom list data.
+This function updates the best_match columns based on the rankings on the
+tomtom list data. By re-ordering the entries of a `tomtom` object, the
+best_match columns can be updated to reflect the new rankings using
+[update_best_match()], where the first row of the `tomtom` data.frame is
+selected as the best match.
 }
 \examples{
 data("example_dreme_tomtom")
@@ -26,4 +30,7 @@ example_dreme_tomtom$tomtom[[1]] <- dplyr::arrange(example_dreme_tomtom$tomtom[[
 new_res <- update_best_match(example_dreme_tomtom)
 # best match is now altered:
 new_res$best_match_name[1]
+}
+\seealso{
+[force_best_match()]
 }
