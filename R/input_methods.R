@@ -1,3 +1,4 @@
+#' @export
 sequence_input.character <- function(input){
   # character input should be file path unless input == "shuffle"
   if (input == "shuffle") return(input)
@@ -6,19 +7,23 @@ sequence_input.character <- function(input){
   return(input)
 }
 
+#' @export
 sequence_input.DNAStringSet <- function(input){
   # stringset is written to temporary fasta file
   write_fasta(input)
 }
 
+#' @export
 sequence_input.BStringSet <- function(input){
   write_fasta(input)
 }
 
+#' @export
 sequence_input.AAStringSet <- function(input){
   write_fasta(input)
 }
 
+#' @export
 motif_input.character <- function(input, path = NULL){
   # character input must be file path,
   # subsequent type checking will be carried out by commandline utility
@@ -40,6 +45,7 @@ motif_input.character <- function(input, path = NULL){
   return(out)
 }
 
+#' @export
 motif_input.data.frame <- function(input, path = tempfile(fileext = ".meme")){
 
   if (!("motif" %in% names(input))) {
@@ -58,6 +64,7 @@ motif_input.data.frame <- function(input, path = tempfile(fileext = ".meme")){
   return(out)
 }
 
+#' @export
 motif_input.list <- function(input, path = tempfile(fileext = ".meme")){
   # check list is universalmotif list
   if (!is_universalmotif_list(input)) error_universalmotif_list(list)
@@ -73,6 +80,7 @@ motif_input.list <- function(input, path = tempfile(fileext = ".meme")){
   return(out)
 }
 
+#' @export
 motif_input.universalmotif <- function(input, path = tempfile(fileext = ".meme")){
 
   df <- as_universalmotif_dataframe(input) %>%

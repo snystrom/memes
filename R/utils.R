@@ -141,10 +141,15 @@ build_sequence_as_granges <- function(){
   return(fun)
 }
 
+#' @export
 #' @noRd
 sequence_as_granges.DNAStringSet <- build_sequence_as_granges()
+
+#' @export
 #' @noRd
 sequence_as_granges.RNAStringSet <- build_sequence_as_granges()
+
+#' @export
 #' @noRd
 sequence_as_granges.BStringSet <- build_sequence_as_granges()
 

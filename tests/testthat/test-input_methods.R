@@ -58,3 +58,17 @@ test_that("motif input method dispatch works",{
   motif <- universalmotif::create_motif()
   expect_equal(motif_input(motif, path), list(metadata = as_universalmotif_dataframe(motif), path = path))
 })
+
+test_that("meme_db option works correctly", {
+  options(meme_db = "")
+  expect_error(search_meme_database_path())
+  db_path <- system.file("extdata/flyFactorSurvey_cleaned.meme", 
+                                   package = "memes")
+  options(meme_db = db_path)
+  expect_equal(search_meme_database_path(), db_path)
+
+})
+
+testthat::teardown(
+  options(meme_db = NULL)
+)

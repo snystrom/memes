@@ -7,7 +7,8 @@
 meme_is_installed(path = NULL)
 }
 \arguments{
-\item{path}{optional path to "meme/bin/"}
+\item{path}{optional path to "meme/bin/". If unset, will follow the search
+heirarchy listed above.}
 }
 \value{
 \code{logical(1)} indicating whether meme is installed with all supported utilities
