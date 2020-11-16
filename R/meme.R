@@ -4,12 +4,12 @@
 #' sequences. It can be used in both discriminative and non-discriminative
 #' modes.
 #'
-#' Note that MEME can take a long time to run. The more input sequences used, the wider the motifs searched for, and
-#' the more motifs MEME is asked to discover will drastically affect runtime.
-#' For this reason, MEME usually performs best on a few (<50) short (100-200
-#' bp) sequences, although this is not a requirement. Additional details on how
-#' data size affects runtime can be found
-#' [here](https://groups.google.com/g/meme-suite/c/7b7PBr6RzJk).
+#' Note that MEME can take a long time to run. The more input sequences used,
+#' the wider the motifs searched for, and the more motifs MEME is asked to
+#' discover will drastically affect runtime.  For this reason, MEME usually
+#' performs best on a few (<50) short (100-200 bp) sequences, although this is
+#' not a requirement. Additional details on how data size affects runtime can be
+#' found [here](https://groups.google.com/g/meme-suite/c/7b7PBr6RzJk).
 #'
 #' MEME works best when specifically tuned to the analysis question. The default
 #' settings are unlikely to be ideal. It has several complex arguments
@@ -52,13 +52,12 @@
 #'
 #' @details ## Additional arguments
 #'
-#' `runMeme()` accepts all valid arguments to meme as arguments passed to `...`.
+#' [runMeme()] accepts all valid arguments to meme as arguments passed to `...`.
 #' For flags without values, pass them as `flag = TRUE`. The `dna`, `rna`, and
 #' `protein` flags should instead be passed to the `alph` argument of
-#' `runMeme()`.
-#' The arguments passed to MEME often have many interactions with each other,
-#' for a detailed description of each argument 
-#' see the [MEME Help Page](meme-suite.org/doc/meme.html).
+#' [runMeme()].  The arguments passed to MEME often have many interactions
+#' with each other, for a detailed description of each argument  see
+#' \url{meme-suite.org/doc/meme.html}.
 #'
 #' # Citation
 #'

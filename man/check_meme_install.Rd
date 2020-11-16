@@ -7,39 +7,44 @@
 check_meme_install(meme_path = NULL)
 }
 \arguments{
-\item{meme_path}{path to "meme/bin" (if unset will search `MEME_BIN`
-environment variable or `meme_bin` option)}
+\item{meme_path}{path to "meme/bin" (if unset will search \code{MEME_BIN}
+environment variable or \code{meme_bin} option)}
 }
 \value{
 message indicating which MEME utilities are installed and their
-  location on disk
+location on disk
 }
 \description{
-In order to use the `run*` family of functions, memes must detect a local
-install of the MEME Suite. MEME is installed in a directory named `meme/bin/`
-which can be located anywhere on the filesystem, but is typically found in `~/meme/bin`.
-If the MEME Suite is installed at `~/meme/bin`, memes can autodetect the install. However,
+In order to use the run* family of functions, memes must detect a local
+install of the MEME Suite. MEME is installed in a directory named meme/bin/
+which can be located anywhere on the filesystem, but is typically found in \verb{~/meme/bin}.
+If the MEME Suite is installed at \verb{~/meme/bin}, memes can autodetect the install. However,
 in the case that the MEME Suite is found at a nonstandard location, the user
-may specify the location of their `meme/bin` in three ways:
- 1. provide the full path to `meme/bin` to the `meme_path` argument to each `run*` function.
- 2. set the `meme_bin` option using `options(meme_bin = "path/to/meme/bin")` once per R session.
- 3. set the `MEME_BIN` environment variable either in `.Renviron` or `~/.bashrc` with the path to `meme/bin`
+may specify the location of their meme/bin in three ways:
 }
 \details{
-To aid the user in determining if memes can detect their `meme/bin` install,
-`check_meme_install()` will search the aforementioned locations for a valid
-`meme/bin`, returning green checks for each detected tool, or red X's for
-undetected tools. Alternatively, users can run `meme_is_installed()` to get a
+\enumerate{
+\item provide the full path to \code{meme/bin} to the \code{meme_path} argument to each \verb{run*} function.
+\item set the \code{meme_bin} option using \code{options(meme_bin = "path/to/meme/bin")} once per R session.
+\item set the \code{MEME_BIN} environment variable either in \code{.Renviron} or \verb{~/.bashrc} with the path to \code{meme/bin}
+}
+
+To aid the user in determining if memes can detect their \code{meme/bin} install,
+\code{check_meme_install()} will search the aforementioned locations for a valid
+\code{meme/bin}, returning green checks for each detected tool, or red X's for
+undetected tools. Alternatively, users can run \code{meme_is_installed()} to get a
 boolean value indicating whether their MEME Suite can be detected.
 
-`check_meme_install()` searches using the following heirarchy. This heirarchy
-mimics how all `run*` functions search for `meme/bin`, thus the paths printed
-from `check_meme_install()` will indicate the paths used by each `run*`
+\code{check_meme_install()} searches using the following heirarchy. This heirarchy
+mimics how all \verb{run*} functions search for \code{meme/bin}, thus the paths printed
+from \code{check_meme_install()} will indicate the paths used by each \verb{run*}
 function. The heirarchy is as follows:
- 1. the `meme_path` function argument if set
- 2. the `meme_bin` option
- 3. the `MEME_BIN` environment variable
- 4. the default location at `~/meme/bin`
+\enumerate{
+\item the \code{meme_path} function argument if set
+\item the \code{meme_bin} option
+\item the \code{MEME_BIN} environment variable
+\item the default location at \verb{~/meme/bin}
+}
 }
 \examples{
 check_meme_install()

@@ -179,11 +179,11 @@ write_fasta <- function(seq, path = tempfile(fileext = ".fa")){
 #' Check user's MEME install
 #'
 #' In order to use the run* family of functions, memes must detect a local
-#' install of the MEME Suite. MEME is installed in a directory named `meme/bin/`
+#' install of the MEME Suite. MEME is installed in a directory named meme/bin/
 #' which can be located anywhere on the filesystem, but is typically found in `~/meme/bin`.
 #' If the MEME Suite is installed at `~/meme/bin`, memes can autodetect the install. However,
 #' in the case that the MEME Suite is found at a nonstandard location, the user
-#' may specify the location of their `meme/bin` in three ways:
+#' may specify the location of their meme/bin in three ways:
 #'
 #'  1. provide the full path to `meme/bin` to the `meme_path` argument to each `run*` function.
 #'  2. set the `meme_bin` option using `options(meme_bin = "path/to/meme/bin")` once per R session.
@@ -209,6 +209,9 @@ write_fasta <- function(seq, path = tempfile(fileext = ".fa")){
 #'
 #' @return message indicating which MEME utilities are installed and their
 #'   location on disk
+#'
+#' @md
+#'
 #' @export
 #'
 #' @examples
@@ -229,12 +232,15 @@ check_meme_install <- function(meme_path = NULL){
 #'  3. the `MEME_BIN` environment variable
 #'  4. the default location at `~/meme/bin`
 #'
-#' @param path optional path to "meme/bin/"
+#' @param path optional path to "meme/bin/". If unset, will follow the search
+#'   heirarchy listed above.
 #'
 #' @return `logical(1)` indicating whether meme is installed with all supported utilities
+#'
+#' @md
 #' @export
 #'
-#' @seealso search_meme_path check_meme_install
+#' @seealso [search_meme_path()] [check_meme_install()]
 #'
 #' @examples
 #' meme_is_installed()

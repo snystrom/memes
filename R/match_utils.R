@@ -8,6 +8,8 @@
 #' the `tomtom` data.frame such that the forced match is the first row of the
 #' `tomtom` entry.
 #'
+#' TODO: change example below to use tomtom.xml import?
+#'
 #' @seealso [update_best_match()]
 #'
 #' @param res results from runTomTom
@@ -18,7 +20,6 @@
 #'   `tomtom` list column for the updated entries.
 #' @export
 #'
-#' TODO: change example below to use tomtom.xml import?
 #' @examples
 #' if (meme_is_installed()){
 #' motif <- universalmotif::create_motif("CCRAAAW", name = "example_motif")

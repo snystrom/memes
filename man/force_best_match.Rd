@@ -25,6 +25,9 @@ lower-ranked matches in the `tomtom` list column. This function also reorders
 the `tomtom` data.frame such that the forced match is the first row of the
 `tomtom` entry.
 }
+\details{
+TODO: change example below to use tomtom.xml import?
+}
 \examples{
 if (meme_is_installed()){
 motif <- universalmotif::create_motif("CCRAAAW", name = "example_motif")

@@ -10,23 +10,25 @@ meme_is_installed(path = NULL)
 \item{path}{optional path to "meme/bin/"}
 }
 \value{
-`logical(1)` indicating whether meme is installed with all supported utilities
+\code{logical(1)} indicating whether meme is installed with all supported utilities
 }
 \description{
-Checks for a valid meme install using same heirarchy as `check_meme_install()`.
-Returns `TRUE` if all supported utilities are found in the meme install
-location, `FALSE` if not.
+Checks for a valid meme install using same heirarchy as \code{check_meme_install()}.
+Returns \code{TRUE} if all supported utilities are found in the meme install
+location, \code{FALSE} if not.
 }
 \details{
 The search heirarchy is as follows:
- 1. the `meme_path` function argument if set
- 2. the `meme_bin` option
- 3. the `MEME_BIN` environment variable
- 4. the default location at `~/meme/bin`
+\enumerate{
+\item the \code{meme_path} function argument if set
+\item the \code{meme_bin} option
+\item the \code{MEME_BIN} environment variable
+\item the default location at \verb{~/meme/bin}
+}
 }
 \examples{
 meme_is_installed()
 }
 \seealso{
-search_meme_path check_meme_install
+\code{\link[=search_meme_path]{search_meme_path()}} \code{\link[=check_meme_install]{check_meme_install()}}
 }
