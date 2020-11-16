@@ -5,7 +5,8 @@ testthat::setup(
 )
 
 testthat::teardown(
-  options(meme_db = "")
+  options(meme_db = NULL)
+  #.Options$meme_db <- NULL
 )
 
 # Setup

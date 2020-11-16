@@ -75,6 +75,7 @@ search_meme_database_path <- function(path = NULL){
   # Allows setting option to a universalmotif object
   # and return path
   if (is.null(path) & !is.null(getOption("meme_db"))) {
+    # TODO: stop("meme_db cannot be an empty string. Ensure the meme_db option is not set to \"\" or an invalid path.")
     if (!is.character(getOption("meme_db"))){
       db <- getOption("meme_db")
       x <- motif_input(db)
