@@ -31,5 +31,5 @@ The search heirarchy is as follows:
 meme_is_installed()
 }
 \seealso{
-\code{\link[=search_meme_path]{search_meme_path()}} \code{\link[=check_meme_install]{check_meme_install()}}
+\code{\link[=check_meme_install]{check_meme_install()}}
 }

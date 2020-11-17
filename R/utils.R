@@ -245,7 +245,7 @@ check_meme_install <- function(meme_path = NULL){
 #' @md
 #' @export
 #'
-#' @seealso [search_meme_path()] [check_meme_install()]
+#' @seealso [check_meme_install()]
 #'
 #' @examples
 #' meme_is_installed()

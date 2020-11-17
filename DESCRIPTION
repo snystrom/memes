@@ -1,13 +1,16 @@
 Package: memes
 Type: Package
-Title: Motif discovery, matching, and comparison using the MEME Suite
-Version: 0.0.6
+Title: motif matching, comparison, and de novo discovery using the MEME Suite
+Version: 0.0.7
 Authors@R: person("Spencer", "Nystrom", 
     email = "nystromdev@gmail.com", 
     role = c("aut", "cre", "cph"),
     comment = c(ORCID = "0000-0003-1000-1579"))
-Description: Provides functions for performing motif analysis using the MEME suite as a backend.
-    Functions & outputs are designed for easy integration into tidy workflows for rapid iteration. 
+Description: A seamless interface to the MEME Suite family of tools for motif
+    analysis. 'memes' provides data aware utilities for using GRanges objects as
+    entrypoints to motif analysis, data structures for examining & editing motif
+    lists, and novel data visualizations. 'memes' functions and data structures are
+    amenable to both base R and tidyverse workflows.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

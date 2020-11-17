@@ -94,7 +94,7 @@ runTomTom <- function(input, database = NULL,
 }
 
 #' @export
-#' @rdname runTomTom
+#' @noRd
 runTomTom.list <- function(input, database = NULL,
                     outdir = "auto",
                     thresh = 10,
@@ -115,7 +115,7 @@ runTomTom.list <- function(input, database = NULL,
 }
 
 #' @export
-#' @rdname runTomTom
+#' @noRd
 runTomTom.default <- function(input, database = NULL,
                       outdir = "auto",
                       thresh = 10,

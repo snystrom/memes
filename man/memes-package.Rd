@@ -4,10 +4,13 @@
 \name{memes-package}
 \alias{memes}
 \alias{memes-package}
-\title{memes: Motif discovery, matching, and comparison using the MEME Suite}
+\title{memes: motif matching, comparison, and de novo discovery using the MEME Suite}
 \description{
-Provides functions for performing motif analysis using the MEME suite as a backend.
-    Functions & outputs are designed for easy integration into tidy workflows for rapid iteration.
+A seamless interface to the MEME Suite family of tools for motif
+    analysis. 'memes' provides data aware utilities for using GRanges objects as
+    entrypoints to motif analysis, data structures for examining & editing motif
+    lists, and novel data visualizations. 'memes' functions and data structures are
+    amenable to both base R and tidyverse workflows.
 }
 \seealso{
 Useful links:

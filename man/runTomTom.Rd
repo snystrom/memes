@@ -2,35 +2,9 @@
 % Please edit documentation in R/tomtom.R
 \name{runTomTom}
 \alias{runTomTom}
-\alias{runTomTom.list}
-\alias{runTomTom.default}
 \title{Run TomTom on target motifs}
 \usage{
 runTomTom(
-  input,
-  database = NULL,
-  outdir = "auto",
-  thresh = 10,
-  min_overlap = 5,
-  dist = "pearson",
-  evalue = TRUE,
-  meme_path = NULL,
-  ...
-)
-
-\method{runTomTom}{list}(
-  input,
-  database = NULL,
-  outdir = "auto",
-  thresh = 10,
-  min_overlap = 5,
-  dist = "pearson",
-  evalue = TRUE,
-  meme_path = NULL,
-  ...
-)
-
-\method{runTomTom}{default}(
   input,
   database = NULL,
   outdir = "auto",
