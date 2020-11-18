@@ -10,7 +10,9 @@
 #'
 #' @param input path to .meme format file of motifs, a list of universalmotifs,
 #'   or a universalmotif data.frame object (such as the output of `runDreme()`)
-#' @param database path to .meme format file to use as reference database (or list of universalmotifs)
+#' @param database path to .meme format file to use as reference database (or
+#'   list of universalmotifs). **NOTE:** p-value estimates are inaccurate when
+#'   the database has fewer than 50 entries.
 #' @param outdir directory to store tomtom results (will be overwritten if
 #'   exists). Default: location of input fasta file, or temporary location if using universalmotif input.
 #' @param thresh report matches less than or equal to this value. If evalue =
@@ -23,6 +25,7 @@
 #'   Default: `pearson`.
 #' @param evalue whether to use E-value as significance threshold (default:
 #'   `TRUE`). If evalue = FALSE, uses *q-value* instead.
+#' @param silent suppress printing stderr to console (default: TRUE).
 #' @param meme_path path to "meme/bin/" (optional). If unset, will check R
 #'   environment variable "MEME_DB (set in `.Renviron`), or option
 #'   "meme_db" (set with `option(meme_db = "path/to/meme/bin")`)
@@ -89,6 +92,7 @@ runTomTom <- function(input, database = NULL,
                       min_overlap = 5,
                       dist = "pearson",
                       evalue = TRUE,
+                      silent = TRUE,
                       meme_path = NULL, ...){
   UseMethod("runTomTom")
 }
@@ -101,6 +105,7 @@ runTomTom.list <- function(input, database = NULL,
                     min_overlap = 5,
                     dist = "pearson",
                     evalue = TRUE,
+                    silent = TRUE,
                     meme_path = NULL, ...){
   purrr::map(input, 
              runTomTom.default, 
@@ -122,6 +127,7 @@ runTomTom.default <- function(input, database = NULL,
                       min_overlap = 5,
                       dist = "pearson",
                       evalue = TRUE,
+                      silent = TRUE,
                       meme_path = NULL, ...){
   # use TOMTOM server default values which differ from commandline defaults?
   # TODO: email TOMTOM maintainers to ask if this is really a better default?
@@ -156,6 +162,14 @@ runTomTom.default <- function(input, database = NULL,
   flags <- c(user_flags, input$path, database)
 
   ps_out <- processx::run(command, flags, spinner = TRUE, error_on_status = FALSE)
+  
+  # Print any messages to user
+  # This will cause double-printing stderr if non-zero exit status,
+  # but at that point, who cares?
+  if (!silent) {
+    message(ps_out$stderr)
+  }
+
   ps_out %>%
     process_check_error(help_fun = ~{tomtom_help(command)},
                         user_flags = cmdfun::cmd_help_parse_flags(user_flags),
