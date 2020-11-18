@@ -27,6 +27,7 @@ test_that("tomtom returns correct data types", {
   motifs <- dreme_out$motif
   ## Test that returns NA cols if all motifs no match
   expect_message(nomatch <- runTomTom(motifs[[1]], database = db))
+  nomatch <- runTomTom(motifs[[1]], database = db)
   expect_true(is.na(nomatch$tomtom))
   expect_true(is.na(nomatch$best_match_motif))
 
@@ -54,7 +55,7 @@ test_that("view_tomtom_hits works", {
 # Input tests
 test_that("all input types are accepted", {
   expect_success(tt_out <- runTomTom(dreme_out, database = db))
-  expect_success(tt_meme_file <- runTomTom(system.file("extdata/example.meme", package = "memes"), database = db))
+  expect_success(runTomTom(system.file("extdata/example.meme", package = "memes", mustWork = TRUE), database = db))
   # universalmotif
   expect_success(tt_um <- runTomTom(universalmotif::create_motif("CCAAAA", altname = "alt"), database = db))
   # universalmotif (no alt name)
@@ -63,4 +64,27 @@ test_that("all input types are accepted", {
   expect_success(runTomTom(motifs, database = db))
   # runMeme output as input
   expect_success(runTomTom(meme_out, database = db))
+})
+
+test_that("tomtom works w/ nonstandard db inputs", {
+  db1 <- universalmotif::create_motif("CRAW", name = "motif_1", altname = "1")
+  db2 <- universalmotif::create_motif("CCRAAAW", name = "motif_2", altname = "2")
+  motif <- universalmotif::create_motif("CCAAAAW", name = "test_motif")
+  # expect warning that db is too small:
+  expect_message(runTomTom(motif, database = list(db1, db2)), "database size too small")
+  # expect warning re <50 motifs inaccurate p-value
+  expect_message(runTomTom(motif, database = list(db1, db2)), "at least 50")
+  # "too small" warning should increment as entries are added
+  expect_message(runTomTom(motif, database = list(db1, db2)), "(2)")
+  expect_message(runTomTom(motif, database = list(db1, db2, db2)), "(3)")
+  expect_message(runTomTom(motif, database = purrr::map(1:51, ~{db1})), NA)
+ 
+  # TODO: Fix tests below
+  # expect warning re discarded motifs 
+  # this command shows expected output: 
+  # runTomTom(motif, database = "inst/extdata/db/fly_factor_survey_id.meme", silent = FALSE)
+  expect_message(runTomTom(motif, database = "inst/extdata/db/fly_factor_survey_id.meme"))
+  # db w/ no altname
+  # > 1 db with identical values
+  expect_true(FALSE)
 })
