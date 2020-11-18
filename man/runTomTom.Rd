@@ -12,6 +12,7 @@ runTomTom(
   min_overlap = 5,
   dist = "pearson",
   evalue = TRUE,
+  silent = TRUE,
   meme_path = NULL,
   ...
 )
@@ -20,7 +21,9 @@ runTomTom(
 \item{input}{path to .meme format file of motifs, a list of universalmotifs,
 or a universalmotif data.frame object (such as the output of \code{runDreme()})}
 
-\item{database}{path to .meme format file to use as reference database (or list of universalmotifs)}
+\item{database}{path to .meme format file to use as reference database (or
+list of universalmotifs). \strong{NOTE:} p-value estimates are inaccurate when
+the database has fewer than 50 entries.}
 
 \item{outdir}{directory to store tomtom results (will be overwritten if
 exists). Default: location of input fasta file, or temporary location if using universalmotif input.}
@@ -38,6 +41,8 @@ Default: \code{pearson}.}
 
 \item{evalue}{whether to use E-value as significance threshold (default:
 \code{TRUE}). If evalue = FALSE, uses \emph{q-value} instead.}
+
+\item{silent}{suppress printing stderr to console (default: TRUE).}
 
 \item{meme_path}{path to "meme/bin/" (optional). If unset, will check R
 environment variable "MEME_DB (set in \code{.Renviron}), or option

@@ -57,7 +57,7 @@
 #'  `protein` flags should instead be passed to the `alph` argument of
 #'  [runMeme()].  The arguments passed to MEME often have many interactions
 #'  with each other, for a detailed description of each argument see
-#'  \url{meme-suite.org/doc/meme.html}.
+#'  [MEME Commandline Documentation](meme-suite.org/doc/meme.html).
 #'
 #'  # Citation
 #'

@@ -98,6 +98,35 @@ MEME performs \emph{de-novo} discovery of ungapped motifs present in the input
 sequences. It can be used in both discriminative and non-discriminative
 modes.
 }
+\details{
+Note that MEME can take a long time to run. The more input sequences used,
+the wider the motifs searched for, and the more motifs MEME is asked to
+discover will drastically affect runtime. For this reason, MEME usually
+performs best on a few (<50) short (100-200 bp) sequences, although this is
+not a requirement. Additional details on how data size affects runtime can be
+found \href{https://groups.google.com/g/meme-suite/c/7b7PBr6RzJk}{here}.
+
+MEME works best when specifically tuned to the analysis question. The default
+settings are unlikely to be ideal. It has several complex arguments
+\href{http://meme-suite.org/doc/meme.html}{documented here}, which \code{runMeme()}
+accepts as R function arguments (see details below).
+
+If discovering motifs within ChIP-seq, ATAC-seq, or similar peaks, MEME may perform
+best if using sequences flaking the summit (the site of maximum signal) of
+each peak rather than the center. ChIP-seq or similar data can also benefit
+from setting \verb{revcomp = TRUE, minw = 5, maxw = 20}. For more tips on using
+MEME to analyze ChIP-seq data, see the following
+\href{https://groups.google.com/forum/#\%21topic/meme-suite/rIbjIHbcpAE}{tips page}.
+\subsection{Additional arguments}{
+
+\code{\link[=runMeme]{runMeme()}} accepts all valid arguments to meme as arguments passed to \code{...}.
+For flags without values, pass them as \code{flag = TRUE}. The \code{dna}, \code{rna}, and
+\code{protein} flags should instead be passed to the \code{alph} argument of
+\code{\link[=runMeme]{runMeme()}}.  The arguments passed to MEME often have many interactions
+with each other, for a detailed description of each argument see
+\href{meme-suite.org/doc/meme.html}{MEME Help Documentation}.
+}
+}
 \section{Citation}{
 If you use \code{runMeme()} in your analysis, please cite:
 
