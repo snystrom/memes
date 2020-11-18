@@ -8,8 +8,6 @@
 #' the `tomtom` data.frame such that the forced match is the first row of the
 #' `tomtom` entry.
 #'
-#' TODO: change example below to use tomtom.xml import?
-#'
 #' @seealso [update_best_match()]
 #'
 #' @param res results from runTomTom
@@ -30,6 +28,7 @@
 #' res2$best_match_name
 #' }
 force_best_match <- function(res, matches){
+  # TODO: change example to use tomtom.xml import?
   if (!all(names(matches) %in% res$name)) {
     bad <- names(matches)[!names(matches) %in% res$name]
     stop(paste0("The following are invalid names: ", bad))
