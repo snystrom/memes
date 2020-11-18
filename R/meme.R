@@ -6,7 +6,7 @@
 #'
 #' Note that MEME can take a long time to run. The more input sequences used,
 #' the wider the motifs searched for, and the more motifs MEME is asked to
-#' discover will drastically affect runtime.  For this reason, MEME usually
+#' discover will drastically affect runtime. For this reason, MEME usually
 #' performs best on a few (<50) short (100-200 bp) sequences, although this is
 #' not a requirement. Additional details on how data size affects runtime can be
 #' found [here](https://groups.google.com/g/meme-suite/c/7b7PBr6RzJk).
@@ -16,12 +16,12 @@
 #' [documented here](http://meme-suite.org/doc/meme.html), which `runMeme()`
 #' accepts as R function arguments (see details below).
 #'
-#' If discovering motifs within ChIP-seq, ATAC-seq, etc. peaks, MEME may perform
+#' If discovering motifs within ChIP-seq, ATAC-seq, or similar peaks, MEME may perform
 #' best if using sequences flaking the summit (the site of maximum signal) of
 #' each peak rather than the center. ChIP-seq or similar data can also benefit
 #' from setting `revcomp = TRUE, minw = 5, maxw = 20`. For more tips on using
 #' MEME to analyze ChIP-seq data, see the following
-#' [tips page](https://groups.google.com/forum/#%21topic/meme-suite/rIbjIHbcpAE).
+#' [tips page](https://groups.google.com/forum/#\%21topic/meme-suite/rIbjIHbcpAE).
 #'
 #' @param input path to fasta, Biostrings::BStringSet list, or list of
 #'   Biostrings::BStringSet (can generate using `get_sequence()`)
@@ -52,27 +52,27 @@
 #'
 #' @details ## Additional arguments
 #'
-#' [runMeme()] accepts all valid arguments to meme as arguments passed to `...`.
-#' For flags without values, pass them as `flag = TRUE`. The `dna`, `rna`, and
-#' `protein` flags should instead be passed to the `alph` argument of
-#' [runMeme()].  The arguments passed to MEME often have many interactions
-#' with each other, for a detailed description of each argument  see
-#' \url{meme-suite.org/doc/meme.html}.
+#'  [runMeme()] accepts all valid arguments to meme as arguments passed to `...`.
+#'  For flags without values, pass them as `flag = TRUE`. The `dna`, `rna`, and
+#'  `protein` flags should instead be passed to the `alph` argument of
+#'  [runMeme()].  The arguments passed to MEME often have many interactions
+#'  with each other, for a detailed description of each argument see
+#'  \url{meme-suite.org/doc/meme.html}.
 #'
-#' # Citation
+#'  # Citation
 #'
-#' If you use `runMeme()` in your analysis, please cite:
+#'  If you use `runMeme()` in your analysis, please cite:
 #'
-#' Timothy L. Bailey and Charles Elkan, "Fitting a mixture model by expectation
-#' maximization to discover motifs in biopolymers", Proceedings of the Second
-#' International Conference on Intelligent Systems for Molecular Biology, pp.
-#' 28-36, AAAI Press, Menlo Park, California, 1994.
-#' [pdf](https://tlbailey.bitbucket.io/papers/ismb94.pdf)
+#'  Timothy L. Bailey and Charles Elkan, "Fitting a mixture model by expectation
+#'  maximization to discover motifs in biopolymers", Proceedings of the Second
+#'  International Conference on Intelligent Systems for Molecular Biology, pp.
+#'  28-36, AAAI Press, Menlo Park, California, 1994.
+#'  [pdf](https://tlbailey.bitbucket.io/papers/ismb94.pdf)
 #'
-#' 
-#' # Licensing
-#' The MEME Suite is free for non-profit use, but for-profit users should purchase a
-#' license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
+#'
+#'  # Licensing
+#'  The MEME Suite is free for non-profit use, but for-profit users should purchase a
+#'  license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
 #'
 #' @export
 #' @rdname runMeme
