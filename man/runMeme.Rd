@@ -124,7 +124,7 @@ For flags without values, pass them as \code{flag = TRUE}. The \code{dna}, \code
 \code{protein} flags should instead be passed to the \code{alph} argument of
 \code{\link[=runMeme]{runMeme()}}.  The arguments passed to MEME often have many interactions
 with each other, for a detailed description of each argument see
-\href{meme-suite.org/doc/meme.html}{MEME Help Documentation}.
+\href{meme-suite.org/doc/meme.html}{MEME Commandline Documentation}.
 }
 }
 \section{Citation}{
