@@ -51,7 +51,7 @@ summit_flank <- example_chip_summits %>%
 
 ### Pre-filtering database for expressed transcription factors
 ```{r}
-meme_db_path <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
+meme_db_path <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes", mustWork = TRUE)
 ```
 
 ```{r}
