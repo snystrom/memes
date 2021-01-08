@@ -109,14 +109,18 @@ jobs:
     ## The docker container to use. Note that we link a directory on the GHA
     ## runner to a docker directory, such that we can then cache the linked
     ## directory. This directory will contain the R packages used.
-    # ORIGINAL
-    #container:
-    #  image: ${{ needs.define-docker-info.outputs.imagename }}
-    # point to my modified bioc containder
     container:
-      image: snystrom/bioconductor_docker_meme:devel
+      if: "!contains(github.event.head_commit.message, '/localdeps')"
+      image: ${{ needs.define-docker-info.outputs.imagename }}
       volumes:
         - /home/runner/work/_temp/Library:/usr/local/lib/R/host-site-library
+    ## Use the /localdeps flag to use preinstalled R libraries in docker container
+    container:
+      if: "contains(github.event.head_commit.message, '/localdeps')"
+      image: ${{ needs.define-docker-info.outputs.imagename }}
+    # point to my modified bioc containder
+    #container:
+    #  image: snystrom/bioconductor_docker_meme:devel
 
     steps:
       - name: Install latest git
@@ -188,6 +192,7 @@ jobs:
           restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocdocker-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-
 
       - name: Install dependencies
+        if: "!contains(github.event.head_commit.message, '/localdeps')"
         run: |
           ## Try installing the package dependencies in steps. First the local
           ## dependencies, then any remaining dependencies to avoid the
