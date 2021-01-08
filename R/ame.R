@@ -162,8 +162,10 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 #' @family import
 #'
 #' @examples
+#' \dontrun{
 #' ame_tsv <- system.file("extdata/ame.tsv", package = "memes", mustWork = TRUE)
 #' importAme(ame_tsv)
+#' }
 importAme <- function(path, method = "fisher", sequences = FALSE){
 
   cols <- get_ame_coltypes(method)
