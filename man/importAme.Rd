@@ -28,8 +28,10 @@ based on the method used, thus this must be set on import or the column
 names will be incorrect.
 }
 \examples{
-ame_tsv <- system.file("extdata/ame.tsv", package = "memes")
+\dontrun{
+ame_tsv <- system.file("extdata/ame.tsv", package = "memes", mustWork = TRUE)
 importAme(ame_tsv)
+}
 }
 \seealso{
 [runAme()]
