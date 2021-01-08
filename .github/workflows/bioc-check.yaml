@@ -110,14 +110,14 @@ jobs:
     ## runner to a docker directory, such that we can then cache the linked
     ## directory. This directory will contain the R packages used.
     container:
-      if: "!contains(github.event.head_commit.message, '/localdeps')"
+    #  if: "!contains(github.event.head_commit.message, '/localdeps')"
       image: ${{ needs.define-docker-info.outputs.imagename }}
-      volumes:
-        - /home/runner/work/_temp/Library:/usr/local/lib/R/host-site-library
+    #  volumes:
+    #    - /home/runner/work/_temp/Library:/usr/local/lib/R/host-site-library
     ## Use the /localdeps flag to use preinstalled R libraries in docker container
-    container:
-      if: "contains(github.event.head_commit.message, '/localdeps')"
-      image: ${{ needs.define-docker-info.outputs.imagename }}
+    #container:
+    #  if: "contains(github.event.head_commit.message, '/localdeps')"
+    #  image: ${{ needs.define-docker-info.outputs.imagename }}
     # point to my modified bioc containder
     #container:
     #  image: snystrom/bioconductor_docker_meme:devel
