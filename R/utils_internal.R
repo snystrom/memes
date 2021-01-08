@@ -75,17 +75,21 @@ search_meme_database_path <- function(path = NULL){
   # Allows setting option to a universalmotif object
   # and return path
   if (is.null(path) & !is.null(getOption("meme_db"))) {
-    if (getOption("meme_db") == ""){
+    if (all(getOption("meme_db") == "")){
       stop("meme_db cannot be an empty string. Ensure the meme_db option is not set to \"\" which can happen if using an invalid file path.")
     }
-    if (!is.character(getOption("meme_db"))){
+    # If all previous checks resolve to this point, then all non-character
+    # inputs need to be written to a file. This is handled by motif_input, and
+    # the file path is returned.
+    if (!all(is.character(getOption("meme_db")))){
       db <- getOption("meme_db")
       x <- motif_input(db)
       return(x$path)
     }
   }
 
-  # Otherwise search envrionment variable / option definition
+  # Otherwise search environment variable / option definition
+  # to resolve the path
   f <- cmdfun::cmd_path_search(environment_var = "MEME_DB",
                                    option_name = "meme_db")
   f(path = path)
