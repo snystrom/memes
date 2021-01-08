@@ -112,8 +112,8 @@ jobs:
     container:
     #  if: "!contains(github.event.head_commit.message, '/localdeps')"
       image: ${{ needs.define-docker-info.outputs.imagename }}
-    #  volumes:
-    #    - /home/runner/work/_temp/Library:/usr/local/lib/R/host-site-library
+      volumes:
+        - /home/runner/work/_temp/Library:/usr/local/lib/R/host-site-library
     ## Use the /localdeps flag to use preinstalled R libraries in docker container
     #container:
     #  if: "contains(github.event.head_commit.message, '/localdeps')"
