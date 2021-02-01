@@ -268,7 +268,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Test coverage
-        if: github.ref == 'refs/heads/master' && env.run_covr == 'true'
+        if: github.ref == 'refs/heads/master' && env.run_covr == 'true' && "!contains(github.event.head_commit.message, '/nocov')"
         run: |
           covr::codecov()
         shell: Rscript {0}

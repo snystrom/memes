@@ -11,9 +11,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Codecov test
-coverage](https://codecov.io/gh/snystrom/dremeR/branch/master/graph/badge.svg)](https://codecov.io/gh/snystrom/dremeR?branch=master)
-[![R build
-status](https://github.com/snystrom/dremeR/workflows/R-CMD-check/badge.svg)](https://github.com/snystrom/dremeR/actions)
+coverage](https://codecov.io/gh/snystrom/memes/branch/master/graph/badge.svg)](https://codecov.io/gh/snystrom/memes?branch=master)
+![R-CMD-check-bioc](https://github.com/snystrom/memes/workflows/R-CMD-check-bioc/badge.svg)
 <!-- badges: end -->
 
 An R interface to the [MEME Suite](http://meme-suite.org/) family of
@@ -208,6 +207,11 @@ package. The `motif` column of the runDreme results object contains
 
 ``` r
 library(universalmotif)
+#> 
+#> Attaching package: 'universalmotif'
+#> The following object is masked from 'package:memes':
+#> 
+#>     update_motifs
 view_motifs(dreme_results$motif)
 ```
 
@@ -270,8 +274,8 @@ AME is used to test for enrichment of known motifs in target sequences.
 Alternately, it will accept all valid inputs as `runTomTom()`.
 
 ``` r
-# here I set e = 30 to detect motifs in the limited example sequences
-# In a real analysis, e should typically be < 1
+# here I set the evalue_report_threshold = 30 to detect motifs in the limited example sequences
+# In a real analysis, evalue_report_threshold should be carefully selected
 ame_results <- runAme(sequences, control = "shuffle", evalue_report_threshold = 30)
 ame_results
 #> # A tibble: 2 x 17
