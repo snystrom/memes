@@ -247,8 +247,10 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 #' @importFrom rlang .data
 #'
 #' @examples
+#' \dontrun{
 #' example_meme_txt <- system.file("extdata/meme_full.txt", package = "universalmotif")
 #' importMeme(example_meme_txt)
+#' }
 importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = FALSE){
   meme_res <- universalmotif::read_meme(meme_txt, readsites = TRUE, readsites.meta = TRUE)
 

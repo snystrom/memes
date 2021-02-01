@@ -281,6 +281,7 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #' @importFrom magrittr %T>%
 #'
 #' @examples
+#' \dontrun{
 #' if (meme_is_installed()) {
 #' # Create random named sequences as input for example
 #' seqs <- universalmotif::create_sequences(rng.seed = 123)
@@ -298,6 +299,7 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #'
 #' # database can be set to multiple values like so: 
 #' runAme(seqs, database = list(motif_file, "my_dreme_motifs" = dreme_results))
+#' }
 #' }
 runAme <- function(input,
        control = "shuffle",

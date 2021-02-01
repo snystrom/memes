@@ -80,11 +80,13 @@
 #' @importFrom magrittr %>%
 #'
 #' @examples
+#' \dontrun{
 #' if (meme_is_installed()) {
 #' motif <- universalmotif::create_motif("CCRAAAW")
 #' database <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
 #' 
 #' runTomTom(motif, database)
+#' }
 #' }
 runTomTom <- function(input, database = NULL,
                       outdir = "auto",
