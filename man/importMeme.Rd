@@ -32,8 +32,10 @@ the genomic coordinates of the motif match from input sequences can be
 parsed from the header.
 }
 \examples{
+\dontrun{
 example_meme_txt <- system.file("extdata/meme_full.txt", package = "universalmotif")
 importMeme(example_meme_txt)
+}
 }
 \seealso{
 [runMeme()] [universalmotif::read_meme()]

@@ -158,6 +158,7 @@ license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copy
 }
 
 \examples{
+\dontrun{
 if (meme_is_installed()) {
 # Create random named sequences as input for example
 seqs <- universalmotif::create_sequences(rng.seed = 123)
@@ -175,5 +176,6 @@ dreme_results <- importDremeXML(dreme_xml)
 
 # database can be set to multiple values like so: 
 runAme(seqs, database = list(motif_file, "my_dreme_motifs" = dreme_results))
+}
 }
 }
