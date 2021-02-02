@@ -123,7 +123,7 @@ is_tomtom_results <- function(res){
 #' @param res data.frame
 #'
 #' @return TRUE or FALSE
-#'
+#' @noRd
 is_universalmotif_dataframe <- function(res){
   spec_df <- universalmotif::create_motif() %>%
     as_universalmotif_dataframe()
