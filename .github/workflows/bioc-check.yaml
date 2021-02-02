@@ -238,6 +238,13 @@ jobs:
           )
         shell: Rscript {0}
 
+      - name: Run testthat
+        if:  env.has_testthat == 'true'
+        run: |
+          options(testthat.progress.max_fails = 50L)
+          devtools::test()
+        shell: Rscript {0}
+
       - name: Reveal testthat details
         if:  env.has_testthat == 'true'
         run: find . -name testthat.Rout -exec cat '{}' ';'
