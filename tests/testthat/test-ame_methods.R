@@ -1,5 +1,5 @@
 skip_if(TRUE, "Testing plots must view manually.")
-# TODO: User vdiffr
+# TODO: Use vdiffr
 # https://github.com/r-lib/vdiffr
 
 

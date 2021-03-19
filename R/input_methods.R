@@ -57,6 +57,7 @@ motif_input.data.frame <- function(input, path = tempfile(fileext = ".meme")){
   }
 
   path <- input$motif %>%
+    # TODO: swap to input %>% to_list %>%
     write_meme_input_path(path = path)
 
   out <- list(metadata = input,
