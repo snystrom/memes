@@ -170,6 +170,30 @@ runTomTom.default <- function(input, database = NULL,
   # but at that point, who cares?
   if (!silent) {
     message(ps_out$stderr)
+  } else {
+    # TODO: move this chunk to a function
+    # Grep out common warnings for database too small,
+    # or inaccurate p-value estimation
+    # and print those warnings
+    # These don't trigger a non-zero exit status, but could affect 
+    # conclusions, so important to print these.
+    err_string <- strsplit(ps_out$stderr, "\n")[[1]]
+    purrr::walk(grep("Warning:|Provide at least", err_string, value = TRUE), message)
+    
+    # Deal with discarding motifs due to duplicate IDs:
+    # Note: this warning will also proc if the IDs are non-dups but the matrix is duplicated
+    # So I'm writing a custom warning message instead
+    grep("Discarding motif .+non-unique ID", err_string, value = TRUE) %>% 
+      gsub(" in file '.+' ", "", .) %>% 
+      gsub("Discarding motif '(.+)'.+", "\\1", .) %>% 
+      {
+        if (length(.) > 0) {
+          message(paste("Discarding", length(.), "motifs because they are duplicated in the database."))
+          message("The following motifs were discarded:")
+          purrr::walk(., message)
+        }
+      }
+    
   }
 
   ps_out %>%
