@@ -1,7 +1,7 @@
 skip_if_not(meme_is_installed())
 
 test_that("runFimo works", {
-  peaks <- system.file("extdata/peaks/peaks.tsv", package = "memes") %>%
+  peaks <- system.file("extdata/peaks/peaks.tsv", package = "memes", mustWork = TRUE) %>%
     readr::read_tsv(col_types = c("seqnames" = "c", "start" = "i", "end" = "i")) %>%
     GenomicRanges::GRanges()
 

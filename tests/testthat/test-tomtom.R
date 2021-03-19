@@ -1,5 +1,17 @@
 skip_if(!meme_is_installed(), "MEME is not installed")
 
+# Setup
+withr::local_options(list("meme_db" = NULL))
+
+db <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes", mustWork = TRUE)
+fa <- system.file("extdata/fasta_ex/fa1.fa", package = "memes", mustWork = TRUE)
+dreme_out <- runDreme(fa, "shuffle", e = 39, outdir = tempdir())
+
+fa2 <- universalmotif::create_sequences(seqnum = 2, seqlen = 100, rng.seed = 123)
+names(fa2) <- seq_along(fa2)
+meme_out <- runMeme(fa2, parse_genomic_coord = FALSE)
+####
+
 test_that("tomtom target PWM and target metadata correctly assigned to eachother", {
   tt_out <<- runTomTom(dreme_out, database = db)
   expect_equal(tt_out$best_match_motif[[2]]@name, tt_out$best_match_name[[2]])
@@ -26,18 +38,20 @@ test_that("tomtom error checking suggests alternatives", {
 test_that("tomtom returns correct data types", {
   motifs <- dreme_out$motif
   ## Test that returns NA cols if all motifs no match
-  expect_message(nomatch <- runTomTom(motifs[[1]], database = db))
-  nomatch <- runTomTom(motifs[[1]], database = db)
+  ## Set impossibly low threshold to guarantee no match
+  expect_message(nomatch <<- runTomTom(motifs[[1]], database = db, thresh = 1e-08))
   expect_true(is.na(nomatch$tomtom))
   expect_true(is.na(nomatch$best_match_motif))
 
-  expect_message(nomatch_multi <- runTomTom(motifs[c(1,3)], database = db))
+  expect_message(nomatch_multi <- runTomTom(motifs[c(1,3)], database = db, thresh = 1e-08))
   expect_true(all(is.na(nomatch_multi$tomtom)))
   expect_true(all(is.na(nomatch_multi$best_match_motif)))
 
   ## Test that returns NULL + real value if some motifs no match
-  classes <- unique(vapply(tt_out$best_match_motif, class, character(1)))
-  expect_true(identical(c("NULL", "universalmotif"), classes))
+  classes <- unique(vapply(tt_out$best_match_motif, 
+                           function(x) {class(x)}, 
+                           character(1)))
+  expect_true(identical(c("NULL", "universalmotif"), sort(classes)))
 })
 
 test_that("view_tomtom_hits works", {
@@ -83,8 +97,11 @@ test_that("tomtom works w/ nonstandard db inputs", {
   # expect warning re discarded motifs 
   # this command shows expected output: 
   # runTomTom(motif, database = "inst/extdata/db/fly_factor_survey_id.meme", silent = FALSE)
-  expect_message(runTomTom(motif, database = "inst/extdata/db/fly_factor_survey_id.meme"))
+  expect_message(runTomTom(motif, database = "inst/extdata/db/fly_factor_survey_id.meme"), "duplicated in the database")
   # db w/ no altname
+  #db1["altname"] <- NA_character_
+  #runTomTom(motif, database = list(db1, db1), silent = F)
+  expect_message(runTomTom(motif, database = list(db1, db1), silent = F), "duplicated in the database")
   # > 1 db with identical values
   expect_true(FALSE)
 })
