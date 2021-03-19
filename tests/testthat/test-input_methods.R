@@ -1,14 +1,10 @@
-context("input methods & meme_database_path search_function")
-
+withr::local_options(list(meme_db = NULL))
 #####
-# MOVE THIS TO HELPER
-#fa <- system.file("extdata/fasta_ex/fa1.fa", package = "memes") %>%
-#  Biostrings::readDNAStringSet()
-#dreme_out <- runDreme(fa, "shuffle", e = 39)
-dreme_out <- system.file("extdata/dreme_example/dreme.xml", package = "memes") %>%
+# Setup
+dreme_out <- system.file("extdata/dreme_example/dreme.xml", package = "memes", mustWork = TRUE) %>%
   importDremeXML()
 
-fb <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
+fb <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes", mustWork = TRUE)
 fb_name <- basename(fb)
 ####
 
@@ -60,15 +56,11 @@ test_that("motif input method dispatch works",{
 })
 
 test_that("meme_db option works correctly", {
-  options(meme_db = "")
   expect_error(search_meme_database_path())
   db_path <- system.file("extdata/flyFactorSurvey_cleaned.meme", 
-                                   package = "memes")
-  options(meme_db = db_path)
+                                   package = "memes", mustWork = TRUE)
+  expect_equal(search_meme_database_path(db_path), db_path)
+  withr::local_options(list(meme_db = db_path))
   expect_equal(search_meme_database_path(), db_path)
 
 })
-
-testthat::teardown(
-  options(meme_db = NULL)
-)

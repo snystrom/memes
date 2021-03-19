@@ -101,7 +101,11 @@ test_that("tomtom works w/ nonstandard db inputs", {
   # db w/ no altname
   #db1["altname"] <- NA_character_
   #runTomTom(motif, database = list(db1, db1), silent = F)
-  expect_message(runTomTom(motif, database = list(db1, db1), silent = F), "duplicated in the database")
+  #expect_message(runTomTom(motif, database = list(db1, db1), silent = F), "duplicated in the database")
+  # Goal here is warn if there is no altname? Does tomtom warn about this?
+  # I think this is needed to ensure that altname exists for join operation to parse data
+  expect_true(FALSE)
   # > 1 db with identical values
+  # Not sure what the error message will be here
   expect_true(FALSE)
 })

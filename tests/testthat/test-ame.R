@@ -99,3 +99,10 @@ test_that("ame import methods work", {
   # Need to make some tests/testdata/ ame output tsv files
   expect_equal("NO", "You need to write import tests for AME")
 })
+
+# TODO
+test_that("list input similar runDreme tests", {
+  skip_if(TRUE, "Need to write list input tests")
+  # Check list input
+  expect_equal("NO", "Need to write test for list input to runAme similar to runDreme tests")
+})
