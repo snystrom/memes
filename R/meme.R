@@ -46,7 +46,7 @@
 #' @param ... additional arguments passed to MEME (see below)
 #'
 #' @return MEME results in universalmotif data.frame format (see:
-#'   [as_universalmotif_dataframe()]). `sites_hits` is a nested data.frame
+#'   [universalmotif::to_df()]). `sites_hits` is a nested data.frame
 #'   column containing the position within each input sequence of matches to the
 #'   identified motif.
 #'

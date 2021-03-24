@@ -46,7 +46,27 @@ motif_input.character <- function(input, path = NULL){
 }
 
 #' @export
+motif_input.universalmotif_df <- function(input, path = tempfile(fileext = ".meme")){
+
+  path <- input %>%
+    # TODO: catch warning?
+    universalmotif::to_list(extrainfo = TRUE) %>% 
+    write_meme_input_path(path = path)
+
+  out <- list(metadata = input,
+              path = path)
+  return(out)
+}
+
+#' @export
 motif_input.data.frame <- function(input, path = tempfile(fileext = ".meme")){
+  if (is(input, "universalmotif_df")) {
+    # This is needed because inheritance is weird & NextMethod() doesn't work right...
+    # TODO: fix this/make sure this isn't too hacky
+    return(motif_input.universalmotif_df(input, path))
+  }
+  # This function will catch if a universalmotif_df was manipulated by tidyverse
+  # thus stripping it's `universalmotif_df` class
 
   if (!("motif" %in% names(input))) {
     stop("input data.frame must contain \"motif\" column")
@@ -57,7 +77,6 @@ motif_input.data.frame <- function(input, path = tempfile(fileext = ".meme")){
   }
 
   path <- input$motif %>%
-    # TODO: swap to input %>% to_list %>%
     write_meme_input_path(path = path)
 
   out <- list(metadata = input,

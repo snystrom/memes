@@ -98,12 +98,21 @@ prepareDremeFlags <- function(input, control, outdir, ...){
 #' parseDreme("dreme_out/dreme.xml")
 #' @noRd
 parseDreme <- function(xml){
-  dreme_stats <- dreme_motif_stats(xml)
+  dreme_stats <- dreme_motif_stats(xml) %>% 
+    # Don't need pvalue or evalue cols anymore 
+    # since they're added by universalmotif as 
+    # pval and eval
+    dplyr::select(-"pvalue", -"evalue")
 
   pfms <- dreme_to_pfm(xml)
 
   dreme_stats$motif <- pfms
-  return(dreme_stats)
+  # Convert to motif_df format
+  # suppressing messages about adding empty motif slots
+  # TODO: ensure this is safe
+  suppressMessages(
+    universalmotif::update_motifs(dreme_stats, extrainfo = TRUE)
+    )
 }
 
 #' Returns Dreme help lines

@@ -206,8 +206,9 @@ runTomTom.default <- function(input, database = NULL,
   tomtom_out <- cmdfun::cmd_file_expect("tomtom", c("tsv", "xml", "html"), outdir = outdir)
 
   tomtom_results <- parseTomTom(tomtom_out$xml, query_metadata = input$metadata)
-
-  return(tomtom_results)
+  # TODO: revisit w/ universalmotif::update_motifs
+  return(structure(tomtom_results, class = c("universalmotif_df", "data.frame")))
+  #return(tomtom_results)
 }
 
 
@@ -648,6 +649,10 @@ parseTomTom <- function(tomtom_xml, query_metadata = NULL){
   }
 
   tomtom_results <- join_tomtom_tables(query, hits)
+  # TODO: rename evalue = eval, qvalue = qval, pvalue = pval
+  # and the corresponding best_match_, etc. cols?
+  # This will fit better with the universalmotif_df format.
+  # and prevent me from rewriting the entire parsing code.
 
   return(tomtom_results)
 }

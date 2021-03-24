@@ -41,8 +41,10 @@ new_dreme_results <- function(){
              nsites = integer(),
              positive_hits = integer(),
              negative_hits = integer(),
-             pvalue = numeric(),
-             evalue = numeric(),
+             #pvalue = numeric(),
+             #evalue = numeric(),
+             pval = numeric(),
+             eval = numeric(),
              unerased_evalue = numeric(),
              positive_total = integer(),
              negative_total = integer(),
@@ -186,7 +188,7 @@ error_universalmotif_list <- function(list){
 #' removing, or renaming columns. When manipulating columns that correspond to
 #' slot names of a `universalmotif` object, this stages changes which can be
 #' propagated to the `universalmotif` object in the `motif` column by calling
-#' [update_motifs()]. Users can convert the data.frame back to pure
+#' [memes_update_motifs()]. Users can convert the data.frame back to pure
 #' `universalmotif` format using [as_universalmotif()].
 #'
 #' Columns which are linked to `universalmotif` format are:
@@ -194,7 +196,7 @@ error_universalmotif_list <- function(list){
 #' `icscore`, `nsites`, `bkgsites`, `pval`, `qval`, `eval`
 #' 
 #' Note that changing the above columns will result in changes to the
-#' `universalmotif` representation when calling [update_motifs()] or
+#' `universalmotif` representation when calling [memes_update_motifs()] or
 #' [as_universalmotif()]
 #'
 #' @param motif universalmotif object or list of universalmotifs
@@ -203,10 +205,10 @@ error_universalmotif_list <- function(list){
 #' @return data.frame with all motif metadata as columns and a special `motif`
 #'   column containing the universalmotif object representation of each motif.
 #'
-#' @seealso [update_motifs()] for synchronizing the data.frame values with the
+#' @seealso [memes_update_motifs()] for synchronizing the data.frame values with the
 #'   `motif` column, and [as_universalmotif()] to convert back to `universalmotif` format.
 #' 
-#' @export
+#' @noRd
 #'
 #' @examples
 #' motif <- universalmotif::create_motif()
@@ -241,7 +243,7 @@ as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
 #'   column values.
 #'   
 #' @seealso [as_universalmotif_dataframe()]
-#' @export
+#' @noRd
 #'
 #' @examples
 #' motif <- universalmotif::create_motif()
@@ -251,7 +253,7 @@ as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
 #' motifs <- as_universalmotif(df)
 as_universalmotif <- function(data){
   data %<>%
-    update_motifs()
+    memes_update_motifs()
 
   return(data$motif)
 }
