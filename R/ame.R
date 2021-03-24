@@ -8,7 +8,7 @@ runAme.list <- function(input,
                         meme_path = NULL,
                         sequences = FALSE,
                         silent = TRUE, ...){
-
+  
   x <- sequence_input_control_list(input, control)
   input <- x$input
   control <- x$control

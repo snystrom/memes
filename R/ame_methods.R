@@ -67,8 +67,8 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
                   minType = min(.data$type_rank),
                   maxType = max(.data$type_rank)) %>%
     dplyr::ungroup() %>%
-    dplyr::arrange("nType", "minType", "maxType") %>%
-    tibble::rowid_to_column("order")
+    dplyr::arrange(!!sym("nType"), !!sym("type_rank"), !!sym("minType"), !!sym("maxType")) %>% 
+    tibble::rowid_to_column(var = "order")
 
 }
 
@@ -137,7 +137,6 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
   id <- enquo(id)
   group <- enquo(group)
   value <- enquo(value)
-
 
   # Only order by group if group is set
   if (rlang::quo_is_null(group)){
