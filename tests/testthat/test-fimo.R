@@ -39,3 +39,9 @@ test_that("runFimo works", {
   expect_message(try(runFimo(seq, motif, psspp = 'x'), silent = TRUE), "Error processing command line options")
 
 })
+
+test_that("import works", {
+  expect_error(importFimo("/file/does/not/exist"))
+  expect_error(parseFimo("/file/does/not/exist"))
+  expect_s4_class(importFimo(system.file("extdata/fimo.tsv", package = "memes", mustWork = TRUE)), "GRanges")
+})
