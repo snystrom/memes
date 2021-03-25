@@ -106,6 +106,8 @@ view_tomtom_nomatch <- function(motif){
 #' In matrix form NO MATCH is a matrix with diagonal all 1,
 #' except at "space" position where all values are 1
 #'
+#' This is a very silly hack, and I love it.
+#'
 #' @return
 #'
 #' @noRd
