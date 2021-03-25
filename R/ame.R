@@ -92,7 +92,7 @@ runAme.default <- function(input,
     cmdfun::cmd_error_if_missing()
 
   import_sequences <- FALSE
-  if (method == "fisher" & sequences == TRUE){
+  if (method == "fisher" & sequences){
     import_sequences <- ame_out$sequences
   }
 
@@ -180,9 +180,9 @@ importAme <- function(path, method = "fisher", sequences = FALSE){
     return(NULL)
   }
 
-  if (sequences == FALSE | method != "fisher"){return(data)}
+  if (!sequences | method != "fisher"){return(data)}
 
-  if (sequences != FALSE & method == "fisher"){
+  if (sequences & method == "fisher"){
     seq <- importAmeSequences(sequences)
 
     if (is.null(seq)){
