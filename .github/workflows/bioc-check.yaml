@@ -33,6 +33,8 @@ on:
   push:
     branches:
       - master
+      - devel
+      - new-motif-df
       - 'RELEASE_*'
   pull_request:
     branches:
@@ -50,10 +52,10 @@ name: R-CMD-check-bioc
 ## "/nocache" in the commit message.
 env:
   has_testthat: 'true'
-  run_covr: 'false'
+  run_covr: 'true'
   run_pkgdown: 'true'
   has_RUnit: 'false'
-  cache-version: 'cache-v7'
+  cache-version: 'cache-v8'
 
 jobs:
   ## This first job uses the GitHub repository branch name to infer what
