@@ -74,6 +74,7 @@ The `view_motifs()` function accepts a `universalmotif` list and can be used to
 visualize the motifs.
 ```{r}
 library(universalmotif)
+library(dplyr)
 
 dreme_out %>% 
   to_list() %>% 
@@ -83,8 +84,6 @@ dreme_out %>%
 The primary advantage of using the `data.frame` output allows simple integration
 with base subsetting, piping, and the `tidyverse`.
 ```{r}
-library(dplyr)
-
 dreme_out %>% 
   # after filtering with dplyr, only motifs with length 3 will be plotted
   filter(length == 3) %>% 
