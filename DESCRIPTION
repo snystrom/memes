@@ -49,6 +49,8 @@ Suggests:
     plyranges (>= 1.9.1),
     rmarkdown,
     covr
+Remotes:
+    bjmt/universalmotif
 biocViews: DataImport, FunctionalGenomics, GeneRegulation, MotifAnnotation, MotifDiscovery, SequenceMatching, Software
 RoxygenNote: 7.1.1
 SystemRequirements: Meme Suite (v5.1.1 or above) <http://meme-suite.org/doc/download.html>
