@@ -42,6 +42,7 @@ Suggests:
     forcats,
     testthat (>= 2.1.0),
     knitr,
+    matrixStats,
     MotifDb,
     pheatmap,
     PMCMRplus,

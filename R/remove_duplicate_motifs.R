@@ -44,6 +44,7 @@ remove_duplicate_motifs.list <- function(x){
 #'
 #' @return a list with entries "unique" for each unique entry, and "dups" for each duplicate entry
 #' @noRd
+#' @importFrom matrixStats colMaxs
 identify_duplicate_motifs <- function(x){
   cor <- universalmotif::compare_motifs(x, method = "PCC")
 
