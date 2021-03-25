@@ -18,10 +18,8 @@ data.frame with statistics for each discovered motif. The `motifs`
 Import Dreme output from previous run
 }
 \examples{
-\dontrun{
-dreme_xml <- system.file("extdata/dreme.xml", package = "memes")
+dreme_xml <- system.file("extdata", "dreme.xml", package = "memes")
 importDremeXML(dreme_xml)
-}
 }
 \seealso{
 [runDreme()]

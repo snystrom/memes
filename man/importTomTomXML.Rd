@@ -35,10 +35,8 @@ the `tomtom` list column contains data.frames with the following format:
     - match_motif: universalmotif object containing the PWM that was matched
 }
 \examples{
-\dontrun{
-tomtom_xml <- system.file("extdata/tomtom.xml", package = "memes")
+tomtom_xml <- system.file("extdata", "tomtom.xml", package = "memes")
 importTomTomXML(tomtom_xml)
-}
 }
 \seealso{
 [runTomTom()]
