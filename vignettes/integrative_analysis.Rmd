@@ -57,7 +57,7 @@ meme_db_path <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "m
 ```{r}
 library(universalmotif)
 meme_db <- read_meme(meme_db_path) %>% 
-  as_universalmotif_dataframe()
+  to_df()
 ```
 
 ```{r}
@@ -110,7 +110,7 @@ by_binding <- summit_flank %>%
 ```
 
 ```{r}
-options(meme_db = as_universalmotif(meme_db_expressed))
+options(meme_db = to_list(meme_db_expressed, extrainfo = FALSE))
 ```
 
 ```{r}
