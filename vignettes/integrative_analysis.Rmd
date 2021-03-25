@@ -289,10 +289,12 @@ cols <- colorRampPalette(c("white", "dodgerblue4"))(255)
 
 anno.df <- dreme_by_binding_renamed %>% 
   dplyr::select(name, binding_type) %>% 
+  tibble::remove_rownames() %>% 
   tibble::column_to_rownames("name")
 
 dreme_by_binding_renamed %>% 
-  {universalmotif::compare_motifs(.$motif, method = "PCC")} %>% 
+  to_list() %>% 
+  universalmotif::compare_motifs(method = "PCC") %>% 
   pheatmap::pheatmap(color = cols, 
                      breaks = seq(0, 1, by = 1/255), 
                      annotation_col = anno.df, 
@@ -384,7 +386,7 @@ all_res <- dreme_results %>%
   runTomTom(dist = "ed")
 ```
 
-```{r, fig.height=8, fig.width=8}
+```{r, fig.height=8, fig.width=8.5}
 all_res %>% 
   view_tomtom_hits(3) %>% 
   cowplot::plot_grid(plotlist = ., labels = "AUTO")
@@ -397,7 +399,7 @@ all_res %<>%
 ```
 
 
-```{r, fig.height=4.5, fig.width=8}
+```{r, fig.height=4.5, fig.width=8.5}
 all_res %>% 
   view_tomtom_hits(1) %>% 
   cowplot::plot_grid(plotlist = ., labels = "AUTO")
@@ -608,3 +610,9 @@ summit_nearest_e93_motif %>%
   PMCMRplus::adAllPairsTest(distance ~ behavior, ., p.adjust.method = "fdr") 
 
 ```
+
+# Session Info
+```{r}
+sessionInfo()
+```
+

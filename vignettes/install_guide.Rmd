@@ -86,3 +86,8 @@ I get the following error: installation of package 'R.oo' had non-zero exit stat
  - Problem: Your R installation likely lacks the `R.css` file
  - Solution: when installing the package, set `remotes::install_github("snystrom/memes", INSTALL_opts = c("--no-html"))`
  - NOTE: all help documents for memes will be parsed as plain-text so will lack links or other formatting.
+
+# Session Info
+```{r}
+sessionInfo()
+```
