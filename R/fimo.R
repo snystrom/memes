@@ -244,10 +244,8 @@ parseFimo <- function(fimo_tsv){
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' fimo_tsv <- system.file("extdata/fimo.tsv", package = "memes")
+#' fimo_tsv <- system.file("extdata", "fimo.tsv", package = "memes")
 #' importFimo(fimo_tsv)
-#' }
 importFimo <- function(fimo_tsv){
   parseFimo(fimo_tsv)
 }

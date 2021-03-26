@@ -18,8 +18,6 @@ GenomicRanges object for each match position. Note unless coordinates
 Import FIMO results
 }
 \examples{
-\dontrun{
-fimo_tsv <- system.file("extdata/fimo.tsv", package = "memes")
+fimo_tsv <- system.file("extdata", "fimo.tsv", package = "memes")
 importFimo(fimo_tsv)
-}
 }

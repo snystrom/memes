@@ -102,12 +102,10 @@ license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copy
 }
 
 \examples{
-\dontrun{
 if (meme_is_installed()) {
 motif <- universalmotif::create_motif("CCRAAAW")
-database <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
+database <- system.file("extdata", "flyFactorSurvey_cleaned.meme", package = "memes")
 
 runTomTom(motif, database)
-}
 }
 }

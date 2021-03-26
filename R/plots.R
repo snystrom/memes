@@ -35,8 +35,8 @@ cowplot_title <- function(plot, title, ...){
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' results <- importTomTomXML(system.file("extdata/tomtom.xml", package = "memes"))
+#' results <- importTomTomXML(system.file("extdata", "tomtom.xml", package = "memes"))
+#' \donttest{
 #' # show top 3 hits
 #' view_tomtom_hits(results, top_n = 3)
 #' }

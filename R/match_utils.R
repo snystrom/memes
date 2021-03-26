@@ -19,15 +19,13 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' if (meme_is_installed()){
 #' motif <- universalmotif::create_motif("CCRAAAW", name = "example_motif")
-#' db <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
+#' db <- system.file("extdata", "flyFactorSurvey_cleaned.meme", package = "memes")
 #' res <- runTomTom(motif, database = db)
 #' res$best_match_name
 #' res2 <- force_best_match(res, c("example_motif" = "Eip93F_SANGER_10"))
 #' res2$best_match_name
-#' }
 #' }
 force_best_match <- function(res, matches){
   # TODO: change example to use tomtom.xml import?
