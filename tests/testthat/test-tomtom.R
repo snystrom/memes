@@ -97,7 +97,16 @@ test_that("tomtom works w/ nonstandard db inputs", {
   # expect warning re discarded motifs 
   # this command shows expected output: 
   # runTomTom(motif, database = "inst/extdata/db/fly_factor_survey_id.meme", silent = FALSE)
-  suppressMessages(expect_message(runTomTom(motif, database = db), "duplicated in the database"))
+  dup_db <- system.file("extdata", "flyFactor_dups.meme", package = "memes", mustWork = TRUE)
+  suppressMessages(expect_message(runTomTom(motif, database = dup_db), "duplicated in the database"))
+ 
+  # TODO: 
+  # runTomTom doesn't throw duplicate motif error
+  # when using universalmotif db as input...
+  #flyFactor_data %>% 
+  #  dplyr::filter(consensus == "MMCACCTGYYV") %>% 
+  #  to_list() %>% 
+  #  {runTomTom(motif, database = ., silent = F)} -> x
   
 })
 
