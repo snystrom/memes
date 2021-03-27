@@ -45,7 +45,7 @@
 #'   2. `MEME_PATH` setting in `.Renviron` or `.bashrc`
 #' @param ... additional arguments passed to MEME (see below)
 #'
-#' @return MEME results in universalmotif data.frame format (see:
+#' @return MEME results in universalmotif_df format (see:
 #'   [universalmotif::to_df()]). `sites_hits` is a nested data.frame
 #'   column containing the position within each input sequence of matches to the
 #'   identified motif.
@@ -290,6 +290,9 @@ importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = F
                     )
   }
 
+  # Convert to universalmotif_df format
+  meme_dataframe <- suppressMessages(universalmotif::update_motifs(meme_dataframe))
+  
   if (!combined_sites){
     return(meme_dataframe)
   } else {
