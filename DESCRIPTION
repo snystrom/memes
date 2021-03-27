@@ -34,7 +34,7 @@ Imports:
     tidyr,
     utils,
     usethis,
-    universalmotif (>= 1.6.1),
+    universalmotif (>= 1.9.3),
     xml2
 Suggests:
     cowplot,

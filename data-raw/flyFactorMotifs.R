@@ -1,6 +1,6 @@
 library(memes)
-library(universalmotif)
 library(magrittr)
+library(universalmotif)
 
 flyFactorDb <- MotifDb::MotifDb %>%
   MotifDb::query("FlyFactorSurvey")
@@ -9,57 +9,33 @@ flyFactorMotifs <- flyFactorDb %>%
   convert_motifs()
 
 flyFactor_data <- flyFactorMotifs %>%
-  as_universalmotif_dataframe()
+  to_df()
 
-#############
-# Add motifs that are missing from MotifDb FlyFactor Survey data
-meme_ffs <- read_meme("inst/extdata/db/fly_factor_survey_id.meme") %>%
-  as_universalmotif_dataframe()
-
-flyFactor_data %<>%
-  dplyr::mutate(id = gsub("_FBgn\\d+", "", altname))
-
-missing_ff <- meme_ffs %>%
-  dplyr::filter(!(name %in% flyFactor_data$id)) %>%
-  dplyr::mutate(symbol = gsub("(.+)-?_.+", "\\1", name)) %>%
-  dplyr::mutate(symbol = gsub("-.+", "", symbol)) %>%
-  dplyr::mutate(symbol = ifelse(symbol == "Blimp", "Blimp-1", symbol)) %>%
-  dplyr::mutate(isoform = gsub("_.+", "", name)) %>%
-  dplyr::mutate(fbgn = gsub("_.+", "", altname)) %>%
-  tidyr::unite(name, c("name", "fbgn"))
-
-missing_ffs_noentries <- missing_ff %>%
-  dplyr::filter(!(symbol %in% flyFactor_data$name)) %>%
-  dplyr::mutate(fbgn = gsub("_.+", "", altname)) %>%
-  dplyr::select(-altname) %>%
-  dplyr::rename(altname = symbol) %>%
-  dplyr::select(-isoform)
-
-missing_ffs_motifs <- as_universalmotif(missing_ffs_noentries)
-# Add datasource entry
-missing_ffs_motifs <- purrr::map(missing_ffs_motifs, ~{
-  .x["extrainfo"] <- c("dataSource" = "FlyFactorSurvey")
-  return(.x)
-})
-
-##########
-
-# Tidy motifdb data
 flyFactor_data %<>%
   dplyr::rename("altname" = "name",
-                "name" = "altname")
-
-flyFactor_data %<>%
+                "name" = "altname") %>% 
   # Critical to set remove = FALSE to keep the `name` column
   tidyr::separate(name, c("tfid"), remove = FALSE, extra = "drop") %>%
   # Only use the tfid if the altname contains an FBgn
-  dplyr::mutate(altname = ifelse(grepl("^FBgn", altname), tfid, altname)) %>%
-  dplyr::mutate(name = gsub("_FBgn\\d+", "", name))
+  dplyr::mutate(altname = ifelse(grepl("^FBgn", altname), tfid, altname)) %>% 
+  dplyr::mutate(name = gsub("_FBgn\\d+", "", name)) %>%
+  # rename all "da" instances using their tfid value instead
+  dplyr::mutate(altname = ifelse(altname == "da", tfid, altname))
 
+swap_alt_id <- c("CG6272", "Clk", "Max", "Mnt", "Jra")
+remove <- "Bgb"
 
-flyFactorMotifs <- as_universalmotif(flyFactor_data)
-# Combine data together
-flyFactorMotifs <- c(flyFactorMotifs, missing_ffs_motifs)
+flyFactor_data %<>%
+  dplyr::mutate(altname = ifelse(altname %in% swap_alt_id, tfid, altname)) %>%
+  dplyr::filter(!(altname %in% remove))
 
+# This operation takes a while to run on large motif lists
+flyFactor_dedup <- remove_duplicate_motifs(flyFactor_data)
+flyFactorMotifs_final <- to_list(flyFactor_dedup, extrainfo = FALSE)
 
-write_meme(flyFactorMotifs, "inst/extdata/flyFactorSurvey_cleaned.meme")
+write_meme(flyFactorMotifs_final, "inst/extdata/flyFactorSurvey_cleaned.meme")
+
+flyFactor_data %>% 
+  dplyr::filter(consensus == "MMCACCTGYYV") %>% 
+  to_list() %>% 
+  write_meme("inst/extdata/flyFactor_dups.meme")
