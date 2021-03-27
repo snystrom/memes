@@ -271,10 +271,6 @@ dreme_by_binding_renamed <- dreme_by_binding %>%
 ```{r, fig.height=5, fig.width=8}
 cols <- colorRampPalette(c("white", "dodgerblue4"))(255)
 
-# TODO: R CMD BUILD fails here saying:
-# Can't subset columns that don't exist.
-# ✖ Column `binding_type` doesn't exist.
-# I think because gh-actions is using old universalmotif  version where extrainfo = FALSE by default
 anno.df <- dreme_by_binding_renamed %>% 
   dplyr::select(name, binding_type) %>% 
   tibble::remove_rownames() %>% 
