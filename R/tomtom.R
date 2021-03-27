@@ -204,9 +204,8 @@ runTomTom.default <- function(input, database = NULL,
   tomtom_out <- cmdfun::cmd_file_expect("tomtom", c("tsv", "xml", "html"), outdir = outdir)
 
   tomtom_results <- parseTomTom(tomtom_out$xml, query_metadata = input$metadata)
-  # TODO: revisit w/ universalmotif::update_motifs
-  return(structure(tomtom_results, class = c("universalmotif_df", "data.frame")))
-  #return(tomtom_results)
+
+  suppressMessages(universalmotif::update_motifs(tomtom_results))
 }
 
 
@@ -341,12 +340,12 @@ get_tomtom_match_data <- function(tomtom_xml_data){
     dplyr::mutate_at(c("query_idx", "idx", "off"), as.integer) %>%
     dplyr::mutate_at("rc", as.character()) %>%
     dplyr::rename("offset" = "off",
-                  "pvalue" = "pv",
-                  "evalue" = "ev",
-                  "qvalue" = "qv",
+                  "pval" = "pv",
+                  "eval" = "ev",
+                  "qval" = "qv",
                   "target_idx" = "idx") %>%
     dplyr::mutate(strand = ifelse(.data$rc == "y", "-", "+")) %>%
-    dplyr::rename_at(c("offset", "pvalue", "evalue", "qvalue", "strand"), ~{paste0("match_", .x)}) %>%
+    dplyr::rename_at(c("offset", "pval", "eval", "qval", "strand"), ~{paste0("match_", .x)}) %>%
     dplyr::select(-"rc")
 
   return(match_df)
@@ -459,9 +458,9 @@ join_tomtom_tables <- function(query, hits){
       dplyr::mutate(best_match_name = NA_character_,
                     best_match_altname = NA_character_,
                     best_match_offset = NA_integer_,
-                    best_match_pvalue = NA_real_,
-                    best_match_evalue = NA_real_,
-                    best_match_qvalue = NA_real_,
+                    best_match_pval = NA_real_,
+                    best_match_eval = NA_real_,
+                    best_match_qval = NA_real_,
                     best_match_strand = NA_character_,
                     best_match_motif = NA,
                     tomtom = NA) %>%
@@ -473,8 +472,8 @@ join_tomtom_tables <- function(query, hits){
       dplyr::rename("match_name" = "match_id",
                     "match_altname" = "match_alt") %>%
       dplyr::select(-"query_idx", -"db_idx", -"target_idx") %>% 
-      dplyr::arrange(!!rlang::sym("match_qvalue"),
-                     !!rlang::sym("match_pvalue"))
+      dplyr::arrange(!!rlang::sym("match_qval"),
+                     !!rlang::sym("match_pval"))
 
   }
 
@@ -506,7 +505,7 @@ join_tomtom_tables <- function(query, hits){
 #' nest_tomtom_fun(tomtom_data, tomtom_best_match_min_evalue)
 tomtom_best_match_min_evalue <- function(df){
     df %>%
-      dplyr::filter("match_evalue" == min("match_evalue")) %>%
+      dplyr::filter("match_eval" == min("match_eval")) %>%
       utils::head(1) %>%
       dplyr::rename_all(~{paste0("best_", .x)})
 }
@@ -536,9 +535,9 @@ nest_tomtom_fun <- function(tomtom_results, fun){
                  "match_motif",
                  "db_name",
                  "match_offset",
-                 "match_pvalue",
-                 "match_evalue",
-                 "match_qvalue",
+                 "match_pval",
+                 "match_eval",
+                 "match_qval",
                  "match_strand")
 
   # Need to remove "motif" S4 column & rejoin unique entries because `tibble` or
@@ -610,9 +609,9 @@ nest_tomtom_results_best_top_row <- function(tomtom_results){
 #'     - alt: alternate name of query PWM
 #'     - match_id: name of matched PWM
 #'     - match_alt: alt name of matched PWM
-#'     - match_pvalue: p-value of match
-#'     - match_evalue: E-value of match
-#'     - match_qvalue: q-value of match
+#'     - match_pval: p-value of match
+#'     - match_eval: E-value of match
+#'     - match_qval: q-value of match
 #'     - match_offset: number of letters the query was offset from the target match
 #'     - match_strand: whether the motif was found on input strand (+) or as reverse-complement (-)
 #'     - db_name: database source of matched motif
