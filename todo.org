@@ -1,0 +1,10 @@
+#+TITLE: Todo
+
+* Presubmission [2/4]:
+** DONE Update .rda to new universalmotif
+** DONE change tomtom pvalue -> pval, etc. to match universalmotif_df format
+*** DONE Change the tomtom_df that gets returned & nested
+*** DONE change the nest_tomtom functions to grab new colnames
+*** DONE Update docs accordingly
+** TODO Double check that runDreme and runMeme docs show correct colnames for return values
+** TODO
