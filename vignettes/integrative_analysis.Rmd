@@ -347,7 +347,9 @@ Finally, we visualize the TomTom results to identify candidate TFs driving the p
 dreme_by_binding_unique %>% 
   view_tomtom_hits(3) %>%
   # TODO: test  if this fixes subscript error
-  cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO", byrow = TRUE)
+  #cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO", byrow = TRUE)
+  patchwork::wrap_plots(nrow = 1) +
+    patchwork::plot_annotation(tag_levels = "A")
 ```
 ```{r, fig.height=4, fig.width=12, eval=F, include=F}
 #TODO: add this type of behavior?
