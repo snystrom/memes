@@ -7,4 +7,7 @@
 *** DONE change the nest_tomtom functions to grab new colnames
 *** DONE Update docs accordingly
 ** TODO Double check that runDreme and runMeme docs show correct colnames for return values
-** TODO
+** TODO view_tomtom_hits %>% cowplot subscript out of bounds error
+doesn't reproduce on my local image, try pulling newest docker image & trying again.
+- Candidate issue: https://github.com/wilkelab/cowplot/blame/901173d7a7db61f3e8883944dda8e5181fc2625f/R/plot_grid.R
+  - see line ~180
