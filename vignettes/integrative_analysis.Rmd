@@ -345,7 +345,9 @@ dreme_by_binding_unique <- dreme_by_binding_renamed %>%
 Finally, we visualize the TomTom results to identify candidate TFs driving the presence of ectopic and orphan sites.
 ```{r, fig.height=4, fig.width=12}
 dreme_by_binding_unique %>% 
-  view_tomtom_hits(3) %>% 
+  # TODO: test  if this fixes subscript error
+  #view_tomtom_hits(3) %>% 
+  view_tomtom_hits() %>% 
   cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
 ```
 
