@@ -320,21 +320,22 @@ ame_denovo_by_binding %>%
   ame_plot_heatmap(group = binding_type, value = "normalize")
 ```
 
-However, there are 4 interesting motifs which distinguish orphan and ectopic
+However, there are 2 interesting motifs which distinguish orphan and ectopic
 sites from entopic sites. To help identify which TFs these motifs might belong
 to, we can use TomTom to match them to known motifs.
 
-First, we isolate the motifs by ID which are unique to 1 group.
+First, we isolate the motifs by ID which are not found in entopic sites.
 ```{r}
+entopic_motifs <- ame_denovo_by_binding %>% 
+  dplyr::filter(binding_type == "entopic") %>% 
+  dplyr::pull(motif_id)
+
 ame_denovo_binding_unique <- ame_denovo_by_binding %>% 
-  # Counts the number of groups a motif is found within
-  dplyr::group_by(motif_id) %>% 
-  dplyr::add_count() %>% 
-  # Selects only rows from motifs found in 1 group
-  dplyr::filter(n == 1)
+  dplyr::filter(!(motif_id %in% entopic_motifs))
 ```
 
-Next, we use the motif id's from the AME results to filter the dreme results, and run TomTom on that subset.
+Next, we use the motif id's from the unique AME results to filter the Dreme
+results, and run TomTom on that subset.
 ```{r}
 dreme_by_binding_unique <- dreme_by_binding_renamed %>% 
   dplyr::filter(name %in% ame_denovo_binding_unique$motif_id) %>% 
@@ -344,6 +345,25 @@ dreme_by_binding_unique <- dreme_by_binding_renamed %>%
 Finally, we visualize the TomTom results to identify candidate TFs driving the presence of ectopic and orphan sites.
 ```{r, fig.height=4, fig.width=12}
 dreme_by_binding_unique %>% 
+  view_tomtom_hits(3) %>% 
+  cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
+```
+
+```{r, fig.height=4, fig.width=12, eval=F, include=F}
+#TODO: add this type of behavior?
+edit_motif <- function(m){
+  class(m) <- NULL
+  m 
+}
+
+motif_rc(dreme_by_binding_unique$motif$m14_CAWTTCG)
+dreme_by_binding_unique$motif$m14_CAWTTCG
+
+dreme_by_binding_unique %>% 
+  dplyr::mutate(motif = I(ifelse(name == "entopic_CAWTTCG", motif_rc(edit_motif(motif)), edit_motif(motif)))) %>% 
+  universalmotif::update_motifs() %>% 
+  #dplyr::mutate(motif = ifelse(name == "entopic_CAWTTCG", motif_rc(motif), motif)) %>% 
+  #update_motifs() %>% 
   view_tomtom_hits(3) %>% 
   cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
 ```
@@ -372,26 +392,31 @@ all_res <- dreme_results %>%
 
 ```{r, fig.height=8, fig.width=8.5}
 all_res %>% 
+  # Plot the top 3 matches
   view_tomtom_hits(3) %>% 
+  # Arrange into figure panels
   cowplot::plot_grid(plotlist = ., labels = "AUTO")
 ```
+After manually inspecting the above hits, we may decide that a lower-ranked
+motif is a better match by eye, or because of domain-specific knowledge. We can
+swap the best matched motif using `force_best_match()`.
 ```{r}
 # use force_best_match to use update the best match info
 all_res %<>% 
-  force_best_match(c("m01_CSAAAAM" = "Eip93F_SANGER_10",
-                     "m03_AKGG" = "pho_SANGER_10"))
+  force_best_match(c("m03_AKGG" = "pho_SANGER_10"))
 ```
 
-
+Replotting the top hits, you can see that "pho_SANGER_10" is now listed as the top hit for "m03_AKGG".
 ```{r, fig.height=4.5, fig.width=8.5}
 all_res %>% 
   view_tomtom_hits(1) %>% 
   cowplot::plot_grid(plotlist = ., labels = "AUTO")
 ```
-
-```{r, fig.height=3, fig.width=8}
+Finally, we can make publication quality figures using cowplot.
+```{r, fig.height=3, fig.width=8.5}
 all_res %>% 
   dplyr::mutate(label = paste0(e93_response, " in response to E93")) %>% 
+  dplyr::arrange(rank) %>% 
   split(.$label) %>% 
   purrr::imap(~{
     top_hits <- view_tomtom_hits(.x, 1) %>% 
