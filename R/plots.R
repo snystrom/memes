@@ -59,6 +59,11 @@ view_tomtom_hits <- function(results, top_n = "all"){
     else {
       stop("n must be either 'all' or a number.")
     }
+    
+    if (length(select) > length(.y$match_motif)){
+      # If top_n > number of hits, just show all hits
+      select <- seq_len(length(.y$match_motif))
+    }
 
     motifList <- c(list(.x), .y$match_motif[select]) %>%
       purrr::discard(is.null)
