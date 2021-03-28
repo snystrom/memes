@@ -67,11 +67,11 @@ view_tomtom_hits <- function(results, top_n = "all"){
 
     # TODO: check that motifList below doesn't have AsIs?
     #motifList <- c(list(.x), .y$match_motif[select]) %>%
-    edit_motif <- function(x){
-      class(x) <- NULL
-      x
-    }
-    motifList <- c(list(.x), edit_motif(.y$match_motif)[select]) %>%
+    #edit_motif <- function(x){
+    #  class(x) <- NULL
+    #  x
+    #}
+    motifList <- c(list(.x), .y$match_motif[select]) %>%
       purrr::discard(is.null)
 
     universalmotif::view_motifs(motifList)
