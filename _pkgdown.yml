@@ -63,9 +63,8 @@ reference:
 
 - title: Motif Manipulation
   contents:
-  - as_universalmotif_dataframe
-  - as_universalmotif
-  - update_motifs
+  - remove_duplicate_motifs
+  - has_duplicate_motifs
 
 - title: Data Helpers
   contents:
