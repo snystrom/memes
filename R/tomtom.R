@@ -205,7 +205,7 @@ runTomTom.default <- function(input, database = NULL,
 
   tomtom_results <- parseTomTom(tomtom_out$xml, query_metadata = input$metadata)
 
-  suppressMessages(universalmotif::update_motifs(tomtom_results))
+  suppressMessages(universalmotif::update_motifs(tomtom_results, extrainfo = TRUE))
 }
 
 

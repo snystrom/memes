@@ -242,10 +242,7 @@ cowplot::plot_grid(pval_heatmap,
 
 ## Denovo motif similarity by binding
 ```{r dreme_by_binding, eval=F}
-# TODO: decide whether to keep this chunk or not, depends on build-time of vignettes
 dreme_by_binding <- by_binding %>% 
-  #TODO: work out this chunk
-  #runDreme("shuffle", nmotifs = 5) %>% 
   runDreme("shuffle", nmotifs = 5) %>% 
   dplyr::bind_rows(.id = "binding_type")
 ```
@@ -344,13 +341,9 @@ dreme_by_binding_unique <- dreme_by_binding_renamed %>%
 
 Finally, we visualize the TomTom results to identify candidate TFs driving the presence of ectopic and orphan sites.
 ```{r, fig.height=4, fig.width=12}
-#TODO: uncomment
-#dreme_by_binding_unique %>% 
-#  view_tomtom_hits(3) %>%
-#  # TODO: test  if this fixes subscript error
-#  #cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO", byrow = TRUE)
-#  patchwork::wrap_plots(nrow = 1) +
-#    patchwork::plot_annotation(tag_levels = "A")
+dreme_by_binding_unique %>% 
+  view_tomtom_hits(3) %>%
+  cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO", byrow = TRUE)
 ```
 ```{r, fig.height=4, fig.width=12, eval=F, include=F}
 #TODO: add this type of behavior?
@@ -394,12 +387,11 @@ all_res <- dreme_results %>%
 ```
 
 ```{r, fig.height=8, fig.width=8.5}
-#TODO: uncomment
-#all_res %>% 
-#  # Plot the top 3 matches
-#  view_tomtom_hits(3) %>% 
-#  # Arrange into figure panels
-#  cowplot::plot_grid(plotlist = ., labels = "AUTO")
+all_res %>% 
+  # Plot the top 3 matches
+  view_tomtom_hits(3) %>% 
+  # Arrange into figure panels
+  cowplot::plot_grid(plotlist = ., labels = "AUTO")
 ```
 After manually inspecting the above hits, we may decide that a lower-ranked
 motif is a better match by eye, or because of domain-specific knowledge. We can
@@ -412,30 +404,29 @@ all_res %<>%
 
 Replotting the top hits, you can see that "pho_SANGER_10" is now listed as the top hit for "m03_AKGG".
 ```{r, fig.height=4.5, fig.width=8.5}
-#TODO: uncomment
-#all_res %>% 
-#  view_tomtom_hits(1) %>% 
-#  cowplot::plot_grid(plotlist = ., labels = "AUTO")
+all_res %>% 
+  view_tomtom_hits(1) %>% 
+  cowplot::plot_grid(plotlist = ., labels = "AUTO")
 ```
+
 Finally, we can make publication quality figures using cowplot.
 ```{r, fig.height=3, fig.width=8.5}
-#TODO: uncomment
-#all_res %>% 
-#  dplyr::mutate(label = paste0(e93_response, " in response to E93")) %>% 
-#  dplyr::arrange(rank) %>% 
-#  split(.$label) %>% 
-#  purrr::imap(~{
-#    top_hits <- view_tomtom_hits(.x, 1) %>% 
-#      cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
-#    
-#    title <- cowplot::ggdraw() +
-#        cowplot::draw_text(.y)
-#    
-#    cowplot::plot_grid(plotlist = list(title, top_hits), 
-#                       ncol = 1,
-#                       rel_heights = c(0.1, 1)
-#    )
-#  })
+all_res %>% 
+  dplyr::mutate(label = paste0(e93_response, " in response to E93")) %>% 
+  dplyr::arrange(rank) %>% 
+  split(.$label) %>% 
+  purrr::imap(~{
+    top_hits <- view_tomtom_hits(.x, 1) %>% 
+      cowplot::plot_grid(plotlist = ., nrow = 1, labels = "AUTO")
+    
+    title <- cowplot::ggdraw() +
+        cowplot::draw_text(.y)
+    
+    cowplot::plot_grid(plotlist = list(title, top_hits), 
+                       ncol = 1,
+                       rel_heights = c(0.1, 1)
+    )
+  })
 ```
 
 
