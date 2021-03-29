@@ -219,7 +219,8 @@ jobs:
           remotes::install_cran("rcmdcheck")
           #TODO: temporary fix until dev version builds at bioc
           remotes::install_github("bjmt/universalmotif")
-          BiocManager::install("BiocCheck")
+          remotes::install_github("Bioconductor/BiocCheck")
+          #BiocManager::install("BiocCheck")
         shell: Rscript {0}
 
       - name: Session info
