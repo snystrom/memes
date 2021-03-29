@@ -139,9 +139,9 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #'   - nsites = number of times the motif is found in input sequences
 #'   - positive_hits = number of sequences in input containing at least 1 of the motif
 #'   - negative_hits = number of sequences in control containing at least 1 of the motif
-#'   - pvalue = p-value
-#'   - evalue = E-value
-#'   - unerased_evalue = Unerased E-Value
+#'   - pval = p-value
+#'   - eval = E-value
+#'   - unerased_eval = Unerased E-Value
 #'   - positive_total = number of sequences in input
 #'   - negative_total = number of sequences in control
 #'   - pos_frac = fraction of positive sequences with a hit

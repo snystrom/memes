@@ -82,9 +82,9 @@ values are as follows:
 \item nsites = number of times the motif is found in input sequences
 \item positive_hits = number of sequences in input containing at least 1 of the motif
 \item negative_hits = number of sequences in control containing at least 1 of the motif
-\item pvalue = p-value
-\item evalue = E-value
-\item unerased_evalue = Unerased E-Value
+\item pval = p-value
+\item eval = E-value
+\item unerased_eval = Unerased E-Value
 \item positive_total = number of sequences in input
 \item negative_total = number of sequences in control
 \item pos_frac = fraction of positive sequences with a hit
