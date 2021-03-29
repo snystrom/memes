@@ -1,7 +1,7 @@
 skip_if_not(meme_is_installed())
 
 test_that("runFimo works", {
-  peaks <- system.file("extdata/peaks/peaks.tsv", package = "memes") %>%
+  peaks <- system.file("extdata/peaks/peaks.tsv", package = "memes", mustWork = TRUE) %>%
     readr::read_tsv(col_types = c("seqnames" = "c", "start" = "i", "end" = "i")) %>%
     GenomicRanges::GRanges()
 
@@ -38,4 +38,10 @@ test_that("runFimo works", {
   expect_error(suppressMessages(runFimo(seq, motif, psspp = 'x')), class = "usethis_error", regexp = "Invalid flags")
   expect_message(try(runFimo(seq, motif, psspp = 'x'), silent = TRUE), "Error processing command line options")
 
+})
+
+test_that("import works", {
+  expect_error(importFimo("/file/does/not/exist"))
+  expect_error(parseFimo("/file/does/not/exist"))
+  expect_s4_class(importFimo(system.file("extdata/fimo.tsv", package = "memes", mustWork = TRUE)), "GRanges")
 })

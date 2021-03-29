@@ -16,9 +16,9 @@
 #'     - altname: alternate name of query PWM
 #'     - match_name: name of matched PWM
 #'     - match_altname: alt name of matched PWM
-#'     - match_pvalue: p-value of match
-#'     - match_evalue: E-value of match
-#'     - match_qvalue: q-value of match
+#'     - match_pval: p-value of match
+#'     - match_eval: E-value of match
+#'     - match_qval: q-value of match
 #'     - match_offset: number of letters the query was offset from the target match
 #'     - match_strand: whether the motif was found on input strand (+) or as reverse-complement (-)
 #'     - db_name: database source of matched motif
@@ -27,10 +27,8 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' tomtom_xml <- system.file("extdata/tomtom.xml", package = "memes")
+#' tomtom_xml <- system.file("extdata", "tomtom.xml", package = "memes")
 #' importTomTomXML(tomtom_xml)
-#' }
 importTomTomXML <- function(tomtom_xml_path){
   parseTomTom(tomtom_xml_path, query_metadata = NULL)
 }
@@ -48,10 +46,8 @@ importTomTomXML <- function(tomtom_xml_path){
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' dreme_xml <- system.file("extdata/dreme.xml", package = "memes")
+#' dreme_xml <- system.file("extdata", "dreme.xml", package = "memes")
 #' importDremeXML(dreme_xml)
-#' }
 importDremeXML <- function(dreme_xml_path){
   parseDreme(dreme_xml_path)
 }

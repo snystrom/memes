@@ -1,6 +1,8 @@
+withr::local_options(list(meme_bin = NULL))
+withr::local_envvar(list(MEME_BIN = ""))
 test_that("get_sequence works", {
 
-  peaks <- system.file("extdata/peaks/peaks.tsv", package = "memes") %>%
+  peaks <- system.file("extdata/peaks/peaks.tsv", package = "memes", mustWork = TRUE) %>%
     readr::read_tsv(col_types = c("seqnames" = "c", "start" = "i", "end" = "i")) %>%
     GenomicRanges::GRanges()
 
@@ -18,22 +20,22 @@ test_that("get_sequence works", {
 
   seqs <- get_sequence(regions, dm.genome)
   expect_equal(unique(Biostrings::width(seqs)), 10)
-  expect_equal(class(seqs), "DNAStringSet")
+  expect_s4_class(seqs, "DNAStringSet")
 
-  context("score is added correctly")
+  # score is added correctly
   seqs_score <- get_sequence(regions, dm.genome, score_column = "score")
 
-  expect_equal(seqs[1][[1]], seqs_score[1][[1]])
+  expect_true(seqs[1][[1]] == seqs_score[1][[1]])
   expect_equal(names(seqs_score)[1], paste(names(seqs)[1], regions[1]$score))
 
-  context("list dispatch works")
+  # list dispatch works
   seqs_list <- get_sequence(regions_list, dm.genome)
 
   expect_true(all(seqs_list$A == seqs[seq(1, length(seqs)/2)]))
   expect_true(all(names(seqs_list$A) %in% names(seqs)))
   expect_true(all(names(seqs_list$B) %in% names(seqs)))
 
-  context("add_sequence works")
+  # add_sequence works
   regions_with_seq <- regions %>%
     add_sequence(dm.genome)
 

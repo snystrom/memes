@@ -139,9 +139,9 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #'   - nsites = number of times the motif is found in input sequences
 #'   - positive_hits = number of sequences in input containing at least 1 of the motif
 #'   - negative_hits = number of sequences in control containing at least 1 of the motif
-#'   - pvalue = p-value
-#'   - evalue = E-value
-#'   - unerased_evalue = Unerased E-Value
+#'   - pval = p-value
+#'   - eval = E-value
+#'   - unerased_eval = Unerased E-Value
 #'   - positive_total = number of sequences in input
 #'   - negative_total = number of sequences in control
 #'   - pos_frac = fraction of positive sequences with a hit
@@ -281,25 +281,22 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #' @importFrom magrittr %T>%
 #'
 #' @examples
-#' \dontrun{
 #' if (meme_is_installed()) {
 #' # Create random named sequences as input for example
 #' seqs <- universalmotif::create_sequences(rng.seed = 123)
 #' names(seqs) <- seq_along(seqs)
 #' 
 #' # An example path to a motif database file in .meme format
-#' motif_file <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
+#' motif_file <- system.file("extdata", "flyFactorSurvey_cleaned.meme", package = "memes")
 #' 
 #' runAme(seqs, database = motif_file)
-#' 
-#' 
+#'
 #' # Dreme results dataset for example
-#' dreme_xml <- system.file("extdata/dreme.xml", package = "memes")
+#' dreme_xml <- system.file("extdata", "dreme.xml", package = "memes")
 #' dreme_results <- importDremeXML(dreme_xml)
 #'
 #' # database can be set to multiple values like so: 
 #' runAme(seqs, database = list(motif_file, "my_dreme_motifs" = dreme_results))
-#' }
 #' }
 runAme <- function(input,
        control = "shuffle",

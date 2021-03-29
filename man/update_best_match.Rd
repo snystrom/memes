@@ -25,7 +25,7 @@ data("example_dreme_tomtom")
 example_dreme_tomtom$best_match_name[1]
 # reorder the `tomtom` data.frame
 example_dreme_tomtom$tomtom[[1]] <- dplyr::arrange(example_dreme_tomtom$tomtom[[1]],
-                                                   dplyr::desc(match_evalue))
+                                                   dplyr::desc(match_eval))
 # update_best_match will use the new order of rows, taking the top row as the new best match
 new_res <- update_best_match(example_dreme_tomtom)
 # best match is now altered:

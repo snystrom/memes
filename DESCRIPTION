@@ -1,8 +1,8 @@
 Package: memes
 Type: Package
 Title: motif matching, comparison, and de novo discovery using the MEME Suite
-Version: 0.0.9.9000
-Authors@R: person("Spencer", "Nystrom", 
+Version: 0.1.2.9000
+Authors@R: person("Spencer", "Nystrom",
     email = "nystromdev@gmail.com", 
     role = c("aut", "cre", "cph"),
     comment = c(ORCID = "0000-0003-1000-1579"))
@@ -22,6 +22,7 @@ Imports:
     ggplot2,
     ggseqlogo,
     magrittr,
+    matrixStats,
     methods,
     processx,
     purrr,
@@ -33,7 +34,7 @@ Imports:
     tidyr,
     utils,
     usethis,
-    universalmotif (>= 1.6.1),
+    universalmotif (>= 1.9.3),
     xml2
 Suggests:
     cowplot,
@@ -54,3 +55,4 @@ SystemRequirements: Meme Suite (v5.1.1 or above) <http://meme-suite.org/doc/down
 VignetteBuilder: knitr
 URL: https://snystrom.github.io/memes/, https://github.com/snystrom/memes
 BugReports: https://github.com/snystrom/memes/issues
+Config/testthat/edition: 3

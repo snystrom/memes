@@ -1,13 +1,25 @@
 skip_if(!meme_is_installed(), "MEME is not installed")
 
+# Setup
+withr::local_options(list("meme_db" = NULL))
+
+db <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes", mustWork = TRUE)
+fa <- system.file("extdata/fasta_ex/fa1.fa", package = "memes", mustWork = TRUE)
+dreme_out <- runDreme(fa, "shuffle", e = 39, outdir = tempdir())
+
+fa2 <- universalmotif::create_sequences(seqnum = 2, seqlen = 100, rng.seed = 123)
+names(fa2) <- seq_along(fa2)
+meme_out <- runMeme(fa2, parse_genomic_coord = FALSE)
+####
 test_that("tomtom target PWM and target metadata correctly assigned to eachother", {
-  tt_out <<- runTomTom(dreme_out, database = db)
+  # NOTE: don't change dist from "pearson" this is needed downstream for the NULL match class test
+  suppressMessages(tt_out <<- runTomTom(dreme_out, database = db, dist = "pearson"))
   expect_equal(tt_out$best_match_motif[[2]]@name, tt_out$best_match_name[[2]])
   
   # Ensure that results are correctly sorted by descending p-value
-  expect_true(all(tt_out$tomtom[[2]]$match_pvalue == sort(tt_out$tomtom[[2]]$match_pvalue)))
+  expect_true(all(tt_out$tomtom[[2]]$match_pval == sort(tt_out$tomtom[[2]]$match_pval)))
   # Ensure that results are correctly sorted by descending q-value
-  expect_true(all(tt_out$tomtom[[2]]$match_qvalue == sort(tt_out$tomtom[[2]]$match_qvalue)))
+  expect_true(all(tt_out$tomtom[[2]]$match_qval == sort(tt_out$tomtom[[2]]$match_qval)))
   
 })
 
@@ -24,20 +36,23 @@ test_that("tomtom error checking suggests alternatives", {
 ## best_match_motif list has names?
 ## motif list has names
 test_that("tomtom returns correct data types", {
-  motifs <- dreme_out$motif
+  motifs <- universalmotif::to_list(dreme_out, extrainfo = TRUE)
   ## Test that returns NA cols if all motifs no match
-  expect_message(nomatch <- runTomTom(motifs[[1]], database = db))
-  nomatch <- runTomTom(motifs[[1]], database = db)
+  ## Set impossibly low threshold to guarantee no match
+  suppressMessages(expect_message(nomatch <<- runTomTom(motifs[[1]], database = db, thresh = 1e-08), "detected no matches"))
   expect_true(is.na(nomatch$tomtom))
   expect_true(is.na(nomatch$best_match_motif))
 
-  expect_message(nomatch_multi <- runTomTom(motifs[c(1,3)], database = db))
+  suppressMessages(expect_message(nomatch_multi <- runTomTom(motifs[c(1,3)], database = db, thresh = 1e-08), 
+                                  "detected no matches"))
   expect_true(all(is.na(nomatch_multi$tomtom)))
   expect_true(all(is.na(nomatch_multi$best_match_motif)))
 
   ## Test that returns NULL + real value if some motifs no match
-  classes <- unique(vapply(tt_out$best_match_motif, class, character(1)))
-  expect_true(identical(c("NULL", "universalmotif"), classes))
+  classes <- unique(vapply(tt_out$best_match_motif, 
+                           function(x) {class(x)}, 
+                           character(1)))
+  expect_true(identical(c("NULL", "universalmotif"), sort(classes)))
 })
 
 test_that("view_tomtom_hits works", {
@@ -46,10 +61,10 @@ test_that("view_tomtom_hits works", {
   expect_type(view_tomtom_hits(tt_out), "list")
 
   # warning when no motifs match but input is >1 length
-  x <- runTomTom(dreme_out$motif[c(1,3)], database = db)
+  suppressMessages(x <- runTomTom(dreme_out[c(1,3),], database = db, thresh = 1e-8))
   # should succeed making "no match" plots as well
-  expect_type(view_tomtom_hits(x), "list")
-
+  expect_s3_class(view_tomtom_hits(x)[[1]], c("gg", "ggplot"))
+  expect_s3_class(view_tomtom_hits(x)[[2]], c("gg", "ggplot"))
 })
 
 # Input tests
@@ -71,20 +86,54 @@ test_that("tomtom works w/ nonstandard db inputs", {
   db2 <- universalmotif::create_motif("CCRAAAW", name = "motif_2", altname = "2")
   motif <- universalmotif::create_motif("CCAAAAW", name = "test_motif")
   # expect warning that db is too small:
-  expect_message(runTomTom(motif, database = list(db1, db2)), "database size too small")
+  suppressMessages(expect_message(runTomTom(motif, database = list(db1, db2)), "database size too small"))
   # expect warning re <50 motifs inaccurate p-value
-  expect_message(runTomTom(motif, database = list(db1, db2)), "at least 50")
+  suppressMessages(expect_message(runTomTom(motif, database = list(db1, db2)), "at least 50"))
   # "too small" warning should increment as entries are added
-  expect_message(runTomTom(motif, database = list(db1, db2)), "(2)")
-  expect_message(runTomTom(motif, database = list(db1, db2, db2)), "(3)")
+  suppressMessages(expect_message(runTomTom(motif, database = list(db1, db2)), "(2)"))
+  suppressMessages(expect_message(runTomTom(motif, database = list(db1, db2, db2)), "(3)"))
   expect_message(runTomTom(motif, database = purrr::map(1:51, ~{db1})), NA)
  
   # TODO: Fix tests below
   # expect warning re discarded motifs 
   # this command shows expected output: 
   # runTomTom(motif, database = "inst/extdata/db/fly_factor_survey_id.meme", silent = FALSE)
-  expect_message(runTomTom(motif, database = "inst/extdata/db/fly_factor_survey_id.meme"))
+  dup_db <- system.file("extdata", "flyFactor_dups.meme", package = "memes", mustWork = TRUE)
+  suppressMessages(expect_message(runTomTom(motif, database = dup_db), "duplicated in the database"))
+ 
+  # TODO: 
+  # runTomTom doesn't throw duplicate motif error
+  # when using universalmotif db as input...
+  #flyFactor_data %>% 
+  #  dplyr::filter(consensus == "MMCACCTGYYV") %>% 
+  #  to_list() %>% 
+  #  {runTomTom(motif, database = ., silent = F)} -> x
+  
+})
+
+test_that("Unusual db formats work", {
+  skip_if(TRUE, "Need to implement tests below here")
+  db1 <- universalmotif::create_motif("CRAW", name = "motif_1", altname = "1")
+  db2 <- universalmotif::create_motif("CCRAAAW", name = "motif_2", altname = "2")
+  motif <- universalmotif::create_motif("CCAAAAW", name = "test_motif")
+  
   # db w/ no altname
-  # > 1 db with identical values
-  expect_true(FALSE)
+  #db1["altname"] <- NA_character_
+  #runTomTom(motif, database = list(db1, db1), silent = F)
+  #expect_message(runTomTom(motif, database = list(db1, db1), silent = F), "duplicated in the database")
+  # Goal here is warn if there is no altname? Does tomtom warn about this?
+  # I think this is needed to ensure that altname exists for join operation to parse data
+  # What I really need to do is fix the tomtom import functions to create an empty altname for the merge,
+  # or only use altname column if it exists for the join.
+  # I'll leave this failing test as a reminder.
+  expect_message(runTomTom(motif, database = list(motif)), 
+                 "some inputs are missing an altname. Using the motif name as altname.")
+  
+  # TODO:
+  # warn if > 1 db with identical values Not sure what the error message will be
+  # here Also not sure if this is needed. The idea would be to help users figure
+  # out which db contributed the duplicated motifs. However, it looks like
+  # tomtom won't catch this so I'd have to check for it before writing out the
+  # data, which doesn't quite work with the current framework.
+  #expect_true(FALSE)
 })

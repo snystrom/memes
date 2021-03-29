@@ -158,24 +158,21 @@ license. See the \href{http://meme-suite.org/doc/copyright.html}{MEME Suite Copy
 }
 
 \examples{
-\dontrun{
 if (meme_is_installed()) {
 # Create random named sequences as input for example
 seqs <- universalmotif::create_sequences(rng.seed = 123)
 names(seqs) <- seq_along(seqs)
 
 # An example path to a motif database file in .meme format
-motif_file <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
+motif_file <- system.file("extdata", "flyFactorSurvey_cleaned.meme", package = "memes")
 
 runAme(seqs, database = motif_file)
 
-
 # Dreme results dataset for example
-dreme_xml <- system.file("extdata/dreme.xml", package = "memes")
+dreme_xml <- system.file("extdata", "dreme.xml", package = "memes")
 dreme_results <- importDremeXML(dreme_xml)
 
 # database can be set to multiple values like so: 
 runAme(seqs, database = list(motif_file, "my_dreme_motifs" = dreme_results))
-}
 }
 }

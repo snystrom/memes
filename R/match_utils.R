@@ -19,15 +19,13 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' if (meme_is_installed()){
 #' motif <- universalmotif::create_motif("CCRAAAW", name = "example_motif")
-#' db <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
+#' db <- system.file("extdata", "flyFactorSurvey_cleaned.meme", package = "memes")
 #' res <- runTomTom(motif, database = db)
 #' res$best_match_name
 #' res2 <- force_best_match(res, c("example_motif" = "Eip93F_SANGER_10"))
 #' res2$best_match_name
-#' }
 #' }
 force_best_match <- function(res, matches){
   # TODO: change example to use tomtom.xml import?
@@ -73,7 +71,7 @@ force_best_match <- function(res, matches){
 #' example_dreme_tomtom$best_match_name[1]
 #' # reorder the `tomtom` data.frame
 #' example_dreme_tomtom$tomtom[[1]] <- dplyr::arrange(example_dreme_tomtom$tomtom[[1]],
-#'                                                    dplyr::desc(match_evalue))
+#'                                                    dplyr::desc(match_eval))
 #' # update_best_match will use the new order of rows, taking the top row as the new best match
 #' new_res <- update_best_match(example_dreme_tomtom)
 #' # best match is now altered:
@@ -152,9 +150,9 @@ nest_tomtom <- function(data){
     dplyr::select(-dplyr::any_of(c("motif", "match_motif", "best_match_motif"))) %>%
     tidyr::nest(data = c("match_name",
                 "match_altname",
-                "match_pvalue",
-                "match_evalue",
-                "match_qvalue",
+                "match_pval",
+                "match_eval",
+                "match_qval",
                 "db_name")) %>%
     dplyr::rename("tomtom" = "data")
 

@@ -244,8 +244,8 @@ the most optimal visualization.
 
 We can partially overcome this limitation by filling the heatmap with the
 normalized rank value for each TF, which accounts for differences in total number of
-discovered motifs between AME runs. Although it does not completely abrograte
-differeces, the signal values for high-ranked motifs within groups will be more
+discovered motifs between AME runs. Although it does not completely abrogate
+differences, the signal values for high-ranked motifs within groups will be more
 comparable. However, **the normalized rank visualization eliminates all real values related to statistical significance!** 
 Instead, this visualization represents the relative ranks of hits within an AME
 run, which already pass a significance threshold set during `runAME()`. This
@@ -354,3 +354,8 @@ Robert McLeay and Timothy L. Bailey, "Motif Enrichment Analysis: A unified frame
 ## Licensing Restrictions
 The MEME Suite is free for non-profit use, but for-profit users should purchase a
 license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
+
+# Session Info
+```{r}
+sessionInfo()
+```

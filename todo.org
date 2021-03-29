@@ -1,0 +1,20 @@
+#+TITLE: Todo
+
+* Presubmission [6/6]:
+** DONE Update .rda to new universalmotif
+** DONE change tomtom pvalue -> pval, etc. to match universalmotif_df format
+*** DONE Change the tomtom_df that gets returned & nested
+*** DONE change the nest_tomtom functions to grab new colnames
+*** DONE Update docs accordingly
+** DONE view_tomtom_hits %>% cowplot subscript out of bounds error
+doesn't reproduce on my local image, try pulling newest docker image & trying again.
+- Candidate issue: https://github.com/wilkelab/cowplot/blame/901173d7a7db61f3e8883944dda8e5181fc2625f/R/plot_grid.R
+  - see line ~180
+** DONE runFimo skip_matched_sequence = TRUE a good default??
+Consider swapping to FALSE. This may be a premature optimization.
+** DONE Double check that runDreme and runMeme docs show correct colnames for return values
+** DONE runTomTom dist=ed
+Make this change before you submit so it's the default!!
+- Change tomtom vignette & tests to ensure correct behavior
+* Post submission [0/1]:
+** TODO update example_dreme_tomtom, and example_tomtom after dist=ed

@@ -1,9 +1,9 @@
 skip_if_not(meme_is_installed(), "Only works with dreme install")
 
 # Setup
-fa <- system.file("extdata/fasta_ex/fa1.fa", package = "memes") %>%
+fa <- system.file("extdata/fasta_ex/fa1.fa", package = "memes", mustWork = TRUE) %>%
   Biostrings::readDNAStringSet()
-fa2 <- system.file("extdata/fasta_ex/fa2.fa", package = "memes") %>%
+fa2 <- system.file("extdata/fasta_ex/fa2.fa", package = "memes", mustWork = TRUE) %>%
   Biostrings::readDNAStringSet()
 
 dreme_out <- runDreme(fa, "shuffle", e = 39)
@@ -22,7 +22,7 @@ test_that("runDreme works", {
 
 })
 
-test_that("Dreme flags correctly parsed", ~{
+test_that("Dreme flags correctly parsed", {
   expect_equal(prepareDremeFlags(input = "input.fa", control = "shuffle"),
                c("-p", "input.fa"))
   expect_equal(prepareDremeFlags(input = "input.fa", control = "background.fa"),
@@ -48,7 +48,7 @@ test_that("dreme_results & universalmotif list validators work", {
 
 test_that("runDreme dispatch works", {
   # test multiple dispatch
-  peaks <- system.file("extdata/peaks/peaks.tsv", package = "memes") %>%
+  peaks <- system.file("extdata/peaks/peaks.tsv", package = "memes", mustWork = TRUE) %>%
     readr::read_tsv(col_types = c("seqnames" = "c",
                                   "start" = "i",
                                   "end" = "i")) %>%
@@ -97,4 +97,3 @@ test_that("runDreme error checking works", {
 
 
 })
-

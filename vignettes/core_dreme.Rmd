@@ -69,27 +69,32 @@ motifs. For more details about each column see the "Value" section of `?runDreme
 dreme_out
 ```
 
-The `motif` column can be used as input to all `universalmotif` functions.
+The results can be converted back to `universalmotif` format using `to_list()`.
+The `view_motifs()` function accepts a `universalmotif` list and can be used to
+visualize the motifs.
 ```{r}
 library(universalmotif)
+library(dplyr)
 
-view_motifs(dreme_out$motif)
+dreme_out %>% 
+  to_list() %>% 
+  view_motifs()
 ```
 
 The primary advantage of using the `data.frame` output allows simple integration
 with base subsetting, piping, and the `tidyverse`.
 ```{r}
-library(dplyr)
-
 dreme_out %>% 
-  filter(length == 3) %>% 
   # after filtering with dplyr, only motifs with length 3 will be plotted
-  {universalmotif::view_motifs(.$motif)}
+  filter(length == 3) %>% 
+  to_list() %>% 
+  universalmotif::view_motifs()
 ```
 
-`universalmotif` manipulations can easily be executed on the `motif` column as well. For example:
+`universalmotif` manipulations can easily be executed on the motifs as well. For example:
 ```{r, fig.height=1.5}
-dreme_out$motif %>% 
+dreme_out %>% 
+  to_list() %>% 
   merge_motifs() %>% 
   view_motifs()
 ```
@@ -113,11 +118,11 @@ dreme_edit <- dreme_out %>%
   dplyr::mutate(name = c("one", "two", "three", "four", "five")) %>% 
   update_motifs()
 
-# as_universalmotif will first update motif information
+# to_list() will first update motif information
 # before returning only the motif column
 edit_motifs <- dreme_out %>% 
   dplyr::mutate(name = c("one", "two", "three", "four", "five")) %>% 
-  as_universalmotif()
+  to_list()
 
 # The following outputs are identical
 # where edit_motifs is a list of motifs
@@ -167,7 +172,7 @@ peaks <- example_chip_summits
 
 To examine whether there are differences in motif content between increasing,
 decreasing, and static sites, we split the peaks into a list by their response
-to e93.
+to E93.
 ```{r}
 by_behavior <- peaks %>% 
   anchor_center() %>% 
@@ -257,3 +262,8 @@ Timothy L. Bailey, "DREME: Motif discovery in transcription factor ChIP-seq data
 ## Licensing Restrictions
 The MEME Suite is free for non-profit use, but for-profit users should purchase a
 license. See the [MEME Suite Copyright Page](http://meme-suite.org/doc/copyright.html) for details.
+
+# Session Info
+```{r}
+sessionInfo()
+```

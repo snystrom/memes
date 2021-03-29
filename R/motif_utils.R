@@ -68,12 +68,14 @@ mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
 
 #' Update the `motif` column to data.frame values
 #'
+#' renamed from update_motifs to not get confused with universalmotif::update_motifs
+#'
 #' @param .data data.frame with `motif` column
 #'
 #' @return .data where `motif` column has been updated to reflect the values
 #'   from columns sharing names with unprotected universalmotif slots. Names of
 #'   `motif` list are updated to reflect name.
-#' @export
+#' @noRd
 #'
 #' @details
 #'
@@ -100,10 +102,10 @@ mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
 #' motif <- universalmotif::create_motif()
 #' df <- as_universalmotif_dataframe(motif)
 #' df <- dplyr::mutate(df, id = "newName")
-#' df <- update_motifs(df)
+#' df <- memes_update_motifs(df)
 #' # renamed motif
 #' df$motif
-update_motifs <- function(.data){
+memes_update_motifs <- function(.data){
   names_lookup <- c("name" = "name",
                     "altname" = "altname",
                     "family" = "family",

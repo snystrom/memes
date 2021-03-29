@@ -22,7 +22,7 @@
 #'   unless input motif is shorter, in which case the shorter length is used as
 #'   the minimum value
 #' @param dist distance metric. Valid arguments: `allr | ed | kullback | pearson | sandelin | blic1 | blic5 | llr1 | llr5`.
-#'   Default: `pearson`.
+#'   Default: `ed` (euclidean distance).
 #' @param evalue whether to use E-value as significance threshold (default:
 #'   `TRUE`). If evalue = FALSE, uses *q-value* instead.
 #' @param silent suppress printing stderr to console (default: TRUE).
@@ -80,19 +80,17 @@
 #' @importFrom magrittr %>%
 #'
 #' @examples
-#' \dontrun{
 #' if (meme_is_installed()) {
 #' motif <- universalmotif::create_motif("CCRAAAW")
-#' database <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes")
+#' database <- system.file("extdata", "flyFactorSurvey_cleaned.meme", package = "memes")
 #' 
 #' runTomTom(motif, database)
-#' }
 #' }
 runTomTom <- function(input, database = NULL,
                       outdir = "auto",
                       thresh = 10,
                       min_overlap = 5,
-                      dist = "pearson",
+                      dist = "ed",
                       evalue = TRUE,
                       silent = TRUE,
                       meme_path = NULL, ...){
@@ -105,7 +103,7 @@ runTomTom.list <- function(input, database = NULL,
                     outdir = "auto",
                     thresh = 10,
                     min_overlap = 5,
-                    dist = "pearson",
+                    dist = "ed",
                     evalue = TRUE,
                     silent = TRUE,
                     meme_path = NULL, ...){
@@ -127,7 +125,7 @@ runTomTom.default <- function(input, database = NULL,
                       outdir = "auto",
                       thresh = 10,
                       min_overlap = 5,
-                      dist = "pearson",
+                      dist = "ed",
                       evalue = TRUE,
                       silent = TRUE,
                       meme_path = NULL, ...){
@@ -170,6 +168,30 @@ runTomTom.default <- function(input, database = NULL,
   # but at that point, who cares?
   if (!silent) {
     message(ps_out$stderr)
+  } else {
+    # TODO: move this chunk to a function
+    # Grep out common warnings for database too small,
+    # or inaccurate p-value estimation
+    # and print those warnings
+    # These don't trigger a non-zero exit status, but could affect 
+    # conclusions, so important to print these.
+    err_string <- strsplit(ps_out$stderr, "\n")[[1]]
+    purrr::walk(grep("Warning:|Provide at least", err_string, value = TRUE), message)
+    
+    # Deal with discarding motifs due to duplicate IDs:
+    # Note: this warning will also proc if the IDs are non-dups but the matrix is duplicated
+    # So I'm writing a custom warning message instead
+    grep("Discarding motif .+non-unique ID", err_string, value = TRUE) %>% 
+      gsub(" in file '.+' ", "", .) %>% 
+      gsub("Discarding motif '(.+)'.+", "\\1", .) %>% 
+      {
+        if (length(.) > 0) {
+          message(paste("Discarding", length(.), "motifs because they are duplicated in the database."))
+          message("The following motifs were discarded:")
+          purrr::walk(., message)
+        }
+      }
+    
   }
 
   ps_out %>%
@@ -183,7 +205,7 @@ runTomTom.default <- function(input, database = NULL,
 
   tomtom_results <- parseTomTom(tomtom_out$xml, query_metadata = input$metadata)
 
-  return(tomtom_results)
+  suppressMessages(universalmotif::update_motifs(tomtom_results, extrainfo = TRUE))
 }
 
 
@@ -318,12 +340,12 @@ get_tomtom_match_data <- function(tomtom_xml_data){
     dplyr::mutate_at(c("query_idx", "idx", "off"), as.integer) %>%
     dplyr::mutate_at("rc", as.character()) %>%
     dplyr::rename("offset" = "off",
-                  "pvalue" = "pv",
-                  "evalue" = "ev",
-                  "qvalue" = "qv",
+                  "pval" = "pv",
+                  "eval" = "ev",
+                  "qval" = "qv",
                   "target_idx" = "idx") %>%
     dplyr::mutate(strand = ifelse(.data$rc == "y", "-", "+")) %>%
-    dplyr::rename_at(c("offset", "pvalue", "evalue", "qvalue", "strand"), ~{paste0("match_", .x)}) %>%
+    dplyr::rename_at(c("offset", "pval", "eval", "qval", "strand"), ~{paste0("match_", .x)}) %>%
     dplyr::select(-"rc")
 
   return(match_df)
@@ -436,9 +458,9 @@ join_tomtom_tables <- function(query, hits){
       dplyr::mutate(best_match_name = NA_character_,
                     best_match_altname = NA_character_,
                     best_match_offset = NA_integer_,
-                    best_match_pvalue = NA_real_,
-                    best_match_evalue = NA_real_,
-                    best_match_qvalue = NA_real_,
+                    best_match_pval = NA_real_,
+                    best_match_eval = NA_real_,
+                    best_match_qval = NA_real_,
                     best_match_strand = NA_character_,
                     best_match_motif = NA,
                     tomtom = NA) %>%
@@ -450,8 +472,8 @@ join_tomtom_tables <- function(query, hits){
       dplyr::rename("match_name" = "match_id",
                     "match_altname" = "match_alt") %>%
       dplyr::select(-"query_idx", -"db_idx", -"target_idx") %>% 
-      dplyr::arrange(!!rlang::sym("match_qvalue"),
-                     !!rlang::sym("match_pvalue"))
+      dplyr::arrange(!!rlang::sym("match_qval"),
+                     !!rlang::sym("match_pval"))
 
   }
 
@@ -483,7 +505,7 @@ join_tomtom_tables <- function(query, hits){
 #' nest_tomtom_fun(tomtom_data, tomtom_best_match_min_evalue)
 tomtom_best_match_min_evalue <- function(df){
     df %>%
-      dplyr::filter("match_evalue" == min("match_evalue")) %>%
+      dplyr::filter("match_eval" == min("match_eval")) %>%
       utils::head(1) %>%
       dplyr::rename_all(~{paste0("best_", .x)})
 }
@@ -513,9 +535,9 @@ nest_tomtom_fun <- function(tomtom_results, fun){
                  "match_motif",
                  "db_name",
                  "match_offset",
-                 "match_pvalue",
-                 "match_evalue",
-                 "match_qvalue",
+                 "match_pval",
+                 "match_eval",
+                 "match_qval",
                  "match_strand")
 
   # Need to remove "motif" S4 column & rejoin unique entries because `tibble` or
@@ -587,9 +609,9 @@ nest_tomtom_results_best_top_row <- function(tomtom_results){
 #'     - alt: alternate name of query PWM
 #'     - match_id: name of matched PWM
 #'     - match_alt: alt name of matched PWM
-#'     - match_pvalue: p-value of match
-#'     - match_evalue: E-value of match
-#'     - match_qvalue: q-value of match
+#'     - match_pval: p-value of match
+#'     - match_eval: E-value of match
+#'     - match_qval: q-value of match
 #'     - match_offset: number of letters the query was offset from the target match
 #'     - match_strand: whether the motif was found on input strand (+) or as reverse-complement (-)
 #'     - db_name: database source of matched motif
@@ -624,6 +646,10 @@ parseTomTom <- function(tomtom_xml, query_metadata = NULL){
   }
 
   tomtom_results <- join_tomtom_tables(query, hits)
+  # TODO: rename evalue = eval, qvalue = qval, pvalue = pval
+  # and the corresponding best_match_, etc. cols?
+  # This will fit better with the universalmotif_df format.
+  # and prevent me from rewriting the entire parsing code.
 
   return(tomtom_results)
 }

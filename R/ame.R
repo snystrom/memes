@@ -8,7 +8,7 @@ runAme.list <- function(input,
                         meme_path = NULL,
                         sequences = FALSE,
                         silent = TRUE, ...){
-
+  
   x <- sequence_input_control_list(input, control)
   input <- x$input
   control <- x$control
@@ -92,7 +92,7 @@ runAme.default <- function(input,
     cmdfun::cmd_error_if_missing()
 
   import_sequences <- FALSE
-  if (method == "fisher" & sequences == TRUE){
+  if (method == "fisher" & sequences){
     import_sequences <- ame_out$sequences
   }
 
@@ -162,10 +162,8 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 #' @family import
 #'
 #' @examples
-#' \dontrun{
-#' ame_tsv <- system.file("extdata/ame.tsv", package = "memes", mustWork = TRUE)
+#' ame_tsv <- system.file("extdata", "ame.tsv", package = "memes", mustWork = TRUE)
 #' importAme(ame_tsv)
-#' }
 importAme <- function(path, method = "fisher", sequences = FALSE){
 
   cols <- get_ame_coltypes(method)
@@ -182,9 +180,9 @@ importAme <- function(path, method = "fisher", sequences = FALSE){
     return(NULL)
   }
 
-  if (sequences == FALSE | method != "fisher"){return(data)}
+  if (!sequences | method != "fisher"){return(data)}
 
-  if (sequences != FALSE & method == "fisher"){
+  if (sequences & method == "fisher"){
     seq <- importAmeSequences(sequences)
 
     if (is.null(seq)){

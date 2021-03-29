@@ -14,13 +14,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-memes contains several experimental features to simplify working with motif
-metadata. These can be used to manipulate motifs detected from MEME Suite tools,
-or to deal with motifs from other sources.
+memes uses the `universalmotif` package to simplify working with motif metadata.
+`universalmotif` objects can be represented in an alternative form, the
+`unviversalmotif_df` which allows users to manipulate motif metadata just as
+they would a normal R data.frame (in fact, they are just R data.frames).
 
-**Note:** These features are experimental and will be influenced by user
-feedback. Please provide comments, issues, or other feedback at the [memes
-issues page](https://github.com/snystrom/memes/issues).
+These objects are useful for tidying motif metadata to prepare a motif database
+for use with memes, or performing any other data-driven tasks involving motifs.
+Here I describe one way these data structures can be used to construct a motif
+database for use with memes.
 
 ```{r setup}
 library(memes)
@@ -50,54 +52,47 @@ flyFactorMotifs <- flyFactorDb %>%
 
 But there are some issues with this database. For example, the following motif
 name is the FlyBase gene number, and the alternate name is the actual
-informative name of the PWM.
+informative name of the PWM. The MEME Suite relies more heavily on the primary
+name, so it would be nice if the database used interpretable names.
 ```{r}
 flyFactorMotifs %>% 
   head(1)
 ```
 
-memes provides the `as_universalmotif_dataframe()` method for converting
-universalmotif lists into special data.frames which can be used to update motif
-entries. This is particularly useful when dealing with several motifs at once.
+The universalmotif function `to_df()` converts universalmotif lists into
+`universalmotif_df` format which can be used to update motif entries. This is
+particularly useful when dealing with several motifs at once.
 ```{r}
 flyFactor_data <- flyFactorMotifs %>% 
-  as_universalmotif_dataframe()
+  to_df()
 ```
 
-The universalmotif data.frame contains all the columns that can be used to
-update motif entries. Any additional columns added to the data.frame will be
-ignored. The `motif` column is a list column that holds the original
-universalmotif objects.
+The columns of the `universalmotif_df` can be freely changed to edit the
+properties of the motifs stored in the `motif` column. Just like standard
+data.frames, additional columns can be added to store additional metadata. For
+more details on these objects see the help page: `?universalmotif::to_df`.
 
-**Note:** If the `motif` column is altered by non-memes methods, the following
-approaches are not guaranteed to work. These features are experimental and will
-be influenced by user feedback. Please provide comments, issues, or other
-feedback at the [memes issues page](https://github.com/snystrom/memes/issues).
 ```{r}
-# The following columns can be used to update motif metadata
+# The following columns can be changed to update motif metadata
 flyFactor_data %>% 
   names
 ```
 
 
-using the universalmotif data.frame, we can quickly see that the issue with FBgn
+using the `universalmotif_df`, we can quickly see that the issue with FBgn
 numbers only applies to certain entries. And TFs which are represented by
 multiple motifs in the database are assigned the same name. The MEME Suite tools
 which use a motif database (like TomTom and AME) require that the entries have
 unique primary identifiers, therefore the default names will not be appropriate.
 
 ```{r}
+# TODO: return here after update and see if printing still throws errors or behaves strangely
 flyFactor_data %>% 
-  # The `motif` column can slow down printing, so it can be helpful to drop it.
-  dplyr::select(-motif) %>% 
   head(5)
 ```
-
-
 However, the `altname` slots from the `motifDb` query are already unique, so we can make them the primary name.
 ```{r}
-flyFactor_data$altname %>% length
-flyFactor_data$altname %>% unique %>% length
+length(flyFactor_data$altname) == length(unique(flyFactor_data$altname))
 ```
 
 An easy way is to use `dplyr::rename` to swap the columns.
@@ -112,6 +107,11 @@ The `name` column now contains the full motif name.
 flyFactor_data %>% 
   head(3)
 ```
+
+
+
+
+
 
 Next to solve the issue with the FBgn's. As of this writing in May 2020, the
 FBgn entries are out of date, making them difficult to look up within R
@@ -144,10 +144,170 @@ flyFactor_data %<>%
   dplyr::mutate(name = gsub("_FBgn\\d+", "", name))
 ```
 
+## A few reality checks
 
-Finally, the resulting data.frame can be converted back into a universalmotif list using `as_universalmotif()`.
+It's worth taking a look at the instances where the `altname` and our parsed
+`tfid` do not match. This is a good way to ensure we haven't missed any
+important edge cases in the data. As new edge cases are encountered, we can develop new rules for tidying the data to ensure a high quality set of motifs.
+
+Start by simply filtering for all instance where there is a mismatch between
+`altname` and `tfid`.
+
+Carefully compare the `altname`, `name`, and `tfid` columns. Why might the
+values differ? Are there instances that make you question the data?
 ```{r}
-flyFactorMotifs_final <- as_universalmotif(flyFactor_data)
+flyFactor_data %>% 
+  dplyr::filter(altname != tfid) %>% 
+  # I'm only showing the first 5 rows for brevity, but take a look at the full
+  # data and see what patterns you notice
+  head(5)
+```
+
+One thing that becomes obvious is that many motifs have mismatched
+`altname`/`tfid` values because of capitalization or hyphenation differences.
+You can use domain-specific knowledge to assess which one is correct. For
+*Drosophila*, "abd-A" is correct over "AbdA", for example.
+
+After manually inspecting these rows, I determined that instances of different
+capitalization, hyphenation, or names that contain "." or "()" can be ignored.
+To further investigate the data, I will ignore capitalization and special character
+differences as follows:
+
+```{r}
+flyFactor_data %>% 
+  # calling tolower() on both columns removes capitalization as a difference
+  dplyr::filter(tolower(altname) != tolower(tfid),
+                # Select all altnames that do not contain "-", "." or "("
+                !grepl("-|\\.|\\(", altname),
+                ) %>% 
+  # I'll visalize only these columns for brevity
+  dplyr::select(altname, tfid, name, consensus) %>% 
+  head(10)
+ 
+```
+Next, what is obvious is that several `altnames` set to "da" have a high number
+of mismatched `tfid`s. For instance, `amos_da_SANGER_10`. When checking the
+[FlyFactorSurvey page for
+da](https://mccb.umassmed.edu/ffs/TFdetails.php?FlybaseID=FBgn0000413), it
+reveals only 1 motif corresponds to this factor. Checking the [page for amos](https://mccb.umassmed.edu/ffs/TFdetails.php?FlybaseID=FBgn0003270) shows a
+match to `amos_da_SANGER_10`. Therefore, we can conclude that factors assigned
+the name of `da` are incorrectly assigned, and we should prefer our parsed
+`tfid`.
+
+```{r}
+flyFactor_data %<>% 
+  # rename all "da" instances using their tfid value instead
+  dplyr::mutate(altname = ifelse(altname == "da", tfid, altname))
+```
+
+Now we've handled the "da" mismatches, we filter them out to identify new special cases.
+```{r}
+flyFactor_data %>% 
+  dplyr::filter(tolower(altname) != tolower(tfid),
+                !grepl("-|\\.|\\(", altname)) %>% 
+  dplyr::select(altname, tfid, name, consensus) %>% 
+  head(10)
+```
+The next thing to notice about these data is that entries with "CG" prefixed
+tfids are often mismatched. This is because when the FlyFactor survey was
+conducted, many genes were unnamed, and thus assigned a CG from FlyBase. As time
+has gone on, some CG's have been named. Checking the [FlyBase page for
+CG10267](http://flybase.org/reports/FBgn0037446) reveals that it has been
+renamed "Zif". This matches with the `altname`, so we conclude that rows with a
+"CG" `tfid` can be safely skipped as their `altname` contains the new gene symbol.
+
+```{r}
+flyFactor_data %>% 
+  dplyr::filter(tolower(altname) != tolower(tfid),
+                !grepl("-|\\.|\\(", altname),
+                # Remove CG genes from consideration
+                !grepl("CG\\d+", tfid)
+                ) %>% 
+  dplyr::select(altname, tfid, name, consensus)
+```
+The remaining rows (only 20 values) can be manually inspected for any
+discrepancies. I went through each entry by hand, looking up their motifs on
+[FlyFactor](https://mccb.umassmed.edu/ffs/), and their gene names on
+[FlyBase](flybase.org) to determine the best way to handle these motifs.
+Sometimes the best way to be sure your data are high quality is to carefully inspect it!
+
+I determined from this that a few `altnames` need swapping, and one motif I will
+remove because it is unusual
+([Bgb](https://mccb.umassmed.edu/ffs/TFdetails.php?FlybaseID=FBgn0013753) has an
+identical motif to
+[run](https://mccb.umassmed.edu/ffs/TFdetails.php?FlybaseID=FBgn0003300), but
+the motif is marked "run" on the FlyFactor website).
+
+I'll make those changes to the data:
+```{r}
+swap_alt_id <- c("CG6272", "Clk", "Max", "Mnt", "Jra")
+remove <- "Bgb"
+
+flyFactor_data %<>% 
+  dplyr::mutate(altname = ifelse(altname %in% swap_alt_id, tfid, altname)) %>% 
+  dplyr::filter(!(altname %in% remove))
+```
+
+Finally, the remaining motif metadata is also OK based on my manual inspection.
+```{r}
+flyFactor_data %>% 
+  dplyr::filter(tolower(altname) != tolower(tfid),
+                !grepl("-|\\.|\\(", altname),
+                # Remove CG genes from consideration
+                !grepl("CG\\d+", tfid)
+                ) %>% 
+  dplyr::select(altname, tfid, name, consensus)
+```
+
+## Removing duplicate motif matrices
+
+Just because the metadata for each entry is unique, this does not mean that the
+motif matrix for each entry is unique. There are many reasons why two different
+factors could have identical motifs: some biological, others technical. In the
+case of the FlyFactorSurvey, some entries are duplicated in MotifDb which should not be. 
+
+For instance, the following motif is a duplicate where the tidied metadata
+matches: 
+
+```{r}
+flyFactor_data %>% 
+  dplyr::filter(consensus == "MMCACCTGYYV")
+```
+It is difficult to determine in a high-throughput way whether any matrix entries
+are identical in a large database, and it is not always possible to rely on
+metadata to determine matrix duplication.
+
+In order to identify and remove duplicate motif matrices, memes provides
+`remove_duplicate_motifs()`, which can be used to deduplicate a list of motifs
+based solely on their motif matrices (i.e. it ignores motif name & other
+metadata). We will use this strategy to deduplicate the flyFactor data.
+
+(NOTE: When working with other motif databases, it is critical to understand the data
+source to determine appropriate measures for handling duplicated entries.)
+```{r}
+# This operation takes a while to run on large motif lists
+flyFactor_dedup <- remove_duplicate_motifs(flyFactor_data)
+```
+
+Duplicate removal identifies and removes `r nrow(flyFactor_data) - nrow(flyFactor_dedup)` identical matrices.
+```{r}
+# Rows before cleanup
+nrow(flyFactor_data)
+# Rows after cleanup
+nrow(flyFactor_dedup)
+```
+
+Using the example from before now shows only 1 motif corresponding to this sequence.
+```{r}
+flyFactor_dedup %>% 
+  dplyr::filter(consensus == "MMCACCTGYYV")
+```
+Finally, now that the database has been tidied and deduplicated, the resulting
+data.frame can be converted back into a universalmotif list using
+`to_list()`. To discard the additional columns we created so they are not passed on to the `universalmotif`, set `extrainfo = FALSE`.
+```{r}
+# extrainfo = FALSE drops the extra columns we added during data cleaning which are now unneeded
+flyFactorMotifs_final <- to_list(flyFactor_dedup, extrainfo = FALSE)
 ```
 
 The resulting universalmotif list object now reflects the changes we made to the
@@ -164,3 +324,7 @@ This cleaned-up version of the FlyFactorSurvey data is packaged with memes in
 write_meme(flyFactorMotifs_final, "flyFactorSurvey_cleaned.meme")
 ```
 
+# Session Info
+```{r}
+sessionInfo()
+```

@@ -88,8 +88,8 @@ behavior:
 \item{...}{additional arguments passed to MEME (see below)}
 }
 \value{
-MEME results in universalmotif data.frame format (see:
-\code{\link[=as_universalmotif_dataframe]{as_universalmotif_dataframe()}}). \code{sites_hits} is a nested data.frame
+MEME results in universalmotif_df format (see:
+\code{\link[universalmotif:tidy-motifs]{universalmotif::to_df()}}). \code{sites_hits} is a nested data.frame
 column containing the position within each input sequence of matches to the
 identified motif.
 }

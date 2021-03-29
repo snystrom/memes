@@ -10,7 +10,7 @@ runFimo(
   bfile = "motif",
   outdir = "auto",
   parse_genomic_coord = TRUE,
-  skip_matched_sequence = TRUE,
+  skip_matched_sequence = FALSE,
   max_strand = TRUE,
   text = TRUE,
   meme_path = NULL,
@@ -40,7 +40,7 @@ relative coordinates (i.e. positions from 1 to length of the fasta entry).}
 
 \item{skip_matched_sequence}{\code{logical(1)} whether or not to include the DNA
 sequence of the match. Default: \code{FALSE}. Note: jobs will complete faster if
-set to FALSE. \code{add_sequence()} can be used to lookup the sequence after data import if
+set to \code{TRUE}. \code{add_sequence()} can be used to lookup the sequence after data import if
 \code{parse_genomic_coord} is \code{TRUE}, so setting this flag is not strictly needed.}
 
 \item{max_strand}{if match is found on both strands, only report strand with

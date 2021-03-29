@@ -23,14 +23,14 @@
     </alphabet>
     <strands>both</strands>
     <background from="--query--" A="0.492999" C="0.00700097" G="0.00700097" T="0.492999"/>
-    <host>c0912.ll.unc.edu</host>
-    <when>Thu May  7 18:13:54 2020</when>
+    <host>c0920.ll.unc.edu</host>
+    <when>Tue Apr 14 16:45:08 2020</when>
   </model>
   <query_dbs>
-    <db source="inst/extdata/fasta_ex/fa1_vs_shuffle/dreme.txt" name="dreme.txt" loaded="3" excluded="0" last_mod_date="Wed Apr 29 19:46:11 2020"/>
+    <db source="inst/extdata/fasta_ex/fa1_vs_shuffle/dreme.txt" name="dreme.txt" loaded="3" excluded="0" last_mod_date="Tue Apr 14 15:27:53 2020"/>
   </query_dbs>
   <target_dbs>
-    <db source="inst/extdata/db/fly_factor_survey_id.meme" name="fly_factor_survey_id" loaded="608" excluded="48" last_mod_date="Wed Apr 29 19:46:11 2020"/>
+    <db source="inst/extdata/db/fly_factor_survey_id.meme" name="fly_factor_survey_id" loaded="608" excluded="48" last_mod_date="Tue Apr 14 15:27:53 2020"/>
   </target_dbs>
   <queries>
     <motif db="0" id="AAA" alt="DREME-1" length="3" nsites="5" evalue="3.9e+001">
@@ -182,19 +182,6 @@
     </motif>
   </targets>
   <matches>
-    <query idx="2">
-      <target idx="5" rc="y" off="0" pv="2.87e-04" ev="1.74e-01" qv="3.26e-01"/>
-      <target idx="4" rc="n" off="-2" pv="4.13e-03" ev="2.51e+00" qv="5.92e-01"/>
-      <target idx="2" rc="n" off="0" pv="4.19e-03" ev="2.55e+00" qv="5.92e-01"/>
-      <target idx="9" rc="n" off="0" pv="4.31e-03" ev="2.62e+00" qv="5.92e-01"/>
-      <target idx="3" rc="n" off="0" pv="6.57e-03" ev="4.00e+00" qv="5.92e-01"/>
-      <target idx="0" rc="n" off="-1" pv="8.25e-03" ev="5.02e+00" qv="5.92e-01"/>
-      <target idx="6" rc="n" off="0" pv="8.60e-03" ev="5.23e+00" qv="5.92e-01"/>
-      <target idx="8" rc="y" off="-1" pv="1.02e-02" ev="6.18e+00" qv="5.92e-01"/>
-      <target idx="10" rc="y" off="0" pv="1.20e-02" ev="7.31e+00" qv="5.92e-01"/>
-      <target idx="1" rc="n" off="0" pv="1.45e-02" ev="8.84e+00" qv="5.92e-01"/>
-      <target idx="7" rc="y" off="1" pv="1.64e-02" ev="9.99e+00" qv="5.92e-01"/>
-    </query>
   </matches>
-  <runtime cycles="424261" seconds="0.424"/>
+  <runtime cycles="408644" seconds="0.409"/>
 </tomtom>

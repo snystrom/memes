@@ -35,8 +35,8 @@ cowplot_title <- function(plot, title, ...){
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' results <- importTomTomXML(system.file("extdata/tomtom.xml", package = "memes"))
+#' results <- importTomTomXML(system.file("extdata", "tomtom.xml", package = "memes"))
+#' \donttest{
 #' # show top 3 hits
 #' view_tomtom_hits(results, top_n = 3)
 #' }
@@ -59,7 +59,18 @@ view_tomtom_hits <- function(results, top_n = "all"){
     else {
       stop("n must be either 'all' or a number.")
     }
+    
+    if (length(select) > length(.y$match_motif)){
+      # If top_n > number of hits, just show all hits
+      select <- seq_len(length(.y$match_motif))
+    }
 
+    # TODO: check that motifList below doesn't have AsIs?
+    #motifList <- c(list(.x), .y$match_motif[select]) %>%
+    #edit_motif <- function(x){
+    #  class(x) <- NULL
+    #  x
+    #}
     motifList <- c(list(.x), .y$match_motif[select]) %>%
       purrr::discard(is.null)
 
@@ -105,6 +116,8 @@ view_tomtom_nomatch <- function(motif){
 #'
 #' In matrix form NO MATCH is a matrix with diagonal all 1,
 #' except at "space" position where all values are 1
+#'
+#' This is a very silly hack, and I love it.
 #'
 #' @return
 #'

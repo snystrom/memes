@@ -29,6 +29,6 @@ example_dreme_by_sens_vs_static <- runDreme(by_sens, "Static")
 
 example_dreme <- example_dreme_by_sens_vs_static$Decreasing
 
-usethis::use_data(example_dreme_by_sens_vs_static)
+#usethis::use_data(example_dreme_by_sens_vs_static)
 usethis::use_data(example_dreme)
 
