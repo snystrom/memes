@@ -1,3 +1,7 @@
+# memes 0.1.2
+* `runFimo()` `skip_matched_sequence` default is now `FALSE`. Set this to `TRUE` if fimo takes a long time to run, then use `add_sequence()` to add it back if needed.
+* `runTomTom()` `dist` default is now `ed` (changed from `pearson`).
+
 # memes 0.1.0
 
 * Removed `as_universalmotif_df()`, `as_universalmotif()`, and `update_motifs()`.
