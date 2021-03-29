@@ -217,9 +217,9 @@ jobs:
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           remotes::install_cran("rcmdcheck")
-          BiocManager::install("BiocCheck")
           #TODO: temporary fix until dev version builds at bioc
           remotes::install_github("bjmt/universalmotif")
+          BiocManager::install("BiocCheck")
         shell: Rscript {0}
 
       - name: Session info
