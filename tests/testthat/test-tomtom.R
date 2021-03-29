@@ -12,7 +12,8 @@ names(fa2) <- seq_along(fa2)
 meme_out <- runMeme(fa2, parse_genomic_coord = FALSE)
 ####
 test_that("tomtom target PWM and target metadata correctly assigned to eachother", {
-  suppressMessages(tt_out <<- runTomTom(dreme_out, database = db))
+  # NOTE: don't change dist from "pearson" this is needed downstream for the NULL match class test
+  suppressMessages(tt_out <<- runTomTom(dreme_out, database = db, dist = "pearson"))
   expect_equal(tt_out$best_match_motif[[2]]@name, tt_out$best_match_name[[2]])
   
   # Ensure that results are correctly sorted by descending p-value

@@ -10,7 +10,7 @@ runTomTom(
   outdir = "auto",
   thresh = 10,
   min_overlap = 5,
-  dist = "pearson",
+  dist = "ed",
   evalue = TRUE,
   silent = TRUE,
   meme_path = NULL,
@@ -37,7 +37,7 @@ unless input motif is shorter, in which case the shorter length is used as
 the minimum value}
 
 \item{dist}{distance metric. Valid arguments: \code{allr | ed | kullback | pearson | sandelin | blic1 | blic5 | llr1 | llr5}.
-Default: \code{pearson}.}
+Default: \code{ed} (euclidean distance).}
 
 \item{evalue}{whether to use E-value as significance threshold (default:
 \code{TRUE}). If evalue = FALSE, uses \emph{q-value} instead.}

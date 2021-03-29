@@ -22,7 +22,7 @@
 #'   unless input motif is shorter, in which case the shorter length is used as
 #'   the minimum value
 #' @param dist distance metric. Valid arguments: `allr | ed | kullback | pearson | sandelin | blic1 | blic5 | llr1 | llr5`.
-#'   Default: `pearson`.
+#'   Default: `ed` (euclidean distance).
 #' @param evalue whether to use E-value as significance threshold (default:
 #'   `TRUE`). If evalue = FALSE, uses *q-value* instead.
 #' @param silent suppress printing stderr to console (default: TRUE).
@@ -90,7 +90,7 @@ runTomTom <- function(input, database = NULL,
                       outdir = "auto",
                       thresh = 10,
                       min_overlap = 5,
-                      dist = "pearson",
+                      dist = "ed",
                       evalue = TRUE,
                       silent = TRUE,
                       meme_path = NULL, ...){
@@ -103,7 +103,7 @@ runTomTom.list <- function(input, database = NULL,
                     outdir = "auto",
                     thresh = 10,
                     min_overlap = 5,
-                    dist = "pearson",
+                    dist = "ed",
                     evalue = TRUE,
                     silent = TRUE,
                     meme_path = NULL, ...){
@@ -125,7 +125,7 @@ runTomTom.default <- function(input, database = NULL,
                       outdir = "auto",
                       thresh = 10,
                       min_overlap = 5,
-                      dist = "pearson",
+                      dist = "ed",
                       evalue = TRUE,
                       silent = TRUE,
                       meme_path = NULL, ...){
