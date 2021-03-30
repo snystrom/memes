@@ -2,7 +2,7 @@
 title: "ChIP-seq Analysis"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Integrative Analysis}
+  %\VignetteIndexEntry{ChIP-seq Analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

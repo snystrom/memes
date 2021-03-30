@@ -16,5 +16,6 @@ Consider swapping to FALSE. This may be a premature optimization.
 ** DONE runTomTom dist=ed
 Make this change before you submit so it's the default!!
 - Change tomtom vignette & tests to ensure correct behavior
-* Post submission [0/1]:
+* Post submission [0/2]:
 ** TODO update example_dreme_tomtom, and example_tomtom after dist=ed
+** TODO https://bioconductor.org/developers/how-to/git/new-package-workflow/

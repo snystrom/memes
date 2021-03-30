@@ -8,9 +8,15 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+
+eval_vignette <- NOT_CRAN & memes::meme_is_installed()
+
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  purl = eval_vignette,
+  eval = eval_vignette
 )
 ```
 
@@ -68,14 +74,13 @@ library(memes)
 
 # Verify that memes detects your meme install
 # (returns all green checks if so)
-# (I have MEME installed to the default location)
 check_meme_install()
 ```
 
 ```{r check_install_fails}
 # You can manually input a path to meme_path
 # If no meme/bin is detected, will return a red X
-check_meme_install(meme_path = 'bad/path')
+check_meme_install(meme_path = "bad/path")
 ```
 
 
