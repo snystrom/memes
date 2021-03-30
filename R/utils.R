@@ -226,7 +226,7 @@ check_meme_install <- function(meme_path = NULL){
   if (is.null(meme_path)){
     x <- try(cmdfun::cmd_install_check(search_meme_path, path = meme_path), 
              silent = TRUE)
-    if (class(x) == "try-error") {
+    if (is(x,"try-error")) {
       message("Cannot detect meme install")
       return(invisible(NULL))
     }
