@@ -16,6 +16,20 @@ Consider swapping to FALSE. This may be a premature optimization.
 ** DONE runTomTom dist=ed
 Make this change before you submit so it's the default!!
 - Change tomtom vignette & tests to ensure correct behavior
-* Post submission [0/2]:
+* Post submission [0/4]:
 ** TODO update example_dreme_tomtom, and example_tomtom after dist=ed
 ** TODO https://bioconductor.org/developers/how-to/git/new-package-workflow/
+** TODO fix cmdfun::cmd_ui_file_exists
+If path = NULL, then when it gets passed to cmd_ui_file_exists(path), get a "path must be character" error.
+
+To fix, catch if path = NULL after if(class(x) == "try-error") & return FALSE.
+```
+x <- try(path_search(path = path) %>% cmd_ui_file_exists(),
+        silent = TRUE)
+    if (class(x) == "try-error") {
+        cmd_ui_file_exists(path)
+        return(invisible(NULL))
+    }
+```
+*** TODO TEMPORARY FIX for memes
+Trycatch this warning if path == NULL
