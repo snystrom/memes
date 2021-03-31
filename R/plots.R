@@ -36,10 +36,8 @@ cowplot_title <- function(plot, title, ...){
 #'
 #' @examples
 #' results <- importTomTomXML(system.file("extdata", "tomtom.xml", package = "memes"))
-#' \donttest{
 #' # show top 3 hits
 #' view_tomtom_hits(results, top_n = 3)
-#' }
 view_tomtom_hits <- function(results, top_n = "all"){
   # TODO: if tomtom is empty, return NONE as plot below??
   purrr::map2(results$motif, results$tomtom, ~{
