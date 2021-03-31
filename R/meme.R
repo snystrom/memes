@@ -233,7 +233,9 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 #'   some variation of this form (delimiters can be any of: "[^[:alnum:]]+" (ie
 #'   non-alphanumeric characters)), (default = FALSE).
 #' @param combined_sites whether to add `combined_sites` output which contains
-#'   coordinates of each sequence, the motif sequence **TODO:** finish this explanation
+#'   coordinates of each sequence, the motif sequence (if `parse_genomic_coord =
+#'   TRUE`), and the `diagram` column raw output from MEME indicating the
+#'   relative locations of motifs in the sequence.
 #'
 #' @return MEME results in universalmotif data.frame format (see:
 #'   [as_universalmotif_dataframe()]). `sites_hits` is a nested data.frame
