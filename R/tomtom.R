@@ -129,8 +129,10 @@ runTomTom.default <- function(input, database = NULL,
                       evalue = TRUE,
                       silent = TRUE,
                       meme_path = NULL, ...){
-  # use TOMTOM server default values which differ from commandline defaults?
-  # TODO: email TOMTOM maintainers to ask if this is really a better default?
+  # email TOMTOM maintainers to ask if ed is really a better default?
+  # Yep:
+  # https://groups.google.com/g/meme-suite/c/7YD0nE8affI/m/aJP0TZszAQAJ
+
 
   # save dreme results & join w/ tomtom results at end.
   # type validation happens below
@@ -646,10 +648,6 @@ parseTomTom <- function(tomtom_xml, query_metadata = NULL){
   }
 
   tomtom_results <- join_tomtom_tables(query, hits)
-  # TODO: rename evalue = eval, qvalue = qval, pvalue = pval
-  # and the corresponding best_match_, etc. cols?
-  # This will fit better with the universalmotif_df format.
-  # and prevent me from rewriting the entire parsing code.
 
   return(tomtom_results)
 }

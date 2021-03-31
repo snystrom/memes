@@ -109,7 +109,6 @@ parseDreme <- function(xml){
   dreme_stats$motif <- pfms
   # Convert to motif_df format
   # suppressing messages about adding empty motif slots
-  # TODO: ensure this is safe
   suppressMessages(
     universalmotif::update_motifs(dreme_stats, extrainfo = TRUE)
     )

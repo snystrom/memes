@@ -261,8 +261,7 @@ Rename the motifs to indicate the binding category they were discovered in.
 dreme_by_binding_renamed <- dreme_by_binding %>% 
   dplyr::mutate(name = paste(binding_type, seq, sep = "_")) %>% 
   # update_motifs updates the information in the special `motif` column
-  # TODO: remove extrainfo after universalmotif 1.9.33 hits devel branch
-  update_motifs(extrainfo = TRUE)
+  update_motifs()
 ```
 
 ```{r, fig.height=5, fig.width=8}

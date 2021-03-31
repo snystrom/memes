@@ -83,7 +83,7 @@ mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
 #' cannot be updated. Any changes to these columns will be **ignored** when updating motifs.
 #'
 #' ## Table of values updated
-#' TODO: change this table to be all universalmotif.dataframe names, w/ second column of "updated: yes/no".
+#'
 #' | `motif`  | `data.frame` |
 #' |:--------:|:------------:|
 #' | name     | name         |
