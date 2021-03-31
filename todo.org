@@ -16,9 +16,9 @@ Consider swapping to FALSE. This may be a premature optimization.
 ** DONE runTomTom dist=ed
 Make this change before you submit so it's the default!!
 - Change tomtom vignette & tests to ensure correct behavior
-* Post submission [0/4]:
+* Post submission [1/6]:
 ** TODO update example_dreme_tomtom, and example_tomtom after dist=ed
-** TODO https://bioconductor.org/developers/how-to/git/new-package-workflow/
+** DONE https://bioconductor.org/developers/how-to/git/new-package-workflow/
 ** TODO fix cmdfun::cmd_ui_file_exists
 If path = NULL, then when it gets passed to cmd_ui_file_exists(path), get a "path must be character" error.
 
@@ -26,10 +26,51 @@ To fix, catch if path = NULL after if(class(x) == "try-error") & return FALSE.
 ```
 x <- try(path_search(path = path) %>% cmd_ui_file_exists(),
         silent = TRUE)
-    if (class(x) == "try-error") {
+    if (is(x, "try-error")) {
         cmd_ui_file_exists(path)
         return(invisible(NULL))
     }
 ```
-*** TODO TEMPORARY FIX for memes
+*** DONE TEMPORARY FIX for memes
 Trycatch this warning if path == NULL
+** TODO add bioconductor_docker_meme instructions to install vignette?
+** TODO update README
+** TODO Support STREME & ENR
+* Review [1/7]:
+** DONE double check all <<- that they're safe
+** TODO run bfg to remove >5MB files
+** TODO reduce function length < 50 lines?
+** TODO check that view_tomtom_results losing \donttest works
+** TODO ensure all TODO's are OK
+** TODO buff up chip-seq vignette with more text
+** WAIT version bump & push to bioc
+
+* TODO Review response:
+
+> Please run BiocCheck in your package source folder as checked out from bioconductor's git repo. I find
+>
+> ```
+> $warning
+> [1] "The following files are over 5MB in size: '.git/objects/pack/pack-a368439aa4aa7ee3afa916aecc0cc4b7d87febad.pack' "
+> ```
+
+
+> `[1] "Avoid '<<-' if possible (found in 3 files)" `
+In this case, I'd prefer to keep my `<<-` if at all possible. Their use is well scoped inside a nested `purrr` loop (i.e. the next environment up is scoped within my function and won't affect the user's env). I could redo this with a couple of `for` loops, but `purrr` gives me a little extra type safety for the final return value which I'd like to hold onto if that's alright.
+
+> `[2] "Recommended function length <= 50 lines."`
+
+> `[3] "Usage of dontrun{} / donttest{} found in man page examples."`
+These are limited to functions that write data to disk.
+
+> and it would be great to clear these, specifically avoiding a large git checkout.
+
+> I also noticed in a vignette "Tidying motif metadata":
+>
+> ```
+> As of this writing in May 2020, the FBgn entries are out of date
+> ```
+This issue is actually upstream of `memes` and comes from the FlyFactor Survey database. I added a new paragraph explaining this issue in more detail and fleshing out the reasoning behind using this example. In short, the purpose of the vignette is to give users practical examples on how to use the `universalmotif_df` format to explore and clean messy data. I lean on this messiness to give good real-world examples for how to evaluate motif annotations and tidy their metadata.
+
+
+> It looks like there are various "TODO"s around. Let me know when you think I should go over this again.
