@@ -36,36 +36,34 @@ Trycatch this warning if path == NULL
 ** TODO add bioconductor_docker_meme instructions to install vignette?
 ** TODO update README
 ** TODO Support STREME & ENR
-* Review [1/7]:
+* Review [1/8]:
 ** DONE double check all <<- that they're safe
 ** TODO run bfg to remove >5MB files
 ** TODO reduce function length < 50 lines?
 ** TODO check that view_tomtom_results losing \donttest works
 ** TODO ensure all TODO's are OK
 ** TODO buff up chip-seq vignette with more text
+*** TODO finish writing the introduction section & early bits about orphan/ectopic binding
+- describe experimental setup
+- walk through details of each step
+- add a `view_motifs` step to the runDreme parts.
+  - tell users to check for low quality repetitive DNA, etc.
+
 ** WAIT version bump & push to bioc
 
 * TODO Review response:
 
 
 > `[1] "Avoid '<<-' if possible (found in 3 files)" `
-In this case, I'd prefer to keep my `<<-` if at all possible. Their use is well scoped inside a `purrr::map` loop (i.e. the next environment up is scoped within my function and won't affect the user's env). I could redo this with a couple of `for` loops, but `purrr` gives me a little extra type safety for the final return value which I'd like to hold onto if that's alright.
+In this case, I'd prefer to keep my `<<-` if at all possible. Their use is well scoped inside a `purrr::map` loop (i.e. the next environment up is scoped within my function environment and won't affect the user's env). I could redo this with a couple of `for` loops, but `purrr` gives me a little extra type safety for the final return value which I'd like to hold onto if that's alright.
 
 > `[2] "Recommended function length <= 50 lines."`
 
-I generally dislike long functions, but the few instances I have big ones are
-big for a reason. The `ame_plot_heatmap` function has lots of plotting code, so
-it's a little easier to have everything in 1 big function than break things up
-here to avoid bugs from getting the nonstandard eval correct. Since it's
-difficult to unit test plots, I decided on this approach to hopefully limit
-bugs. `ame_order_by_cluster` is large because I did a little ASCII cartoon in the
-comments to explain the algorithm.
+I generally dislike long functions, but the few instances I have big ones are big for a reason. The `ame_plot_heatmap` function has lots of plotting code, so it's a little easier to have everything in 1 big function than break things up here to avoid bugs from getting the nonstandard eval correct. Since it's difficult to unit test plots, I decided on this approach to hopefully limit bugs. `ame_order_by_cluster` is large because I did a little ASCII cartoon in the comments to explain the algorithm.
 
 > `[3] "Usage of dontrun{} / donttest{} found in man page examples."`
-These are limited to examples of functions that write data to disk to prevent
-writing junk to the build machine or userspace. In these cases I wrap it in
-`\donttest`. Should I put these in `\dontrun` instead of `\donttest` to prevent
-this further? I'm not sure how `\donttest` chunks are evaluated vs `\dontrun` in this situation.
+
+These are limited to examples of functions that write data to disk to prevent writing junk to the build machine or userspace. In these cases I wrap it in `\donttest`. Should I put these in `\dontrun` instead of `\donttest` to prevent this further? I'm not sure how `\donttest` chunks are evaluated vs `\dontrun` in this situation. On CRAN for similar functions I've used `\dontrun` for this, but BiocCheck says to prefer `\donttest`.
 
 > I also noticed in a vignette "Tidying motif metadata":
 >
@@ -74,8 +72,7 @@ this further? I'm not sure how `\donttest` chunks are evaluated vs `\dontrun` in
 > ```
 This issue is actually upstream of `memes` and comes from the FlyFactor Survey database. I added a new paragraph explaining this issue in more detail and fleshing out the reasoning behind using this example. In short, the purpose of the vignette is to give users practical examples on how to use the `universalmotif_df` format to explore and clean messy data. I lean on this messiness to give good real-world examples for how to evaluate motif annotations and tidy their metadata.
 
-
 > It looks like there are various "TODO"s around. Let me know when you think I should go over this again.
-I went back through and double checked all my TODO's and ensured I wasn't leaving anything undone. In particular I fixed the ones in the vignettes that were being rendered out now that the latest `universalmotif` version is up on the devel branch. There's still 1 TODO in the `integrative_analys.Rmd` vignette but it's not rendered out or evaluated, just a future note for possible improvement on the document. I can remove that chunk if it may cause issues somewhere.
+I went back through and double checked all my TODO's and ensured I wasn't leaving anything undone or broken. In particular I fixed the ones in the vignettes that were being rendered out now that the latest `universalmotif` version is up on the devel branch.
 
 The remaining TODO flags mark things that may need attention in the future if I make changes to that area of the code, but should be stable under current conditions.
