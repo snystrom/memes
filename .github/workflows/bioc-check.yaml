@@ -301,6 +301,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git remote add site git@github.com:snystrom/memes-manual.git
           git fetch site gh-pages
           git checkout gh-pages
           git remote set-branches site gh-pages
