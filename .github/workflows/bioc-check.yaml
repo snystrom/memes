@@ -301,9 +301,9 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git fetch site gh-pages
           git checkout gh-pages
           git remote set-branches site gh-pages
-          git fetch site gh-pages
           git worktree add --track -B gh-pages /tmp/site-builder/ site/gh-pages
           Rscript -e "pkgdown::build_site(pkg = ".", devel = FALSE, preview = FALSE, install = FALSE)"
           git worktree remove /tmp/site-builder/
