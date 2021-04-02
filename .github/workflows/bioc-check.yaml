@@ -319,6 +319,7 @@ jobs:
         with:
           source-directory: 'docs'
           destination-github-username: 'snystrom'
+          destination-repository-username: 'snystrom'
           destination-repository-name: 'memes-manual'
           user-email: "snystrom@users.noreply.github.com"
 
