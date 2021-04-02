@@ -11,10 +11,12 @@ ame_compare_heatmap_methods(ame, group, value = -log10(adj.pvalue))
 
 \item{group}{optional name of group to split results by}
 
-\item{value}{value to compare to "normalize" method (default: -log10(adj.pvalue))}
+\item{value}{value to compare to "normalize" method (default:
+-log10(adj.pvalue))}
 }
 \value{
-a cowplot 2 panel plot comparing the distribution of `value` to normalized rank values
+a cowplot 2 panel plot comparing the distribution of `value` to
+  normalized rank values
 }
 \description{
 This helper function allows the user to visualize the distribution of their
