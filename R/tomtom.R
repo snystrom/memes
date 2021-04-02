@@ -130,21 +130,16 @@ runTomTom.default <- function(input, database = NULL,
                       silent = TRUE,
                       meme_path = NULL, ...){
   # email TOMTOM maintainers to ask if ed is really a better default?
-  # Yep:
-  # https://groups.google.com/g/meme-suite/c/7YD0nE8affI/m/aJP0TZszAQAJ
-
+  # Yep: https://groups.google.com/g/meme-suite/c/7YD0nE8affI/m/aJP0TZszAQAJ
 
   # save dreme results & join w/ tomtom results at end.
   # type validation happens below
-
   input <- motif_input(input)
 
   if (is.null(input$metadata)){
-    # Allows .meme input files to
-    # import query motif metadata
-    # I use this solution instead of modifying motif_input
-    # to allow motif_input on databases to not require importing the file
-    # since these can be large
+    # Allows .meme input files to import query motif metadata I use this
+    # solution instead of modifying motif_input to allow motif_input on
+    # databases to not require importing the file since these can be large
     input$metadata <- input$path %>%
       universalmotif::read_meme() %>%
       as_universalmotif_dataframe()
@@ -165,43 +160,19 @@ runTomTom.default <- function(input, database = NULL,
 
   ps_out <- processx::run(command, flags, spinner = TRUE, error_on_status = FALSE)
   
-  # Print any messages to user
-  # This will cause double-printing stderr if non-zero exit status,
-  # but at that point, who cares?
+  # Print any messages to user This will cause double-printing stderr if
+  # non-zero exit status, but at that point, who cares?
   if (!silent) {
     message(ps_out$stderr)
   } else {
-    # TODO: move this chunk to a function
-    # Grep out common warnings for database too small,
-    # or inaccurate p-value estimation
-    # and print those warnings
-    # These don't trigger a non-zero exit status, but could affect 
-    # conclusions, so important to print these.
-    err_string <- strsplit(ps_out$stderr, "\n")[[1]]
-    purrr::walk(grep("Warning:|Provide at least", err_string, value = TRUE), message)
-    
-    # Deal with discarding motifs due to duplicate IDs:
-    # Note: this warning will also proc if the IDs are non-dups but the matrix is duplicated
-    # So I'm writing a custom warning message instead
-    grep("Discarding motif .+non-unique ID", err_string, value = TRUE) %>% 
-      gsub(" in file '.+' ", "", .) %>% 
-      gsub("Discarding motif '(.+)'.+", "\\1", .) %>% 
-      {
-        if (length(.) > 0) {
-          message(paste("Discarding", length(.), "motifs because they are duplicated in the database."))
-          message("The following motifs were discarded:")
-          purrr::walk(., message)
-        }
-      }
-    
+    print_tomtom_messages(ps_out$stderr)
   }
 
   ps_out %>%
     process_check_error(help_fun = ~{tomtom_help(command)},
                         user_flags = cmdfun::cmd_help_parse_flags(user_flags),
                         flags_fun = ~{gsub("-", "_", .)},
-                        default_help_fun = TRUE
-                        )
+                        default_help_fun = TRUE)
 
   tomtom_out <- cmdfun::cmd_file_expect("tomtom", c("tsv", "xml", "html"), outdir = outdir)
 
@@ -258,6 +229,40 @@ prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
 #' @noRd
 tomtom_help <- function(command){
   processx::run(command, error_on_status = FALSE)$stderr
+}
+
+#' Print important messages to users about inaccurate p-values or duplicated entries
+#'
+#' @param stderr 
+#'
+#' @return
+#'
+#' @noRd
+print_tomtom_messages <- function(stderr){
+
+  # Grep out common warnings for database too small,
+  # or inaccurate p-value estimation
+  # and print those warnings
+  # These don't trigger a non-zero exit status, but could affect
+  # conclusions, so important to print these.
+  err_string <- strsplit(stderr, "\n")[[1]]
+  purrr::walk(grep("Warning:|Provide at least", err_string, value = TRUE), message)
+
+  # Deal with discarding motifs due to duplicate IDs:
+  # Note: this warning will also proc if the IDs are non-dups but the matrix is duplicated
+  # So I'm writing a custom warning message instead
+  grep("Discarding motif .+non-unique ID", err_string, value = TRUE) %>%
+    gsub(" in file '.+' ", "", .) %>%
+    gsub("Discarding motif '(.+)'.+", "\\1", .) %>%
+    {
+      if (length(.) > 0) {
+        message(paste("Discarding", length(.), "motifs because they are duplicated in the database."))
+        message("The following motifs were discarded:")
+        purrr::walk(., message)
+      }
+    }
+
+  return(invisible(NULL))
 }
 
 #' Return query table from tomtom xml
