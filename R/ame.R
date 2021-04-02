@@ -39,7 +39,6 @@ runAme.BStringSetList <- function(input,
   runAme.list(as.list(input), control, outdir, method, database, meme_path, sequences, silent, ...)
 }
 
-#' See runAme Generic for details
 #' @export
 #' @rdname runAme
 runAme.default <- function(input,

@@ -37,7 +37,7 @@ transcription factor E93 during *Drosophila* wing development. These data are
 useful because they contain multiple groupings with interesting motif properties
 between groups.
 
-The ChIP experiemnts were performed under two conditions: ectopic expression of
+The ChIP experiments were performed under two conditions: ectopic expression of
 E93 during early development, and under wild-type conditions in a late stage of
 development. Peaks are annotated based on whether they are found in both
 conditions ("Endogenous" peaks), only in the ectopic expression condition
@@ -48,7 +48,8 @@ distinguish these three categories of binding from eachother. To investigate
 this question, we will first look for enrichment of known transcription factor
 motifs within each binding category using the AME tool.
 
-To start, ensure memes can detect your local install of the MEME Suite (see `vignette("install_guide")` for help).
+To start, ensure memes can detect your local install of the MEME Suite (see
+`vignette("install_guide")` for help).
 
 ```{r}
 check_meme_install()
@@ -56,7 +57,7 @@ check_meme_install()
 
 ### Prepare peaks for analysis
 
-A subset of annotate E93 ChIP summits from the are shipped with the memes package and can be loaded as follows:
+A subset of annotated E93 ChIP summits are shipped with the memes package and can be loaded as follows:
 ```{r, message=F}
 data("example_chip_summits", package = "memes")
 head(example_chip_summits, 5)
@@ -91,7 +92,7 @@ meme_db_path <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "m
 
 ### Pre-filtering database for expressed transcription factors
 
-A key consideration when using a database of known transcription factors is whether to include motifs for TFs which are not expressed. On one hand, including all motifs allows maximum discovery of potential regulators, but on the other hand may detect factors which are not relevant under your experimental conditions. Another consideration is for many tools, increasing the number of tested motifs increases the multiple testing penaly, so limiting the motif database to a smaller number of relevant candidates can be a way to improve statistical power. There is no one right answer to this question. For this vignette, I will give an example for how one could go about filtering a database to consider only expressed factors. For other analyses, this question will need to be carefully considered.
+A key consideration when using a database of known transcription factors is whether to include motifs for TFs which are not expressed. On one hand, including all motifs allows maximum discovery of potential regulators, but on the other hand may detect factors which are not relevant under your experimental conditions. Another consideration for many tools is that increasing the number of tested motifs increases the multiple testing penaly, so limiting the motif database to a smaller number of relevant candidates can be a way to improve statistical power. There is no one right answer to this question. For this vignette, I will give an example for how one could go about filtering a database to consider only expressed factors. For other analyses, this question will need to be carefully considered.
 
 First, we load the motif database into R using `read_meme`. To more easily manipulate the motif metadata, we can convert this to a data.frame using `to_df`.
 
@@ -122,7 +123,7 @@ example_rnaseq %>%
          x = "Largest FPKM Value")
 ```
 
-Choosing how to decide on whether a gene is expressed or not is a non-trivial topic. **DO NOT BLINDLY DO WHAT I DO HERE**. To keep this vignette on topic, I will use an overly simplistic cutoff of FPKM > 5 to define expressed genes. In this example, I will consider any gene that exceeds the cutoff at either timepoint as expressed.
+Choosing a method to decide whether a gene is expressed or not is a non-trivial topic. **DO NOT BLINDLY DO WHAT I DO HERE**. To keep this vignette on topic, I will use an overly simplistic cutoff of FPKM > 5 to define expressed genes. In this example, I will consider any gene that exceeds the cutoff at either timepoint as expressed.
 ```{r}
 expressed_genes <- example_rnaseq %>% 
   # For each gene, keep only those with max(FPKM) greater or equal to 5.
@@ -197,7 +198,7 @@ It is built on top of `ggplot2`, so all `ggplot2` functions can be used to
 further modify the plot.
 
 By default, it uses the -log10(adjusted p-value) as the heat values. See the
-documentation for additional notes on customization.
+documentation (`?ame_plot_heatmap`) for additional notes on customization.
 
 We can visualize the top 10 hits from the ectopic binding results as follows:
 
@@ -233,13 +234,14 @@ ame_res %>%
 ```
 
 ### Reducing redundant motif hits
-There is another key consideration for the above visualization and that is that
+
+Another key consideration for the above visualization is that
 in the FlyFactorSurvey database we used, different TFs can have multiple motif
 entries in the database which are all detected separately by AME. Here, when
 returning the top 5 hits from each group, you can see, for example, that a motif
 matching "Aef1" is reported 2 times within the top 5 hits of the ectopic sites.
 In this situation, it makes sense to summarize the data at the TF level, instead
-of the motif level. **Note:** There may be exceptions to this if for example, a
+of the motif level. **Note:** There may be exceptions to this if, for example, a
 TF has multiple DNA binding sequences it can recognize, in which case having
 multiple hits may reflect a biological property of your sequences. You will have
 to handle this on a case-by-case basis for interesting hits and different motif
@@ -335,7 +337,7 @@ cowplot::plot_grid(pval_heatmap,
                    labels = "AUTO")
 ```
 
-## Denovo motif similarity by binding
+## *De-novo* motif similarity by binding
 
 Discovery of *de-novo* motifs within binding categories can be another way to
 identify meaningful motifs that distinguish between ectopic, entopic, and orphan
@@ -408,11 +410,11 @@ This heatmap reveals that most motifs discovered in each group are highly
 similar to the motifs found in other groups. 
 
 
-### Test Denovo motif enrichment using AME
+### Test *de-novo* motif enrichment using AME
 
 The above analysis suggests the motif content of the different binding
 categories are highly similar in sequence composition. To extend these analyses,
-we can use AME to test for motif enrichment of the denovo discovered motifs
+we can use AME to test for motif enrichment of the *de-novo* discovered motifs
 within each binding category, and determine whether the motifs detected in one
 category are indeed enriched in another. To do this, we can provide the
 *de-novo* motifs as the AME database to test for their enrichment in each sequence category.
@@ -427,7 +429,7 @@ ame_denovo_by_binding <- by_binding %>%
   dplyr::bind_rows(.id = "binding_type") 
 ```
 
-Plotting the heatmap of results reveals that indeed a majority of the Denovo
+Plotting the heatmap of results reveals that indeed a majority of the *de-novo*
 motifs discovered within a single category are detected in all 3 categories,
 supporting the conclusion that orphan, ectopic, and entopic sites are highly
 similar in sequence content.
@@ -518,7 +520,7 @@ dreme_results <- dreme_by_sens_vs_static %>%
   dplyr::bind_rows(.id = "e93_response")
 ```
 
-Next, we match the denovo motifs with known TF motifs using TomTom. The TomTom
+Next, we match the *de-novo* motifs with known TF motifs using TomTom. The TomTom
 results will be added as new columns to the input data. TomTom data columns
 begin with `best_match_` summarizing the top hit, and the `tomtom` column is a
 nested data.frame storing the full results for each input motif.
@@ -531,8 +533,11 @@ denovo_dynamic_motifs <- dreme_results %>%
 We can visualize some of the top TomTom hits for each *de-novo* motif using
 `view_tomtom_hits()`. Passing a number to `view_tomtom_hits()` shows that many
 matches ranked in descending order. Passing no value will show all hits. It's a
-good idea to inspect all hits visually. This can be an extremely revealing step.
-For brevity, I'll only show the top 3 hits for each motif.
+good idea to inspect all hits visually. This can be an extremely revealing step,
+as it will give you insight into which motifs are generally similar to your
+input motif. You may also discover proteins with identical motifs, in which case
+you may need to decide which TF is the better candidate. For brevity, I'll only
+show the top 3 hits for each motif.
 
 ```{r, fig.height=8, fig.width=8.5}
 denovo_dynamic_motifs %>% 
@@ -547,7 +552,7 @@ After manually inspecting the above hits, we may decide that a lower-ranked
 motif is a better match by eye, or because of domain-specific knowledge that
 makes a different TF a better candidate. We can swap the best matched motif
 using `force_best_match()`. This will update the `best_match_` columns and
-re-rank the `tomtom` nest data column to set a lower ranked match to the top
+re-rank the `tomtom` nested data column to set a lower ranked match to the top
 hit. The updates `best_match_` columns will reflect the values corresponding to
 the new match.
 
@@ -758,14 +763,13 @@ best_motifs %>%
 ```
 
 We can test whether the distribution of FIMO scores between multiple groups is
-statistically significantly different using 
-
+statistically significantly different using
 an [Anderson-Darling test](https://en.wikipedia.org/wiki/Anderson%E2%80%93Darling_test). For a
 pairwise comparison (in case you only have 2 groups to test), a [Kolmogorov-Smirnov test](https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test) is commonly
 used instead. The `PMCMRplus::adAllPairsTest()` performs the Anderson-Darling
 test and corrects for multiple testing. This reveals that Decreasing FIMO scores
-are significantly different from Increasing and Static scores, but Increasing
-and Static scores are not significantly different from eachother, supporting the
+are significantly different from Increasing and Static scores (p < 0.05), but Increasing
+and Static scores are not significantly different from eachother (p > 0.05), supporting the
 conclusion that E93 motifs in Decreasing sites are higher quality than those in
 Increasing or Static sites.
 
