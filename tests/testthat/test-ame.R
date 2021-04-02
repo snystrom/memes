@@ -11,7 +11,7 @@ test_that("AME Internal functions work",{
 test_that("input error checking works", {
   fa1 <- system.file("extdata/fasta_ex/fa1.fa", package = "memes", mustWork = TRUE)
   fa2 <- system.file("extdata/fasta_ex/fa2.fa", package = "memes", mustWork = TRUE)
-  db <- system.file("extdata/db/fly_factor_survey_id.meme", package = "memes", mustWork = TRUE)
+  db <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes", mustWork = TRUE)
   
   expect_error(
     suppressMessages(

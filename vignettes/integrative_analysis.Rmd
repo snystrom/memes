@@ -23,6 +23,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(memes)
 library(magrittr)
+library(ggplot2)
 suppressPackageStartupMessages(library(GenomicRanges))
 ```
 
@@ -103,7 +104,7 @@ meme_db <- read_meme(meme_db_path) %>%
 To simplify the vignette, we've preproccessed RNAseq data from our tissue of interest and shipped them with `memes`. These are FPKM normalized counts for each transcription factor gene at early and late developmental times. 
 ```{r}
 data("example_rnaseq", package = "memes")
-head(example_rnaseq, 6)
+head(example_rnaseq, 4)
 ```
 
 ```{r, fig.height=5, fig.width=5, eval=F, include=F, echo=F}
@@ -172,7 +173,7 @@ by_binding <- summit_flank %>%
 The data are returned as a Biostrings List, where each list entry represents the sequences of each E93 binding category.
 
 ```{r}
-by_binding
+head(by_binding)
 ```
 
 Finally, we test each set of sequencing using AME with the `runAme` function. This will run AME on each set of input sequences in the Biostrings List.
@@ -186,7 +187,7 @@ This returns a list object where each entry is the AME results for each
 category. For example, here is what the results for the ectopic peaks look like:
 
 ```{r}
-head(ame_by_binding$ectopic)
+head(ame_by_binding$ectopic, 5)
 ```
 
 ### Visualizing AME results 
