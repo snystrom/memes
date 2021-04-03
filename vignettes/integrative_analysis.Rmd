@@ -69,7 +69,7 @@ identifier for each peak, `peak_binding_description` describes the condition in
 which E93 is observed to bind to this region (described in detail below), and
 `e93_sensitive_behavior` describes the change in chromatin accessibility
 observed at this site following E93 expression. These annotations will be used
-throughout this vignette to learn motifs which predict differences in E93
+throughout this vignette to learn motifs which are associated with differences in E93
 binding, and differences in chromatin accessibility at E93 bound sites.
 
 The summit of a ChIP peak represents the single base-pair position with the
