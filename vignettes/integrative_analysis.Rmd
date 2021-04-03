@@ -63,6 +63,15 @@ data("example_chip_summits", package = "memes")
 head(example_chip_summits, 5)
 ```
 
+The ChIP summits have 3 additional annotation columns: `id`,
+`peak_binding_description`, and `e93_sensitive_behavior`. `id` is a unique
+identifier for each peak, `peak_binding_description` describes the condition in
+which E93 is observed to bind to this region (described in detail below), and
+`e93_sensitive_behavior` describes the change in chromatin accessibility
+observed at this site following E93 expression. These annotations will be used
+throughout this vignette to learn motifs which predict differences in E93
+binding, and differences in chromatin accessibility at E93 bound sites.
+
 The summit of a ChIP peak represents the single base-pair position with the
 highest amplitude ChIP signal within a ChIP peak. Typically, motif analysis
 gives the best results when performed in a small window (100 - 200 bp) around
