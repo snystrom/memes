@@ -821,7 +821,7 @@ best_motifs %>%
 
 We can also build a more complex representation of these data by making a
 heatmap of the sequence variability for each matched sequence using
-`plot_sequence_heatmap`. This function will plot each sequence as a row of a
+`plot_sequence_heatmap()`. This function will plot each sequence as a row of a
 heatmap where each column represents the position relative to the motif start
 coordinate. The cells are colored by the DNA sequence found at that position for
 each sequence. Using this type of plot it becomes even more clear how
