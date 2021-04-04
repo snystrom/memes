@@ -43,11 +43,16 @@ Trycatch this warning if path == NULL
 ** DONE check that view_tomtom_results losing \donttest works
 ** DONE ensure all TODO's are OK
 ** TODO buff up chip-seq vignette with more text
-*** TODO finish writing the introduction section & early bits about orphan/ectopic binding
+*** DONE finish writing the introduction section & early bits about orphan/ectopic binding
 - describe experimental setup
 - walk through details of each step
 - add a `view_motifs` step to the runDreme parts.
   - tell users to check for low quality repetitive DNA, etc.
+*** TODO fix AME Heatmap visualization intro & discussion
+ex from matt:
+```
+Using p-value heatmaps to make inter-group comparisons can be useful to visualize differential enrichment of motifs. But such heatmaps can be misleading, particularly when AME produces a very large number of hits...
+```
 
 ** WAIT version bump & push to bioc
 

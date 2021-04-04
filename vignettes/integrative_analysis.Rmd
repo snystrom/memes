@@ -69,7 +69,7 @@ identifier for each peak, `peak_binding_description` describes the condition in
 which E93 is observed to bind to this region (described in detail below), and
 `e93_sensitive_behavior` describes the change in chromatin accessibility
 observed at this site following E93 expression. These annotations will be used
-throughout this vignette to learn motifs which are associated with differences in E93
+throughout this vignette to identify motifs that are associated with differences in E93
 binding, and differences in chromatin accessibility at E93 bound sites.
 
 The summit of a ChIP peak represents the single base-pair position with the
@@ -92,7 +92,7 @@ summit_flank <- example_chip_summits %>%
 
 One approach to identify enriched motifs is to search for enrichment of known
 transcription factor (TF) motifs within sequences of interest. The Fly Factor
-Survey is a database of known *Drosophila* TF motifs which we will use throught
+Survey is a database of known *Drosophila* TF motifs that we will use throught
 this vignette. These data are also packaged with `memes`:
 
 ```{r}
@@ -225,6 +225,7 @@ E93 binding category. The list can be combined into a data.frame using
 `binding_type` that contains the names from the `ame_by_binding` list. In this
 way, the `ame_res` data.frame contains all AME results for each run, which can
 be distinguished by the `binding_type` column.
+
 ```{r}
 ame_res <- ame_by_binding %>% 
   dplyr::bind_rows(.id = "binding_type")
@@ -285,6 +286,7 @@ ame_res %>%
 
 
 ### AME Heatmap Visualization
+
 If you have read `vignette("core_ame")`, the "normalized rank" heatmap was
 introduced as an alternative visualization method useful when AME produces very
 large numbers of hits, or when p-values are on very different scales between groups. 
@@ -815,6 +817,30 @@ best_motifs %>%
   c(list("E93_FlyFactor" = e93_flyfactor), .) %>% 
   # Plot each motif
   view_motifs()
+```
+
+We can also build a more complex representation of these data by making a
+heatmap of the sequence variability for each matched sequence using
+`plot_sequence_heatmap`. This function will plot each sequence as a row of a
+heatmap where each column represents the position relative to the motif start
+coordinate. The cells are colored by the DNA sequence found at that position for
+each sequence. Using this type of plot it becomes even more clear how
+variability at position 6 differs between Decreasing and Increasing sites, where
+Decreasing sites have a very consistent "C" at position 6, while Increasing
+sites are more likely to have non-C bases at this position.
+
+```{r, fig.height=5.25, fig.width=8}
+best_motifs %>% 
+  # Get sequences of each matched motif
+  add_sequence(dm.genome) %>% 
+  data.frame %>% 
+  # Split by E93 response category
+  split(.$e93_sensitive_behavior) %>% 
+  # Extract the "sequence" column from each category
+  purrr::map("sequence") %>% 
+  # Plot a heatmap for each category
+  purrr::imap(plot_sequence_heatmap, title_hjust = 0.5) %>% 
+  cowplot::plot_grid(plotlist = ., nrow = 1)
 ```
 
 
