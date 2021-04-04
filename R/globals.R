@@ -1,1 +1,1 @@
-utils::globalVariables(c(".", "adj.pvalue", "motif_id"))
+utils::globalVariables(c(".", "adj.pvalue", "motif_id", "position"))

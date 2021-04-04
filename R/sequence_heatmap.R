@@ -55,11 +55,11 @@ sequence_df_to_heatmap <- function(x, alph = c("DNA", "RNA", "AA")){
   colors <- switch(alph,
                    DNA = DNA_COLORS,
                    RNA = RNA_COLORS,
-                   AA = RNA_COLORS)
+                   AA = AA_COLORS)
   
   x %>% 
-    dplyr::mutate(position = factor(position)) %>% 
-    ggplot(aes(position, id)) +
+    dplyr::mutate("position" = factor(position)) %>% 
+    ggplot(aes(.data$position, .data$id)) +
       geom_tile(aes(fill = letters)) +
       scale_fill_manual(values = colors) +
       scale_y_continuous(expand = c(0,0)) +
