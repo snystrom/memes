@@ -120,8 +120,8 @@ plot_sequence_heatmap <- function(sequence, title = NULL, logo = TRUE,
     stop("heights must be a numeric vector of lenght 2", call. = FALSE)
   }
   
-  pwm <- create_motif(sequence) %>% 
-    view_motifs() +
+  pwm <- universalmotif::create_motif(sequence) %>%
+    universalmotif::view_motifs() +
       labs(title = title) +
       theme(axis.text.x = element_blank(), 
             plot.title = element_text(hjust = title_hjust))
