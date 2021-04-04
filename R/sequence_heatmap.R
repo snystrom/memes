@@ -103,7 +103,8 @@ sequence_to_heatmap <- function(sequences, alph = c("DNA", "RNA", "AA")){
 #'   sequences
 #'   
 #' @seealso runFimo
-#'   
+#' @export
+#' 
 #' @importFrom ggplot2 labs theme element_blank element_text
 #' 
 #' @examples
