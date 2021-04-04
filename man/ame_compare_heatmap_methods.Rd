@@ -21,7 +21,7 @@ a cowplot 2 panel plot comparing the distribution of `value` to
 \description{
 This helper function allows the user to visualize the distribution of their
 AME results data on different scales to help understand the implications of
-using different values in `ame_plot_heatmap()`
+using different values in `plot_ame_heatmap()`
 }
 \examples{
 data("example_ame", package = "memes")

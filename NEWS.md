@@ -1,3 +1,7 @@
+# memes 0.99.6
+* added list S3 method for `plot_sequence_heatmap` so now named lists of sequences can be passed natively to this function.
+  * updated ChIP-seq vignette to demonstrate this
+
 # memes 0.99.5
 * added `plot_sequence_heatmap` for making heatmaps of sequence lists
 * Added significantly more explanation to the ChIP-seq vignette

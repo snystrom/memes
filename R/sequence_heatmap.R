@@ -85,19 +85,28 @@ sequence_to_heatmap <- function(sequences, alph = c("DNA", "RNA", "AA")){
 #' Sometimes it is useful to visualize individual motif matches in aggregate to
 #' understand how sequence variability contributes to motif matches. This
 #' function creates a heatmap where each row represents a single sequence and
-#' each column represents a position. Sequences are optionally aggregated into a
-#' sequence logo aligned in register with the heatmap to visualize how sequence
-#' variability contributes to motif makeup.
+#' each column represents a position. Cells are colored by the sequence at that
+#' position. Sequences are optionally aggregated into a sequence logo aligned in
+#' register with the heatmap to visualize how sequence variability contributes
+#' to motif makeup.
 #' 
 #' @param sequence character vector of sequences, plot will be ranked in order
-#'   of the sequences. Each sequence must be equal length.
-#' @param title title of the plot
+#'   of the sequences. Each sequence must be equal length. Alternately, sequence
+#' can be a named list in which case each plot will be titled by the names of
+#' the list entries.
+#' @param title title of the plot. Default: NULL. If sequence is a named list of
+#'   sequences, title defaults to the list entry names. Set to NULL to override
+#'   this behavior. To use a different title than the list entry name, pass a
+#'   vector of names to `title`.
 #' @param logo whether to include a sequence logo above the heatmap
 #' @param alph alphabet colorscheme to use. One of: DNA, RNA, AA.
 #' @param title_hjust value from 0 to 1 determining the horizontal justification
 #'   of the title. Default: 0.
 #' @param heights ratio of logo:heatmap heights. Given as: c(logo_height,
 #' heatmap_height). Values are not absolute. Ignored when logo = FALSE.
+#' @param legend passed to ggplot2::theme(legend.position). Default: "none".
+#'   Values can be: "none", "left", "right", "top", "bottom", or coordinates in
+#'   c(x,y) format.
 #' 
 #' @return a ggplot object of the sequence heatmap ranked by the order of
 #'   sequences
@@ -112,9 +121,42 @@ sequence_to_heatmap <- function(sequences, alph = c("DNA", "RNA", "AA")){
 #' genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
 #' motifs <- add_sequence(example_fimo, genome)
 #' plot_sequence_heatmap(motifs$sequence)
+#' 
+#' # Use on named list
+#' sequences <- list("set 1" = motifs$sequence[1:100], 
+#'                   "set 2" = motifs$sequence[101:200])
+#' plot_sequence_heatmap(sequences)
+#' 
+#' # Use different titles for list input
+#' plot_sequence_heatmap(sequences, title = c("A", "B"))
 plot_sequence_heatmap <- function(sequence, title = NULL, logo = TRUE, 
                                   alph = c("DNA", "RNA", "AA"), 
-                                  title_hjust = 0, heights = c(1,5)){
+                                  title_hjust = 0, heights = c(1,5), 
+                                  legend = "none"){
+  UseMethod("plot_sequence_heatmap")
+}
+
+#' @export
+plot_sequence_heatmap.list <- function(sequence, title = names(sequence), 
+                                  logo = TRUE, alph = c("DNA", "RNA", "AA"), 
+                                  title_hjust = 0, heights = c(1,5), 
+                                  legend = "none"){
+  purrr::map2(sequence, 
+              title,
+              plot_sequence_heatmap.default, 
+              logo = logo, 
+              alph = alph,
+              title_hjust = title_hjust,
+              heights = heights,
+              legend = legend
+              )
+}
+
+#' @export
+plot_sequence_heatmap.default <- function(sequence, title = NULL, logo = TRUE, 
+                                  alph = c("DNA", "RNA", "AA"), 
+                                  title_hjust = 0, heights = c(1,5), 
+                                  legend = "none"){
   
   if (length(heights) != 2) {
     stop("heights must be a numeric vector of lenght 2", call. = FALSE)
@@ -130,7 +172,7 @@ plot_sequence_heatmap <- function(sequence, title = NULL, logo = TRUE,
     labs(y = NULL) +
     theme(axis.text.y = element_blank(), 
           legend.title = element_blank(),
-          legend.position = "none"
+          legend.position = legend
           ) 
     
   if (logo){

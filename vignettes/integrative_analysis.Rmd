@@ -839,7 +839,8 @@ best_motifs %>%
   # Extract the "sequence" column from each category
   purrr::map("sequence") %>% 
   # Plot a heatmap for each category
-  purrr::imap(plot_sequence_heatmap, title_hjust = 0.5) %>% 
+  plot_sequence_heatmap(title_hjust = 0.5) %>% 
+  # Arrange into a grid
   cowplot::plot_grid(plotlist = ., nrow = 1)
 ```
 
