@@ -58,6 +58,7 @@ reference:
 - title: Data Visualization
   contents:
   - view_tomtom_hits
+  - plot_sequence_heatmap
   - ame_plot_heatmap
   - ame_compare_heatmap_methods
 
