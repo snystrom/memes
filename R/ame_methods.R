@@ -133,12 +133,12 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
 #' data("example_ame", package = "memes")
 #' 
 #' # Plot a single category heatmap
-#' ame_plot_heatmap(example_ame$Decreasing)
+#' plot_ame_heatmap(example_ame$Decreasing)
 #' 
 #' # Plot a multi category heatmap
 #' grouped_ame <- dplyr::bind_rows(example_ame, .id = "category")
-#' ame_plot_heatmap(grouped_ame, group = category)
-ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(adj.pvalue), group_name = NULL, scale_max = NA){
+#' plot_ame_heatmap(grouped_ame, group = category)
+plot_ame_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(adj.pvalue), group_name = NULL, scale_max = NA){
   id <- enquo(id)
   group <- enquo(group)
   value <- enquo(value)
@@ -223,7 +223,7 @@ ame_plot_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
 #'
 #' This helper function allows the user to visualize the distribution of their
 #' AME results data on different scales to help understand the implications of
-#' using different values in `ame_plot_heatmap()`
+#' using different values in `plot_ame_heatmap()`
 #'
 #' @param ame ame results data.frame
 #' @param group optional name of group to split results by

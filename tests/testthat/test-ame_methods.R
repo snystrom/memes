@@ -19,24 +19,24 @@ ame_analysis %>%
 
 
 
-# check ame_plot_heatmap
+# check plot_ame_heatmap
 ## test each input type
 ame_analysis %>%
   dplyr::mutate(grp = c("1", "2"), grp = factor(grp, levels = c("2", "1"))) %>%
-  ame_plot_heatmap()
+  plot_ame_heatmap()
 
 # y axis labeled "grp" with values 1 & 2.
 ame_analysis %>%
   dplyr::mutate(grp = c("1", "2"), grp = factor(grp, levels = c("2", "1"))) %>%
-  ame_plot_heatmap(id = motif_id, group = grp)
+  plot_ame_heatmap(id = motif_id, group = grp)
 
 ame_analysis %>%
   dplyr::mutate(grp = c("1", "2"), grp = factor(grp, levels = c("2", "1"))) %>%
-  ame_plot_heatmap(group = grp, value = -log10(evalue))
+  plot_ame_heatmap(group = grp, value = -log10(evalue))
 
 ame_analysis %>%
-  ame_plot_heatmap()
+  plot_ame_heatmap()
 
 # 1 y-axis value labeled 'test'
 ame_analysis %>%
-  ame_plot_heatmap(group_name = "test")
+  plot_ame_heatmap(group_name = "test")

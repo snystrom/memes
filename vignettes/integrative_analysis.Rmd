@@ -202,19 +202,19 @@ head(ame_by_binding$ectopic, 5)
 
 ### Visualizing AME results 
 
-The `ame_plot_heatmap()` function provides a quick way to visualize AME results.
+The `plot_ame_heatmap()` function provides a quick way to visualize AME results.
 It is built on top of `ggplot2`, so all `ggplot2` functions can be used to
 further modify the plot.
 
 By default, it uses the -log10(adjusted p-value) as the heat values. See the
-documentation (`?ame_plot_heatmap`) for additional notes on customization.
+documentation (`?plot_ame_heatmap`) for additional notes on customization.
 
 We can visualize the top 10 hits from the ectopic binding results as follows:
 
 ```{r, fig.height=3.5, fig.width=7}
 ame_by_binding$ectopic %>% 
   dplyr::filter(rank %in% 1:10) %>% 
-  ame_plot_heatmap(group_name = "Ectopic Sites")  +
+  plot_ame_heatmap(group_name = "Ectopic Sites")  +
     ggtitle("Top 10 AME Hits in Ectopic Sites")
 ```
 
@@ -233,14 +233,14 @@ ame_res <- ame_by_binding %>%
 ```
 
 It is possible to aggregate results from multiple runs into a heatmap by setting
-the `group` parameter in `ame_plot_heatmap()`. This will stratify the y-axis by
+the `group` parameter in `plot_ame_heatmap()`. This will stratify the y-axis by
 the entries in the column passed to `group`. This results in clustering motifs
 with shared hits across categories along the x-axis for quickly visualizing
 motifs that may be shared or distinct between multiple groups.
 
 ```{r, fig.height=5,fig.width=15}
 ame_res %>% 
-  ame_plot_heatmap(group = binding_type)
+  plot_ame_heatmap(group = binding_type)
 ```
 
 ### Reducing redundant motif hits
@@ -279,7 +279,7 @@ ame_res %>%
   dplyr::group_by(binding_type, motif_alt_id) %>%
   # within each binding type, select the TF hit with the lowest adjusted p-value
   dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
-  ame_plot_heatmap(group = binding_type, id = motif_alt_id) +
+  plot_ame_heatmap(group = binding_type, id = motif_alt_id) +
     labs(y = "Binding Category",
          x = "Transcription Factor Motif")
 ```
@@ -324,18 +324,18 @@ best_ame_hits <- ame_res %>%
   dplyr::filter(adj.pvalue == min(adj.pvalue))
   
 pval_heatmap <- best_ame_hits %>% 
-  ame_plot_heatmap(group = binding_type, id = motif_alt_id) +
+  plot_ame_heatmap(group = binding_type, id = motif_alt_id) +
     labs(x = NULL,
          title = "-log10(adj.pvalue)")
   
 
 norm_heatmap <- best_ame_hits %>% 
-  ame_plot_heatmap(group = binding_type, id = motif_alt_id, value = "normalize") +
+  plot_ame_heatmap(group = binding_type, id = motif_alt_id, value = "normalize") +
     labs(x = NULL,
          title = "normalize")
 
 pval_scaled_heatmap <- best_ame_hits %>% 
-  ame_plot_heatmap(group = binding_type, id = motif_alt_id, scale_max = 10) +
+  plot_ame_heatmap(group = binding_type, id = motif_alt_id, scale_max = 10) +
     labs(x = NULL,
          title = "-log10(adj.pvalue) (scale capped at 10)")
 ```
@@ -446,7 +446,7 @@ supporting the conclusion that orphan, ectopic, and entopic sites are highly
 similar in sequence content.
 ```{r, fig.height=4, fig.width=10}
 ame_denovo_by_binding %>% 
-  ame_plot_heatmap(group = binding_type, scale_max = 10)
+  plot_ame_heatmap(group = binding_type, scale_max = 10)
 ```
 
 However, there are 2 interesting motifs which distinguish orphan and ectopic

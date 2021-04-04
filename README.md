@@ -305,13 +305,13 @@ full_results %>%
 ![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
 
 It can be useful to view the results from `runAme()` as a heatmap.
-`ame_plot_heatmap()` can create complex visualizations for analysis of
+`plot_ame_heatmap()` can create complex visualizations for analysis of
 enrichment between different region types (see vignettes for details).
 Here is a simple example heatmap.
 
 ``` r
 ame_results %>% 
-  ame_plot_heatmap()
+  plot_ame_heatmap()
 ```
 
 ![](man/figures/README-unnamed-chunk-13-1.png)<!-- -->

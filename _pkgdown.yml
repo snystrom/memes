@@ -59,7 +59,7 @@ reference:
   contents:
   - view_tomtom_hits
   - plot_sequence_heatmap
-  - ame_plot_heatmap
+  - plot_ame_heatmap
   - ame_compare_heatmap_methods
 
 - title: Motif Manipulation

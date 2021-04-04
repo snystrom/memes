@@ -172,7 +172,7 @@ column named `sequences` that can be unnested using `tidyr::unnest()`.
 
 ## Visualizing Results as Heatmap
 
-The `ame_plot_heatmap()` function provides a method to easily generate
+The `plot_ame_heatmap()` function provides a method to easily generate
 visualizations of AME results.
 
 To plot results from multiple runs together, they must first be joined into 1
@@ -189,7 +189,7 @@ ame_by_behavior_vs_static %>%
   # .id will specify a column to hold the list object names
   dplyr::bind_rows(.id = "behavior") %>% 
   # setting group to a column name will split the results on the y-axis
-  ame_plot_heatmap(group = behavior)
+  plot_ame_heatmap(group = behavior)
 ```
 
 ### Complex Heatmap Example
@@ -223,14 +223,14 @@ ame_res <- ame_by_binding %>%
 ```
 
 It is possible to aggregate results from multiple runs into a heatmap by setting
-the `group` parameter in `ame_plot_heatmap()`.
+the `group` parameter in `plot_ame_heatmap()`.
 
 This is too many hits to properly view in this vignette, but you can see that the heatmap
 will plot motifs by their overlap across groups, where unique motifs are on the
 left, and shared motifs are on the right.
 ```{r, fig.height=5,fig.width=15}
 ame_res %>% 
-  ame_plot_heatmap(group = binding_type)
+  plot_ame_heatmap(group = binding_type)
 ```
 
 ## Issues with Heatmap Visualization
@@ -266,7 +266,7 @@ ame_res %>%
   ame_compare_heatmap_methods(group = binding_type)
 ```
 
-To use the normalized rank value, set `value = "normalize"` in `ame_plot_heatmap()`.
+To use the normalized rank value, set `value = "normalize"` in `plot_ame_heatmap()`.
 
 This plot reveals that the motifs which tend to be shared across all 3
 categories tend to be higher ranks in the output than the motifs unique to the
@@ -280,7 +280,7 @@ library(ggplot2)
 (normalize_heatmap <- ame_res %>% 
   dplyr::group_by(binding_type, motif_alt_id) %>% 
   dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
-  ame_plot_heatmap(group = binding_type, id = motif_alt_id, value = "normalize") +
+  plot_ame_heatmap(group = binding_type, id = motif_alt_id, value = "normalize") +
     # All ggplot functions can be used to extend or edit the heatmap plots
     ggtitle("value = \"normalize\""))
 ```
@@ -298,13 +298,13 @@ A comparison of all three methods can be seen below.
 pval_heatmap <- ame_res %>% 
   dplyr::group_by(binding_type, motif_alt_id) %>% 
   dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
-  ame_plot_heatmap(group = binding_type, id = motif_alt_id) +
+  plot_ame_heatmap(group = binding_type, id = motif_alt_id) +
     ggtitle("value = -log10(adj.pvalue)")
 
 scale_heatmap <- ame_res %>% 
   dplyr::group_by(binding_type, motif_alt_id) %>% 
   dplyr::filter(adj.pvalue == min(adj.pvalue)) %>% 
-  ame_plot_heatmap(group = binding_type, id = motif_alt_id, scale_max = 7.5) +
+  plot_ame_heatmap(group = binding_type, id = motif_alt_id, scale_max = 7.5) +
     ggtitle("value = -log10(adj.pvalue) (scale capped at 7.5)")
 ```
 
