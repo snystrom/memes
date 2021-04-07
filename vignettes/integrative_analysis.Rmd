@@ -156,7 +156,7 @@ nrow(meme_db)
 nrow(meme_db_expressed)
 ```
 
-Using this filtering strategy, we've decreased our multiple-testing penalty by ~`r round((nrow(meme_db_expressed)/nrow(meme_db)) * 100, 1)`%.
+Using this filtering strategy, we've decreased our multiple-testing penalty by ~54%.
 
 As a convenience function, we can set a default motif database to use for each `memes` function by setting the R option `meme_db` to a `universalmotif` object. This can be done as follows:
 
