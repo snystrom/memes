@@ -18,4 +18,3 @@ test_that("sequence heatmap functions work", {
   #TODO: deal with named sequences? BStringsList?
   # set_names(named_seq, NULL)?
 })
-  
