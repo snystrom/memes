@@ -1,3 +1,7 @@
+# memes 0.99.8
+* Removed inline `r` call in integrative_analysis vignette to fix issue on bioc build machine
+# memes 0.99.7
+* Version bump to force pkg rebuild
 # memes 0.99.6
 * added list S3 method for `plot_sequence_heatmap` so now named lists of sequences can be passed natively to this function.
   * updated ChIP-seq vignette to demonstrate this
