@@ -38,6 +38,8 @@ motif_input.character <- function(input, path = NULL){
     }
   }
 
+  # Expand paths, etc.
+  input <- search_meme_database_path(input)
   cmdfun::cmd_error_if_missing(input)
 
   out <- list(metadata = NULL,

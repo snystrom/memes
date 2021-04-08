@@ -1,3 +1,5 @@
+# memes 0.99.10
+* Fixed a bug where paths weren't correctly expanded when used as `database` entry under certain conditions
 # memes 0.99.8
 * Removed inline `r` call in integrative_analysis vignette to fix issue on bioc build machine
 # memes 0.99.7
