@@ -17,10 +17,12 @@ knitr::opts_chunk$set(
 # memes
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Codecov test coverage](https://codecov.io/gh/snystrom/memes/branch/master/graph/badge.svg)](https://codecov.io/gh/snystrom/memes?branch=master)
 ![R-CMD-check-bioc](https://github.com/snystrom/memes/workflows/R-CMD-check-bioc/badge.svg)
+![Bioconductor Build Status](https://bioconductor.org/shields/build/devel/bioc/memes.svg)
+![Bioconductor Lifetime](https://bioconductor.org/shields/years-in-bioc/memes.svg)
 <!-- badges: end -->
 
 An R interface to the [MEME Suite](http://meme-suite.org/) family of tools,
@@ -30,7 +32,21 @@ running the commands, then importing the results directly into R.
 
 ## Installation
 
-### Development Version
+### Bioconductor
+
+memes is currently available on the Bioconductor `devel` branch:
+
+```{r, eval=F}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("memes")
+```
+
+### Development Version (Github)
 You can install the development version of memes from [GitHub](https://github.com/snystrom/memes) with:
 
 ```{r, eval=F}

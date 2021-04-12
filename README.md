@@ -6,13 +6,17 @@
 <!-- badges: start -->
 
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Codecov test
 coverage](https://codecov.io/gh/snystrom/memes/branch/master/graph/badge.svg)](https://codecov.io/gh/snystrom/memes?branch=master)
 ![R-CMD-check-bioc](https://github.com/snystrom/memes/workflows/R-CMD-check-bioc/badge.svg)
+![Bioconductor Build
+Status](https://bioconductor.org/shields/build/devel/bioc/memes.svg)
+![Bioconductor
+Lifetime](https://bioconductor.org/shields/years-in-bioc/memes.svg)
 <!-- badges: end -->
 
 An R interface to the [MEME Suite](http://meme-suite.org/) family of
@@ -23,7 +27,21 @@ results directly into R.
 
 ## Installation
 
-### Development Version
+### Bioconductor
+
+memes is currently available on the Bioconductor `devel` branch:
+
+``` r
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("memes")
+```
+
+### Development Version (Github)
 
 You can install the development version of memes from
 [GitHub](https://github.com/snystrom/memes) with:
@@ -223,7 +241,7 @@ dreme_results %>%
   view_motifs()
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 
 ### Matching motifs using TOMTOM
 
@@ -311,7 +329,7 @@ full_results %>%
 #> $m01_AGAGC
 ```
 
-<img src="man/figures/README-unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
 
 It can be useful to view the results from `runAme()` as a heatmap.
 `plot_ame_heatmap()` can create complex visualizations for analysis of
@@ -323,7 +341,7 @@ ame_results %>%
   plot_ame_heatmap()
 ```
 
-<img src="man/figures/README-unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 \# Scanning for motif occurances using FIMO
 
 The FIMO tool is used to identify matches to known motifs. `runFimo`
@@ -343,7 +361,7 @@ fimo_results <- runFimo(sequences, e93_motif, thresh = 1e-3)
 plot_sequence_heatmap(fimo_results$matched_sequence)  
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
 
 ## Importing Data from previous runs
 
