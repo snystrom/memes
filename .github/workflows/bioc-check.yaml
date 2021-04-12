@@ -34,7 +34,6 @@ on:
     branches:
       - master
       - devel
-      - new-motif-df
       - 'RELEASE_*'
   pull_request:
     branches:
@@ -55,7 +54,7 @@ env:
   run_covr: 'true'
   run_pkgdown: 'true'
   has_RUnit: 'false'
-  cache-version: 'cache-v11'
+  cache-version: 'cache-v12'
 
 jobs:
   ## This first job uses the GitHub repository branch name to infer what
