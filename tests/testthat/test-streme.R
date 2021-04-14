@@ -1,5 +1,4 @@
 test_that("streme works", {
-  withr::local_options(meme_bin = "~/meme/bin")
   seqs <- universalmotif::create_sequences("CCRAAAW", rng.seed = 123)
   expect_s3_class(runStreme(seqs, "shuffle"), "universalmotif_df")
   expect_s3_class(runStreme(seqs, control = NA, objfun = "cd"), "universalmotif_df")
