@@ -69,7 +69,7 @@ of common flags. To set flags with no values (ex. \code{-dna}), pass the
 argument as a boolean value (ex. \code{dna = TRUE}).}
 }
 \value{
-data.frame with statistics for each discovered motif. The \code{motif}
+\code{universalmotif_df} with statistics for each discovered motif. The \code{motif}
 column contains a universalmotif object representation in PCM format of
 each DREME motif. If no motifs are discovered, returns NULL. The column
 values are as follows:
@@ -103,6 +103,8 @@ Properly setting the \code{control} parameter is key to discovering biologically
 relevant motifs. Often, using \code{control = "shuffle"} will produce a suboptimal
 set of motifs; however, some discriminative analysis designs don't have
 proper "control" regions other than to shuffle.
+
+As of MEME version 5.2.0, DREME is deprecated. Consider \code{\link[=runStreme]{runStreme()}} instead.
 
 In addition to allowing any valid flag of dreme to be passed to \code{...}, we
 provide a few user-friendly aliases for common flags which are more readable (see list below).

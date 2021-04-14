@@ -49,6 +49,8 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' relevant motifs. Often, using `control = "shuffle"` will produce a suboptimal
 #' set of motifs; however, some discriminative analysis designs don't have
 #' proper "control" regions other than to shuffle.
+#' 
+#' As of MEME version 5.2.0, DREME is deprecated. Consider [runStreme()] instead.
 #'
 #' @param input regions to scan for motifs. Can be any of:
 #'   - path to fasta file
@@ -127,7 +129,7 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' | protein      | protein    | use protein alphabet (NOT RECCOMENDED)     | FALSE   |
 #'
 #'
-#' @return data.frame with statistics for each discovered motif. The `motif`
+#' @return `universalmotif_df` with statistics for each discovered motif. The `motif`
 #'   column contains a universalmotif object representation in PCM format of
 #'   each DREME motif. If no motifs are discovered, returns NULL. The column
 #'   values are as follows:
