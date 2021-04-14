@@ -51,3 +51,21 @@ importTomTomXML <- function(tomtom_xml_path){
 importDremeXML <- function(dreme_xml_path){
   parseDreme(dreme_xml_path)
 }
+
+#' Import Streme output from previous run
+#'
+#' @param streme_xml_path path to streme.xml file
+#'
+#' @return data.frame with statistics for each discovered motif. The `motifs`
+#'   column contains a universalmotif object representation in PCM format of
+#'   each DREME motif. If no motifs are discovered, returns NULL.
+#'
+#' @seealso [runStreme()]
+#' @export
+#'
+#' @examples
+#' dreme_xml <- system.file("extdata", "streme.xml", package = "memes")
+#' importStremeXML(streme_xml)
+importStremeXML <- function(streme_xml_path){
+  parseStreme(streme_xml_path)
+}
