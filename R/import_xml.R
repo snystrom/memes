@@ -64,7 +64,7 @@ importDremeXML <- function(dreme_xml_path){
 #' @export
 #'
 #' @examples
-#' dreme_xml <- system.file("extdata", "streme.xml", package = "memes")
+#' streme_xml <- system.file("extdata", "streme.xml", package = "memes")
 #' importStremeXML(streme_xml)
 importStremeXML <- function(streme_xml_path){
   parseStreme(streme_xml_path)
