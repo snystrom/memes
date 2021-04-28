@@ -96,8 +96,6 @@ test_that("tomtom works w/ nonstandard db inputs", {
  
   # TODO: Fix tests below
   # expect warning re discarded motifs 
-  # this command shows expected output: 
-  # runTomTom(motif, database = "inst/extdata/db/fly_factor_survey_id.meme", silent = FALSE)
   dup_db <- system.file("extdata", "flyFactor_dups.meme", package = "memes", mustWork = TRUE)
   suppressMessages(expect_message(runTomTom(motif, database = dup_db), "duplicated in the database"))
  

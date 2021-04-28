@@ -34,7 +34,6 @@ on:
     branches:
       - master
       - devel
-      - new-motif-df
       - 'RELEASE_*'
   pull_request:
     branches:
@@ -55,7 +54,7 @@ env:
   run_covr: 'true'
   run_pkgdown: 'true'
   has_RUnit: 'false'
-  cache-version: 'cache-v11'
+  cache-version: 'cache-v12'
 
 jobs:
   ## This first job uses the GitHub repository branch name to infer what
@@ -301,12 +300,27 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          Rscript -e "pkgdown::deploy_to_branch(new_process = FALSE)"
+          rm -r docs/
+          Rscript -e "pkgdown::build_site(devel = FALSE, preview = FALSE, install = FALSE)"
         shell: bash {0}
         ## Note that you need to run pkgdown::deploy_to_branch(new_process = FALSE)
         ## at least one locally before this will work. This creates the gh-pages
         ## branch (erasing anything you haven't version controlled!) and
         ## makes the git history recognizable by pkgdown.
+        ##
+        ## Builds pkg in docs, then moves to new repo
+
+      - name: Push pkgdown site to Site repo
+        if: github.ref == 'refs/heads/master' && env.run_pkgdown == 'true'
+        uses: cpina/github-action-push-to-another-repository@v1.2
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: 'docs'
+          destination-github-username: 'snystrom'
+          destination-repository-username: 'snystrom'
+          destination-repository-name: 'memes-manual'
+          user-email: "snystrom@users.noreply.github.com"
 
       - name: Upload check results
         if: failure()

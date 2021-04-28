@@ -49,7 +49,7 @@ invalid file, but the `MEME_DB` environment variable is a valid file, the
 `MEME_DB` path will be used.
 
 ```{r}
-options(meme_db = system.file("extdata/db/fly_factor_survey_id.meme", package = "memes"))
+options(meme_db = system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes", mustWork = TRUE))
 ```
  
  

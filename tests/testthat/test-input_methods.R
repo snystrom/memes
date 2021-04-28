@@ -1,7 +1,7 @@
 withr::local_options(list(meme_db = NULL))
 #####
 # Setup
-dreme_out <- system.file("extdata/dreme_example/dreme.xml", package = "memes", mustWork = TRUE) %>%
+dreme_out <- system.file("extdata/dreme.xml", package = "memes", mustWork = TRUE) %>%
   importDremeXML()
 
 fb <- system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes", mustWork = TRUE)

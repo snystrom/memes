@@ -30,8 +30,6 @@ return ggseqlogo outputs which can be further manipulated using
 }
 \examples{
 results <- importTomTomXML(system.file("extdata", "tomtom.xml", package = "memes"))
-\donttest{
 # show top 3 hits
 view_tomtom_hits(results, top_n = 3)
-}
 }

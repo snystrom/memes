@@ -5,7 +5,7 @@
 \alias{runAme.BStringSetList}
 \alias{runAme.default}
 \alias{runAme}
-\title{See runAme Generic for details}
+\title{Motif enrichment using AME}
 \usage{
 \method{runAme}{list}(
   input,

@@ -86,7 +86,6 @@ which use a motif database (like TomTom and AME) require that the entries have
 unique primary identifiers, therefore the default names will not be appropriate.
 
 ```{r}
-# TODO: return here after update and see if printing still throws errors or behaves strangely
 flyFactor_data %>% 
   head(5)
 ```
@@ -113,11 +112,21 @@ flyFactor_data %>%
 
 
 
-Next to solve the issue with the FBgn's. As of this writing in May 2020, the
-FBgn entries are out of date, making them difficult to look up within R
-([FlyBase.org](flybase.org) has a nice conversion tool for this, however). For this
-example, we will try to grab the correct gene name from the motif name, which is
-stored in the first field of the name, formatted as follows:
+Next to solve the issue with the FBgn's. FBgn numbers are unique identifiers for
+a gene within a given FlyBase reference assembly. However, FBgn numbers are not
+stable over time (i.e. the same gene may have a different FBgn number between
+reference assemblies), therefore they are unreliable values to determine the
+correct gene symbol. [FlyBase.org](https://flybase.org) has a nice [conversion tool](https://flybase.org/convert/id) 
+which can be used to update FBgn numbers. 
+
+As of this writing in March 2021, the FBgn entries provided by the Fly Factor
+Survey database are out of date. In order to demonstrate an example of methods
+for tidying motif metadata, I won't use the FlyBase conversion tool, but will
+instead highlight some approaches which may be more generally useful when
+working with motif databases from disparate sources.
+
+For this example, we will try to grab the correct gene name from the motif name,
+which is stored in the first field of the name, formatted as follows:
 "<gene>_<sequencing-platform>_<FBgn>".
 
 We use `tidyr::separate` to split out the first entry to the `tifd` column, then

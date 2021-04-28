@@ -38,6 +38,8 @@ motif_input.character <- function(input, path = NULL){
     }
   }
 
+  # Expand paths, etc.
+  input <- search_meme_database_path(input)
   cmdfun::cmd_error_if_missing(input)
 
   out <- list(metadata = NULL,
@@ -49,8 +51,7 @@ motif_input.character <- function(input, path = NULL){
 motif_input.universalmotif_df <- function(input, path = tempfile(fileext = ".meme")){
 
   path <- input %>%
-    # TODO: catch warning?
-    universalmotif::to_list(extrainfo = TRUE) %>% 
+    universalmotif::to_list(extrainfo = TRUE) %>%
     write_meme_input_path(path = path)
 
   out <- list(metadata = input,
@@ -62,7 +63,7 @@ motif_input.universalmotif_df <- function(input, path = tempfile(fileext = ".mem
 motif_input.data.frame <- function(input, path = tempfile(fileext = ".meme")){
   if (is(input, "universalmotif_df")) {
     # This is needed because inheritance is weird & NextMethod() doesn't work right...
-    # TODO: fix this/make sure this isn't too hacky
+    # TODO: make sure this isn't too hacky
     return(motif_input.universalmotif_df(input, path))
   }
   # This function will catch if a universalmotif_df was manipulated by tidyverse

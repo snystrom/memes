@@ -84,9 +84,11 @@ e93_motif["name"] <- "E93_FlyFactor"
 `runFimo()` is configured to use different default behavior relative to the
 commandline and MEME-Suite Server versions. By default, `runFimo()` runs using
 `text` mode, which greatly increases speed and allows returning all detected
-matches to the input motifs. `runFimo()` also runs using `skip_matched_sequence
-= FALSE` to further increase speed and decrease output data size. Sequence
-information can be recovered using `get_sequences()`. 
+matches to the input motifs. By default `runFimo()` will add the sequence of the
+matched region to the output data; however, this operation can be very slow for
+large sets of regions and can drastically increase the size of the output data.
+To speed up the operation and decrease data size, set `skip_matched_sequence =
+TRUE`. Sequence information can be added back later using `add_sequence()`. 
 
 ```{r}
 fimo_results <- runFimo(sequences, e93_motif)
@@ -174,6 +176,14 @@ from positions 1-4 in the matched sequences.
 motifs_by_binding %>% 
   view_motifs(use.type = "PPM")
 ```
+
+Finally, the sequence-level information can be used to visualize all sequences
+and their contribution to the final PWM using `plot_sequence_heatmap`.
+
+```{r, fig.height=5, fig.width=3}
+plot_sequence_heatmap(fimo_results_with_seq$sequence)
+```
+
 
 ## Importing Data from previous FIMO Runs
 

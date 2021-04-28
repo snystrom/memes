@@ -1,9 +1,9 @@
 Package: memes
 Type: Package
 Title: motif matching, comparison, and de novo discovery using the MEME Suite
-Version: 0.1.2.9000
-Authors@R: person("Spencer", "Nystrom",
-    email = "nystromdev@gmail.com", 
+Version: 0.99.10.90000
+Authors@R: person("Spencer", "Nystrom", 
+    email = "nystromdev@gmail.com",
     role = c("aut", "cre", "cph"),
     comment = c(ORCID = "0000-0003-1000-1579"))
 Description: A seamless interface to the MEME Suite family of tools for motif
@@ -24,6 +24,7 @@ Imports:
     magrittr,
     matrixStats,
     methods,
+    patchwork,
     processx,
     purrr,
     rlang,

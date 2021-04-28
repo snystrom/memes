@@ -222,7 +222,18 @@ write_fasta <- function(seq, path = tempfile(fileext = ".fa")){
 #' @examples
 #' check_meme_install()
 check_meme_install <- function(meme_path = NULL){
-  cmdfun::cmd_install_check(search_meme_path, path = meme_path)
+  # TODO: temporary fix, revert to else block below after cmdfun update:
+  if (is.null(meme_path)){
+    x <- try(cmdfun::cmd_install_check(search_meme_path, path = meme_path), 
+             silent = TRUE)
+    if (is(x,"try-error")) {
+      message("Cannot detect meme install")
+      return(invisible(NULL))
+    }
+  } else {
+    cmdfun::cmd_install_check(search_meme_path, path = meme_path)
+  }
+  
 }
 
 #' Returns logical vector indicating valid MEME-Suite install status

@@ -8,7 +8,8 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-"
+  fig.path = "man/figures/README-",
+  fig.align = "center"
   #out.width = "100%"
 )
 ```
@@ -16,10 +17,12 @@ knitr::opts_chunk$set(
 # memes
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Codecov test coverage](https://codecov.io/gh/snystrom/memes/branch/master/graph/badge.svg)](https://codecov.io/gh/snystrom/memes?branch=master)
 ![R-CMD-check-bioc](https://github.com/snystrom/memes/workflows/R-CMD-check-bioc/badge.svg)
+![Bioconductor Build Status](https://bioconductor.org/shields/build/devel/bioc/memes.svg)
+![Bioconductor Lifetime](https://bioconductor.org/shields/years-in-bioc/memes.svg)
 <!-- badges: end -->
 
 An R interface to the [MEME Suite](http://meme-suite.org/) family of tools,
@@ -29,7 +32,21 @@ running the commands, then importing the results directly into R.
 
 ## Installation
 
-### Development Version
+### Bioconductor
+
+memes is currently available on the Bioconductor `devel` branch:
+
+```{r, eval=F}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("memes")
+```
+
+### Development Version (Github)
 You can install the development version of memes from [GitHub](https://github.com/snystrom/memes) with:
 
 ```{r, eval=F}
@@ -76,7 +93,6 @@ library(memes)
 
 # Verify that memes detects your meme install
 # (returns all green checks if so)
-# (I have MEME installed to the default location)
 check_meme_install()
 ```
 
@@ -115,12 +131,14 @@ comparison of *de-novo* discovered motifs with their matches.
 
 **Output Types**:
 
-`runDreme()`, and `runTomTom()` return data.frames with special columns. The `motif`
-column contains `universalmotif` objects, with 1 entry per row. The remaining
-columns describe the properties of each returned motif. The following column
-names are special in that their values are used when running `update_motifs` to
-alter the properties of the motifs stored in the `motif` column. Be careful
-about changing these values.
+`runDreme()`, and `runTomTom()` return `universalmotif_df` objects which are
+data.frames with special columns. The `motif` column contains a `universalmotif`
+object, with 1 entry per row. The remaining columns describe the properties of
+each returned motif. The following column names are special in that their values
+are used when running `update_motifs` to alter the properties of the motifs
+stored in the `motif` column. Be careful about changing these values as these
+changes will propagate to the `motif` column when calling `update_motifs()` or
+`to_list()`.
 
  - name
  - altname
@@ -134,11 +152,17 @@ about changing these values.
  - eval
 
 memes is built around the [universalmotif package](https://www.bioconductor.org/packages/release/bioc/html/universalmotif.html)
-which provides a framework for manipulating motifs in R. The `motif` columns
-from `runDreme()` and `runTomTom()` can be used natively with all `universalmotif`
-functions (eg `universalmotif::view_motifs(dreme_results$motif)`).
+which provides a framework for manipulating motifs in R. `universalmotif_df`
+objects can interconvert between data.frame and `universalmotif` list format
+using the `to_df()` and `to_list()` functions, respectively. This allows use of
+`memes` results with all other Bioconductor motif packages, as `universalmotif`
+objects can convert to any other motif type using `convert_motifs()`.
 
-`runTomTom()` returns a special column: `tomtom` which is a `data.frame` of all match data for each input motif. This can be expanded out using `tidyr::unnest(tomtom_results, "tomtom")`.
+`runTomTom()` returns a special column: `tomtom` which is a `data.frame` of all
+match data for each input motif. This can be expanded out using
+`tidyr::unnest(tomtom_results, "tomtom")`, and renested with `nest_tomtom()`.
+The `best_match_` prefixed columns returned by `runTomTom()` indicate values for
+the motif which was the best match to the input motif.
 
 ## Quick Examples
 ### Motif Discovery with DREME
@@ -174,12 +198,14 @@ dreme_results <- runDreme(sequences, control = "shuffle", e = 50)
 ```
 memes is built around the
 [universalmotif](https://www.bioconductor.org/packages/release/bioc/html/universalmotif.html)
-package. The `motif` column of the runDreme results object contains
-`universalmotif` objects which can be used natively in all `universalmotif`
-functions.
+package. The results are returned in `universalmotif_df` format, which is an R data.frame that can seamlessly interconvert between data.frame and `universalmotif` format using `to_list()` to convert to `universalmotif` list format, and `to_df()` to convert back to data.frame format. Using `to_list()` allows using `memes` results with all `universalmotif` functions like so:
+
 ```{r}
 library(universalmotif)
-view_motifs(dreme_results$motif)
+
+dreme_results %>% 
+  to_list() %>% 
+  view_motifs()
 ```
 
 ### Matching motifs using TOMTOM
@@ -187,10 +213,10 @@ Discovered motifs can be matched to known TF motifs using `runTomTom()`, which c
 
 TomTom uses a database of known motifs which can be passed to the `database` parameter as a path to a .meme format file, or a `universalmotif` object.
 
-Optionally, you can set the environment variable `MEME_DB` in `.Renviron`, or
+Optionally, you can set the environment variable `MEME_DB` in `.Renviron` to a file on disk, or
 the `meme_db` value in `options` to a valid .meme format file and memes will
 use that file as the database. memes will always prefer user input to the
-function call.
+function call over a global variable setting.
 
 ```{r}
 options(meme_db = system.file("extdata/flyFactorSurvey_cleaned.meme", package = "memes"))
@@ -214,7 +240,7 @@ full_results <- dreme_results %>%
 AME is used to test for enrichment of known motifs in target sequences. `runAme()`
 will use the `MEME_DB` entry in `.Renviron` or `options(meme_db =
 "path/to/database.meme")` as the motif database. Alternately, it will accept all
-valid inputs as `runTomTom()`.
+valid inputs similar to `runTomTom()`.
 ```{r}
 # here I set the evalue_report_threshold = 30 to detect motifs in the limited example sequences
 # In a real analysis, evalue_report_threshold should be carefully selected
@@ -232,23 +258,40 @@ additional matches in descending order of their rank.
 
 ```{r}
 full_results %>% 
-  view_tomtom_hits(top_n = 1) %>% 
-  # Here I use the cowplot library simply to combine each plot into a 4-panel grid
-  cowplot::plot_grid(plotlist = .)
+  view_tomtom_hits(top_n = 1)
 ```
 
 It can be useful to view the results from `runAme()` as a heatmap. 
-`ame_plot_heatmap()` can create complex visualizations for analysis of enrichment
+`plot_ame_heatmap()` can create complex visualizations for analysis of enrichment
 between different region types (see vignettes for details). Here is a simple
 example heatmap.
 ```{r, fig.height=3, fig.width=5}
 ame_results %>% 
-  ame_plot_heatmap()
+  plot_ame_heatmap()
+```
+# Scanning for motif occurances using FIMO
+
+The FIMO tool is used to identify matches to known motifs. `runFimo` will return
+these hits as a `GRanges` object containing the genomic coordinates of the motif
+match.
+```{r, fig.height=4, fig.width=3}
+# Query MotifDb for a motif
+e93_motif <- MotifDb::query(MotifDb::MotifDb, "Eip93F") %>% 
+  universalmotif::convert_motifs()
+
+# Scan for the E93 motif within given sequences
+fimo_results <- runFimo(sequences, e93_motif, thresh = 1e-3)
+
+# Visualize the sequences matching the E93 motif
+plot_sequence_heatmap(fimo_results$matched_sequence)  
 ```
 
 ## Importing Data from previous runs
 
-memes also supports importing results generated using the MEME suite outside of R (for example, running jobs on [meme-suite.org](meme-suite.org), or running on the commandline). 
+memes also supports importing results generated using the MEME suite outside of
+R (for example, running jobs on [meme-suite.org](meme-suite.org), or running on
+the commandline). This enables use of preexisting MEME suite results with
+downstream memes functions.
 
 | MEME Tool | Function Name       | File Type        |
 |:---------:|:-------------------:|:----------------:|

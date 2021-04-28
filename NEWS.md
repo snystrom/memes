@@ -1,9 +1,23 @@
+# memes 0.99.10
+* Fixed a bug where paths weren't correctly expanded when used as `database` entry under certain conditions
+# memes 0.99.8
+* Removed inline `r` call in integrative_analysis vignette to fix issue on bioc build machine
+# memes 0.99.7
+* Version bump to force pkg rebuild
+# memes 0.99.6
+* added list S3 method for `plot_sequence_heatmap` so now named lists of sequences can be passed natively to this function.
+  * updated ChIP-seq vignette to demonstrate this
+
+# memes 0.99.5
+* added `plot_sequence_heatmap` for making heatmaps of sequence lists
+* Added significantly more explanation to the ChIP-seq vignette
+* renamed `ame_plot_heatmap` -> `plot_ame_heatmap` for consistency 
+
 # memes 0.1.2
 * `runFimo()` `skip_matched_sequence` default is now `FALSE`. Set this to `TRUE` if fimo takes a long time to run, then use `add_sequence()` to add it back if needed.
 * `runTomTom()` `dist` default is now `ed` (changed from `pearson`).
 
 # memes 0.1.0
-
 * Removed `as_universalmotif_df()`, `as_universalmotif()`, and `update_motifs()`.
   * These functions are replaced by `universalmotif::to_df()`, `universalmotif::to_list()`, and `universalmotif::update_motifs()`
 * `runDreme` and `runTomTom` results are now returned in `universalmotif_df` format (behaves just like a data.frame)

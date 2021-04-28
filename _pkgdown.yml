@@ -58,14 +58,14 @@ reference:
 - title: Data Visualization
   contents:
   - view_tomtom_hits
-  - ame_plot_heatmap
+  - plot_sequence_heatmap
+  - plot_ame_heatmap
   - ame_compare_heatmap_methods
 
 - title: Motif Manipulation
   contents:
-  - as_universalmotif_dataframe
-  - as_universalmotif
-  - update_motifs
+  - remove_duplicate_motifs
+  - has_duplicate_motifs
 
 - title: Data Helpers
   contents:

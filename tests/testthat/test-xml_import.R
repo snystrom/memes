@@ -1,5 +1,5 @@
 test_that("DREME XML import",{
-  dreme_xml <- system.file("extdata/dreme_example/dreme.xml", package = "memes", mustWork = TRUE)
+  dreme_xml <- system.file("extdata/dreme.xml", package = "memes", mustWork = TRUE)
   expect_s3_class(dreme_xml_data <<- importDremeXML(dreme_xml), "data.frame")
   expect_true(is_dreme_results(dreme_xml_data))
 })
@@ -7,9 +7,9 @@ test_that("DREME XML import",{
 # testthat NULL tomtom result returns empty columns
 test_that("TomTom Import works",{
   # good has matches
-  tomtom_good_xml <- system.file("extdata/tomtom_ex/tomtom_good.xml", package = "memes", mustWork = TRUE)
+  tomtom_good_xml <- system.file("extdata/tomtom.xml", package = "memes", mustWork = TRUE)
   # bad has no detected matches
-  tomtom_bad_xml <- system.file("extdata/tomtom_ex/tomtom_bad.xml", package = "memes", mustWork = TRUE)
+  tomtom_bad_xml <- system.file("extdata/tomtom_bad.xml", package = "memes", mustWork = TRUE)
 
   expect_s3_class(tomtom_good <<- importTomTomXML(tomtom_good_xml), "data.frame")
   # Should return query motifs w/ NA values for each column.
