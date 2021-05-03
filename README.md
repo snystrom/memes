@@ -50,6 +50,9 @@ You can install the development version of memes from
 if (!requireNamespace("remotes", quietly=TRUE))
   install.packages("remotes")
 remotes::install_github("snystrom/memes")
+
+# To temporarily bypass the R version 4.1 requirement, you can pull from the following branch:
+remotes::install_github("snystrom/memes", ref = "no-r-4")
 ```
 
 ### Docker Container
@@ -105,6 +108,7 @@ check_meme_install()
 #> ✓ /opt/meme/bin/fimo
 #> ✓ /opt/meme/bin/tomtom
 #> ✓ /opt/meme/bin/meme
+#> x /opt/meme/bin/streme
 ```
 
 ``` r
@@ -374,6 +378,7 @@ functions.
 
 | MEME Tool |    Function Name    | File Type  |
 |:---------:|:-------------------:|:----------:|
+|  Streme   | `importStremeXML()` | streme.xml |
 |   Dreme   | `importDremeXML()`  | dreme.xml  |
 |  TomTom   | `importTomTomXML()` | tomtom.xml |
 |    AME    |    `importAme()`    | ame.tsv\*  |
