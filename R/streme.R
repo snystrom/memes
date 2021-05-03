@@ -326,15 +326,15 @@ streme_motif_stats <- function(streme_xml_path){
     # Put test variables first (do before rename)
     dplyr::select("name", "altname", "width", 
                   "initial_width", "seed", "nsites", "score_threshold",
-                  tidyselect::starts_with("test_"), 
-                  tidyselect::starts_with("train_"), 
-                  tidyselect::everything()) %>% 
+                  dplyr::starts_with("test_"), 
+                  dplyr::starts_with("train_"), 
+                  dplyr::everything()) %>% 
     # Change the "test_" columns for compatibility w/ universalmotif_df
     dplyr::rename_with(~{gsub("test_", "", .)},
-                     tidyselect::starts_with("test_"), 
+                     dplyr::starts_with("test_"), 
                      ) %>% 
     # pvalue -> pval for universalmotif compatability
     dplyr::rename_with(~{gsub("pvalue", "pval", .)},
-                     tidyselect::contains("pvalue"), 
+                     dplyr::contains("pvalue"), 
                      ) 
 }
