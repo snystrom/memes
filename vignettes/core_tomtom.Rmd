@@ -14,6 +14,13 @@ knitr::opts_chunk$set(
 )
 ```
 
+# See package website for full vignette
+
+The Bioconductor build system does not have the MEME Suite installed, therefore
+these vignettes will not contain any R output. To view the full vignette, visit
+this article page on the memes website [at this link](https://snystrom.github.io/memes-manual/articles/core_tomtom.html)
+
+# Introduction
 TomTom is a tool for comparing motifs to a known set of motifs. It takes as
 input a set of motifs and a database of known motifs to return a ranked list of
 the significance of the match between the input and known motifs. TomTom can be
