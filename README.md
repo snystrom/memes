@@ -50,6 +50,9 @@ You can install the development version of memes from
 if (!requireNamespace("remotes", quietly=TRUE))
   install.packages("remotes")
 remotes::install_github("snystrom/memes")
+
+# To temporarily bypass the R version 4.1 requirement, you can pull from the following branch:
+remotes::install_github("snystrom/memes", ref = "no-r-4")
 ```
 
 ### Docker Container
@@ -105,6 +108,7 @@ check_meme_install()
 #> ✓ /opt/meme/bin/fimo
 #> ✓ /opt/meme/bin/tomtom
 #> ✓ /opt/meme/bin/meme
+#> x /opt/meme/bin/streme
 ```
 
 ``` r
@@ -117,16 +121,17 @@ check_meme_install(meme_path = 'bad/path')
 
 ## The Core Tools
 
-| Function Name |              Use               | Sequence Input | Motif Input | Output                                                  |
-|:-------------:|:------------------------------:|:--------------:|:-----------:|:--------------------------------------------------------|
-| `runDreme()`  | Motif Discovery (short motifs) |      Yes       |     No      | data.frame w/ `motifs` column                           |
-|  `runAme()`   |        Motif Enrichment        |      Yes       |     Yes     | data.frame (optional: `sequences` column)               |
-|  `runFimo()`  |         Motif Scanning         |      Yes       |     Yes     | GRanges of motif positions                              |
-| `runTomTom()` |        Motif Comparison        |       No       |     Yes     | data.frame w/ `best_match_motif` and `tomtom` columns\* |
-|  `runMeme()`  | Motif Discovery (long motifs)  |      Yes       |     No      | data.frame w/ `motifs` column                           |
+| Function Name |              Use               | Sequence Input | Motif Input | Output                                                           |
+|:-------------:|:------------------------------:|:--------------:|:-----------:|:-----------------------------------------------------------------|
+| `runStreme()` | Motif Discovery (short motifs) |      Yes       |     No      | `universalmotif_df`                                              |
+| `runDreme()`  | Motif Discovery (short motifs) |      Yes       |     No      | `universalmotif_df`                                              |
+|  `runAme()`   |        Motif Enrichment        |      Yes       |     Yes     | data.frame (optional: `sequences` column)                        |
+|  `runFimo()`  |         Motif Scanning         |      Yes       |     Yes     | GRanges of motif positions                                       |
+| `runTomTom()` |        Motif Comparison        |       No       |     Yes     | `universalmotif_df` w/ `best_match_motif` and `tomtom` columns\* |
+|  `runMeme()`  | Motif Discovery (long motifs)  |      Yes       |     No      | `universalmotif_df`                                              |
 
-\* **Note:** if `runTomTom()` is run using the results of `runDreme()`,
-the results will be joined with the `runDreme()` results as extra
+\* **Note:** if `runTomTom()` is run using a `universalmotif_df` the
+results will be joined with the `universalmotif_df` results as extra
 columns. This allows easy comparison of *de-novo* discovered motifs with
 their matches.
 
@@ -149,15 +154,15 @@ their matches.
 
 **Output Types**:
 
-`runDreme()`, and `runTomTom()` return `universalmotif_df` objects which
-are data.frames with special columns. The `motif` column contains a
-`universalmotif` object, with 1 entry per row. The remaining columns
-describe the properties of each returned motif. The following column
-names are special in that their values are used when running
-`update_motifs` to alter the properties of the motifs stored in the
-`motif` column. Be careful about changing these values as these changes
-will propagate to the `motif` column when calling `update_motifs()` or
-`to_list()`.
+`runDreme()`, `runStreme()`, `runMeme()` and `runTomTom()` return
+`universalmotif_df` objects which are data.frames with special columns.
+The `motif` column contains a `universalmotif` object, with 1 entry per
+row. The remaining columns describe the properties of each returned
+motif. The following column names are special in that their values are
+used when running `update_motifs()` and `to_list()` to alter the
+properties of the motifs stored in the `motif` column. Be careful about
+changing these values as these changes will propagate to the `motif`
+column when calling `update_motifs()` or `to_list()`.
 
 -   name
 -   altname
@@ -373,6 +378,7 @@ functions.
 
 | MEME Tool |    Function Name    | File Type  |
 |:---------:|:-------------------:|:----------:|
+|  Streme   | `importStremeXML()` | streme.xml |
 |   Dreme   | `importDremeXML()`  | dreme.xml  |
 |  TomTom   | `importTomTomXML()` | tomtom.xml |
 |    AME    |    `importAme()`    | ame.tsv\*  |

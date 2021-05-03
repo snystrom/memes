@@ -283,9 +283,17 @@ get_probability_matrix <- function(motif_xml_entry){
   # trick for numeric matrix
   motif_attr <- attrs_to_df(motif_xml_entry, stringsAsFactors = FALSE)
 
-  nsites <- motif_attr$length %>%
-     as.character() %>%
-     as.integer()
+  if (!("length" %in% names(motif_attr))){
+    # STREME
+    nsites <- motif_attr$width %>%
+       as.character() %>%
+       as.integer()
+  } else {
+    # DREME
+    nsites <- motif_attr$length %>%
+       as.character() %>%
+       as.integer()
+  }
 
   freqs <- motif_xml_entry %>%
     xml2::xml_children(.) %>%

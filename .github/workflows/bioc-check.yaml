@@ -34,6 +34,7 @@ on:
     branches:
       - master
       - devel
+      - streme
       - 'RELEASE_*'
   pull_request:
     branches:
@@ -54,7 +55,7 @@ env:
   run_covr: 'true'
   run_pkgdown: 'true'
   has_RUnit: 'false'
-  cache-version: 'cache-v12'
+  cache-version: 'cache-v13'
 
 jobs:
   ## This first job uses the GitHub repository branch name to infer what

@@ -41,6 +41,7 @@ articles:
 reference:
 - title: Core Tools
   contents:
+  - runStreme
   - runDreme
   - runMeme
   - runTomTom
