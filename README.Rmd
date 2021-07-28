@@ -275,6 +275,7 @@ example heatmap.
 ame_results %>% 
   plot_ame_heatmap()
 ```
+
 # Scanning for motif occurances using FIMO
 
 The FIMO tool is used to identify matches to known motifs. `runFimo` will return
