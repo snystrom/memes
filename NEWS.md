@@ -1,3 +1,5 @@
+# memes 1.1.1
+* `runFimo` now returns `NULL` and prints a message when `text = FALSE` and FIMO detects no matches instead of throwing a cryptic error message
 # memes 0.99.11
 * Add support for STREME with `runStreme()`. STREME will supercede DREME in a future MEME Suite release.
 # memes 0.99.10
@@ -30,3 +32,4 @@
 * Added `remove_duplicate_motifs` and `has_duplicate_motifs` for detecting and removing duplicated matrices in a universalmotif object or data.frame
 * Overhauled the Tidying Motifs vignette for more extensive EDA and a demo of deduplication
   * Updated the `flyFactorSurvey_cleaned.meme` example database to reflect new changes to the vignette
+
