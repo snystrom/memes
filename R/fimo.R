@@ -135,11 +135,6 @@ runFimo <- function(sequences, motifs, bfile = "motif",
 
   if (!is.na(text)) {
     if (text){
-      # TODO: consider dropping chunk since it's abstracted into parseFimo
-      #if (ps_out$stdout == "") {
-      #  message("No matches were detected")
-      #  return(NULL)
-      #}
       fimo_res <- ps_out$stdout %>%
         parseFimo()
       return(fimo_res)
@@ -226,7 +221,13 @@ parseFimo <- function(fimo_tsv){
                                                 "q-value" = "d",
                                                 "matched_sequence" = "c")
                                   ), 
-                         error = function(e) {stop(e)}, 
+                         error = function(e) {
+                           # move the empty string check down
+                           if (fimo_tsv == ""){
+                             return(NULL)
+                           }
+                           stop(e)
+                           }, 
                          warning = function(w) {
                            # If the above file import fails w/ warning
                            # (usually because fimo.tsv is empty)
