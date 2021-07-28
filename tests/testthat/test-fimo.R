@@ -33,6 +33,10 @@ test_that("runFimo works", {
   names(seq) <- seq_along(seq)
   expect_null(suppressMessages(runFimo(seq, motif, thresh = 1e-10)))
   expect_message(runFimo(seq, motif, thresh = 1e-10), "No matches were detected")
+  
+  # run, but message "no matches detected" if text = FALSE
+  expect_null(suppressMessages(runFimo(seq, motif, thresh = 1e-10, text = FALSE)))
+  expect_message(runFimo(seq, motif, thresh = 1e-10, text = FALSE), "No matches were detected")
 
   # Suggest psp instead of psspp
   expect_error(suppressMessages(runFimo(seq, motif, psspp = 'x')), class = "usethis_error", regexp = "Invalid flags")
