@@ -135,10 +135,11 @@ runFimo <- function(sequences, motifs, bfile = "motif",
 
   if (!is.na(text)) {
     if (text){
-      if (ps_out$stdout == "") {
-        message("No matches were detected")
-        return(NULL)
-      }
+      # TODO: consider dropping chunk since it's abstracted into parseFimo
+      #if (ps_out$stdout == "") {
+      #  message("No matches were detected")
+      #  return(NULL)
+      #}
       fimo_res <- ps_out$stdout %>%
         parseFimo()
       return(fimo_res)
@@ -148,9 +149,9 @@ runFimo <- function(sequences, motifs, bfile = "motif",
 
   fimo_out <- cmdfun::cmd_file_combn("fimo", "tsv", outdir = outdir)
 
+  #print(fimo_out$tsv)
   fimo_out$tsv %>%
-    parseFimo() %>%
-    return()
+    parseFimo()
 }
 
 #' Parse flags for FIMO input
@@ -212,7 +213,7 @@ fimoHelp <- function(command){
 #' @noRd
 parseFimo <- function(fimo_tsv){
 
-  fimo_matches <- readr::read_tsv(fimo_tsv,
+  fimo_lines <- tryCatch(readr::read_tsv(fimo_tsv,
                                   comment = "#",
                                   col_types = c("motif_id" = "c",
                                                 "motif_alt_id" = "c",
@@ -224,7 +225,33 @@ parseFimo <- function(fimo_tsv){
                                                 "p-value" = "d",
                                                 "q-value" = "d",
                                                 "matched_sequence" = "c")
-                                  ) %>%
+                                  ), 
+                         error = function(e) {stop(e)}, 
+                         warning = function(w) {
+                           # If the above file import fails w/ warning
+                           # (usually because fimo.tsv is empty)
+                           # Double check that the file is actually empty
+                           # (no other lines except for comments & empty lines)
+                           # Then return NULL if that's the case.
+                           lines <- readr::read_lines(fimo_tsv) %>%
+                              grep("^#", ., invert = TRUE, value = TRUE) 
+                           line_lengths <- vapply(lines, nchar, integer(1))
+                           
+                           if (any(line_lengths) > 0){
+                             stop(paste("Error reading file:", fimo_tsv))
+                           }
+                           
+                           return(NULL)
+                           }
+                         )
+ 
+  # NULL is only returned above if fimo_tsv is empty, therefore no matches
+  if (is.null(fimo_lines)) {
+    message("No matches were detected")
+    return(NULL)
+  }
+  
+  fimo_matches <- fimo_lines %>%
     dplyr::rename_all(~{gsub("-", "", .)}) %>%
     dplyr::rename("seqnames" = "sequence_name") %>%
     # NOTE: FIMO uses 1-based coordinates, so no need to shift for GRanges conversion
