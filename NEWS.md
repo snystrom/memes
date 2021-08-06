@@ -1,3 +1,5 @@
+# memes 1.1.3
+* fixed a bug in `runTomTom` where setting `norc = TRUE` failed on data import
 # memes 1.1.1
 * `runFimo` now returns `NULL` and prints a message when `text = FALSE` and FIMO detects no matches instead of throwing a cryptic error message
 # memes 0.99.11
