@@ -30,6 +30,12 @@ test_that("tomtom error checking suggests alternatives", {
   expect_error(
     suppressMessages(runTomTom(dreme_out, database = db, incomplete_score = TRUE)),
     "incomplete_scores", class = "error")
+  
+  # Make sure norc = TRUE imports work correctly
+  expect_error(
+    runTomTom(system.file("extdata/example.meme", package = "memes", mustWork = TRUE), 
+              database = db, norc = TRUE), 
+    NA)
 })
 
 # Test return vals

@@ -353,7 +353,7 @@ get_tomtom_match_data <- function(tomtom_xml_data){
                   "target_idx" = "idx") %>%
     dplyr::mutate(strand = ifelse(.data$rc == "y", "-", "+")) %>%
     dplyr::rename_at(c("offset", "pval", "eval", "qval", "strand"), ~{paste0("match_", .x)}) %>%
-    dplyr::select(-"rc")
+    dplyr::select_at(dplyr::vars(-"rc"))
 
   return(match_df)
 }
