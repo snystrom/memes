@@ -136,6 +136,7 @@ runFimo <- function(sequences, motifs, bfile = "motif",
   if (!is.na(text)) {
     if (text){
       fimo_res <- ps_out$stdout %>%
+        I() %>%
         parseFimo()
       return(fimo_res)
     }
