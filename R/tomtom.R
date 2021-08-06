@@ -344,16 +344,28 @@ get_tomtom_match_data <- function(tomtom_xml_data){
     purrr::set_names(xml2::xml_attr(matches, "idx")) %>%
     purrr::map_dfr(attrs_to_df, stringsAsFactors = FALSE, .id = "query_idx") %>%
     dplyr::mutate_at(c("pv", "ev", "qv"), as.double) %>%
-    dplyr::mutate_at(c("query_idx", "idx", "off"), as.integer) %>%
-    dplyr::mutate_at("rc", as.character()) %>%
+    dplyr::mutate_at(c("query_idx", "idx", "off"), as.integer) %>% 
     dplyr::rename("offset" = "off",
                   "pval" = "pv",
                   "eval" = "ev",
                   "qval" = "qv",
-                  "target_idx" = "idx") %>%
-    dplyr::mutate(strand = ifelse(.data$rc == "y", "-", "+")) %>%
+                  "target_idx" = "idx") %>% 
+    {
+      # Only use rc to determine strand if col exists, else set strand to "*"
+      df <- .
+      if ("rc" %in% names(df)) {
+        df %<>% 
+          dplyr::mutate_at("rc", as.character()) %>%
+          dplyr::mutate(strand = ifelse(.data$rc == "y", "-", "+")) %>%
+          dplyr::select_at(dplyr::vars(-"rc"))
+      } else {
+        df$strand <- "*"
+      }
+      
+      df
+      
+    } %>% 
     dplyr::rename_at(c("offset", "pval", "eval", "qval", "strand"), ~{paste0("match_", .x)}) %>%
-    dplyr::select_at(dplyr::vars(-"rc"))
 
   return(match_df)
 }
