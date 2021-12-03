@@ -269,11 +269,12 @@ parseStreme <- function(xml){
 #' @noRd
 streme_to_pfm <- function(streme_xml_path){
   streme_xml <- xml2::read_xml(streme_xml_path)
+  streme_version <- xml2::xml_attr(streme_xml, "version")
 
   streme_run_info <- xml2::xml_children(streme_xml)[1] %>%
     xml2::xml_children()
 
-  background_freq <- dreme_get_background_freq(streme_run_info)
+  background_freq <- streme_get_background_freq(streme_run_info, streme_version)
 
   motifs_matrix <- xml2::xml_children(streme_xml)[2] %>%
     xml2::xml_children() %>% 
@@ -295,6 +296,77 @@ streme_to_pfm <- function(streme_xml_path){
   })
 
   return(pfmList)
+}
+
+#' Return named vector of letter frequencies from STREME run
+#'
+#' @param streme_run_info `xml_nodeset` of the dreme run info
+#' @param version STREME version number
+#'
+#' @return named vector of letter frequencies, suitable as input to `bkg` in
+#'   universalmotif::create_motif
+#'
+#' @importFrom magrittr %>%
+#'
+#' @noRd
+streme_get_background_freq <- function(streme_run_info, version){
+
+  # STREME changed how background frequencies were encoded in XML around 5.4.1
+  # unsure when the change was made because it is undocumented in release notes.
+  if (compareVersion(version, "5.4.1") >= 0) {
+    return(streme_get_background_freq_new(streme_run_info))
+  } else {
+    return(streme_get_background_freq_old(streme_run_info))
+  }
+}
+
+#' Return named vector of letter frequencies from STREME run
+#'
+#' @param streme_run_info `xml_nodeset` of the dreme run info
+#'
+#' @return named vector of letter frequencies, suitable as input to `bkg` in
+#'   universalmotif::create_motif
+#'
+#' @importFrom magrittr %>%
+#'
+#' @noRd
+streme_get_background_freq_new <- function(streme_run_info){
+
+  background_entry <- xml2::xml_find_all(streme_run_info, "//background_frequencies")
+
+  alphabet_array <- background_entry %>%
+    xml2::xml_find_all("//alphabet_array") %>%
+    xml2::xml_children()
+
+  background_freq <- xml2::xml_double(alphabet_array) %>%
+    magrittr::set_names(xml2::xml_attrs(alphabet_array) %>% unlist())
+
+  return(background_freq)
+}
+
+#' Return named vector of letter frequencies from STREME run
+#'
+#' @param streme_run_info `xml_nodeset` of the dreme run info
+#'
+#' @return named vector of letter frequencies, suitable as input to `bkg` in
+#'   universalmotif::create_motif
+#'
+#' @importFrom magrittr %>%
+#'
+#' @noRd
+streme_get_background_freq_old <- function(streme_run_info){
+  background_entry <- xml2::xml_find_all(streme_run_info, "//background")
+
+  background_df <- background_entry %>%
+    attrs_to_df() %>%
+    dplyr::select(-"from") %>%
+    lapply(function(x) as.character(x) %>% as.numeric) %>%
+    dplyr::bind_cols()
+
+  background_freq <- as.numeric(background_df) %>%
+    magrittr::set_names(names(background_df))
+
+  return(background_freq)
 }
 
 #' Parse stats for Streme results
