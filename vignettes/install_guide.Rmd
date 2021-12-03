@@ -43,9 +43,9 @@ Linux, MacOS, Cygwin, and Windows Linux Subsystem using the following shell
 commands:
 
 ```{bash, eval=F}
-# As of May 2020, version 5.1.1 is the most recent MEME-Suite version
+# As of December 2021, version 5.4.1 is the most recent MEME-Suite version
 # Please check the install guide (linked above) for more recent information
-version=5.1.1
+version=5.4.1
 wget http://meme-suite.org/meme-software/$version/meme-$version.tar.gz
 tar zxf meme-$version.tar.gz
 cd meme-$version
