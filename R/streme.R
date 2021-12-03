@@ -104,7 +104,7 @@ runStreme.list <- function(input, control, outdir = "auto", objfun = "de",
 #' @noRd
 runStreme.BStringSetList <- function(input, control, outdir = "auto", objfun = "de", 
                       alph = "dna", meme_path = NULL, silent = TRUE, ...){
-  runStreme.list(input, control, outdir, objfun, alph, meme_path, silent, ...)
+  runStreme.list(as.list(input), control, outdir, objfun, alph, meme_path, silent, ...)
 }
 
 #' @export
