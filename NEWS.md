@@ -1,3 +1,5 @@
+# memes 1.2.2
+* fixed a bug in `runStreme` causing failures on data import for STREME version >= 5.4.1
 # memes 1.2.1
 * fixed a bug in `runStreme` causing failures when using BStringSetLists as input
 # memes 1.1.3
