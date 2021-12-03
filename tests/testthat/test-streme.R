@@ -26,4 +26,12 @@ test_that("streme works", {
   expect_type(runStreme.list(seqlist, "two"), "list")
   expect_type(runStreme.list(seqlist, "shuffle"), "list")
   expect_named(runStreme.list(seqlist, "shuffle"), c("one", "two"))
+  
+  # Test BStringSetList input
+  bslist <- BStringSetList("one" = seqs,
+       "two" = universalmotif::create_sequences("AATAATT", rng.seed = 321)
+       )
+  expect_type(runStreme(bslist, "two"), "list")
+  expect_type(runStreme(bslist, "shuffle"), "list")
+  expect_named(runStreme(bslist, "shuffle"), c("one", "two"))
 })
