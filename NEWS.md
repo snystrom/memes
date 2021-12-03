@@ -1,3 +1,5 @@
+# memes 1.2.1
+* fixed a bug in `runStreme` causing failures when using BStringSetLists as input
 # memes 1.1.3
 * fixed a bug in `runTomTom` where setting `norc = TRUE` failed on data import
 # memes 1.1.1
