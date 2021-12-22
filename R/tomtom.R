@@ -486,7 +486,11 @@ join_tomtom_tables <- function(query, hits){
       dplyr::select(-"query_idx", -"db_idx")
   } else {
     tomtom_results <- query %>%
-      dplyr::left_join(hits, by = c("query_idx", "db_idx")) %>%
+      # The query db_idx is actually not a pointer to the motif db, so it is
+      # removed prior to the join. Post-join db_idx indicates the hits db_idx
+      # value. (issue 92.)
+      dplyr::select(-"db_idx") %>% 
+      dplyr::left_join(hits, by = c("query_idx")) %>%
       # Rename columns for max compatibility with universalmotif
       dplyr::rename("match_name" = "match_id",
                     "match_altname" = "match_alt") %>%
