@@ -307,6 +307,7 @@ streme_to_pfm <- function(streme_xml_path){
 #'   universalmotif::create_motif
 #'
 #' @importFrom magrittr %>%
+#' @importFrom utils compareVersion
 #'
 #' @noRd
 streme_get_background_freq <- function(streme_run_info, version){
