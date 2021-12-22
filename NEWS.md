@@ -1,3 +1,5 @@
+# memes 1.2.3
+* fixed a bug in `importTomTomXML` where `tomtom` list column would contain missing data if `tomtom` was run using multiple database sources as input.
 # memes 1.2.2
 * fixed a bug in `runStreme` causing failures on data import for STREME version >= 5.4.1
 # memes 1.2.1
