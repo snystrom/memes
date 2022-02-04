@@ -241,14 +241,25 @@ plot_ame_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
 #' @examples
 #' data("example_ame", package = "memes")
 #' ame_compare_heatmap_methods(example_ame$Decreasing)
+#' 
+#' ame_compare_heatmap_methods(dplyr::bind_rows(example_ame, .id = "type"), type)
 ame_compare_heatmap_methods <- function(ame, group, value = -log10(adj.pvalue)){
 
   group <- rlang::enquo(group)
   value <- rlang::enquo(value)
 
+  if (rlang::quo_name(group) == ""){
+    stat_plot <- stat_ecdf(size = 1, pad = FALSE)
+    rel_widths <- c(1, 1)
+  } else {
+    stat_plot <- stat_ecdf(aes(color = !!group), size = 1, pad = FALSE)
+    # Add extra padding for the legend
+    rel_widths <- c(1, 1.25)
+  }
+
   value_dist <- ame %>%
     ggplot(aes(!!value)) +
-      stat_ecdf(aes(color = !!group), size = 1, pad = FALSE) +
+      stat_plot +
       labs(y = "Fraction of Motifs") +
       theme_bw() +
       theme(legend.position = "none") +
@@ -256,7 +267,7 @@ ame_compare_heatmap_methods <- function(ame, group, value = -log10(adj.pvalue)){
 
   normrank_dist <- ame %>%
     ggplot(aes(rank_normalize(rank))) +
-      stat_ecdf(aes(color = !!group), size = 1, pad = FALSE) +
+      stat_plot +
       scale_x_continuous(
                          breaks = c(0, 0.25, 0.5, 0.75, 1),
                          labels = c("0\n(High)", 0.25, 0.5, 0.75, "1\n(Low)"),
@@ -268,7 +279,7 @@ ame_compare_heatmap_methods <- function(ame, group, value = -log10(adj.pvalue)){
 
   cowplot::plot_grid(value_dist,
                      normrank_dist,
-                     rel_widths = c(1,1.25),
+                     rel_widths = rel_widths,
                      labels = "AUTO")
 
 }
