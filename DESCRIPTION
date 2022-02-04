@@ -1,7 +1,7 @@
 Package: memes
 Type: Package
 Title: motif matching, comparison, and de novo discovery using the MEME Suite
-Version: 1.2.4
+Version: 1.2.5
 Authors@R: person("Spencer", "Nystrom", 
     email = "nystromdev@gmail.com", 
     role = c("aut", "cre", "cph"),
@@ -51,7 +51,7 @@ Suggests:
     rmarkdown,
     covr
 biocViews: DataImport, FunctionalGenomics, GeneRegulation, MotifAnnotation, MotifDiscovery, SequenceMatching, Software
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 SystemRequirements: Meme Suite (v5.3.3 or above) <http://meme-suite.org/doc/download.html>
 VignetteBuilder: knitr
 URL: https://snystrom.github.io/memes/, https://github.com/snystrom/memes
