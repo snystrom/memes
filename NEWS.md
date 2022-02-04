@@ -1,3 +1,5 @@
+# memes 1.2.5
+* fixed error in `ame_compare_heatmap_methods` that triggers when plotting without providing a `group` argument.
 # memes 1.2.4
 * updated NAMESPACE to fix R CMD CHECK note.
 # memes 1.2.3

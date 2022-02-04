@@ -26,4 +26,6 @@ using different values in `plot_ame_heatmap()`
 \examples{
 data("example_ame", package = "memes")
 ame_compare_heatmap_methods(example_ame$Decreasing)
+
+ame_compare_heatmap_methods(dplyr::bind_rows(example_ame, .id = "type"), type)
 }
