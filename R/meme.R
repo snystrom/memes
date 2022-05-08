@@ -282,14 +282,20 @@ importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = F
   # Currently, granges nested inside a data.frame causes printing issues,
   # so I convert these back to data.frame (*sigh*)
   if (parse_genomic_coord){
-    meme_dataframe %<>%
-      dplyr::mutate("sites_hits" = purrr::map2(.data$sites_hits,
-                                               .data$width, ~{
-                                               meme_sites_meta_to_granges(.x, .y) %>%
-                    # temporary until come up with a fix for printing data.frames with nested Granges
-                                                 data.frame
-                                               })
-                    )
+    meme_dataframe <- try(
+        dplyr::mutate(meme_dataframe, "sites_hits" = purrr::map2(.data$sites_hits,
+                                                 .data$width, ~{
+                                                 meme_sites_meta_to_granges(.x, .y) %>%
+                      # temporary until come up with a fix for printing data.frames with nested Granges
+                                                   data.frame
+                                                 })
+        ), silent = TRUE)
+    
+    if (is(meme_dataframe, "try-error")) {
+      stop(paste("Problem parsing genomic coordinates from sites_hits.",
+           "This usually happens when using a custom fasta file as input to MEME.",
+           "Try setting `parse_genomic_coords = FALSE`."), call. = FALSE)
+    }
   }
 
   # Convert to universalmotif_df format
