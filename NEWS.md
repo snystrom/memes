@@ -1,3 +1,5 @@
+# memes 1.4.1
+* added an informative error message during `importMeme` when `parse_genomic_coords` fails with custom fasta import.
 # memes 1.2.5
 * fixed error in `ame_compare_heatmap_methods` that triggers when plotting without providing a `group` argument.
 # memes 1.2.4
