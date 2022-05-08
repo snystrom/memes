@@ -172,6 +172,10 @@ prepareFimoFlags <- function(bfile, parse_genomic_coord, skip_matched_sequence, 
     purrr::set_names(~{gsub("_", "-", .x)})
 
   if (!is.null(bfile)){
+    if (file.exists(bfile) & bfile %in% c("motif", "uniform")) {
+      message(paste0("Working directory contains a file named: ", bfile, " that will be used as the `bfile` argument.",
+      "To force use of the FIMO keyword, pass argument as: `bfile = --", bfile, "--`"))
+    }
     if (!file.exists(bfile) & bfile %in% c("motif", "uniform")){
       # if bfile isn't a path, user is probably inputting special keywords which
       # get wrapped in '--', but first drop all "-" in bfile input in case user

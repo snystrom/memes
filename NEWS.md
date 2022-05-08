@@ -1,3 +1,5 @@
+# memes 1.5.2
+* added a warning in `runFimo` in case `bfile` argument matches an existing local file.
 # memes 1.4.1
 * added an informative error message during `importMeme` when `parse_genomic_coords` fails with custom fasta import.
 # memes 1.2.5
