@@ -38,7 +38,7 @@
 #' @param ... additional commandline arguments to fimo. See the FIMO Flag table below.
 #'
 #' @return GRanges object containing positions of each match. Note: if
-#'   `parse_genomic_coords = FALSE`, each `seqnames` entry will be the full fasta
+#'   `parse_genomic_coord = FALSE`, each `seqnames` entry will be the full fasta
 #'   header, and start/end will be the relative position within that sequence of the
 #'   match. The GRanges object has the following additional `mcols`:
 #'     * motif_id = primary name of matched motif
@@ -206,7 +206,7 @@ fimoHelp <- function(command){
 #' @param fimo_tsv path to fimo.tsv output
 #'
 #' @return GenomicRanges object for each match position. Note: if
-#'   parse_genomic_coords == FALSE, each `seqnames` entry will be the fasta
+#'   parse_genomic_coord == FALSE, each `seqnames` entry will be the fasta
 #'   header, and start/end will be the position within that sequence of the
 #'   match.
 #'

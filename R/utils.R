@@ -6,7 +6,7 @@
 get_sequence.GRanges <- function(regions, genome, score_column = NULL, ...){
 
   chrNames <- seqnames(regions)
-  # NOTE: parse_genomic_coords uses 1-based coordinates, so no need to shift here.
+  # NOTE: parse_genomic_coord uses 1-based coordinates, so no need to shift here.
   startPos <- start(regions)
   endPos <- end(regions)
 

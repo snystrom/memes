@@ -159,7 +159,7 @@ runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", 
              combined_sites = combined_sites)
 }
 
-#' Override parse_genomic_coords setting if alph = protein
+#' Override parse_genomic_coord setting if alph = protein
 #' @noRd
 alph_parse_coords <- function(alph, parse_coords = TRUE){
   if (alph %in% c("protein")) {
@@ -294,7 +294,7 @@ importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = F
     if (is(meme_dataframe, "try-error")) {
       stop(paste("Problem parsing genomic coordinates from sites_hits.",
            "This usually happens when using a custom fasta file as input to MEME.",
-           "Try setting `parse_genomic_coords = FALSE`."), call. = FALSE)
+           "Try setting `parse_genomic_coord = FALSE`."), call. = FALSE)
     }
   }
 
