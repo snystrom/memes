@@ -1,3 +1,6 @@
+# memes 1.7.0
+* Fixed a bug in `parseStreme` causing motif ids and list object names to be out of sync.
+* Changed `parseStreme` and `runStreme` output motif ids slightly to always pad leading 0's to the numeric ids, consistent with how other MEME Suite tools behave. For instance, a previous motif may be named "m1-ATGC", will now be named "m01-ATGC". This may cause slight code breakage if filtering on specific hard-coded ids. This change also ensures correct sorting order of motif outputs consistent with the behavior of the rest of the package.
 # memes 1.5.2
 * added a warning in `runFimo` in case `bfile` argument matches an existing local file.
 # memes 1.4.1

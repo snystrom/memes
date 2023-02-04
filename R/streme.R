@@ -370,6 +370,45 @@ streme_get_background_freq_old <- function(streme_run_info){
   return(background_freq)
 }
 
+
+#' Parse motif IDs from streme output
+#' 
+#' 0-pad numeric ids to preserve sort order, add 'm' prefix to match other MEME
+#' Suite tool naming convention
+#' 
+#' @param ids the raw ids from the STREME XML (e.g. "1-CACAC")
+#' @return A vector of cleaned ids (e.g. "m01-CACAC")
+#' 
+#' @noRd
+clean_streme_ids <- function(ids) {
+  
+  raw_numeric_ids <- strsplit(ids, "-", fixed = TRUE) %>% 
+    purrr::map_chr(head, 1)
+  
+  # The max number of 0's to pad to each id 
+  numeric_id_lengths <- nchar(raw_numeric_ids)
+  
+  # The minimum length of a cleaned numeric ID after 0 padding
+  # e.g. 2 for "1" => "01"
+  min_numeric_id_length <- 2
+  
+  # Pad so that all numeric IDs are equal length (match length of longest)
+  if (max(numeric_id_lengths) > min_numeric_id_length) {
+    min_numeric_id_length <- max(numeric_id_lengths)
+  }
+  
+  zeros_to_add <- min_numeric_id_length - numeric_id_lengths
+ 
+  # Pad zeros to correct length 
+  purrr::map2_chr(ids, zeros_to_add, ~{
+    # e.x. 
+    # 1-ATGC => m01-ATGC
+    paste0("m", rep(0, length.out = .y), .x)
+  }) %>% 
+    gsub("-", "_", .)
+  
+}
+
 #' Parse stats for Streme results
 #'
 #' @param streme_xml_path path to streme.xml
@@ -389,8 +428,7 @@ streme_motif_stats <- function(streme_xml_path){
   xml2::xml_children(streme_xml)[2] %>%
     xml2::xml_children() %>% 
     attrs_to_df() %>% 
-    dplyr::mutate("id" = gsub("-", "_", id) %>% 
-                    gsub("(\\d)", "m\\1", .)) %>% 
+    dplyr::mutate("id" = clean_streme_ids(id)) %>% 
     dplyr::rename("name" = "id",
                   "altname" = "alt") %>% 
     dplyr::mutate_at(int_cols, as.integer) %>% 
@@ -409,5 +447,5 @@ streme_motif_stats <- function(streme_xml_path){
     # pvalue -> pval for universalmotif compatability
     dplyr::rename_with(~{gsub("pvalue", "pval", .)},
                      dplyr::contains("pvalue"), 
-                     ) 
+                     )
 }
