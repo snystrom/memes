@@ -1,0 +1,19 @@
+citHeader("To cite memes in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "Memes: A motif analysis environment in R using tools from the MEME Suite",
+  author   = personList( as.person("Spencer L. Nystrom"),
+                         as.person("Daniel J. McKay")
+  ),
+  journal  = "PLOS Computational Biology",
+  year     = 2021,
+  doi      = "10.1371/journal.pcbi.1008991",
+  volume = 17,
+  pages  = "1-14",
+  url    = "https://doi.org/10.1371/journal.pcbi.1008991",
+  textVersion = paste("Nystrom, SL, McKay, DJ",
+                      "(2021) Memes: A motif analysis environment in R using tools from the MEME Suite. ",
+                      "PLOS Computational Biology 17(9): e1008991. https://doi.org/10.1371/journal.pcbi.1008991"
+  )
+)
