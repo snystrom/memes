@@ -215,7 +215,19 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
   flags <- c(flagsList, alph_flags) %>%
     cmdfun::cmd_list_to_flags()
 
+  validateMemeFlags(flags)
+
   return(flags)
+}
+
+#' @param flags a list of meme flags (from [`prepareMemeFlags()`])
+#' @return invisibly return TRUE if successful, or throws if failing validation
+validateMemeFlags <- function(flags) {
+  # if control exists and no objfun, warn about setting an objfun
+  #  (current cli default is still "classic", but cannot guarantee, so suggest
+  #  the user set `objfun = "classic"` explicitly to suppress the warning)
+  # if control does not exist and objfun != classic, do not warn
+  #  (but MEME may shuffle and make a control)
 }
 
 #' Import MEME results

@@ -7,3 +7,10 @@ test_that("MEME Import errors correctly", {
   )
   
 })
+
+test_that("prepareMemeFlags warns about objfun", {
+  # TODO:
+  expect_warning(prepareMemeFlags(control = NA), "cannot use classic")
+  expect_warning(prepareMemeFlags(control = NA, objfun = "classic"), "cannot use classic")
+  expect_warning(prepareMemeFlags(control = NA, objfun = "se"), NA)
+})
