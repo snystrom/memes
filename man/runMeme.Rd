@@ -148,6 +148,23 @@ seqs <- universalmotif::create_sequences("CCRAAAW", seqnum = 4)
 names(seqs) <- 1:length(seqs)
 runMeme(seqs, parse_genomic_coord = FALSE)
 
+# MEME has many parameters as can be looked up in the MEME Commandline doc
+# for instance [-minw <minw>] sets the minimum motif width
+# this can be easily achived by setting an argument with the same name:
+runMeme(seqs, parse_genomic_coord = FALSE, minw = 10)
+
+# now use a random protein sequence and a costum control sequences
+# instead of shuffling the input sequences as control
+# Note: this requires to use change the default objfun method
+
+# define 10 random input protein sequences
+seqs_aa <- universalmotif::create_sequences(alphabet = "AA", seqnum = 10)
+names(seqs_aa) <- 1:length(seqs_aa)
+# define 100 random control protein sequences
+seqs_aa_control <- universalmotif::create_sequences(alphabet = "AA", seqnum = 100)
+names(seqs_aa_control) <- 1:length(seqs_aa_control)
+runMeme(seqs_aa, alph = "protein", parse_genomic_coord = FALSE,
+        control = seqs_aa_control, objfun = "de")
 }
 
 }
