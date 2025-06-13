@@ -15,7 +15,7 @@ test_that("streme works", {
   suppressMessages(expect_message(runStreme(few_seqs, "shuffle"), 
                "Warning: No hold-out set"))
   suppressMessages(expect_message(runStreme(few_seqs, "shuffle"), 
-               "Warning: Ignoring <pvt>"))
+               "Warning: Ignoring <thresh>|Warning: Ignoring <pvt>"))
   
   
   # Test list input
