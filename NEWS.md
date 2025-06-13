@@ -1,3 +1,5 @@
+# memes 1.17.1
+* Fixes an error when reading XML files with jagged `evalue` metadata entries
 # memes 1.13.1
 * Fixed an error in importAme that prevented import when runAme was run with sequences = TRUE (Reported by @withermatt on Github. Thank you!)
 # memes 1.7.1

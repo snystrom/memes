@@ -141,3 +141,9 @@ test_that("Unusual db formats work", {
   # data, which doesn't quite work with the current framework.
   #expect_true(FALSE)
 })
+
+test_that("Jagged tomtom xml can be parsed", {
+  # from: https://github.com/snystrom/memes/issues/123
+  xml <- system.file("extdata/tomtom_jagged_evalue.xml", package = "memes", mustWork = TRUE)
+  expect_s3_class(importTomTomXML(xml), "data.frame")
+})

@@ -131,9 +131,7 @@ attrs_to_df <- function(xml, ...) {
   # converts xml attributes to dataframe
   # where each column is an attribute
   xml2::xml_attrs(xml) %>%
-    data.frame() %>%
-    t() %>%
-    data.frame(row.names = NULL, ...)
+    purrr::map_dfr(., ~{.x})
 }
 
 

@@ -32,8 +32,11 @@ tomtom_query_motif_dfs <- function(tt_xml){
 #' @noRd
 tomtom_xml_motif_to_universalmotif <- function(entry, tt_xml){
   data <- attrs_to_df(entry, stringsAsFactors = FALSE) %>%
-    dplyr::mutate_at(c("length", "nsites"), as.integer) %>%
-    dplyr::mutate_at(c("evalue"), as.double)
+    dplyr::mutate_at(c("length", "nsites"), as.integer)
+
+  if ("evalue" %in% names(data)) {
+    data <- dplyr::mutate_at(data, c("evalue"), as.double)
+  }
 
   pfm <- t(get_probability_matrix(entry))
 

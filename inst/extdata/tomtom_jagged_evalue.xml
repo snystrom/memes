@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<tomtom version="5.5.1" release="Sun Jan 29 10:33:12 2023 -0800">
+  <model>
+    <command_line>tomtom -no-ssc -oc Da10_1_tomtom -min-overlap 5 -dist pearson -evalue -thresh 10.0 -verbosity 1 Da10_1_streme/streme.html motif_databases/JASPAR/JASPAR2024_CORE_plants_non-redundant.meme motif_databases/ARABD/ArabidopsisDAPv1.meme</command_line>
+    <distance_measure value="pearson"/>
+    <threshold type="evalue">10</threshold>
+    <alphabet name="DNA" like="dna">
+      <letter id="A" symbol="A" complement="T" name="Adenine" colour="CC0000"/>
+      <letter id="C" symbol="C" complement="G" name="Cytosine" colour="0000CC"/>
+      <letter id="G" symbol="G" complement="C" name="Guanine" colour="FFB300"/>
+      <letter id="T" symbol="T" aliases="U" complement="A" name="Thymine" colour="008000"/>
+      <letter id="N" symbol="N" aliases="X." equals="ACGT" name="Any base"/>
+      <letter id="V" symbol="V" equals="ACG" name="Not T"/>
+      <letter id="H" symbol="H" equals="ACT" name="Not G"/>
+      <letter id="D" symbol="D" equals="AGT" name="Not C"/>
+      <letter id="B" symbol="B" equals="CGT" name="Not A"/>
+      <letter id="M" symbol="M" equals="AC" name="Amino"/>
+      <letter id="R" symbol="R" equals="AG" name="Purine"/>
+      <letter id="W" symbol="W" equals="AT" name="Weak"/>
+      <letter id="S" symbol="S" equals="CG" name="Strong"/>
+      <letter id="Y" symbol="Y" equals="CT" name="Pyrimidine"/>
+      <letter id="K" symbol="K" equals="GT" name="Keto"/>
+    </alphabet>
+    <strands>both</strands>
+    <background from="--query--" A="0.289" C="0.211" G="0.211" T="0.289"/>
+    <host>node03</host>
+    <when>Tue May 27 15:55:09 2025</when>
+  </model>
+  <query_dbs>
+    <db source="Da10_1_streme/streme.html" name="streme.html" loaded="6" excluded="0" last_mod_date="Tue May 27 15:43:48 2025"/>
+  </query_dbs>
+  <target_dbs>
+    <db source="motif_databases/JASPAR/JASPAR2024_CORE_plants_non-redundant.meme" name="JASPAR2024_CORE_plants_non-redundant" loaded="805" excluded="0" last_mod_date="Fri May  9 10:17:23 2025"/>
+    <db source="motif_databases/ARABD/ArabidopsisDAPv1.meme" name="ArabidopsisDAPv1" loaded="872" excluded="0" last_mod_date="Fri May  9 10:19:42 2025"/>
+  </target_dbs>
+  <queries>
+    <motif db="0" id="6-BGMCACGTGKCV" alt="STREME-6" length="12" nsites="71">
+      <pos A="0.0758215" C="0.208344" G="0.382672" T="0.333163"/>
+      <pos A="0.0841228" C="0.0174126" G="0.747931" T="0.150534"/>
+      <pos A="0.515793" C="0.473987" G="0.000809907" T="0.00941065"/>
+      <pos A="0.017712" C="0.972067" G="0.00911125" T="0.0011093"/>
+      <pos A="0.980668" C="0.000809907" G="0.0174126" T="0.0011093"/>
+      <pos A="0.0011093" C="0.963766" G="0.0174126" T="0.017712"/>
+      <pos A="0.017712" C="0.0174126" G="0.963766" T="0.0011093"/>
+      <pos A="0.0011093" C="0.0174126" G="0.000809907" T="0.980668"/>
+      <pos A="0.0011093" C="0.00911125" G="0.972067" T="0.017712"/>
+      <pos A="0.00941065" C="0.000809907" G="0.473987" T="0.515793"/>
+      <pos A="0.150534" C="0.747931" G="0.0174126" T="0.0841228"/>
+      <pos A="0.333163" C="0.382672" G="0.208344" T="0.0758215"/>
+    </motif>
+  </queries>
+  <targets>
+    <motif db="1" id="has_evalue" alt="has_e" length="15" nsites="589" evalue="1.6e-1140"
+        url="http://neomorph.salk.edu/dap_web/pages/browse_table_aj.php?AGI=FUS3">
+      <pos A="0.541553" C="0.129046" G="0.105281" T="0.22412"/>
+      <pos A="0.273348" C="0.263149" G="0.106979" T="0.356526"/>
+      <pos A="0.580595" C="0.0798183" G="0.159602" T="0.179985"/>
+      <pos A="0.152824" C="0.200342" G="0.0560533" T="0.590781"/>
+      <pos A="0.460073" C="0.0849114" G="0.390462" T="0.0645541"/>
+      <pos A="4.90578e-05" C="0.999866" G="3.58174e-05" T="4.90578e-05"/>
+      <pos A="0.999879" C="3.58174e-05" G="3.58174e-05" T="4.90578e-05"/>
+      <pos A="4.90578e-05" C="3.58174e-05" G="3.58174e-05" T="0.999879"/>
+      <pos A="0.00514119" C="0.00173353" G="0.993076" T="4.90578e-05"/>
+      <pos A="4.90578e-05" C="0.999866" G="3.58174e-05" T="4.90578e-05"/>
+      <pos A="0.998182" C="3.58174e-05" G="0.00173353" T="4.90578e-05"/>
+      <pos A="0.349735" C="0.0509612" G="0.0390782" T="0.560226"/>
+      <pos A="0.351432" C="0.0984911" G="0.388765" T="0.161312"/>
+      <pos A="0.229212" C="0.376882" G="0.130744" T="0.263162"/>
+      <pos A="0.558528" C="0.106979" G="0.130744" T="0.203749"/>
+    </motif>
+    <motif db="1" id="no_evalue" alt="no_e" length="15" nsites="589"
+        url="http://neomorph.salk.edu/dap_web/pages/browse_table_aj.php?AGI=FUS3">
+      <pos A="0.541553" C="0.129046" G="0.105281" T="0.22412"/>
+      <pos A="0.273348" C="0.263149" G="0.106979" T="0.356526"/>
+      <pos A="0.580595" C="0.0798183" G="0.159602" T="0.179985"/>
+      <pos A="0.152824" C="0.200342" G="0.0560533" T="0.590781"/>
+      <pos A="0.460073" C="0.0849114" G="0.390462" T="0.0645541"/>
+      <pos A="4.90578e-05" C="0.999866" G="3.58174e-05" T="4.90578e-05"/>
+      <pos A="0.999879" C="3.58174e-05" G="3.58174e-05" T="4.90578e-05"/>
+      <pos A="4.90578e-05" C="3.58174e-05" G="3.58174e-05" T="0.999879"/>
+      <pos A="0.00514119" C="0.00173353" G="0.993076" T="4.90578e-05"/>
+      <pos A="4.90578e-05" C="0.999866" G="3.58174e-05" T="4.90578e-05"/>
+      <pos A="0.998182" C="3.58174e-05" G="0.00173353" T="4.90578e-05"/>
+      <pos A="0.349735" C="0.0509612" G="0.0390782" T="0.560226"/>
+      <pos A="0.351432" C="0.0984911" G="0.388765" T="0.161312"/>
+      <pos A="0.229212" C="0.376882" G="0.130744" T="0.263162"/>
+      <pos A="0.558528" C="0.106979" G="0.130744" T="0.203749"/>
+    </motif>
+  </targets>
+  <matches>
+  </matches>
+  <runtime cycles="19583199" seconds="19.583"/>
+</tomtom>
