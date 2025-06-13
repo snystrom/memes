@@ -1,19 +1,37 @@
-test_that("DREME XML import",{
-  dreme_xml <- system.file("extdata/dreme.xml", package = "memes", mustWork = TRUE)
+test_that("DREME XML import", {
+  dreme_xml <- system.file(
+    "extdata/dreme.xml",
+    package = "memes",
+    mustWork = TRUE
+  )
   expect_s3_class(dreme_xml_data <<- importDremeXML(dreme_xml), "data.frame")
   expect_true(is_dreme_results(dreme_xml_data))
 })
 
 # testthat NULL tomtom result returns empty columns
-test_that("TomTom Import works",{
+test_that("TomTom Import works", {
   # good has matches
-  tomtom_good_xml <- system.file("extdata/tomtom.xml", package = "memes", mustWork = TRUE)
+  tomtom_good_xml <- system.file(
+    "extdata/tomtom.xml",
+    package = "memes",
+    mustWork = TRUE
+  )
   # bad has no detected matches
-  tomtom_bad_xml <- system.file("extdata/tomtom_bad.xml", package = "memes", mustWork = TRUE)
+  tomtom_bad_xml <- system.file(
+    "extdata/tomtom_bad.xml",
+    package = "memes",
+    mustWork = TRUE
+  )
 
-  expect_s3_class(tomtom_good <<- importTomTomXML(tomtom_good_xml), "data.frame")
+  expect_s3_class(
+    tomtom_good <<- importTomTomXML(tomtom_good_xml),
+    "data.frame"
+  )
   # Should return query motifs w/ NA values for each column.
-  expect_s3_class(suppressMessages(tomtom_bad <<- importTomTomXML(tomtom_bad_xml)), "data.frame")
+  expect_s3_class(
+    suppressMessages(tomtom_bad <<- importTomTomXML(tomtom_bad_xml)),
+    "data.frame"
+  )
   expect_message(importTomTomXML(tomtom_bad_xml), "TomTom detected no matches")
 
   # Ensure "query_idx", "target_idx", or "db_idx" cols don't appear in results

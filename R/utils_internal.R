@@ -8,13 +8,13 @@
 #' @examples
 #'
 #' @noRd
-search_meme_path <- function(path = NULL, util = NULL){
-  f <- cmdfun::cmd_path_search(environment_var = "MEME_BIN",
-                                       option_name = "meme_bin",
-                                       default_path = "~/meme/bin",
-                                       utils = c("dreme", "ame", "fimo", 
-                                                 "tomtom", "meme", "streme")
-                                       )
+search_meme_path <- function(path = NULL, util = NULL) {
+  f <- cmdfun::cmd_path_search(
+    environment_var = "MEME_BIN",
+    option_name = "meme_bin",
+    default_path = "~/meme/bin",
+    utils = c("dreme", "ame", "fimo", "tomtom", "meme", "streme")
+  )
   f(path, util)
 }
 
@@ -30,59 +30,65 @@ search_meme_path <- function(path = NULL, util = NULL){
 #' @examples
 #'
 #' @noRd
-search_meme_database_path <- function(path = NULL){
+search_meme_database_path <- function(path = NULL) {
   # database can be path, or universalmotif list, (or vector: c(motifList, path))
   # names will be used as file names for non file-path entries
 
-  if (!is.null(path)){
-    if (is(path, "character")){
-      if (path == ""){
+  if (!is.null(path)) {
+    if (is(path, "character")) {
+      if (path == "") {
         stop("path cannot be an empty string")
       }
     }
   }
 
   if (any(is.data.frame(path))) {
-    stop("data.frame is not a supported input type, if this is a dreme results object, try passing it inside a list like: database = list(results)")
+    stop(
+      "data.frame is not a supported input type, if this is a dreme results object, try passing it inside a list like: database = list(results)"
+    )
   }
 
-  if (!is.character(path) & !is.list(path) & !is.null(path)){
+  if (!is.character(path) & !is.list(path) & !is.null(path)) {
     stop("path must be character or list")
   }
 
-  if (length(path) > 1 | is.list(path)){
-    paths <- purrr::imap(path, ~{
-      # Resolve how to name database entries:
-      if(.y != "" & !is.character(.x)) {
-        # rename non-path inputs to index# or name (if defined by user)
-        out <- file.path(tempdir(), .y)
-      } else if (.y != "" & !is.numeric(.y)) {
-        # use current file name & path if user does not define a new name for path entries
-        # (allows path inputs when all entries unnamed to not get renamed to their index position)
-        out <- file.path(tempdir(), .y)
-      } else{
-        # Otherwise, use type-specific path default
-        out <- NULL
-      }
+  if (length(path) > 1 | is.list(path)) {
+    paths <- purrr::imap(
+      path,
+      ~ {
+        # Resolve how to name database entries:
+        if (.y != "" & !is.character(.x)) {
+          # rename non-path inputs to index# or name (if defined by user)
+          out <- file.path(tempdir(), .y)
+        } else if (.y != "" & !is.numeric(.y)) {
+          # use current file name & path if user does not define a new name for path entries
+          # (allows path inputs when all entries unnamed to not get renamed to their index position)
+          out <- file.path(tempdir(), .y)
+        } else {
+          # Otherwise, use type-specific path default
+          out <- NULL
+        }
 
-      motif_input(.x, out)
-    }) %>%
+        motif_input(.x, out)
+      }
+    ) %>%
       purrr::map_chr("path") %>%
       purrr::set_names(NULL)
     return(paths)
   }
 
-
   # Allows setting option to a universalmotif object
   # and return path
   if (is.null(path) & !is.null(getOption("meme_db"))) {
-    if (all(getOption("meme_db") == "")){
-      stop("meme_db cannot be an empty string. Ensure the meme_db option is not set to \"\" which can happen if using an invalid file path.")
+    if (all(getOption("meme_db") == "")) {
+      stop(
+        "meme_db cannot be an empty string. Ensure the meme_db option is not set to \"\" which can happen if using an invalid file path."
+      )
     }
     # If all previous checks resolve to this point, then all non-character
     # inputs need to be written to a file. This is handled by motif_input, and
     # the file path is returned.
-    if (!all(is.character(getOption("meme_db")))){
+    if (!all(is.character(getOption("meme_db")))) {
       db <- getOption("meme_db")
       x <- motif_input(db)
       return(x$path)
@@ -91,8 +97,10 @@ search_meme_database_path <- function(path = NULL){
 
   # Otherwise search environment variable / option definition
   # to resolve the path
-  f <- cmdfun::cmd_path_search(environment_var = "MEME_DB",
-                                   option_name = "meme_db")
+  f <- cmdfun::cmd_path_search(
+    environment_var = "MEME_DB",
+    option_name = "meme_db"
+  )
   f(path = path)
 }
 
@@ -108,12 +116,14 @@ search_meme_database_path <- function(path = NULL){
 #' outdir_name("path/to/condition1.fa", "backgroundSequence.fa")
 #'
 #' @noRd
-outdir_name <- function(input, control){
-
-  paste0(dirname(input), "/",
-         basename(tools::file_path_sans_ext(input)),
-         "_vs_",
-         basename(tools::file_path_sans_ext(control)))
+outdir_name <- function(input, control) {
+  paste0(
+    dirname(input),
+    "/",
+    basename(tools::file_path_sans_ext(input)),
+    "_vs_",
+    basename(tools::file_path_sans_ext(control))
+  )
 }
 
 
@@ -131,7 +141,12 @@ attrs_to_df <- function(xml, ...) {
   # converts xml attributes to dataframe
   # where each column is an attribute
   xml2::xml_attrs(xml) %>%
-    purrr::map_dfr(., ~{.x})
+    purrr::map_dfr(
+      .,
+      ~ {
+        .x
+      }
+    )
 }
 
 
@@ -147,9 +162,18 @@ attrs_to_df <- function(xml, ...) {
 #' @return valid path
 #'
 #' @noRd
-write_meme_list <- function(list, path = tempfile(fileext = ".meme"), version = 5){
+write_meme_list <- function(
+  list,
+  path = tempfile(fileext = ".meme"),
+  version = 5
+) {
   list %>%
-    universalmotif::write_meme(path, append = FALSE, overwrite = TRUE, version = version)
+    universalmotif::write_meme(
+      path,
+      append = FALSE,
+      overwrite = TRUE,
+      version = version
+    )
 
   cmdfun::cmd_error_if_missing(path)
 
@@ -166,7 +190,7 @@ write_meme_list <- function(list, path = tempfile(fileext = ".meme"), version = 
 #' @return tempfile path
 #'
 #' @noRd
-duplicate_file <- function(path){
+duplicate_file <- function(path) {
   dupFile <- tempfile()
   file.copy(path, dupFile)
   return(dupFile)
@@ -187,7 +211,7 @@ duplicate_file <- function(path){
 #' rank_normalize(c(1,3,5))
 #'
 #' @noRd
-rank_normalize <- function(rank){
+rank_normalize <- function(rank) {
   if (length(rank) == 1) {
     # Rank 1 is highest rank
     return(0)

@@ -7,22 +7,22 @@
 #' @return a minimal empty tomtom_results valid data.frame
 #'
 #' @noRd
-new_tomtom_results <- function(){
-  data.frame(name = NA_character_,
-             altname = NA_character_,
-             motif = NA,
-             best_match_name = NA_character_,
-             best_match_altname = NA_character_,
-             best_match_offset = NA_integer_,
-             best_match_pval = NA_real_,
-             best_match_eval = NA_real_,
-             best_match_qval = NA_real_,
-             best_match_strand = NA_character_,
-             best_match_motif = NA,
-             tomtom = NA,
-             stringsAsFactors = FALSE
-             )
-
+new_tomtom_results <- function() {
+  data.frame(
+    name = NA_character_,
+    altname = NA_character_,
+    motif = NA,
+    best_match_name = NA_character_,
+    best_match_altname = NA_character_,
+    best_match_offset = NA_integer_,
+    best_match_pval = NA_real_,
+    best_match_eval = NA_real_,
+    best_match_qval = NA_real_,
+    best_match_strand = NA_character_,
+    best_match_motif = NA,
+    tomtom = NA,
+    stringsAsFactors = FALSE
+  )
 }
 
 #' Unfinished constructor for a dreme_results data.frame
@@ -32,27 +32,28 @@ new_tomtom_results <- function(){
 #' @return an empty dreme_results valid data.frame
 #'
 #' @noRd
-new_dreme_results <- function(){
-  data.frame(rank = integer(),
-             name = character(),
-             altname = character(),
-             seq = character(),
-             length = integer(),
-             nsites = integer(),
-             positive_hits = integer(),
-             negative_hits = integer(),
-             #pvalue = numeric(),
-             #evalue = numeric(),
-             pval = numeric(),
-             eval = numeric(),
-             unerased_evalue = numeric(),
-             positive_total = integer(),
-             negative_total = integer(),
-             pos_frac = numeric(),
-             neg_frac = numeric(),
-             motif = list(),
-             stringsAsFactors = FALSE
-             )
+new_dreme_results <- function() {
+  data.frame(
+    rank = integer(),
+    name = character(),
+    altname = character(),
+    seq = character(),
+    length = integer(),
+    nsites = integer(),
+    positive_hits = integer(),
+    negative_hits = integer(),
+    #pvalue = numeric(),
+    #evalue = numeric(),
+    pval = numeric(),
+    eval = numeric(),
+    unerased_evalue = numeric(),
+    positive_total = integer(),
+    negative_total = integer(),
+    pos_frac = numeric(),
+    neg_frac = numeric(),
+    motif = list(),
+    stringsAsFactors = FALSE
+  )
 }
 
 #' Validate & throw errors for dreme_results data.frames
@@ -64,21 +65,31 @@ new_dreme_results <- function(){
 #'   to the user when describing properties that are incompatible with the data type.
 #'
 #' @noRd
-error_dreme_results <- function(res){
+error_dreme_results <- function(res) {
   spec_dreme_res <- new_dreme_results()
   if (!(all(names(spec_dreme_res) %in% names(res)))) {
-
-    missingNames <- names(spec_dreme_res)[!names(spec_dreme_res) %in% names(res)]
+    missingNames <- names(spec_dreme_res)[
+      !names(spec_dreme_res) %in% names(res)
+    ]
     nameString <- paste(missingNames, collapse = ", ")
-    stop(paste0("object is not a valid dreme results data.frame. Missing columns: ", nameString))
+    stop(paste0(
+      "object is not a valid dreme results data.frame. Missing columns: ",
+      nameString
+    ))
   }
 
-  is_universalmotif <- purrr::map_lgl(res$motif, ~{is(.x, "universalmotif")}) %>%
+  is_universalmotif <- purrr::map_lgl(
+    res$motif,
+    ~ {
+      is(.x, "universalmotif")
+    }
+  ) %>%
     purrr::set_names(NULL)
 
   if (length(is_universalmotif) == 0) stop("motif column is empty")
 
-  if (!all(is_universalmotif)) stop("not all objects in motif column are of type universalmotif")
+  if (!all(is_universalmotif))
+    stop("not all objects in motif column are of type universalmotif")
   return(NULL)
 }
 
@@ -89,7 +100,7 @@ error_dreme_results <- function(res){
 #' @return TRUE or FALSE
 #'
 #' @noRd
-is_dreme_results <- function(res){
+is_dreme_results <- function(res) {
   spec_dreme_res <- new_dreme_results()
 
   # all names exist
@@ -108,7 +119,7 @@ is_dreme_results <- function(res){
 #' @return TRUE or FALSE
 #'
 #' @noRd
-is_tomtom_results <- function(res){
+is_tomtom_results <- function(res) {
   spec_tomtom_res <- new_tomtom_results()
 
   # all names exist
@@ -126,7 +137,7 @@ is_tomtom_results <- function(res){
 #'
 #' @return TRUE or FALSE
 #' @noRd
-is_universalmotif_dataframe <- function(res){
+is_universalmotif_dataframe <- function(res) {
   spec_df <- universalmotif::create_motif() %>%
     as_universalmotif_dataframe()
 
@@ -144,10 +155,17 @@ is_universalmotif_dataframe <- function(res){
 #' @return TRUE or FALSE if all members are universalmotif objects.
 #'
 #' @noRd
-is_universalmotif_list <- function(list){
-  if (length(list) == 0) {return(FALSE)}
+is_universalmotif_list <- function(list) {
+  if (length(list) == 0) {
+    return(FALSE)
+  }
 
-  purrr::map_lgl(list, ~{is(.x, "universalmotif")}) %>%
+  purrr::map_lgl(
+    list,
+    ~ {
+      is(.x, "universalmotif")
+    }
+  ) %>%
     purrr::set_names(NULL) %>%
     all
 }
@@ -159,27 +177,35 @@ is_universalmotif_list <- function(list){
 #' @return NULL or informative error describing why list is invalid
 #'
 #' @noRd
-error_universalmotif_list <- function(list){
-
+error_universalmotif_list <- function(list) {
   if (is_universalmotif_list(list)) return(NULL)
 
-  check_universalmotif <- purrr::map_lgl(list, ~{is(.x, "universalmotif")}) %>%
+  check_universalmotif <- purrr::map_lgl(
+    list,
+    ~ {
+      is(.x, "universalmotif")
+    }
+  ) %>%
     purrr::set_names(NULL)
 
   # warn no objects are motif
-  if (sum(check_universalmotif) == 0) stop("no entries in list are of type universalmotif")
+  if (sum(check_universalmotif) == 0)
+    stop("no entries in list are of type universalmotif")
 
   # warn some objects not motif
   if (!sum(check_universalmotif) == length(check_universalmotif)) {
     bad_index <- which(!check_universalmotif)
-    bad_index <- paste0("c(" , paste(bad_index, collapse = ", "), ")")
-    stop(paste0("some entries in list are not of type universalmotif.\nIndices of bad entries: ", bad_index))
+    bad_index <- paste0("c(", paste(bad_index, collapse = ", "), ")")
+    stop(paste0(
+      "some entries in list are not of type universalmotif.\nIndices of bad entries: ",
+      bad_index
+    ))
   }
 }
 
 
 #' Convert universalmotif to data.frame with motif column
-#' 
+#'
 #' The universalmotif data.frame structure is an R data frame where
 #' `universalmotif` metadata slots are represented as columns, and individual
 #' motifs are stored along rows. Additionally, the `universalmotif`
@@ -194,7 +220,7 @@ error_universalmotif_list <- function(list){
 #' Columns which are linked to `universalmotif` format are:
 #' `name`, `altname`, `family`, `organism`, `consensus`, `alphabet`, `strand`,
 #' `icscore`, `nsites`, `bkgsites`, `pval`, `qval`, `eval`
-#' 
+#'
 #' Note that changing the above columns will result in changes to the
 #' `universalmotif` representation when calling [memes_update_motifs()] or
 #' [as_universalmotif()]
@@ -207,31 +233,31 @@ error_universalmotif_list <- function(list){
 #'
 #' @seealso [memes_update_motifs()] for synchronizing the data.frame values with the
 #'   `motif` column, and [as_universalmotif()] to convert back to `universalmotif` format.
-#' 
+#'
 #' @noRd
 #'
 #' @examples
 #' motif <- universalmotif::create_motif()
 #' motif_df <- as_universalmotif_dataframe(motif)
-as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
+as_universalmotif_dataframe <- function(motif, na.rm = FALSE) {
   data <- universalmotif::summarise_motifs(motif, na.rm = na.rm)
 
-  if (is(motif, "universalmotif")){
+  if (is(motif, "universalmotif")) {
     data$motif <- list(motif)
-  } else if (is(motif, "list")){
+  } else if (is(motif, "list")) {
     data$motif <- motif
   }
   return(data)
 }
 
 #' Convert universalmotif data.frames back into universalmotifs
-#' 
+#'
 #' This function converts universalmotif data.frames into `universalmotif`
 #' format, first by updating the `motif` metadata to reflect the current values
 #' of the linked columns, then extracting the updated `universalmotif` objects.
 #' Columns which do not correspond to `universalmotif` slot names are dropped
 #' and not propagated to the `universalmotif` output.
-#' 
+#'
 #' Columns which are propagated to `universalmotif` format:
 #' `name`, `altname`, `family`, `organism`, `consensus`, `alphabet`, `strand`,
 #' `icscore`, `nsites`, `bkgsites`, `pval`, `qval`, `eval`
@@ -241,7 +267,7 @@ as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
 #'
 #' @return universalmotif list from motifs, updated to reflect the data.frame
 #'   column values.
-#'   
+#'
 #' @seealso [as_universalmotif_dataframe()]
 #' @noRd
 #'
@@ -251,7 +277,7 @@ as_universalmotif_dataframe <- function(motif, na.rm = FALSE){
 #' df <- dplyr::mutate(df, altname = "new_alt_name")
 #'
 #' motifs <- as_universalmotif(df)
-as_universalmotif <- function(data){
+as_universalmotif <- function(data) {
   data %<>%
     memes_update_motifs()
 

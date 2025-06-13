@@ -3,21 +3,23 @@
 #' @importFrom Biostrings getSeq
 #' @export
 #' @noRd
-get_sequence.GRanges <- function(regions, genome, score_column = NULL, ...){
-
+get_sequence.GRanges <- function(regions, genome, score_column = NULL, ...) {
   chrNames <- seqnames(regions)
   # NOTE: parse_genomic_coord uses 1-based coordinates, so no need to shift here.
   startPos <- start(regions)
   endPos <- end(regions)
 
-  feature_names <- paste0(chrNames,":",startPos,"-",endPos)
+  feature_names <- paste0(chrNames, ":", startPos, "-", endPos)
 
-  if (!is.null(score_column)){
+  if (!is.null(score_column)) {
     stopifnot(score_column %in% names(mcols(regions)))
 
-    feature_names <- paste(feature_names, mcols(regions)[[score_column]], sep = " ")
+    feature_names <- paste(
+      feature_names,
+      mcols(regions)[[score_column]],
+      sep = " "
+    )
   }
-
 
   sequences <- Biostrings::getSeq(genome, regions, ...)
   names(sequences) <- feature_names
@@ -26,21 +28,36 @@ get_sequence.GRanges <- function(regions, genome, score_column = NULL, ...){
 
 #' @export
 #' @noRd
-get_sequence.data.frame <- function(regions, genome, score_column = NULL, ...){
-  regions <- tryCatch(GenomicRanges::GRanges(regions),
-           error = function(e){stop(e)})
+get_sequence.data.frame <- function(regions, genome, score_column = NULL, ...) {
+  regions <- tryCatch(GenomicRanges::GRanges(regions), error = function(e) {
+    stop(e)
+  })
 
-  get_sequence.GRanges(regions = regions, genome = genome, score_column = score_column, ...)
-
+  get_sequence.GRanges(
+    regions = regions,
+    genome = genome,
+    score_column = score_column,
+    ...
+  )
 }
 
 #' This and all functions below are simply to support all the different GRangesList types that exist.
 #' they have no special inputs that differ from the other methods.
 #' @export
 #' @noRd
-get_sequence.GenomicRangesList <- function(regions, genome, score_column = NULL, ...){
-  sequences <- lapply(regions, function(x){
-    get_sequence.GRanges(regions = x, genome = genome, score_column = score_column, ...)
+get_sequence.GenomicRangesList <- function(
+  regions,
+  genome,
+  score_column = NULL,
+  ...
+) {
+  sequences <- lapply(regions, function(x) {
+    get_sequence.GRanges(
+      regions = x,
+      genome = genome,
+      score_column = score_column,
+      ...
+    )
   })
 
   Biostrings::BStringSetList(sequences)
@@ -48,32 +65,72 @@ get_sequence.GenomicRangesList <- function(regions, genome, score_column = NULL,
 
 #' @export
 #' @noRd
-get_sequence.GRangesList <- function(regions, genome, score_column = NULL, ...){
-  get_sequence.GenomicRangesList(regions = regions, genome = genome, score_column = score_column, ...)
+get_sequence.GRangesList <- function(
+  regions,
+  genome,
+  score_column = NULL,
+  ...
+) {
+  get_sequence.GenomicRangesList(
+    regions = regions,
+    genome = genome,
+    score_column = score_column,
+    ...
+  )
 }
 
 #' @export
 #' @noRd
-get_sequence.CompressedGRangesList <- function(regions, genome, score_column = NULL, ...){
-  get_sequence.GenomicRangesList(regions = regions, genome = genome, score_column = score_column, ...)
+get_sequence.CompressedGRangesList <- function(
+  regions,
+  genome,
+  score_column = NULL,
+  ...
+) {
+  get_sequence.GenomicRangesList(
+    regions = regions,
+    genome = genome,
+    score_column = score_column,
+    ...
+  )
 }
 
 #' @export
 #' @noRd
-get_sequence.SimpleGRangesList <- function(regions, genome, score_column = NULL, ...){
-  get_sequence.GenomicRangesList(regions = regions, genome = genome, score_column = score_column, ...)
+get_sequence.SimpleGRangesList <- function(
+  regions,
+  genome,
+  score_column = NULL,
+  ...
+) {
+  get_sequence.GenomicRangesList(
+    regions = regions,
+    genome = genome,
+    score_column = score_column,
+    ...
+  )
 }
 
 #' @export
 #' @noRd
-get_sequence.list <- function(regions, genome, score_column = NULL, ...){
-  get_sequence.GenomicRangesList(regions = regions, genome = genome, score_column = score_column, ...)
+get_sequence.list <- function(regions, genome, score_column = NULL, ...) {
+  get_sequence.GenomicRangesList(
+    regions = regions,
+    genome = genome,
+    score_column = score_column,
+    ...
+  )
 }
 
 #' @export
 #' @noRd
-get_sequence.character <- function(regions, genome, score_column = NULL, ...){
-  get_sequence.data.frame(regions = regions, genome = genome, score_column = score_column, ...)
+get_sequence.character <- function(regions, genome, score_column = NULL, ...) {
+  get_sequence.data.frame(
+    regions = regions,
+    genome = genome,
+    score_column = score_column,
+    ...
+  )
 }
 
 #' Add nucleic acid sequence of regions to metadata column
@@ -94,7 +151,7 @@ get_sequence.character <- function(regions, genome, score_column = NULL, ...){
 #' data(example_peaks, package = "memes")
 #' dm.genome <- BSgenome.Dmelanogaster.UCSC.dm3::BSgenome.Dmelanogaster.UCSC.dm3
 #' add_sequence(example_peaks, dm.genome)
-add_sequence <- function(ranges, genome, name = "sequence"){
+add_sequence <- function(ranges, genome, name = "sequence") {
   name <- rlang::enquo(name)
   seq <- ranges %>%
     get_sequence(genome)
@@ -104,7 +161,9 @@ add_sequence <- function(ranges, genome, name = "sequence"){
   # Ensure seq_ranges and ranges are in the same order
   #stopifnot(identical(granges(seq_ranges), granges(plyranges::set_strand(ranges, "*"))))
 
-  mcols(ranges)[rlang::quo_name(name)] <- mcols(seq_ranges)[rlang::quo_name(name)]
+  mcols(ranges)[rlang::quo_name(name)] <- mcols(seq_ranges)[rlang::quo_name(
+    name
+  )]
   return(ranges)
 }
 
@@ -120,14 +179,14 @@ add_sequence <- function(ranges, genome, name = "sequence"){
 #' @importFrom tidyr separate
 #'
 #' @noRd
-sequence_as_granges <- function(seq, name = "sequence"){
+sequence_as_granges <- function(seq, name = "sequence") {
   UseMethod("sequence_as_granges")
 }
 
 #' Macro for building sequence_as_granges
 #' @importFrom rlang :=
 #' @noRd
-build_sequence_as_granges <- function(){
+build_sequence_as_granges <- function() {
   fun <- function(seq, name = "sequence") {
     name <- rlang::enquo(name)
     seq %>%
@@ -136,7 +195,6 @@ build_sequence_as_granges <- function(){
       dplyr::rename(!!name := "x") %>%
       tidyr::separate("coords", c("seqnames", "start", "end")) %>%
       GenomicRanges::GRanges(.)
-
   }
   return(fun)
 }
@@ -167,12 +225,14 @@ sequence_as_granges.BStringSet <- build_sequence_as_granges()
 #' \donttest{
 #' write_fasta(seq)
 #' }
-write_fasta <- function(seq, path = tempfile(fileext = ".fa")){
-  Biostrings::writeXStringSet(x = seq,
-                              filepath = path,
-                              append = FALSE,
-                              compress = FALSE,
-                              format = "fasta")
+write_fasta <- function(seq, path = tempfile(fileext = ".fa")) {
+  Biostrings::writeXStringSet(
+    x = seq,
+    filepath = path,
+    append = FALSE,
+    compress = FALSE,
+    format = "fasta"
+  )
 
   if (!file.exists(path)) {
     stop(paste0(path, " not created"))
@@ -221,19 +281,20 @@ write_fasta <- function(seq, path = tempfile(fileext = ".fa")){
 #'
 #' @examples
 #' check_meme_install()
-check_meme_install <- function(meme_path = NULL){
+check_meme_install <- function(meme_path = NULL) {
   # TODO: temporary fix, revert to else block below after cmdfun update:
-  if (is.null(meme_path)){
-    x <- try(cmdfun::cmd_install_check(search_meme_path, path = meme_path), 
-             silent = TRUE)
-    if (is(x,"try-error")) {
+  if (is.null(meme_path)) {
+    x <- try(
+      cmdfun::cmd_install_check(search_meme_path, path = meme_path),
+      silent = TRUE
+    )
+    if (is(x, "try-error")) {
       message("Cannot detect meme install")
       return(invisible(NULL))
     }
   } else {
     cmdfun::cmd_install_check(search_meme_path, path = meme_path)
   }
-  
 }
 
 #' Returns logical vector indicating valid MEME-Suite install status
@@ -260,8 +321,7 @@ check_meme_install <- function(meme_path = NULL){
 #'
 #' @examples
 #' meme_is_installed()
-meme_is_installed <- function(path = NULL){
-  
+meme_is_installed <- function(path = NULL) {
   # temporary fix to catch if directory doesn't exist:
   # will eventually fix upstream in cmdfun
   # https://github.com/snystrom/memes/issues/65

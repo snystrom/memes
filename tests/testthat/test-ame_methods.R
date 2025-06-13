@@ -2,8 +2,6 @@ skip_if(TRUE, "Testing plots must view manually.")
 # TODO: Use vdiffr
 # https://github.com/r-lib/vdiffr
 
-
-
 # check order_by_cluster
 ame_analysis %>%
   dplyr::mutate(grp = c("1", "2"), grp = factor(grp, levels = c("2", "1"))) %>%
@@ -16,7 +14,6 @@ ame_analysis %>%
 ame_analysis %>%
   dplyr::mutate(grp = c("1", "2")) %>%
   ame_order_by_cluster(id = motif_id, group = NULL)
-
 
 
 # check plot_ame_heatmap

@@ -13,7 +13,8 @@ test_that("process_check_error suggests correctly", {
   expect_error(
     capture.output(
       suppressMessages(
-        process_check_error(a_out,
+        process_check_error(
+          a_out,
           help_fun = ~ {
             ame_help(a)
           },
@@ -32,14 +33,16 @@ test_that("process_check_error suggests correctly", {
   expect_error(
     capture.output(
       suppressMessages(
-        process_check_error(a_out,
+        process_check_error(
+          a_out,
           help_fun = ~ {
             processx::run(a, "-h", error_on_status = F)$stderr
           },
           user_flags = c("evalue_reorpt_threshold"),
           flags_fun = ~ {
             gsub("-", "_", .x)
-          }, default_help_fun = TRUE
+          },
+          default_help_fun = TRUE
         )
       )
     ),
@@ -51,14 +54,16 @@ test_that("process_check_error suggests correctly", {
   expect_error(
     suppressMessages(
       capture.output(
-        process_check_error(a_out,
+        process_check_error(
+          a_out,
           help_fun = ~ {
             processx::run(a, "-h", error_on_status = F)$stderr
           },
           user_flags = c("evalue_reorpt_threshold"),
           flags_fun = ~ {
             gsub("-", "_", .x)
-          }, default_help_fun = TRUE
+          },
+          default_help_fun = TRUE
         )
       )
     ),

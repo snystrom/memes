@@ -1,5 +1,5 @@
 #' @export
-sequence_input.character <- function(input){
+sequence_input.character <- function(input) {
   # character input should be file path unless input == "shuffle"
   if (input == "shuffle") return(input)
 
@@ -8,31 +8,31 @@ sequence_input.character <- function(input){
 }
 
 #' @export
-sequence_input.DNAStringSet <- function(input){
+sequence_input.DNAStringSet <- function(input) {
   # stringset is written to temporary fasta file
   write_fasta(input)
 }
 
 #' @export
-sequence_input.BStringSet <- function(input){
+sequence_input.BStringSet <- function(input) {
   write_fasta(input)
 }
 
 #' @export
-sequence_input.AAStringSet <- function(input){
+sequence_input.AAStringSet <- function(input) {
   write_fasta(input)
 }
 
 #' @export
-motif_input.character <- function(input, path = NULL){
+motif_input.character <- function(input, path = NULL) {
   # character input must be file path,
   # subsequent type checking will be carried out by commandline utility
   # path != NULL, copy & rename to this name
-  if (length(input) > 1){
+  if (length(input) > 1) {
     stop("input must be character of length == 1")
   }
-  if (!is.null(path)){
-    if (path != "" | !is.na(path)){
+  if (!is.null(path)) {
+    if (path != "" | !is.na(path)) {
       file.copy(input, path)
       input <- path
     }
@@ -42,25 +42,25 @@ motif_input.character <- function(input, path = NULL){
   input <- search_meme_database_path(input)
   cmdfun::cmd_error_if_missing(input)
 
-  out <- list(metadata = NULL,
-              path = input)
+  out <- list(metadata = NULL, path = input)
   return(out)
 }
 
 #' @export
-motif_input.universalmotif_df <- function(input, path = tempfile(fileext = ".meme")){
-
+motif_input.universalmotif_df <- function(
+  input,
+  path = tempfile(fileext = ".meme")
+) {
   path <- input %>%
     universalmotif::to_list(extrainfo = TRUE) %>%
     write_meme_input_path(path = path)
 
-  out <- list(metadata = input,
-              path = path)
+  out <- list(metadata = input, path = path)
   return(out)
 }
 
 #' @export
-motif_input.data.frame <- function(input, path = tempfile(fileext = ".meme")){
+motif_input.data.frame <- function(input, path = tempfile(fileext = ".meme")) {
   if (is(input, "universalmotif_df")) {
     # This is needed because inheritance is weird & NextMethod() doesn't work right...
     # TODO: make sure this isn't too hacky
@@ -80,13 +80,12 @@ motif_input.data.frame <- function(input, path = tempfile(fileext = ".meme")){
   path <- input$motif %>%
     write_meme_input_path(path = path)
 
-  out <- list(metadata = input,
-              path = path)
+  out <- list(metadata = input, path = path)
   return(out)
 }
 
 #' @export
-motif_input.list <- function(input, path = tempfile(fileext = ".meme")){
+motif_input.list <- function(input, path = tempfile(fileext = ".meme")) {
   # check list is universalmotif list
   if (!is_universalmotif_list(input)) error_universalmotif_list(list)
 
@@ -95,23 +94,23 @@ motif_input.list <- function(input, path = tempfile(fileext = ".meme")){
   path <- input %>%
     write_meme_input_path(path = path)
 
-  out <- list(metadata = df,
-              path = path)
+  out <- list(metadata = df, path = path)
 
   return(out)
 }
 
 #' @export
-motif_input.universalmotif <- function(input, path = tempfile(fileext = ".meme")){
-
+motif_input.universalmotif <- function(
+  input,
+  path = tempfile(fileext = ".meme")
+) {
   df <- as_universalmotif_dataframe(input) %>%
     data.frame
 
   path <- input %>%
     write_meme_input_path(path = path)
 
-  out <- list(metadata = df,
-              path = path)
+  out <- list(metadata = df, path = path)
 
   return(out)
 }
@@ -124,9 +123,9 @@ motif_input.universalmotif <- function(input, path = tempfile(fileext = ".meme")
 #' @return
 #'
 #' @noRd
-write_meme_input_path <- function(input, path){
-  if (is.null(path)){
-      path <- tempfile(fileext = ".meme")
+write_meme_input_path <- function(input, path) {
+  if (is.null(path)) {
+    path <- tempfile(fileext = ".meme")
   }
   if (path == "" | is.null(path) | is.na(path)) {
     path <- tempfile(fileext = ".meme")
@@ -144,7 +143,7 @@ write_meme_input_path <- function(input, path){
 #' @return list with `input` and `control` values
 #'
 #' @noRd
-split_input_control <- function(input, control){
+split_input_control <- function(input, control) {
   # input = list
   # control = character vector
   input_minus_control <- input %>%
@@ -159,10 +158,8 @@ split_input_control <- function(input, control){
   control <- control_seq
 
   return(
-    list(input = input,
-         control = control)
-        )
-
+    list(input = input, control = control)
+  )
 }
 
 #' Correctly handle input/control input logic when input is a list
@@ -180,33 +177,35 @@ split_input_control <- function(input, control){
 #' @importFrom Biostrings BStringSetList
 #'
 #' @noRd
-sequence_input_control_list <- function(input, control){
-
-  if (is.character(control)){
-
-    if (all(control %in% names(input))){
+sequence_input_control_list <- function(input, control) {
+  if (is.character(control)) {
+    if (all(control %in% names(input))) {
       x <- split_input_control(input, control)
 
       input <- x$input
       control <- x$control
-    } else if (!all(control %in% names(input)) & !identical(control, "shuffle")){
+    } else if (
+      !all(control %in% names(input)) & !identical(control, "shuffle")
+    ) {
       # Handle control = "shuffle"
       # If input is a list with a "shuffle" entry, use the "shuffle" entry
       # this may need revision if shuffle behavior is different across tools, or some tools don't have shuffle feature?
       missing <- control[!(control %in% names(input))]
-      stop(paste0("The following names passed to control do not exist in the input names: ", missing))
+      stop(paste0(
+        "The following names passed to control do not exist in the input names: ",
+        missing
+      ))
     }
   }
 
-  if (is.list(control)){
+  if (is.list(control)) {
     ctrl <- Biostrings::BStringSetList(control)
     control <- unlist(ctrl)
   }
 
-  if (methods::is(control, "BStringSetList")){
+  if (methods::is(control, "BStringSetList")) {
     control <- unlist(control)
   }
 
-  return(list(input = input,
-              control = control))
+  return(list(input = input, control = control))
 }

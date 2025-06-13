@@ -22,7 +22,7 @@
 #' # renamed motif
 #' df$motif
 #' @noRd
-mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
+mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL) {
   #dots <- enquos(...)
   #return(dots)
 
@@ -32,38 +32,45 @@ mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
 
   dots <- cmdfun::cmd_args_dots()
 
-  if (!is.null(.override)){
+  if (!is.null(.override)) {
     dots <- as.list(.override)
   }
 
   # check all values exist
   stopifnot(unlist(dots) %in% names(.data))
-  stopifnot(names(dots) %in% names(universalmotif::summarise_motifs(.data[[.motif]], na.rm = FALSE)))
+  stopifnot(
+    names(dots) %in%
+      names(universalmotif::summarise_motifs(.data[[.motif]], na.rm = FALSE))
+  )
 
   # foreach entry, replace for each motif
-  purrr::imap(dots, ~{
-    data_col <- .x
-    motif_slot <- .y
+  purrr::imap(
+    dots,
+    ~ {
+      data_col <- .x
+      motif_slot <- .y
 
-    # i tracks rows in dataframe
-    i <- 1
-    .data[[.motif]] <<- purrr::map(.data[[.motif]], ~{
-      value <- .data[i,data_col]
+      # i tracks rows in dataframe
+      i <- 1
+      .data[[.motif]] <<- purrr::map(
+        .data[[.motif]],
+        ~ {
+          value <- .data[i, data_col]
 
-      # Skip NA value replacement
-      if (is.na(value)) {
-        i <<- i+1
-        return(.x)
-      }
+          # Skip NA value replacement
+          if (is.na(value)) {
+            i <<- i + 1
+            return(.x)
+          }
 
-      .x[motif_slot] <- value
-      i <<- i+1
-      return(.x)
-    })
-
-  })
+          .x[motif_slot] <- value
+          i <<- i + 1
+          return(.x)
+        }
+      )
+    }
+  )
   return(.data)
-
 }
 
 #' Update the `motif` column to data.frame values
@@ -105,18 +112,19 @@ mutate_motif <- function(.data, ..., .motif = "motif", .override = NULL){
 #' df <- memes_update_motifs(df)
 #' # renamed motif
 #' df$motif
-memes_update_motifs <- function(.data){
-  names_lookup <- c("name" = "name",
-                    "altname" = "altname",
-                    "family" = "family",
-                    "organism" = "organism",
-                    "strand" = "strand",
-                    "nsites" = "nsites",
-                    "bkgsites" = "bkgsites",
-                    "pval" = "pval",
-                    "qval" = "qval",
-                    "eval" = "eval"
-                    )
+memes_update_motifs <- function(.data) {
+  names_lookup <- c(
+    "name" = "name",
+    "altname" = "altname",
+    "family" = "family",
+    "organism" = "organism",
+    "strand" = "strand",
+    "nsites" = "nsites",
+    "bkgsites" = "bkgsites",
+    "pval" = "pval",
+    "qval" = "qval",
+    "eval" = "eval"
+  )
 
   to_mutate <- names_lookup[names_lookup %in% names(.data)]
 

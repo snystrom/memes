@@ -86,82 +86,138 @@
 #'
 #' }
 #'
-runMeme <- function(input, control = NA, outdir = "auto", alph = "dna", parse_genomic_coord = TRUE,
-                            combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
+runMeme <- function(
+  input,
+  control = NA,
+  outdir = "auto",
+  alph = "dna",
+  parse_genomic_coord = TRUE,
+  combined_sites = FALSE,
+  silent = TRUE,
+  meme_path = NULL,
+  ...
+) {
   UseMethod("runMeme")
 }
 
 #' @export
 #' @rdname runMeme
-runMeme.list <- function(input, control = NA, outdir = "auto", alph = "dna", parse_genomic_coord = TRUE,
-                            combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
-
+runMeme.list <- function(
+  input,
+  control = NA,
+  outdir = "auto",
+  alph = "dna",
+  parse_genomic_coord = TRUE,
+  combined_sites = FALSE,
+  silent = TRUE,
+  meme_path = NULL,
+  ...
+) {
   x <- sequence_input_control_list(input, control)
   input <- x$input
   control <- x$control
 
-  res <- purrr::map(input, runMeme.default,
-             control = control,
-             outdir = outdir,
-             alph = alph,
-             combined_sites = combined_sites,
-             meme_path = meme_path,
-             silent = silent,
-             ...
-             )
+  res <- purrr::map(
+    input,
+    runMeme.default,
+    control = control,
+    outdir = outdir,
+    alph = alph,
+    combined_sites = combined_sites,
+    meme_path = meme_path,
+    silent = silent,
+    ...
+  )
 }
 
 #' @export
 #' @rdname runMeme
-runMeme.BStringSetList <- function(input, control = NA, outdir = "auto", alph = "dna", parse_genomic_coord = TRUE,
-                            combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
-  runMeme.list(as.list(input), control, outdir, alph, combined_sites, silent, meme_path, ...)
+runMeme.BStringSetList <- function(
+  input,
+  control = NA,
+  outdir = "auto",
+  alph = "dna",
+  parse_genomic_coord = TRUE,
+  combined_sites = FALSE,
+  silent = TRUE,
+  meme_path = NULL,
+  ...
+) {
+  runMeme.list(
+    as.list(input),
+    control,
+    outdir,
+    alph,
+    combined_sites,
+    silent,
+    meme_path,
+    ...
+  )
 }
 
 #' @export
 #' @rdname runMeme
-runMeme.default <- function(input, control = NA, outdir = "auto", alph = "dna", parse_genomic_coord = TRUE,
-                            combined_sites = FALSE, silent = TRUE, meme_path = NULL, ...){
-
+runMeme.default <- function(
+  input,
+  control = NA,
+  outdir = "auto",
+  alph = "dna",
+  parse_genomic_coord = TRUE,
+  combined_sites = FALSE,
+  silent = TRUE,
+  meme_path = NULL,
+  ...
+) {
   input <- sequence_input(input)
 
-  if (all(is.na(control))){
+  if (all(is.na(control))) {
     control <- NA
   } else {
     control <- sequence_input(control)
   }
 
-  if (outdir == "auto"){
+  if (outdir == "auto") {
     outdir <- outdir_name(input, control)
   }
 
-  user_flags <- prepareMemeFlags(control, outdir,
-                                 alph = alph, ...)
+  user_flags <- prepareMemeFlags(control, outdir, alph = alph, ...)
 
   command <- search_meme_path(path = meme_path, util = "meme")
 
-  ps_out <- processx::run(command, c(user_flags, input), 
-                          error_on_status = FALSE, spinner = TRUE)
+  ps_out <- processx::run(
+    command,
+    c(user_flags, input),
+    error_on_status = FALSE,
+    spinner = TRUE
+  )
 
   ps_out %>%
-    process_check_error(help_fun = ~{meme_help_flags(command)},
-        user_flags = cmdfun::cmd_help_parse_flags(user_flags),
-        default_help_fun = FALSE)
+    process_check_error(
+      help_fun = ~ {
+        meme_help_flags(command)
+      },
+      user_flags = cmdfun::cmd_help_parse_flags(user_flags),
+      default_help_fun = FALSE
+    )
 
   print_process_stdout(ps_out, silent = silent)
 
-  meme_out <- cmdfun::cmd_file_expect(prefix = "meme", 
-                                      ext = c("txt", "xml", "html"), 
-                                      outdir = outdir)
+  meme_out <- cmdfun::cmd_file_expect(
+    prefix = "meme",
+    ext = c("txt", "xml", "html"),
+    outdir = outdir
+  )
 
-  importMeme(meme_out$txt, 
-             parse_genomic_coord = alph_parse_coords(alph, parse_genomic_coord), 
-             combined_sites = combined_sites)
+  importMeme(
+    meme_out$txt,
+    parse_genomic_coord = alph_parse_coords(alph, parse_genomic_coord),
+    combined_sites = combined_sites
+  )
 }
 
 #' Override parse_genomic_coord setting if alph = protein
 #' @noRd
-alph_parse_coords <- function(alph, parse_coords = TRUE){
+alph_parse_coords <- function(alph, parse_coords = TRUE) {
   if (alph %in% c("protein")) {
     return(FALSE)
   } else {
@@ -176,34 +232,34 @@ alph_parse_coords <- function(alph, parse_coords = TRUE){
 #' @return list w/ bool values of alphabet identity
 #' @noRd
 #'
-meme_alph_to_args <- function(alph){
+meme_alph_to_args <- function(alph) {
+  flags <- list("dna" = FALSE, "rna" = FALSE, "protein" = FALSE, "alph" = FALSE)
 
-  flags <- list("dna" = FALSE,
-       "rna" = FALSE,
-       "protein" = FALSE,
-       "alph" = FALSE)
-
-  if (tolower(alph) %in% c("dna", "rna", "protein")){
+  if (tolower(alph) %in% c("dna", "rna", "protein")) {
     alph <- tolower(alph)
 
     flags[[alph]] <- TRUE
 
     return(flags)
-  } else if (file.exists(alph)){
+  } else if (file.exists(alph)) {
     flags[["alph"]] <- alph
     return(flags)
   } else {
-    message(paste0(alph, " is not a valid file path on disk (file does not exist)"))
-    stop("alph value is invalid. Must be one of dna/rna/protein or a path to a valid file.")
+    message(paste0(
+      alph,
+      " is not a valid file path on disk (file does not exist)"
+    ))
+    stop(
+      "alph value is invalid. Must be one of dna/rna/protein or a path to a valid file."
+    )
   }
 }
 
 #' Convert user input flags into commandline flags for MEME
 #'
 #' @noRd
-prepareMemeFlags <- function(control, outdir, alph, ...){
-  argsDict <- c("outdir" = "oc",
-                "control" = "neg")
+prepareMemeFlags <- function(control, outdir, alph, ...) {
+  argsDict <- c("outdir" = "oc", "control" = "neg")
 
   # handle alphabet assignment
   alph_flags <- meme_alph_to_args(alph) %>%
@@ -251,8 +307,16 @@ prepareMemeFlags <- function(control, outdir, alph, ...){
 #' @examples
 #' example_meme_txt <- system.file("extdata", "meme_full.txt", package = "universalmotif")
 #' importMeme(example_meme_txt)
-importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = FALSE){
-  meme_res <- universalmotif::read_meme(meme_txt, readsites = TRUE, readsites.meta = TRUE)
+importMeme <- function(
+  meme_txt,
+  parse_genomic_coord = FALSE,
+  combined_sites = FALSE
+) {
+  meme_res <- universalmotif::read_meme(
+    meme_txt,
+    readsites = TRUE,
+    readsites.meta = TRUE
+  )
 
   meme_dataframe <- meme_res$motifs %>%
     as_universalmotif_dataframe() %>%
@@ -260,15 +324,16 @@ importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = F
 
   ##
   # Add sites info as data.frame
-  if (is(meme_res$sites.meta, "data.frame")){
+  if (is(meme_res$sites.meta, "data.frame")) {
     meme_res$sites.meta <- list(meme_res$sites.meta)
     names(meme_res$sites.meta) <- meme_dataframe$name
   }
 
-  meme_sites_hits <- purrr::map(meme_res$sites.meta,
-                                 #meme_dataframe$width,
-                                 meme_sites_meta_to_df
-                                 ) %>%
+  meme_sites_hits <- purrr::map(
+    meme_res$sites.meta,
+    #meme_dataframe$width,
+    meme_sites_meta_to_df
+  ) %>%
     dplyr::bind_rows(.id = "name") %>%
     dplyr::group_by(.data$name) %>%
     tidyr::nest() %>%
@@ -281,31 +346,44 @@ importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = F
   # Coerce sites hits info to granges
   # Currently, granges nested inside a data.frame causes printing issues,
   # so I convert these back to data.frame (*sigh*)
-  if (parse_genomic_coord){
+  if (parse_genomic_coord) {
     meme_dataframe <- try(
-        dplyr::mutate(meme_dataframe, "sites_hits" = purrr::map2(.data$sites_hits,
-                                                 .data$width, ~{
-                                                 meme_sites_meta_to_granges(.x, .y) %>%
-                      # temporary until come up with a fix for printing data.frames with nested Granges
-                                                   data.frame
-                                                 })
-        ), silent = TRUE)
-    
+      dplyr::mutate(
+        meme_dataframe,
+        "sites_hits" = purrr::map2(
+          .data$sites_hits,
+          .data$width,
+          ~ {
+            meme_sites_meta_to_granges(.x, .y) %>%
+              # temporary until come up with a fix for printing data.frames with nested Granges
+              data.frame
+          }
+        )
+      ),
+      silent = TRUE
+    )
+
     if (is(meme_dataframe, "try-error")) {
-      stop(paste("Problem parsing genomic coordinates from sites_hits.",
-           "This usually happens when using a custom fasta file as input to MEME.",
-           "Try setting `parse_genomic_coord = FALSE`."), call. = FALSE)
+      stop(
+        paste(
+          "Problem parsing genomic coordinates from sites_hits.",
+          "This usually happens when using a custom fasta file as input to MEME.",
+          "Try setting `parse_genomic_coord = FALSE`."
+        ),
+        call. = FALSE
+      )
     }
   }
 
   # Convert to universalmotif_df format
-  meme_dataframe <- suppressMessages(universalmotif::update_motifs(meme_dataframe))
-  
-  if (!combined_sites){
+  meme_dataframe <- suppressMessages(universalmotif::update_motifs(
+    meme_dataframe
+  ))
+
+  if (!combined_sites) {
     return(meme_dataframe)
   } else {
-
-    if (!parse_genomic_coord){
+    if (!parse_genomic_coord) {
       meme_sites_combined <- meme_res$sites.meta.combined %>%
         meme_sites_meta_combined_to_df()
     } else {
@@ -314,10 +392,11 @@ importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = F
         meme_sites_meta_combined_to_granges()
     }
 
-    results_list <- list("meme_data" = meme_dataframe,
-                         "combined_sites" = meme_sites_combined)
+    results_list <- list(
+      "meme_data" = meme_dataframe,
+      "combined_sites" = meme_sites_combined
+    )
     return(results_list)
-
   }
 }
 
@@ -328,7 +407,7 @@ importMeme <- function(meme_txt, parse_genomic_coord = FALSE, combined_sites = F
 #' @return
 #'
 #' @noRd
-meme_help <- function(command){
+meme_help <- function(command) {
   processx::run(command, "-h", error_on_status = FALSE)$stderr
 }
 
@@ -342,9 +421,11 @@ meme_help <- function(command){
 #' @return vector of flag arguments for meme
 #'
 #' @noRd
-meme_help_flags <- function(command){
+meme_help_flags <- function(command) {
   meme_help(command) %>%
-    {strsplit(., "\n")[[1]]} %>%
+    {
+      strsplit(., "\n")[[1]]
+    } %>%
     gsub("\t", " ", .) %>%
     gsub("\\[", "", .) %>%
     gsub("\\]", "", .) %>%
@@ -354,7 +435,7 @@ meme_help_flags <- function(command){
 #' @param sites the .$sites.meta output of
 #'   universalmotif::read_meme(readsites = T, readsites.meta = T)
 #' @noRd
-meme_sites_meta_to_df <- function(sites){
+meme_sites_meta_to_df <- function(sites) {
   sites %>%
     as.data.frame %>%
     dplyr::rename_all(tolower)
@@ -363,11 +444,15 @@ meme_sites_meta_to_df <- function(sites){
 #' @param sites the .$sites.meta.combined output of
 #'   universalmotif::read_meme(readsites = T, readsites.meta = T)
 #' @noRd
-meme_sites_meta_combined_to_df <- function(sites){
+meme_sites_meta_combined_to_df <- function(sites) {
   sites %>%
     as.data.frame %>%
     dplyr::rename_all(tolower) %>%
-    dplyr::rename_all(~{gsub("\\.", "_", .x)})
+    dplyr::rename_all(
+      ~ {
+        gsub("\\.", "_", .x)
+      }
+    )
 }
 
 #' convert site metadata into motif positions in GRanges
@@ -382,7 +467,7 @@ meme_sites_meta_combined_to_df <- function(sites){
 #' @importFrom tidyr separate
 #'
 #' @noRd
-meme_sites_meta_to_granges <- function(sites_df, motif_length){
+meme_sites_meta_to_granges <- function(sites_df, motif_length) {
   sites_df %>%
     tidyr::separate(sequence, c("seqnames", "start", "end")) %>%
     GenomicRanges::GRanges(.) %>%
@@ -399,7 +484,7 @@ meme_sites_meta_to_granges <- function(sites_df, motif_length){
 #'   to `meme_sites_meta_combined_to_df()`
 #' @importFrom tidyr separate
 #' @noRd
-meme_sites_meta_combined_to_granges <- function(sites_df){
+meme_sites_meta_combined_to_granges <- function(sites_df) {
   sites_df %>%
     tidyr::separate(sequence, c("seqnames", "start", "end")) %>%
     GenomicRanges::GRanges(.)

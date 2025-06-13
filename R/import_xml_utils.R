@@ -1,4 +1,3 @@
-
 #' Convert tomtom query entries to universalmotif dataframe format
 #'
 #' @param tt_xml tomtom xml2 data
@@ -6,18 +5,23 @@
 #' @return
 #'
 #' @noRd
-tomtom_query_motif_dfs <- function(tt_xml){
+tomtom_query_motif_dfs <- function(tt_xml) {
   tt_motif_list <- tt_xml %>%
     xml2::xml_find_all("//queries") %>%
     xml2::xml_children() %>%
     purrr::map(tomtom_xml_motif_to_universalmotif, tt_xml)
 
   data <- as_universalmotif_dataframe(tt_motif_list) %>%
-    dplyr::mutate(query_idx = (seq_len(nrow(.)) - 1),
-      db_idx = purrr::map_int(tt_motif_list, ~{
-      .x@extrainfo["db"] %>%
-        as.integer()
-    }))
+    dplyr::mutate(
+      query_idx = (seq_len(nrow(.)) - 1),
+      db_idx = purrr::map_int(
+        tt_motif_list,
+        ~ {
+          .x@extrainfo["db"] %>%
+            as.integer()
+        }
+      )
+    )
 
   return(data)
 }
@@ -30,7 +34,7 @@ tomtom_query_motif_dfs <- function(tt_xml){
 #' @return universalmotif object w/ metadata of entry
 #'
 #' @noRd
-tomtom_xml_motif_to_universalmotif <- function(entry, tt_xml){
+tomtom_xml_motif_to_universalmotif <- function(entry, tt_xml) {
   data <- attrs_to_df(entry, stringsAsFactors = FALSE) %>%
     dplyr::mutate_at(c("length", "nsites"), as.integer)
 
@@ -44,16 +48,16 @@ tomtom_xml_motif_to_universalmotif <- function(entry, tt_xml){
   tt_run_info <- xml2::xml_children(tt_xml)[1]
   bkg <- dreme_get_background_freq(tt_run_info)
 
-  motif <- universalmotif::create_motif(pfm,
-                               name = data$id,
-                               altname = check_col(data, "alt", character(0)),
-                               bkg = bkg,
-                               pval = check_col(data, "pvalue"),
-                               nsites = check_col(data, "nsites"),
-                               eval = check_col(data, "evalue"),
-                               extrainfo = c("db" = data$db)
-                               )
-
+  motif <- universalmotif::create_motif(
+    pfm,
+    name = data$id,
+    altname = check_col(data, "alt", character(0)),
+    bkg = bkg,
+    pval = check_col(data, "pvalue"),
+    nsites = check_col(data, "nsites"),
+    eval = check_col(data, "evalue"),
+    extrainfo = c("db" = data$db)
+  )
 
   return(motif)
 }
@@ -79,7 +83,7 @@ tomtom_xml_motif_to_universalmotif <- function(entry, tt_xml){
 #' check_col(df_undef$a)
 #' }
 #' @noRd
-check_col <- function(df, col, type = numeric(0)){
+check_col <- function(df, col, type = numeric(0)) {
   val <- ifelse(!is.null(df[[col]]), df[[col]], type)
   class(val) <- class(type)
   return(val)

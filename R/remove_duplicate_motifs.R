@@ -15,25 +15,25 @@
 #' motif <- universalmotif::create_motif()
 #' duplicated <- c(motif, motif)
 #' remove_duplicate_motifs(duplicated)
-remove_duplicate_motifs <- function(x){
+remove_duplicate_motifs <- function(x) {
   UseMethod("remove_duplicate_motifs")
 }
 
 #' @export
-remove_duplicate_motifs.universalmotif_df <- function(x){
+remove_duplicate_motifs.universalmotif_df <- function(x) {
   remove_duplicate_motifs.data.frame(x)
 }
 
 #' @export
-remove_duplicate_motifs.data.frame <- function(x){
-  x %>% 
+remove_duplicate_motifs.data.frame <- function(x) {
+  x %>%
     universalmotif::to_list() %>%
-    remove_duplicate_motifs.list() %>% 
+    remove_duplicate_motifs.list() %>%
     universalmotif::to_df()
 }
 
 #' @export
-remove_duplicate_motifs.list <- function(x){
+remove_duplicate_motifs.list <- function(x) {
   ids <- identify_duplicate_motifs(x)
   x[ids$unique]
 }
@@ -45,7 +45,7 @@ remove_duplicate_motifs.list <- function(x){
 #' @return a list with entries "unique" for each unique entry, and "dups" for each duplicate entry
 #' @noRd
 #' @importFrom matrixStats colMaxs
-identify_duplicate_motifs <- function(x){
+identify_duplicate_motifs <- function(x) {
   cor <- universalmotif::compare_motifs(x, method = "PCC")
 
   # Get the first occurrence of nondup motifs
@@ -57,11 +57,8 @@ identify_duplicate_motifs <- function(x){
 
   uniqs <- which(matrixStats::colMaxs(cor) != 1)
   dups <- which(matrixStats::colMaxs(cor) == 1)
-  
-  return(list("unique" = uniqs,
-              "dups" = dups
-              ))
-  
+
+  return(list("unique" = uniqs, "dups" = dups))
 }
 
 #' Check for duplicated motif matrices
@@ -79,24 +76,24 @@ identify_duplicate_motifs <- function(x){
 #' motif <- universalmotif::create_motif()
 #' duplicated <- c(motif, motif)
 #' has_duplicate_motifs(duplicated)
-has_duplicate_motifs <- function(x){
+has_duplicate_motifs <- function(x) {
   UseMethod("has_duplicate_motifs")
 }
 
 #' @export
-has_duplicate_motifs.universalmotif_df <- function(x){
+has_duplicate_motifs.universalmotif_df <- function(x) {
   has_duplicate_motifs.data.frame(x)
 }
 
 #' @export
-has_duplicate_motifs.data.frame <- function(x){
+has_duplicate_motifs.data.frame <- function(x) {
   x %>%
     universalmotif::to_list() %>%
     has_duplicate_motifs.list()
 }
 
 #' @export
-has_duplicate_motifs.list <- function(x){
+has_duplicate_motifs.list <- function(x) {
   ids <- identify_duplicate_motifs(x)
   length(ids$unique) != length(x)
 }

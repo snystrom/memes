@@ -36,7 +36,8 @@ motif_input <- function(x, ...) UseMethod("motif_input")
 #' # using GRanges object for coordinates
 #' data(example_peaks, package = "memes")
 #' get_sequence(example_peaks, drosophila.genome)
-get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequence")
+get_sequence <- function(regions, genome, score_column, ...)
+  UseMethod("get_sequence")
 
 #' Denovo motif discovery of target regions using DREME
 #'
@@ -49,7 +50,7 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' relevant motifs. Often, using `control = "shuffle"` will produce a suboptimal
 #' set of motifs; however, some discriminative analysis designs don't have
 #' proper "control" regions other than to shuffle.
-#' 
+#'
 #' As of MEME version 5.2.0, DREME is deprecated. Consider [runStreme()] instead.
 #'
 #' @param input regions to scan for motifs. Can be any of:
@@ -169,14 +170,21 @@ get_sequence <- function(regions, genome, score_column, ...) UseMethod("get_sequ
 #' # Create random named sequences as input for example
 #' seqs <- universalmotif::create_sequences(rng.seed = 123)
 #' names(seqs) <- seq_along(seqs)
-#' 
+#'
 #' # Runs dreme with default settings, shuffles input as background
 #' runDreme(seqs, "shuffle")
 #'
 #' # Runs searching for max 2 motifs, e-value cutoff = 0.1, explicitly using the DNA alphabet
 #' runDreme(seqs, "shuffle", nmotifs = 2, e = 0.1, dna = TRUE)
 #' }
-runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...) {
+runDreme <- function(
+  input,
+  control,
+  outdir = "auto",
+  meme_path = NULL,
+  silent = TRUE,
+  ...
+) {
   UseMethod("runDreme")
 }
 
@@ -287,25 +295,29 @@ runDreme <- function(input, control, outdir = "auto", meme_path = NULL, silent =
 #' # Create random named sequences as input for example
 #' seqs <- universalmotif::create_sequences(rng.seed = 123)
 #' names(seqs) <- seq_along(seqs)
-#' 
+#'
 #' # An example path to a motif database file in .meme format
 #' motif_file <- system.file("extdata", "flyFactorSurvey_cleaned.meme", package = "memes")
-#' 
+#'
 #' runAme(seqs, database = motif_file)
 #'
 #' # Dreme results dataset for example
 #' dreme_xml <- system.file("extdata", "dreme.xml", package = "memes")
 #' dreme_results <- importDremeXML(dreme_xml)
 #'
-#' # database can be set to multiple values like so: 
+#' # database can be set to multiple values like so:
 #' runAme(seqs, database = list(motif_file, "my_dreme_motifs" = dreme_results))
 #' }
-runAme <- function(input,
-       control = "shuffle",
-       outdir = "auto",
-       method = "fisher",
-       database = NULL,
-       meme_path = NULL,
-       sequences = FALSE, silent = TRUE, ...){
+runAme <- function(
+  input,
+  control = "shuffle",
+  outdir = "auto",
+  method = "fisher",
+  database = NULL,
+  meme_path = NULL,
+  sequences = FALSE,
+  silent = TRUE,
+  ...
+) {
   UseMethod("runAme")
 }

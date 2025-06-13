@@ -5,8 +5,10 @@ test_that("motif_utils work", {
   name1 <- "seq1"
   name2 <- "seq2"
 
-  motifs <- list(universalmotif::create_motif(seq1, name = name1),
-                 universalmotif::create_motif(seq2, name = name2))
+  motifs <- list(
+    universalmotif::create_motif(seq1, name = name1),
+    universalmotif::create_motif(seq2, name = name2)
+  )
 
   df <- as_universalmotif_dataframe(motifs)
 
@@ -33,14 +35,26 @@ test_that("motif_utils work", {
   df_bad %<>%
     dplyr::mutate(icscore = -1)
 
-  expect_equal(memes_update_motifs(df_bad)$motif[[1]]@icscore, motifs[[1]]@icscore)
-  expect_equal(memes_update_motifs(df_bad)$motif[[2]]@icscore, motifs[[2]]@icscore)
+  expect_equal(
+    memes_update_motifs(df_bad)$motif[[1]]@icscore,
+    motifs[[1]]@icscore
+  )
+  expect_equal(
+    memes_update_motifs(df_bad)$motif[[2]]@icscore,
+    motifs[[2]]@icscore
+  )
 
   df_bad %<>%
     dplyr::mutate(alphabet = -1)
 
-  expect_equal(memes_update_motifs(df_bad)$motif[[1]]@alphabet, motifs[[1]]@alphabet)
-  expect_equal(memes_update_motifs(df_bad)$motif[[2]]@alphabet, motifs[[2]]@alphabet)
+  expect_equal(
+    memes_update_motifs(df_bad)$motif[[1]]@alphabet,
+    motifs[[1]]@alphabet
+  )
+  expect_equal(
+    memes_update_motifs(df_bad)$motif[[2]]@alphabet,
+    motifs[[2]]@alphabet
+  )
 
   # Error if motif column cannot be found
   df_bad %<>%
@@ -49,9 +63,7 @@ test_that("motif_utils work", {
 
   # error if motif column isn't universalmotif list
   df_bad <- df %>%
-    dplyr::rename("name" = "motif",
-                  "motif" = "name")
+    dplyr::rename("name" = "motif", "motif" = "name")
 
   expect_error(memes_update_motifs(df_bad))
-
 })

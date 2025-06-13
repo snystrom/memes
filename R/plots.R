@@ -8,10 +8,14 @@
 #'
 #' @noRd
 #'
-cowplot_title <- function(plot, title, ...){
+cowplot_title <- function(plot, title, ...) {
   title <- cowplot::ggdraw() +
     cowplot::draw_text(title, ...)
-  cowplot::plot_grid(plotlist = list(title, plot), ncol = 1, rel_heights = c(0.1, 1))
+  cowplot::plot_grid(
+    plotlist = list(title, plot),
+    ncol = 1,
+    rel_heights = c(0.1, 1)
+  )
 }
 
 #' Compare top tomtom hits to original motif
@@ -38,42 +42,47 @@ cowplot_title <- function(plot, title, ...){
 #' results <- importTomTomXML(system.file("extdata", "tomtom.xml", package = "memes"))
 #' # show top 3 hits
 #' view_tomtom_hits(results, top_n = 3)
-view_tomtom_hits <- function(results, top_n = "all"){
+view_tomtom_hits <- function(results, top_n = "all") {
   # TODO: if tomtom is empty, return NONE as plot below??
-  purrr::map2(results$motif, results$tomtom, ~{
+  purrr::map2(
+    results$motif,
+    results$tomtom,
+    ~ {
+      if (is.null(.y)) {
+        return(view_tomtom_nomatch(.x))
+      }
 
-    if (is.null(.y)) {
-      return(view_tomtom_nomatch(.x))
+      # Needed to handle when tomtom discovers no hits for any motifs, in which case
+      # tomtom is NA instead of NULL so the column is kept in the dataframe
+      if (all(is.na(.y))) {
+        return(view_tomtom_nomatch(.x))
+      }
+
+      if (top_n == "all") {
+        select <- seq_len(length(.y$match_motif))
+      } else if (is.numeric(top_n)) {
+        select <- seq_len(top_n)
+      } else {
+        stop("n must be either 'all' or a number.")
+      }
+
+      if (length(select) > length(.y$match_motif)) {
+        # If top_n > number of hits, just show all hits
+        select <- seq_len(length(.y$match_motif))
+      }
+
+      # TODO: check that motifList below doesn't have AsIs?
+      #motifList <- c(list(.x), .y$match_motif[select]) %>%
+      #edit_motif <- function(x){
+      #  class(x) <- NULL
+      #  x
+      #}
+      motifList <- c(list(.x), .y$match_motif[select]) %>%
+        purrr::discard(is.null)
+
+      universalmotif::view_motifs(motifList)
     }
-
-    # Needed to handle when tomtom discovers no hits for any motifs, in which case
-    # tomtom is NA instead of NULL so the column is kept in the dataframe
-    if (all(is.na(.y))) {
-      return(view_tomtom_nomatch(.x))
-    }
-
-    if (top_n == "all") {select <- seq_len(length(.y$match_motif))}
-    else if (is.numeric(top_n)) {select <- seq_len(top_n)}
-    else {
-      stop("n must be either 'all' or a number.")
-    }
-    
-    if (length(select) > length(.y$match_motif)){
-      # If top_n > number of hits, just show all hits
-      select <- seq_len(length(.y$match_motif))
-    }
-
-    # TODO: check that motifList below doesn't have AsIs?
-    #motifList <- c(list(.x), .y$match_motif[select]) %>%
-    #edit_motif <- function(x){
-    #  class(x) <- NULL
-    #  x
-    #}
-    motifList <- c(list(.x), .y$match_motif[select]) %>%
-      purrr::discard(is.null)
-
-    universalmotif::view_motifs(motifList)
-  })
+  )
 }
 
 #' Plot motif with "No Match" below.
@@ -89,11 +98,13 @@ view_tomtom_hits <- function(results, top_n = "all"){
 #' @importFrom ggplot2 ggtitle theme element_text
 #'
 #' @noRd
-view_tomtom_nomatch <- function(motif){
+view_tomtom_nomatch <- function(motif) {
   # Thanks, Hadley: http://r-pkgs.had.co.nz/description.html
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package \"ggplot2\" needed for this function to work. Please install it.",
-         call. = FALSE)
+    stop(
+      "Package \"ggplot2\" needed for this function to work. Please install it.",
+      call. = FALSE
+    )
   }
   motif_logo <- universalmotif::view_motifs(motif)
 
@@ -103,7 +114,12 @@ view_tomtom_nomatch <- function(motif){
 
   nomatch_logo <- nomatch_logo()
 
-  cowplot::plot_grid(motif_logo, nomatch_logo, ncol = 1, rel_heights = c(1,0.6))
+  cowplot::plot_grid(
+    motif_logo,
+    nomatch_logo,
+    ncol = 1,
+    rel_heights = c(1, 0.6)
+  )
 }
 
 
@@ -120,15 +136,13 @@ view_tomtom_nomatch <- function(motif){
 #' @return
 #'
 #' @noRd
-nomatch_matrix <- function(){
-  m <- matrix(0,
-              nrow = 7,
-              ncol = 7)
+nomatch_matrix <- function() {
+  m <- matrix(0, nrow = 7, ncol = 7)
   diag(m) <- 1
   n <- c("N", "O", "M", "A", "T", "C", "H")
   rownames(m) <- c("N", "O", "M", "A", "T", "C", "H")
-  no <- m[,c(1,2)]
-  match <- m[,c(3:7)]
+  no <- m[, c(1, 2)]
+  match <- m[, c(3:7)]
   space <- matrix(1, nrow = 7, ncol = 1)
   mat <- cbind(no, space, match)
 
@@ -142,17 +156,24 @@ nomatch_matrix <- function(){
 #' @importFrom ggplot2 element_text
 #' @importFrom ggseqlogo make_col_scheme ggseqlogo
 #' @noRd
-nomatch_logo <- function(){
+nomatch_logo <- function() {
   mat <- nomatch_matrix()
   alph <- rownames(mat)
-  col <- ggseqlogo::make_col_scheme(chars = alph, cols = rep("#333333", length(alph)))
+  col <- ggseqlogo::make_col_scheme(
+    chars = alph,
+    cols = rep("#333333", length(alph))
+  )
 
-  ggseqlogo::ggseqlogo(mat,
-                       namespace = alph,
-                       method = "bits",
-                       col_scheme = col) +
-    ggplot2::theme(axis.text = element_text(color = "white"),
-                   axis.text.x = element_text(color = "white"),
-                   axis.text.y = element_text(color = "white"),
-                   axis.title = element_text(color = "white"))
+  ggseqlogo::ggseqlogo(
+    mat,
+    namespace = alph,
+    method = "bits",
+    col_scheme = col
+  ) +
+    ggplot2::theme(
+      axis.text = element_text(color = "white"),
+      axis.text.x = element_text(color = "white"),
+      axis.text.y = element_text(color = "white"),
+      axis.title = element_text(color = "white")
+    )
 }

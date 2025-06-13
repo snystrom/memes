@@ -93,28 +93,34 @@
 #' # parse_genomic_coord set to FALSE since fasta headers aren't in "chr:start-end" format.
 #' runFimo(seq, motif, parse_genomic_coord = FALSE)
 #' }
-runFimo <- function(sequences, motifs, bfile = "motif",
-                    outdir = "auto",
-                    parse_genomic_coord = TRUE,
-                    skip_matched_sequence = FALSE,
-                    max_strand = TRUE,
-                    text = TRUE,
-                    meme_path = NULL,
-                    silent = TRUE,
-                    ...){
-
+runFimo <- function(
+  sequences,
+  motifs,
+  bfile = "motif",
+  outdir = "auto",
+  parse_genomic_coord = TRUE,
+  skip_matched_sequence = FALSE,
+  max_strand = TRUE,
+  text = TRUE,
+  meme_path = NULL,
+  silent = TRUE,
+  ...
+) {
   sequences <- sequence_input(sequences)
   motifs <- motif_input(motifs)
 
-  if (outdir == "auto") outdir <- paste0(outdir_name(sequences, motifs$path), "_fimo")
+  if (outdir == "auto")
+    outdir <- paste0(outdir_name(sequences, motifs$path), "_fimo")
 
-  user_flags <- prepareFimoFlags(bfile = bfile,
-                            parse_genomic_coord = parse_genomic_coord,
-                            skip_matched_sequence = skip_matched_sequence,
-                            max_strand = max_strand,
-                            text = text,
-                            outdir = outdir,
-                            ...)
+  user_flags <- prepareFimoFlags(
+    bfile = bfile,
+    parse_genomic_coord = parse_genomic_coord,
+    skip_matched_sequence = skip_matched_sequence,
+    max_strand = max_strand,
+    text = text,
+    outdir = outdir,
+    ...
+  )
 
   flags <- c(user_flags, motifs$path, sequences)
 
@@ -123,25 +129,30 @@ runFimo <- function(sequences, motifs, bfile = "motif",
   ps_out <- processx::run(command, flags, error_on_status = FALSE)
 
   ps_out %>%
-    process_check_error(help_fun = ~{fimoHelp(command)},
-                        user_flags = cmdfun::cmd_help_parse_flags(user_flags) %>%
-                          # filter out special inputs to bfile
-                          grep("--$", ., invert = TRUE, value = TRUE),
-                        flags_fun = ~{gsub("-", "_", .x)},
-                        default_help_fun = TRUE)
+    process_check_error(
+      help_fun = ~ {
+        fimoHelp(command)
+      },
+      user_flags = cmdfun::cmd_help_parse_flags(user_flags) %>%
+        # filter out special inputs to bfile
+        grep("--$", ., invert = TRUE, value = TRUE),
+      flags_fun = ~ {
+        gsub("-", "_", .x)
+      },
+      default_help_fun = TRUE
+    )
 
   print_process_stdout(ps_out, silent = silent)
   print_process_stderr(ps_out, silent = silent)
 
   if (!is.na(text)) {
-    if (text){
+    if (text) {
       fimo_res <- ps_out$stdout %>%
         I() %>%
         parseFimo()
       return(fimo_res)
     }
   }
-
 
   fimo_out <- cmdfun::cmd_file_combn("fimo", "tsv", outdir = outdir)
 
@@ -163,31 +174,46 @@ runFimo <- function(sequences, motifs, bfile = "motif",
 #' @return
 #'
 #' @noRd
-prepareFimoFlags <- function(bfile, parse_genomic_coord, skip_matched_sequence, max_strand, text, outdir = outdir, ...){
-
+prepareFimoFlags <- function(
+  bfile,
+  parse_genomic_coord,
+  skip_matched_sequence,
+  max_strand,
+  text,
+  outdir = outdir,
+  ...
+) {
   argsDict <- c("outdir" = "oc")
 
   flags <- cmdfun::cmd_args_all() %>%
     cmdfun::cmd_list_interp(argsDict) %>%
-    purrr::set_names(~{gsub("_", "-", .x)})
+    purrr::set_names(
+      ~ {
+        gsub("_", "-", .x)
+      }
+    )
 
-  if (!is.null(bfile)){
+  if (!is.null(bfile)) {
     if (file.exists(bfile) & bfile %in% c("motif", "uniform")) {
-      message(paste0("Working directory contains a file named: ", bfile, " that will be used as the `bfile` argument.",
-      "To force use of the FIMO keyword, pass argument as: `bfile = --", bfile, "--`"))
+      message(paste0(
+        "Working directory contains a file named: ",
+        bfile,
+        " that will be used as the `bfile` argument.",
+        "To force use of the FIMO keyword, pass argument as: `bfile = --",
+        bfile,
+        "--`"
+      ))
     }
-    if (!file.exists(bfile) & bfile %in% c("motif", "uniform")){
+    if (!file.exists(bfile) & bfile %in% c("motif", "uniform")) {
       # if bfile isn't a path, user is probably inputting special keywords which
       # get wrapped in '--', but first drop all "-" in bfile input in case user
       # added '--' already.
-      flags$bfile %<>% gsub("-", "", .) %>%
-        gsub("(.+)", "--\\1--", .)
+      flags$bfile %<>% gsub("-", "", .) %>% gsub("(.+)", "--\\1--", .)
     }
   }
 
   flags %>%
     cmdfun::cmd_list_to_flags(prefix = "--")
-
 }
 
 #' Returns help string for FIMO
@@ -197,7 +223,7 @@ prepareFimoFlags <- function(bfile, parse_genomic_coord, skip_matched_sequence, 
 #' @return
 #'
 #' @noRd
-fimoHelp <- function(command){
+fimoHelp <- function(command) {
   processx::run(command, error_on_status = FALSE)$stderr
 }
 
@@ -211,60 +237,67 @@ fimoHelp <- function(command){
 #'   match.
 #'
 #' @noRd
-parseFimo <- function(fimo_tsv){
+parseFimo <- function(fimo_tsv) {
+  fimo_lines <- tryCatch(
+    readr::read_tsv(
+      fimo_tsv,
+      comment = "#",
+      col_types = c(
+        "motif_id" = "c",
+        "motif_alt_id" = "c",
+        "sequence_name" = "c",
+        "start" = "i",
+        "stop" = "i",
+        "strand" = "c",
+        "score" = "d",
+        "p-value" = "d",
+        "q-value" = "d",
+        "matched_sequence" = "c"
+      )
+    ),
+    error = function(e) {
+      # move the empty string check down
+      if (fimo_tsv == "") {
+        return(NULL)
+      }
+      stop(e)
+    },
+    warning = function(w) {
+      # If the above file import fails w/ warning
+      # (usually because fimo.tsv is empty)
+      # Double check that the file is actually empty
+      # (no other lines except for comments & empty lines)
+      # Then return NULL if that's the case.
+      lines <- readr::read_lines(fimo_tsv) %>%
+        grep("^#", ., invert = TRUE, value = TRUE)
+      line_lengths <- vapply(lines, nchar, integer(1))
 
-  fimo_lines <- tryCatch(readr::read_tsv(fimo_tsv,
-                                  comment = "#",
-                                  col_types = c("motif_id" = "c",
-                                                "motif_alt_id" = "c",
-                                                "sequence_name" = "c",
-                                                "start" = "i",
-                                                "stop" = "i",
-                                                "strand" = "c",
-                                                "score" = "d",
-                                                "p-value" = "d",
-                                                "q-value" = "d",
-                                                "matched_sequence" = "c")
-                                  ), 
-                         error = function(e) {
-                           # move the empty string check down
-                           if (fimo_tsv == ""){
-                             return(NULL)
-                           }
-                           stop(e)
-                           }, 
-                         warning = function(w) {
-                           # If the above file import fails w/ warning
-                           # (usually because fimo.tsv is empty)
-                           # Double check that the file is actually empty
-                           # (no other lines except for comments & empty lines)
-                           # Then return NULL if that's the case.
-                           lines <- readr::read_lines(fimo_tsv) %>%
-                              grep("^#", ., invert = TRUE, value = TRUE) 
-                           line_lengths <- vapply(lines, nchar, integer(1))
-                           
-                           if (any(line_lengths) > 0){
-                             stop(paste("Error reading file:", fimo_tsv))
-                           }
-                           
-                           return(NULL)
-                           }
-                         )
- 
+      if (any(line_lengths) > 0) {
+        stop(paste("Error reading file:", fimo_tsv))
+      }
+
+      return(NULL)
+    }
+  )
+
   # NULL is only returned above if fimo_tsv is empty, therefore no matches
   if (is.null(fimo_lines)) {
     message("No matches were detected")
     return(NULL)
   }
-  
+
   fimo_matches <- fimo_lines %>%
-    dplyr::rename_all(~{gsub("-", "", .)}) %>%
+    dplyr::rename_all(
+      ~ {
+        gsub("-", "", .)
+      }
+    ) %>%
     dplyr::rename("seqnames" = "sequence_name") %>%
     # NOTE: FIMO uses 1-based coordinates, so no need to shift for GRanges conversion
     GenomicRanges::GRanges()
-    # Compute q-value?
-    #dplyr::group_by(motif_alt_id) %>%
-    #dplyr::mutate(q.value = p.value/n())
+  # Compute q-value?
+  #dplyr::group_by(motif_alt_id) %>%
+  #dplyr::mutate(q.value = p.value/n())
 }
 
 #' Import FIMO results
@@ -279,6 +312,6 @@ parseFimo <- function(fimo_tsv){
 #' @examples
 #' fimo_tsv <- system.file("extdata", "fimo.tsv", package = "memes")
 #' importFimo(fimo_tsv)
-importFimo <- function(fimo_tsv){
+importFimo <- function(fimo_tsv) {
   parseFimo(fimo_tsv)
 }

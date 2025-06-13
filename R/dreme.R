@@ -1,55 +1,98 @@
 #' @export
 #' @noRd
-runDreme.list <- function(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...){
-
+runDreme.list <- function(
+  input,
+  control,
+  outdir = "auto",
+  meme_path = NULL,
+  silent = TRUE,
+  ...
+) {
   x <- sequence_input_control_list(input, control)
   input <- x$input
   control <- x$control
 
-  res <- purrr::map(input, runDreme.default,
-             control = control,
-             outdir = outdir,
-             meme_path = meme_path,
-             silent = silent,
-             ...
-             )
+  res <- purrr::map(
+    input,
+    runDreme.default,
+    control = control,
+    outdir = outdir,
+    meme_path = meme_path,
+    silent = silent,
+    ...
+  )
   return(res)
 }
 
 #' @export
 #' @noRd
-runDreme.BStringSetList <- function(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...){
+runDreme.BStringSetList <- function(
+  input,
+  control,
+  outdir = "auto",
+  meme_path = NULL,
+  silent = TRUE,
+  ...
+) {
   runDreme.list(as.list(input), control, outdir, meme_path, silent, ...)
 }
 
 #' @export
 #' @noRd
-runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, silent = TRUE, ...){
-
+runDreme.default <- function(
+  input,
+  control,
+  outdir = "auto",
+  meme_path = NULL,
+  silent = TRUE,
+  ...
+) {
   # Handle multiple input types by multiple dispatch
   # input & control will be coerced to file paths
   input <- sequence_input(input)
   control <- sequence_input(control)
 
-  if (outdir == "auto") {outdir <- outdir_name(input, control)}
+  if (outdir == "auto") {
+    outdir <- outdir_name(input, control)
+  }
 
-  flags <- prepareDremeFlags(input = input, control = control, outdir = outdir, ...)
+  flags <- prepareDremeFlags(
+    input = input,
+    control = control,
+    outdir = outdir,
+    ...
+  )
 
   command <- search_meme_path(path = meme_path, util = "dreme")
-  ps_out <- processx::run(command, flags, spinner = TRUE, error_on_status = FALSE)
+  ps_out <- processx::run(
+    command,
+    flags,
+    spinner = TRUE,
+    error_on_status = FALSE
+  )
 
   ps_out %>%
-    process_check_error(help_fun = ~{dreme_help(command)},
-                        user_flags = cmdfun::cmd_help_parse_flags(flags),
-                        default_help_fun = TRUE)
+    process_check_error(
+      help_fun = ~ {
+        dreme_help(command)
+      },
+      user_flags = cmdfun::cmd_help_parse_flags(flags),
+      default_help_fun = TRUE
+    )
 
   print_process_stdout(ps_out, silent = silent)
 
   n_motifs <- dreme_nmotifs_found(ps_out)
 
-  if (n_motifs == 0) {return(NULL)}
+  if (n_motifs == 0) {
+    return(NULL)
+  }
 
-  dreme_out <- cmdfun::cmd_file_expect("dreme", c("txt", "html", "xml"), outdir = outdir)
+  dreme_out <- cmdfun::cmd_file_expect(
+    "dreme",
+    c("txt", "html", "xml"),
+    outdir = outdir
+  )
 
   dreme_results <- parseDreme(dreme_out$xml)
 
@@ -69,15 +112,17 @@ runDreme.default <- function(input, control, outdir = "auto", meme_path = NULL, 
 #' @importFrom magrittr %>%
 #'
 #' @noRd
-prepareDremeFlags <- function(input, control, outdir, ...){
-  argDict <- c(nmotifs = "m",
-               sec = "t",
-               evalue = "e",
-               seed = "s",
-               input = "p",
-               control = "n",
-               outdir = "oc",
-               ngen = "g")
+prepareDremeFlags <- function(input, control, outdir, ...) {
+  argDict <- c(
+    nmotifs = "m",
+    sec = "t",
+    evalue = "e",
+    seed = "s",
+    input = "p",
+    control = "n",
+    outdir = "oc",
+    ngen = "g"
+  )
 
   flags <- cmdfun::cmd_args_all() %>%
     cmdfun::cmd_list_interp(argDict) %>%
@@ -85,7 +130,6 @@ prepareDremeFlags <- function(input, control, outdir, ...){
     cmdfun::cmd_list_to_flags()
 
   return(flags)
-
 }
 
 #' Import dreme output to R
@@ -97,10 +141,10 @@ prepareDremeFlags <- function(input, control, outdir, ...){
 #'
 #' parseDreme("dreme_out/dreme.xml")
 #' @noRd
-parseDreme <- function(xml){
-  dreme_stats <- dreme_motif_stats(xml) %>% 
-    # Don't need pvalue or evalue cols anymore 
-    # since they're added by universalmotif as 
+parseDreme <- function(xml) {
+  dreme_stats <- dreme_motif_stats(xml) %>%
+    # Don't need pvalue or evalue cols anymore
+    # since they're added by universalmotif as
     # pval and eval
     dplyr::select(-"pvalue", -"evalue")
 
@@ -111,7 +155,7 @@ parseDreme <- function(xml){
   # suppressing messages about adding empty motif slots
   suppressMessages(
     universalmotif::update_motifs(dreme_stats, extrainfo = TRUE)
-    )
+  )
 }
 
 #' Returns Dreme help lines
@@ -121,7 +165,7 @@ parseDreme <- function(xml){
 #' @return
 #'
 #' @noRd
-dreme_help <- function(command){
+dreme_help <- function(command) {
   processx::run(command, "-h", error_on_status = FALSE)$stderr
 }
 
@@ -175,25 +219,26 @@ dreme_motif_stats <- function(dreme_xml_path) {
   motif_stats %<>%
     dplyr::mutate_if(is.factor, as.character) %>%
     dplyr::mutate_at(dbl_cols, as.numeric) %>%
-    dplyr::mutate_at(c("length", "nsites",
-                       "p", "n"), as.integer)
+    dplyr::mutate_at(c("length", "nsites", "p", "n"), as.integer)
 
   # append info about positive / negative regions
   # compute some useful statistics
   motif_stats_final <- motif_stats %>%
-    dplyr::rename("positive_hits" = "p",
-                  "negative_hits" = "n") %>%
-    dplyr::mutate("positive_total" = pos_info$count %>% as.integer,
-                  "negative_total" = neg_info$count %>% as.integer,
-                  "pos_frac" = .data$positive_hits/.data$positive_total,
-                  "neg_frac" = .data$negative_hits/.data$negative_total) %>%
-    dplyr::mutate(rank = gsub("^m", "", .data$id) %>% as.integer(),
-                  id = paste0(.data$id, "_", .data$seq)) %>%
+    dplyr::rename("positive_hits" = "p", "negative_hits" = "n") %>%
+    dplyr::mutate(
+      "positive_total" = pos_info$count %>% as.integer,
+      "negative_total" = neg_info$count %>% as.integer,
+      "pos_frac" = .data$positive_hits / .data$positive_total,
+      "neg_frac" = .data$negative_hits / .data$negative_total
+    ) %>%
+    dplyr::mutate(
+      rank = gsub("^m", "", .data$id) %>% as.integer(),
+      id = paste0(.data$id, "_", .data$seq)
+    ) %>%
     dplyr::select("rank", dplyr::everything()) %>%
     # Finally, change id and alt to "name" and "altname"
     # for compatibility with universalmotif
-    dplyr::rename("name" = "id",
-                  "altname" = "alt")
+    dplyr::rename("name" = "id", "altname" = "alt")
 
   return(motif_stats_final)
 }
@@ -209,7 +254,7 @@ dreme_motif_stats <- function(dreme_xml_path) {
 #' @importFrom magrittr %>%
 #'
 #' @noRd
-dreme_get_background_freq <- function(dreme_run_info){
+dreme_get_background_freq <- function(dreme_run_info) {
   background_entry <- xml2::xml_find_all(dreme_run_info, "//background")
 
   background_df <- background_entry %>%
@@ -234,7 +279,7 @@ dreme_get_background_freq <- function(dreme_run_info){
 #' @importFrom magrittr %>%
 #'
 #' @noRd
-dreme_to_pfm <- function(dreme_xml_path){
+dreme_to_pfm <- function(dreme_xml_path) {
   dreme_xml <- xml2::read_xml(dreme_xml_path)
 
   dreme_run_info <- xml2::xml_children(dreme_xml)[1] %>%
@@ -250,18 +295,23 @@ dreme_to_pfm <- function(dreme_xml_path){
   motif_stats_list <- dreme_motif_stats(dreme_xml_path) %>%
     split(.$name)
 
-  pfmList <- purrr::map2(motif_stats_list, motifs_matrix, ~{
-    universalmotif::create_motif(.y,
-                                 type = "PCM",
-                                 name = .x$name,
-                                 altname = .x$altname,
-                                 bkg = background_freq,
-                                 pval = .x$pvalue,
-                                 nsites = .x$nsites,
-                                 bkgsites = .x$negative_total,
-                                 eval = .x$evalue)
-
-  })
+  pfmList <- purrr::map2(
+    motif_stats_list,
+    motifs_matrix,
+    ~ {
+      universalmotif::create_motif(
+        .y,
+        type = "PCM",
+        name = .x$name,
+        altname = .x$altname,
+        bkg = background_freq,
+        pval = .x$pvalue,
+        nsites = .x$nsites,
+        bkgsites = .x$negative_total,
+        eval = .x$evalue
+      )
+    }
+  )
 
   return(pfmList)
 }
@@ -275,7 +325,7 @@ dreme_to_pfm <- function(dreme_xml_path){
 #' @return position probability matrix
 #'
 #' @noRd
-get_probability_matrix <- function(motif_xml_entry){
+get_probability_matrix <- function(motif_xml_entry) {
   # takes a <motif></motif> XML entry to return the probability matrix
   # WARNING: matrix is a character matrix (NOT NUMERIC)
   # need to do the lapply(matrix, function(x)
@@ -283,16 +333,16 @@ get_probability_matrix <- function(motif_xml_entry){
   # trick for numeric matrix
   motif_attr <- attrs_to_df(motif_xml_entry, stringsAsFactors = FALSE)
 
-  if (!("length" %in% names(motif_attr))){
+  if (!("length" %in% names(motif_attr))) {
     # STREME
     nsites <- motif_attr$width %>%
-       as.character() %>%
-       as.integer()
+      as.character() %>%
+      as.integer()
   } else {
     # DREME
     nsites <- motif_attr$length %>%
-       as.character() %>%
-       as.integer()
+      as.character() %>%
+      as.integer()
   }
 
   freqs <- motif_xml_entry %>%
@@ -302,9 +352,12 @@ get_probability_matrix <- function(motif_xml_entry){
   freq_table <- lapply(freqs, attrs_to_df, stringsAsFactors = FALSE) %>%
     dplyr::bind_rows()
 
-  freq_matrix <- lapply(freq_table, function(x) as.character(x) %>% as.numeric) %>%
-                    dplyr::bind_rows(.) %>%
-                    as.matrix(.)
+  freq_matrix <- lapply(
+    freq_table,
+    function(x) as.character(x) %>% as.numeric
+  ) %>%
+    dplyr::bind_rows(.) %>%
+    as.matrix(.)
 
   return(freq_matrix)
 }
@@ -316,7 +369,7 @@ get_probability_matrix <- function(motif_xml_entry){
 #' @return
 #'
 #' @noRd
-dreme_nmotifs_line <- function(stdout){
+dreme_nmotifs_line <- function(stdout) {
   lines <- strsplit(stdout, "\n") %>%
     .[[1]]
 
@@ -331,7 +384,7 @@ dreme_nmotifs_line <- function(stdout){
 #' @return
 #'
 #' @noRd
-dreme_nmotifs <- function(line){
+dreme_nmotifs <- function(line) {
   nmotifs <- gsub("(^\\d+).+", "\\1", line)
   return(as.integer(nmotifs))
 }
@@ -343,7 +396,7 @@ dreme_nmotifs <- function(line){
 #' @return `integer(1)` of number of motifs passing threshold
 #'
 #' @noRd
-dreme_nmotifs_found <- function(processx_out){
+dreme_nmotifs_found <- function(processx_out) {
   processx_out$stdout %>%
     dreme_nmotifs_line() %>%
     dreme_nmotifs()

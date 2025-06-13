@@ -17,7 +17,12 @@
 #' @importFrom tibble rowid_to_column
 #'
 #' @noRd
-ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
+ame_order_by_cluster <- function(
+  ame,
+  id = motif_id,
+  group = NULL,
+  name = NULL
+) {
   # orders data in "order" column first by TFs unique to each type,
   # then by motifs shared between types such that tfs are shown by unique,
   # pairwise, 3-wise, etc. starting from the first type upwards.
@@ -49,10 +54,12 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
   group <- enquo(group)
   id <- enquo(id)
 
-  if (rlang::quo_is_null(group)){
+  if (rlang::quo_is_null(group)) {
     # thank you:
     # https://rpubs.com/tjmahr/quo_is_missing
-    if (is.null(name)){name <- "All Regions"}
+    if (is.null(name)) {
+      name <- "All Regions"
+    }
 
     res <- ame %>%
       dplyr::mutate(type = factor(name)) %>%
@@ -62,17 +69,24 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
   }
 
   ame %>%
-    dplyr::mutate(type = factor(!!group),
-                  type_rank = as.integer(.data$type)) %>%
+    dplyr::mutate(
+      type = factor(!!group),
+      type_rank = as.integer(.data$type)
+    ) %>%
     dplyr::group_by(!!id) %>%
-    dplyr::mutate(nType = dplyr::n(),
-                  minType = min(.data$type_rank),
-                  maxType = max(.data$type_rank)) %>%
+    dplyr::mutate(
+      nType = dplyr::n(),
+      minType = min(.data$type_rank),
+      maxType = max(.data$type_rank)
+    ) %>%
     dplyr::ungroup() %>%
-    dplyr::arrange(!!sym("nType"), !!sym("type_rank"), 
-                   !!sym("minType"), !!sym("maxType")) %>% 
+    dplyr::arrange(
+      !!sym("nType"),
+      !!sym("type_rank"),
+      !!sym("minType"),
+      !!sym("maxType")
+    ) %>%
     tibble::rowid_to_column(var = "order")
-
 }
 
 #' Plot AME heatmap clustered by similarity in detected motifs
@@ -131,20 +145,27 @@ ame_order_by_cluster <- function(ame, id = motif_id, group = NULL, name = NULL){
 #'
 #' @examples
 #' data("example_ame", package = "memes")
-#' 
+#'
 #' # Plot a single category heatmap
 #' plot_ame_heatmap(example_ame$Decreasing)
-#' 
+#'
 #' # Plot a multi category heatmap
 #' grouped_ame <- dplyr::bind_rows(example_ame, .id = "category")
 #' plot_ame_heatmap(grouped_ame, group = category)
-plot_ame_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(adj.pvalue), group_name = NULL, scale_max = NA){
+plot_ame_heatmap <- function(
+  ame,
+  id = motif_id,
+  group = NULL,
+  value = -log10(adj.pvalue),
+  group_name = NULL,
+  scale_max = NA
+) {
   id <- enquo(id)
   group <- enquo(group)
   value <- enquo(value)
 
   # Only order by group if group is set
-  if (rlang::quo_is_null(group)){
+  if (rlang::quo_is_null(group)) {
     res <- ame %>%
       ame_order_by_cluster(id = id, group = NULL, name = group_name)
   } else {
@@ -154,61 +175,82 @@ plot_ame_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
 
   # ggplot theme for ame heatmap
   heatmap_theme <- theme_bw() +
-   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
-         axis.text = element_text(color = "black",
-                                  size = 34 / .pt))
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+      axis.text = element_text(color = "black", size = 34 / .pt)
+    )
 
   # Check whether value is set to "normalize" (quotes important)
   # have to do as_label because as_name errors w/ expressions
   value_eval <- rlang::as_label(value) != "\"normalize\""
 
-  if (value_eval){
+  if (value_eval) {
     # Default behavior is to do tidyeval on value
-    plot <-  res %>%
+    plot <- res %>%
       ggplot(aes(reorder(!!id, order), as.factor(.data$type))) +
-        geom_tile(aes(fill = !!value), color = 'black', size = 0.3) +
-        heatmap_theme +
-        labs(x = substitute(id),
-             y = substitute(group),
-             fill = substitute(value)) +
-        scale_fill_gradient2(low = "white",
-                             high = "firebrick")
-
+      geom_tile(aes(fill = !!value), color = 'black', size = 0.3) +
+      heatmap_theme +
+      labs(
+        x = substitute(id),
+        y = substitute(group),
+        fill = substitute(value)
+      ) +
+      scale_fill_gradient2(low = "white", high = "firebrick")
   } else {
     # Otherwise use normalized rank
-    plot <-  res %>%
+    plot <- res %>%
       dplyr::group_by(!!group) %>%
       dplyr::mutate(norm_rank = rank_normalize(rank)) %>%
       ggplot(aes(stats::reorder(!!id, order), as.factor(.data$type))) +
-        geom_tile(aes(fill = .data$norm_rank), color = 'black', size = 0.3) +
-        heatmap_theme +
-        labs(x = substitute(id),
-             y = substitute(group),
-             fill = "Normalized Rank") +
-        scale_fill_continuous(low = "firebrick",
-                              high = "white",
-                              breaks = c(0, 1),
-                              labels = c("High", "Low"))
-
+      geom_tile(aes(fill = .data$norm_rank), color = 'black', size = 0.3) +
+      heatmap_theme +
+      labs(
+        x = substitute(id),
+        y = substitute(group),
+        fill = "Normalized Rank"
+      ) +
+      scale_fill_continuous(
+        low = "firebrick",
+        high = "white",
+        breaks = c(0, 1),
+        labels = c("High", "Low")
+      )
   }
 
   # Couldn't come up with a clever way to do this in conjunction with above logic,
   # so just handle scale_max plotting separately
   if (!is.na(scale_max) & value_eval) {
-
     plot <- res %>%
-      dplyr::mutate("scale_data" = ifelse(!!value > scale_max, scale_max, !!value)) %>%
+      dplyr::mutate(
+        "scale_data" = ifelse(!!value > scale_max, scale_max, !!value)
+      ) %>%
       ggplot(aes(reorder(!!id, order), as.factor(.data$type))) +
-        geom_tile(aes(fill = .data$scale_data), color = 'black', size = 0.3) +
-        heatmap_theme +
-        labs(x = substitute(id),
-             y = substitute(group),
-             fill = substitute(value)) +
-        scale_fill_gradient2(low = "white", high = "firebrick",
-                             limits = c(0, scale_max),
-                             breaks = c(0, scale_max/4, scale_max/2, 0.75 * scale_max, scale_max),
-                             labels = c(0, scale_max/4, scale_max/2, 0.75 * scale_max, paste0(scale_max, "+")))
-
+      geom_tile(aes(fill = .data$scale_data), color = 'black', size = 0.3) +
+      heatmap_theme +
+      labs(
+        x = substitute(id),
+        y = substitute(group),
+        fill = substitute(value)
+      ) +
+      scale_fill_gradient2(
+        low = "white",
+        high = "firebrick",
+        limits = c(0, scale_max),
+        breaks = c(
+          0,
+          scale_max / 4,
+          scale_max / 2,
+          0.75 * scale_max,
+          scale_max
+        ),
+        labels = c(
+          0,
+          scale_max / 4,
+          scale_max / 2,
+          0.75 * scale_max,
+          paste0(scale_max, "+")
+        )
+      )
   }
 
   if (!value_eval & !is.na(scale_max)) {
@@ -216,7 +258,6 @@ plot_ame_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
   }
 
   return(plot)
-
 }
 
 #' Compare AME heatmap methods
@@ -241,14 +282,17 @@ plot_ame_heatmap <- function(ame, id = motif_id, group = NULL, value = -log10(ad
 #' @examples
 #' data("example_ame", package = "memes")
 #' ame_compare_heatmap_methods(example_ame$Decreasing)
-#' 
+#'
 #' ame_compare_heatmap_methods(dplyr::bind_rows(example_ame, .id = "type"), type)
-ame_compare_heatmap_methods <- function(ame, group, value = -log10(adj.pvalue)){
-
+ame_compare_heatmap_methods <- function(
+  ame,
+  group,
+  value = -log10(adj.pvalue)
+) {
   group <- rlang::enquo(group)
   value <- rlang::enquo(value)
 
-  if (rlang::quo_name(group) == ""){
+  if (rlang::quo_name(group) == "") {
     stat_plot <- stat_ecdf(size = 1, pad = FALSE)
     rel_widths <- c(1, 1)
   } else {
@@ -259,27 +303,26 @@ ame_compare_heatmap_methods <- function(ame, group, value = -log10(adj.pvalue)){
 
   value_dist <- ame %>%
     ggplot(aes(!!value)) +
-      stat_plot +
-      labs(y = "Fraction of Motifs") +
-      theme_bw() +
-      theme(legend.position = "none") +
-      labs(title = paste0("value = ", rlang::as_label(value)))
+    stat_plot +
+    labs(y = "Fraction of Motifs") +
+    theme_bw() +
+    theme(legend.position = "none") +
+    labs(title = paste0("value = ", rlang::as_label(value)))
 
   normrank_dist <- ame %>%
     ggplot(aes(rank_normalize(rank))) +
-      stat_plot +
-      scale_x_continuous(
-                         breaks = c(0, 0.25, 0.5, 0.75, 1),
-                         labels = c("0\n(High)", 0.25, 0.5, 0.75, "1\n(Low)"),
-                         ) +
-      labs(title = "value = \"normalize\"",
-           y = NULL,
-           x = "Normalized Rank")  +
-      theme_bw()
+    stat_plot +
+    scale_x_continuous(
+      breaks = c(0, 0.25, 0.5, 0.75, 1),
+      labels = c("0\n(High)", 0.25, 0.5, 0.75, "1\n(Low)"),
+    ) +
+    labs(title = "value = \"normalize\"", y = NULL, x = "Normalized Rank") +
+    theme_bw()
 
-  cowplot::plot_grid(value_dist,
-                     normrank_dist,
-                     rel_widths = rel_widths,
-                     labels = "AUTO")
-
+  cowplot::plot_grid(
+    value_dist,
+    normrank_dist,
+    rel_widths = rel_widths,
+    labels = "AUTO"
+  )
 }

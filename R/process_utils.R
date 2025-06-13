@@ -6,7 +6,7 @@
 #' @return
 #'
 #' @noRd
-print_process_stdout <- function(processx_out, silent = TRUE){
+print_process_stdout <- function(processx_out, silent = TRUE) {
   process_check_error(processx_out)
 
   # leaving here incase needed for debugging
@@ -14,7 +14,6 @@ print_process_stdout <- function(processx_out, silent = TRUE){
   #if (!silent) message(nmotifs_line)
 
   if (!silent) message(processx_out$stdout)
-
 }
 
 #' Print stderr from processx output
@@ -25,11 +24,10 @@ print_process_stdout <- function(processx_out, silent = TRUE){
 #' @return
 #'
 #' @noRd
-print_process_stderr <- function(processx_out, silent = TRUE){
+print_process_stderr <- function(processx_out, silent = TRUE) {
   process_check_error(processx_out)
 
   if (!silent) message(processx_out$stderr)
-
 }
 
 #' Check if processx process completed successfully
@@ -47,13 +45,21 @@ print_process_stderr <- function(processx_out, silent = TRUE){
 #' @examples
 #'
 #' @noRd
-process_check_error <- function(processx_out, help_fun = NULL, user_flags = NULL, flags_fun = NULL, default_help_fun = FALSE){
-  if (processx_out$status != 0 & (is.null(help_fun) | is.null(user_flags))){
+process_check_error <- function(
+  processx_out,
+  help_fun = NULL,
+  user_flags = NULL,
+  flags_fun = NULL,
+  default_help_fun = FALSE
+) {
+  if (processx_out$status != 0 & (is.null(help_fun) | is.null(user_flags))) {
     cat(processx_out$stdout)
     stop(processx_out$stderr)
   } else if (processx_out$status != 0) {
     stopifnot(is.function(help_fun) | is(help_fun, "formula"))
-    stopifnot(is.function(flags_fun) | is.null(flags_fun) | is(flags_fun, "formula"))
+    stopifnot(
+      is.function(flags_fun) | is.null(flags_fun) | is(flags_fun, "formula")
+    )
 
     # Allows lambda
     help_fun <- rlang::as_function(help_fun)
@@ -62,12 +68,11 @@ process_check_error <- function(processx_out, help_fun = NULL, user_flags = NULL
     message(processx_out$stderr)
     #usethis::ui_warn(c("\n", processx_out$stderr))
 
-    if (default_help_fun){
+    if (default_help_fun) {
       help_fun() %>%
         cmdfun::cmd_help_parse_flags(split_newline = TRUE) %>%
         cmdfun::cmd_help_flags_similar(user_flags, .fun = flags_fun) %>%
         cmdfun::cmd_help_flags_suggest()
-
     } else {
       help_fun() %>%
         cmdfun::cmd_help_flags_similar(user_flags, .fun = flags_fun) %>%
@@ -75,7 +80,6 @@ process_check_error <- function(processx_out, help_fun = NULL, user_flags = NULL
     }
 
     usethis::ui_stop("Shell process had non-zero exit status.")
-
   }
   return(NULL)
 }

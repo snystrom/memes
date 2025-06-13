@@ -60,7 +60,7 @@
 #'   appended to the data.frame. If no matches are returned, `tomtom` and
 #'   `best_match_motif` columns will be set to `NA` and a message indicating
 #'   this will print.
-#' 
+#'
 #' @details # Citation
 #' If you use `runTomTom()` in your analysis, please cite:
 #'
@@ -83,52 +83,66 @@
 #' if (meme_is_installed()) {
 #' motif <- universalmotif::create_motif("CCRAAAW")
 #' database <- system.file("extdata", "flyFactorSurvey_cleaned.meme", package = "memes")
-#' 
+#'
 #' runTomTom(motif, database)
 #' }
-runTomTom <- function(input, database = NULL,
-                      outdir = "auto",
-                      thresh = 10,
-                      min_overlap = 5,
-                      dist = "ed",
-                      evalue = TRUE,
-                      silent = TRUE,
-                      meme_path = NULL, ...){
+runTomTom <- function(
+  input,
+  database = NULL,
+  outdir = "auto",
+  thresh = 10,
+  min_overlap = 5,
+  dist = "ed",
+  evalue = TRUE,
+  silent = TRUE,
+  meme_path = NULL,
+  ...
+) {
   UseMethod("runTomTom")
 }
 
 #' @export
 #' @noRd
-runTomTom.list <- function(input, database = NULL,
-                    outdir = "auto",
-                    thresh = 10,
-                    min_overlap = 5,
-                    dist = "ed",
-                    evalue = TRUE,
-                    silent = TRUE,
-                    meme_path = NULL, ...){
-  purrr::map(input, 
-             runTomTom.default, 
-              database = database,
-              outdir = outdir,
-              thresh = thresh,
-              min_overlap = min_overlap,
-              dist = dist,
-              evalue = evalue,
-              meme_path = meme_path, ...)
-  
+runTomTom.list <- function(
+  input,
+  database = NULL,
+  outdir = "auto",
+  thresh = 10,
+  min_overlap = 5,
+  dist = "ed",
+  evalue = TRUE,
+  silent = TRUE,
+  meme_path = NULL,
+  ...
+) {
+  purrr::map(
+    input,
+    runTomTom.default,
+    database = database,
+    outdir = outdir,
+    thresh = thresh,
+    min_overlap = min_overlap,
+    dist = dist,
+    evalue = evalue,
+    meme_path = meme_path,
+    ...
+  )
 }
 
 #' @export
 #' @noRd
-runTomTom.default <- function(input, database = NULL,
-                      outdir = "auto",
-                      thresh = 10,
-                      min_overlap = 5,
-                      dist = "ed",
-                      evalue = TRUE,
-                      silent = TRUE,
-                      meme_path = NULL, ...){
+runTomTom.default <- function(
+  input,
+  database = NULL,
+  outdir = "auto",
+  thresh = 10,
+  min_overlap = 5,
+  dist = "ed",
+  evalue = TRUE,
+  silent = TRUE,
+  meme_path = NULL,
+  ...
+) {
   # email TOMTOM maintainers to ask if ed is really a better default?
   # Yep: https://groups.google.com/g/meme-suite/c/7YD0nE8affI/m/aJP0TZszAQAJ
 
@@ -136,7 +150,7 @@ runTomTom.default <- function(input, database = NULL,
   # type validation happens below
   input <- motif_input(input)
 
-  if (is.null(input$metadata)){
+  if (is.null(input$metadata)) {
     # Allows .meme input files to import query motif metadata I use this
     # solution instead of modifying motif_input to allow motif_input on
     # databases to not require importing the file since these can be large
@@ -147,19 +161,29 @@ runTomTom.default <- function(input, database = NULL,
 
   command <- search_meme_path(path = meme_path, util = "tomtom")
 
-  if (outdir == "auto") {outdir <- file.path(dirname(input$path), "tomtom")}
+  if (outdir == "auto") {
+    outdir <- file.path(dirname(input$path), "tomtom")
+  }
 
   database <- search_meme_database_path(path = database)
 
-  user_flags <- prepareTomTomFlags(outdir = outdir,
-                                   thresh = thresh,
-                                   min_overlap = min_overlap,
-                                   dist = dist,
-                                   evalue = evalue, ...)
+  user_flags <- prepareTomTomFlags(
+    outdir = outdir,
+    thresh = thresh,
+    min_overlap = min_overlap,
+    dist = dist,
+    evalue = evalue,
+    ...
+  )
   flags <- c(user_flags, input$path, database)
 
-  ps_out <- processx::run(command, flags, spinner = TRUE, error_on_status = FALSE)
-  
+  ps_out <- processx::run(
+    command,
+    flags,
+    spinner = TRUE,
+    error_on_status = FALSE
+  )
+
   # Print any messages to user This will cause double-printing stderr if
   # non-zero exit status, but at that point, who cares?
   if (!silent) {
@@ -169,16 +193,29 @@ runTomTom.default <- function(input, database = NULL,
   }
 
   ps_out %>%
-    process_check_error(help_fun = ~{tomtom_help(command)},
-                        user_flags = cmdfun::cmd_help_parse_flags(user_flags),
-                        flags_fun = ~{gsub("-", "_", .)},
-                        default_help_fun = TRUE)
+    process_check_error(
+      help_fun = ~ {
+        tomtom_help(command)
+      },
+      user_flags = cmdfun::cmd_help_parse_flags(user_flags),
+      flags_fun = ~ {
+        gsub("-", "_", .)
+      },
+      default_help_fun = TRUE
+    )
 
-  tomtom_out <- cmdfun::cmd_file_expect("tomtom", c("tsv", "xml", "html"), outdir = outdir)
+  tomtom_out <- cmdfun::cmd_file_expect(
+    "tomtom",
+    c("tsv", "xml", "html"),
+    outdir = outdir
+  )
 
   tomtom_results <- parseTomTom(tomtom_out$xml, query_metadata = input$metadata)
 
-  suppressMessages(universalmotif::update_motifs(tomtom_results, extrainfo = TRUE))
+  suppressMessages(universalmotif::update_motifs(
+    tomtom_results,
+    extrainfo = TRUE
+  ))
 }
 
 
@@ -204,14 +241,16 @@ runTomTom.default <- function(input, database = NULL,
 #' @importFrom magrittr %>%
 #'
 #' @noRd
-prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
+prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...) {
   # lookup table converts arguments with - to _ so
   # user doesn't have to escape flags
-  argsDict <- c("outdir" = "oc",
-               "min_overlap" = "min-overlap",
-               "motif_pseudo" = "motif-pseudo",
-               "no_ssc" = "no-ssc",
-               "incomplete_scores" = "incomplete-scores")
+  argsDict <- c(
+    "outdir" = "oc",
+    "min_overlap" = "min-overlap",
+    "motif_pseudo" = "motif-pseudo",
+    "no_ssc" = "no-ssc",
+    "incomplete_scores" = "incomplete-scores"
+  )
 
   flags <- cmdfun::cmd_args_all() %>%
     cmdfun::cmd_list_interp(argsDict) %>%
@@ -227,26 +266,28 @@ prepareTomTomFlags <- function(outdir, thresh, min_overlap, dist, evalue, ...){
 #' @return
 #'
 #' @noRd
-tomtom_help <- function(command){
+tomtom_help <- function(command) {
   processx::run(command, error_on_status = FALSE)$stderr
 }
 
 #' Print important messages to users about inaccurate p-values or duplicated entries
 #'
-#' @param stderr 
+#' @param stderr
 #'
 #' @return
 #'
 #' @noRd
-print_tomtom_messages <- function(stderr){
-
+print_tomtom_messages <- function(stderr) {
   # Grep out common warnings for database too small,
   # or inaccurate p-value estimation
   # and print those warnings
   # These don't trigger a non-zero exit status, but could affect
   # conclusions, so important to print these.
   err_string <- strsplit(stderr, "\n")[[1]]
-  purrr::walk(grep("Warning:|Provide at least", err_string, value = TRUE), message)
+  purrr::walk(
+    grep("Warning:|Provide at least", err_string, value = TRUE),
+    message
+  )
 
   # Deal with discarding motifs due to duplicate IDs:
   # Note: this warning will also proc if the IDs are non-dups but the matrix is duplicated
@@ -256,7 +297,11 @@ print_tomtom_messages <- function(stderr){
     gsub("Discarding motif '(.+)'.+", "\\1", .) %>%
     {
       if (length(.) > 0) {
-        message(paste("Discarding", length(.), "motifs because they are duplicated in the database."))
+        message(paste(
+          "Discarding",
+          length(.),
+          "motifs because they are duplicated in the database."
+        ))
         message("The following motifs were discarded:")
         purrr::walk(., message)
       }
@@ -276,14 +321,15 @@ print_tomtom_messages <- function(stderr){
 #' @importFrom magrittr %>%
 #'
 #' @noRd
-get_tomtom_query_data <- function(tomtom_xml_data){
+get_tomtom_query_data <- function(tomtom_xml_data) {
   xml2::xml_find_all(tomtom_xml_data, "//queries") %>%
     xml2::xml_children() %>%
     attrs_to_df(stringsAsFactors = FALSE) %>%
-    dplyr::mutate(query_idx = (seq_len(nrow(.)) - 1),
-                  db = as.integer(.data$db)) %>%
-    dplyr::rename("db_idx" = "db",
-                  "name" = "id") %>%
+    dplyr::mutate(
+      query_idx = (seq_len(nrow(.)) - 1),
+      db = as.integer(.data$db)
+    ) %>%
+    dplyr::rename("db_idx" = "db", "name" = "id") %>%
     # allows renaming alt column only if exists
     dplyr::rename_all(dplyr::recode, alt = "altname")
 }
@@ -296,8 +342,7 @@ get_tomtom_query_data <- function(tomtom_xml_data){
 #' @return
 #' @noRd
 #'
-add_query_metadata <- function(query, metadata){
-
+add_query_metadata <- function(query, metadata) {
   if (any(c("query_idx", "db_idx") %in% names(metadata))) {
     # these colnames are privleged use in tomtom, so reserve any original values & convert back later
     # so they don't perturb join logic
@@ -317,8 +362,8 @@ add_query_metadata <- function(query, metadata){
 
   query_with_metadata <- metadata %>%
     dplyr::left_join(query, by = c("name", "altname"))
-    # return user-input idx cols if any
-    #dplyr::rename_with(~{gsub("\\.original", "", .x)}, dplyr::matches("query_idx.original$|db_idx.original$"))
+  # return user-input idx cols if any
+  #dplyr::rename_with(~{gsub("\\.original", "", .x)}, dplyr::matches("query_idx.original$|db_idx.original$"))
 
   return(query_with_metadata)
 }
@@ -334,40 +379,48 @@ add_query_metadata <- function(query, metadata){
 #' @importFrom rlang .data
 #'
 #' @noRd
-get_tomtom_match_data <- function(tomtom_xml_data){
+get_tomtom_match_data <- function(tomtom_xml_data) {
   matches <- xml2::xml_find_all(tomtom_xml_data, "//matches") %>%
     xml2::xml_children()
 
-  if (length(matches) == 0){return(NULL)}
+  if (length(matches) == 0) {
+    return(NULL)
+  }
 
   match_df <- purrr::map(matches, xml2::xml_children) %>%
     purrr::set_names(xml2::xml_attr(matches, "idx")) %>%
     purrr::map_dfr(attrs_to_df, stringsAsFactors = FALSE, .id = "query_idx") %>%
     dplyr::mutate_at(c("pv", "ev", "qv"), as.double) %>%
-    dplyr::mutate_at(c("query_idx", "idx", "off"), as.integer) %>% 
-    dplyr::rename("offset" = "off",
-                  "pval" = "pv",
-                  "eval" = "ev",
-                  "qval" = "qv",
-                  "target_idx" = "idx") %>% 
+    dplyr::mutate_at(c("query_idx", "idx", "off"), as.integer) %>%
+    dplyr::rename(
+      "offset" = "off",
+      "pval" = "pv",
+      "eval" = "ev",
+      "qval" = "qv",
+      "target_idx" = "idx"
+    ) %>%
     {
       # Only use rc to determine strand if col exists, else set strand to "*"
       df <- .
       if ("rc" %in% names(df)) {
-        df %<>% 
+        df %<>%
           dplyr::mutate_at("rc", as.character()) %>%
           dplyr::mutate(strand = ifelse(.data$rc == "y", "-", "+")) %>%
           dplyr::select_at(dplyr::vars(-"rc"))
       } else {
         df$strand <- "*"
       }
-      
-      df
-      
-    } %>% 
-    dplyr::rename_at(c("offset", "pval", "eval", "qval", "strand"), ~{paste0("match_", .x)}) %>%
 
-  return(match_df)
+      df
+    } %>%
+    dplyr::rename_at(
+      c("offset", "pval", "eval", "qval", "strand"),
+      ~ {
+        paste0("match_", .x)
+      }
+    ) %>%
+
+    return(match_df)
 }
 
 #' Get database info
@@ -381,7 +434,7 @@ get_tomtom_match_data <- function(tomtom_xml_data){
 #' @importFrom magrittr %>%
 #'
 #' @noRd
-get_tomtom_db_data <- function(tomtom_xml_data){
+get_tomtom_db_data <- function(tomtom_xml_data) {
   xml2::xml_find_all(tomtom_xml_data, "//target_dbs") %>%
     xml2::xml_children() %>%
     attrs_to_df(stringsAsFactors = FALSE) %>%
@@ -402,7 +455,7 @@ get_tomtom_db_data <- function(tomtom_xml_data){
 #' @importFrom rlang .data
 #'
 #' @noRd
-get_tomtom_target_data <- function(tomtom_xml_data){
+get_tomtom_target_data <- function(tomtom_xml_data) {
   targets <- xml2::xml_find_all(tomtom_xml_data, "//targets") %>%
     xml2::xml_children()
 
@@ -419,19 +472,30 @@ get_tomtom_target_data <- function(tomtom_xml_data){
   target_df$pfm <- target_pfms
 
   target_data <- target_df %>%
-    dplyr::mutate(match_motif = purrr::pmap(list(.data$pfm, .data$id, .data$alt, .data$nsites), ~{
-      universalmotif::create_motif(..1,
-                                   type = "PCM",
-                                   name = ..2,
-                                   altname = ..3,
-                                   nsites = ..4)
-    })) %>%
+    dplyr::mutate(
+      match_motif = purrr::pmap(
+        list(.data$pfm, .data$id, .data$alt, .data$nsites),
+        ~ {
+          universalmotif::create_motif(
+            ..1,
+            type = "PCM",
+            name = ..2,
+            altname = ..3,
+            nsites = ..4
+          )
+        }
+      )
+    ) %>%
     dplyr::select(-"pfm") %>%
-    dplyr::rename_at(c("id", "alt"), ~{paste0("match_", .x)}) %>%
+    dplyr::rename_at(
+      c("id", "alt"),
+      ~ {
+        paste0("match_", .x)
+      }
+    ) %>%
     dplyr::select(dplyr::contains("idx"), dplyr::contains("match"))
 
   return(target_data)
-
 }
 
 #' Return db/target/match data as merged dataframe
@@ -440,8 +504,7 @@ get_tomtom_target_data <- function(tomtom_xml_data){
 #'
 #' @return hits lookup table or NULL if no matches detected (will pass message)
 #' @noRd
-get_tomtom_hits <- function(tomtom_xml_data){
-
+get_tomtom_hits <- function(tomtom_xml_data) {
   match_data <- tomtom_xml_data %>%
     get_tomtom_match_data()
 
@@ -460,7 +523,6 @@ get_tomtom_hits <- function(tomtom_xml_data){
     dplyr::left_join(match_data, by = "target_idx")
 
   return(hits)
-
 }
 
 #' Merge query data w/ hits data, nesting full tomtom results
@@ -471,33 +533,35 @@ get_tomtom_hits <- function(tomtom_xml_data){
 #' @return
 #' @importFrom rlang sym
 #' @noRd
-join_tomtom_tables <- function(query, hits){
-  if (is.null(hits)){
+join_tomtom_tables <- function(query, hits) {
+  if (is.null(hits)) {
     tomtom_results <- query %>%
-      dplyr::mutate(best_match_name = NA_character_,
-                    best_match_altname = NA_character_,
-                    best_match_offset = NA_integer_,
-                    best_match_pval = NA_real_,
-                    best_match_eval = NA_real_,
-                    best_match_qval = NA_real_,
-                    best_match_strand = NA_character_,
-                    best_match_motif = NA,
-                    tomtom = NA) %>%
+      dplyr::mutate(
+        best_match_name = NA_character_,
+        best_match_altname = NA_character_,
+        best_match_offset = NA_integer_,
+        best_match_pval = NA_real_,
+        best_match_eval = NA_real_,
+        best_match_qval = NA_real_,
+        best_match_strand = NA_character_,
+        best_match_motif = NA,
+        tomtom = NA
+      ) %>%
       dplyr::select(-"query_idx", -"db_idx")
   } else {
     tomtom_results <- query %>%
       # The query db_idx is actually not a pointer to the motif db, so it is
       # removed prior to the join. Post-join db_idx indicates the hits db_idx
       # value. (issue 92.)
-      dplyr::select(-"db_idx") %>% 
+      dplyr::select(-"db_idx") %>%
       dplyr::left_join(hits, by = c("query_idx")) %>%
       # Rename columns for max compatibility with universalmotif
-      dplyr::rename("match_name" = "match_id",
-                    "match_altname" = "match_alt") %>%
-      dplyr::select(-"query_idx", -"db_idx", -"target_idx") %>% 
-      dplyr::arrange(!!rlang::sym("match_qval"),
-                     !!rlang::sym("match_pval"))
-
+      dplyr::rename(
+        "match_name" = "match_id",
+        "match_altname" = "match_alt"
+      ) %>%
+      dplyr::select(-"query_idx", -"db_idx", -"target_idx") %>%
+      dplyr::arrange(!!rlang::sym("match_qval"), !!rlang::sym("match_pval"))
   }
 
   if (!("altname" %in% names(tomtom_results))) {
@@ -507,7 +571,7 @@ join_tomtom_tables <- function(query, hits){
   }
 
   # Nest full match data & add best_match_ columns if hits exist
-  if (!is.null(hits)){
+  if (!is.null(hits)) {
     tomtom_results %<>%
       #nest_tomtom_results()
       nest_tomtom_results_best_top_row()
@@ -526,11 +590,15 @@ join_tomtom_tables <- function(query, hits){
 #'
 #' @examples
 #' nest_tomtom_fun(tomtom_data, tomtom_best_match_min_evalue)
-tomtom_best_match_min_evalue <- function(df){
-    df %>%
-      dplyr::filter("match_eval" == min("match_eval")) %>%
-      utils::head(1) %>%
-      dplyr::rename_all(~{paste0("best_", .x)})
+tomtom_best_match_min_evalue <- function(df) {
+  df %>%
+    dplyr::filter("match_eval" == min("match_eval")) %>%
+    utils::head(1) %>%
+    dplyr::rename_all(
+      ~ {
+        paste0("best_", .x)
+      }
+    )
 }
 
 #' Return tomtom best match by taking top column in tomtom df
@@ -539,9 +607,13 @@ tomtom_best_match_min_evalue <- function(df){
 #'
 #' @return
 #' @noRd
-tomtom_best_match_top_row <- function(df){
-  df[1,] %>%
-    dplyr::rename_all(~{paste0("best_", .x)})
+tomtom_best_match_top_row <- function(df) {
+  df[1, ] %>%
+    dplyr::rename_all(
+      ~ {
+        paste0("best_", .x)
+      }
+    )
 }
 
 #' Nest tomtom using `fun` to return best match
@@ -552,16 +624,18 @@ tomtom_best_match_top_row <- function(df){
 #' @return tomtom_results data.frame with nested `tomtom` column
 #' @noRd
 #'
-nest_tomtom_fun <- function(tomtom_results, fun){
-  nest_cols <- c("match_name",
-                 "match_altname",
-                 "match_motif",
-                 "db_name",
-                 "match_offset",
-                 "match_pval",
-                 "match_eval",
-                 "match_qval",
-                 "match_strand")
+nest_tomtom_fun <- function(tomtom_results, fun) {
+  nest_cols <- c(
+    "match_name",
+    "match_altname",
+    "match_motif",
+    "db_name",
+    "match_offset",
+    "match_pval",
+    "match_eval",
+    "match_qval",
+    "match_strand"
+  )
 
   # Need to remove "motif" S4 column & rejoin unique entries because `tibble` or
   # `tidyr` doesn't play nice with S4. S4 is allowed in the nested column, but
@@ -569,7 +643,6 @@ nest_tomtom_fun <- function(tomtom_results, fun){
   tomtom_motifs <- tomtom_results %>%
     dplyr::select(dplyr::any_of(c("name", "altname", "motif"))) %>%
     unique
-
 
   tomtom_results %>%
     dplyr::select(-"motif") %>%
@@ -582,11 +655,14 @@ nest_tomtom_fun <- function(tomtom_results, fun){
     # Add back motif column
     dplyr::left_join(tomtom_motifs, by = c("name", "altname")) %>%
     # Reorder columns
-    dplyr::select("name", "altname",
-                  dplyr::matches("[^best_|^tomtom]"),
-                  dplyr::matches("motif"),
-                  dplyr::contains("best_"),
-                  "tomtom")
+    dplyr::select(
+      "name",
+      "altname",
+      dplyr::matches("[^best_|^tomtom]"),
+      dplyr::matches("motif"),
+      dplyr::contains("best_"),
+      "tomtom"
+    )
 }
 
 
@@ -602,7 +678,7 @@ nest_tomtom_fun <- function(tomtom_results, fun){
 #' @importFrom rlang .data
 #'
 #' @noRd
-nest_tomtom_results <- function(tomtom_results){
+nest_tomtom_results <- function(tomtom_results) {
   nest_tomtom_fun(tomtom_results, tomtom_best_match_min_evalue)
 }
 
@@ -616,7 +692,7 @@ nest_tomtom_results <- function(tomtom_results){
 #'   Which is list of data.frames for each match too the given id.
 #'
 #' @noRd
-nest_tomtom_results_best_top_row <- function(tomtom_results){
+nest_tomtom_results_best_top_row <- function(tomtom_results) {
   nest_tomtom_fun(tomtom_results, tomtom_best_match_top_row)
 }
 
@@ -649,13 +725,13 @@ nest_tomtom_results_best_top_row <- function(tomtom_results){
 #' @examples
 #' parseTomTom("inst/extdata/tomtom.xml")
 #' @noRd
-parseTomTom <- function(tomtom_xml, query_metadata = NULL){
+parseTomTom <- function(tomtom_xml, query_metadata = NULL) {
   #tomtom_xml <- "inst/extdata/dreme_example/tomtom/tomtom.xml"
   tomtom_xml_data <- xml2::read_xml(tomtom_xml)
 
   hits <- get_tomtom_hits(tomtom_xml_data)
 
-  if (is.null(query_metadata)){
+  if (is.null(query_metadata)) {
     # TODO:
     # CHECK DATA TYPE?
 
@@ -672,4 +748,3 @@ parseTomTom <- function(tomtom_xml, query_metadata = NULL){
 
   return(tomtom_results)
 }
-

@@ -29,7 +29,7 @@
 #' @examples
 #' tomtom_xml <- system.file("extdata", "tomtom.xml", package = "memes")
 #' importTomTomXML(tomtom_xml)
-importTomTomXML <- function(tomtom_xml_path){
+importTomTomXML <- function(tomtom_xml_path) {
   parseTomTom(tomtom_xml_path, query_metadata = NULL)
 }
 
@@ -48,7 +48,7 @@ importTomTomXML <- function(tomtom_xml_path){
 #' @examples
 #' dreme_xml <- system.file("extdata", "dreme.xml", package = "memes")
 #' importDremeXML(dreme_xml)
-importDremeXML <- function(dreme_xml_path){
+importDremeXML <- function(dreme_xml_path) {
   parseDreme(dreme_xml_path)
 }
 
@@ -66,6 +66,6 @@ importDremeXML <- function(dreme_xml_path){
 #' @examples
 #' streme_xml <- system.file("extdata", "streme.xml", package = "memes")
 #' importStremeXML(streme_xml)
-importStremeXML <- function(streme_xml_path){
+importStremeXML <- function(streme_xml_path) {
   parseStreme(streme_xml_path)
 }

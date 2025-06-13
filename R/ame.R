@@ -1,63 +1,85 @@
 #' @export
 #' @rdname runAme
-runAme.list <- function(input,
-                        control = "shuffle",
-                        outdir = "auto",
-                        method = "fisher",
-                        database = NULL,
-                        meme_path = NULL,
-                        sequences = FALSE,
-                        silent = TRUE, ...){
-  
+runAme.list <- function(
+  input,
+  control = "shuffle",
+  outdir = "auto",
+  method = "fisher",
+  database = NULL,
+  meme_path = NULL,
+  sequences = FALSE,
+  silent = TRUE,
+  ...
+) {
   x <- sequence_input_control_list(input, control)
   input <- x$input
   control <- x$control
 
-  res <- purrr::map(input, runAme.default,
-             control = control,
-             outdir = outdir,
-             method = method,
-             database = database,
-             meme_path = meme_path,
-             sequences = sequences,
-             silent = silent,
-             ...
-             )
+  res <- purrr::map(
+    input,
+    runAme.default,
+    control = control,
+    outdir = outdir,
+    method = method,
+    database = database,
+    meme_path = meme_path,
+    sequences = sequences,
+    silent = silent,
+    ...
+  )
   return(res)
 }
 
 #' @export
 #' @rdname runAme
-runAme.BStringSetList <- function(input,
-                        control = "shuffle",
-                        outdir = "auto",
-                        method = "fisher",
-                        database = NULL,
-                        meme_path = NULL,
-                        sequences = FALSE,
-                        silent = TRUE, ...){
-  runAme.list(as.list(input), control, outdir, method, database, meme_path, sequences, silent, ...)
+runAme.BStringSetList <- function(
+  input,
+  control = "shuffle",
+  outdir = "auto",
+  method = "fisher",
+  database = NULL,
+  meme_path = NULL,
+  sequences = FALSE,
+  silent = TRUE,
+  ...
+) {
+  runAme.list(
+    as.list(input),
+    control,
+    outdir,
+    method,
+    database,
+    meme_path,
+    sequences,
+    silent,
+    ...
+  )
 }
 
 #' @export
 #' @rdname runAme
-runAme.default <- function(input,
-       control = "shuffle",
-       outdir = "auto",
-       method = "fisher",
-       database = NULL,
-       meme_path = NULL,
-       sequences = FALSE, silent = TRUE, ...){
-
+runAme.default <- function(
+  input,
+  control = "shuffle",
+  outdir = "auto",
+  method = "fisher",
+  database = NULL,
+  meme_path = NULL,
+  sequences = FALSE,
+  silent = TRUE,
+  ...
+) {
   input <- sequence_input(input)
 
-  if (!all(is.na(control))){
+  if (!all(is.na(control))) {
     control <- sequence_input(control)
   }
 
   # Autodetect outdir path from path names
   # note: this line must run after input&control are parsed to paths
-  if (outdir == "auto") {outdir <- outdir_name(input, control)}
+  if (outdir == "auto") {
+    outdir <- outdir_name(input, control)
+  }
 
   user_flags <- prepareAmeFlags(control, outdir, method, ...)
   database <- search_meme_database_path(database)
@@ -66,23 +88,34 @@ runAme.default <- function(input,
   # format: ame <flags> <input.fa> <db.meme>
   flags <- c(user_flags, input, database)
 
-  ps_out <- processx::run(command, flags, spinner = TRUE, error_on_status = FALSE)
+  ps_out <- processx::run(
+    command,
+    flags,
+    spinner = TRUE,
+    error_on_status = FALSE
+  )
 
   # Handles printing argument suggestions if process has non-zero exit status
   # help_fun must be anonymous function to delay evaluating ame_help unless it's needed
   ps_out %>%
-    process_check_error(help_fun = ~{ame_help(command)},
-                        user_flags = cmdfun::cmd_help_parse_flags(user_flags) %>%
-                          grep("shuffle", ., invert = TRUE, value = TRUE),
-                        flags_fun = ~{gsub("-", "_", .x)},
-                        default_help_fun = TRUE)
+    process_check_error(
+      help_fun = ~ {
+        ame_help(command)
+      },
+      user_flags = cmdfun::cmd_help_parse_flags(user_flags) %>%
+        grep("shuffle", ., invert = TRUE, value = TRUE),
+      flags_fun = ~ {
+        gsub("-", "_", .x)
+      },
+      default_help_fun = TRUE
+    )
 
   print_process_stdout(ps_out, silent = silent)
   print_process_stderr(ps_out, silent = silent)
 
   # NOTE: sequences.tsv is only created when method == "fisher"
   ame_out <- cmdfun::cmd_file_combn("ame", c("tsv", "html"), outdir)
-  if (method == "fisher"){
+  if (method == "fisher") {
     ame_seq <- cmdfun::cmd_file_combn("sequences", "tsv", outdir)
     ame_out$sequences <- ame_seq[[1]]
   }
@@ -91,7 +124,7 @@ runAme.default <- function(input,
     cmdfun::cmd_error_if_missing()
 
   import_sequences <- FALSE
-  if (method == "fisher" & sequences){
+  if (method == "fisher" & sequences) {
     import_sequences <- ame_out$sequences
   }
 
@@ -105,17 +138,20 @@ runAme.default <- function(input,
 #' @return
 #'
 #' @noRd
-ame_help <- function(command){
+ame_help <- function(command) {
   processx::run(command, "--help", error_on_status = FALSE)$stderr
 }
 
-prepareAmeFlags <- function(control, outdir, method, ...){
-
+prepareAmeFlags <- function(control, outdir, method, ...) {
   argsDict <- c("outdir" = "oc")
 
   flagList <- cmdfun::cmd_args_all() %>%
     cmdfun::cmd_list_interp(argsDict) %>%
-    purrr::set_names(~{gsub("_", "-", .x)})
+    purrr::set_names(
+      ~ {
+        gsub("_", "-", .x)
+      }
+    )
 
   if (exists("control", flagList)) {
     if (flagList$control == "shuffle") {
@@ -164,19 +200,24 @@ prepareAmeFlags <- function(control, outdir, method, ...){
 #' @examples
 #' ame_tsv <- system.file("extdata", "ame.tsv", package = "memes", mustWork = TRUE)
 #' importAme(ame_tsv)
-importAme <- function(path, method = c("fisher", "ranksum", "dmhg3", "dmhg4", "pearson", "spearman"), sequences = NULL) {
+importAme <- function(
+  path,
+  method = c("fisher", "ranksum", "dmhg3", "dmhg4", "pearson", "spearman"),
+  sequences = NULL
+) {
   method <- match.arg(method)
   has_sequences <- is.character(sequences)
   cols <- get_ame_coltypes(method)
 
-  data <- readr::read_tsv(path,
-                          col_names = names(cols$cols),
-                          col_types = cols,
-                          skip = 1,
-                          comment = "#"
-                          )
+  data <- readr::read_tsv(
+    path,
+    col_names = names(cols$cols),
+    col_types = cols,
+    skip = 1,
+    comment = "#"
+  )
 
-  if (nrow(data) == 0){
+  if (nrow(data) == 0) {
     message("AME detected no enrichment")
     return(NULL)
   }
@@ -192,7 +233,7 @@ importAme <- function(path, method = c("fisher", "ranksum", "dmhg3", "dmhg4", "p
   if (has_sequences && method == "fisher") {
     seq <- importAmeSequences(sequences)
 
-    if (is.null(seq)){
+    if (is.null(seq)) {
       return(data)
     }
 
@@ -202,9 +243,8 @@ importAme <- function(path, method = c("fisher", "ranksum", "dmhg3", "dmhg4", "p
       dplyr::rename("sequences" = "data") %>%
       data.frame
 
-    return(dplyr::left_join(data, seq, by = c("motif_id","motif_db")))
+    return(dplyr::left_join(data, seq, by = c("motif_id", "motif_db")))
   }
-
 }
 
 #' Helper for combining readr::cols() objects
@@ -214,16 +254,19 @@ importAme <- function(path, method = c("fisher", "ranksum", "dmhg3", "dmhg4", "p
 #'
 #' @return combined cols() object of all inputs
 #' @noRd
-combine_cols <- function(col, cols_list){
-    # original cols to col
-    # pass extra cols to cols as list
+combine_cols <- function(col, cols_list) {
+  # original cols to col
+  # pass extra cols to cols as list
 
-    out <- col
+  out <- col
 
-    purrr::walk(cols_list, ~{
+  purrr::walk(
+    cols_list,
+    ~ {
       out$cols <<- c(out$cols, .x$cols)
-    })
-    return(out)
+    }
+  )
+  return(out)
 }
 
 #' Import AME sequences information for method="fisher" runs.
@@ -246,13 +289,14 @@ combine_cols <- function(col, cols_list){
 #' }
 #'
 #' @noRd
-importAmeSequences <- function(path){
-
-  sequences <- readr::read_tsv(path,
-                               col_types = readr::cols("c", "c", "c", "d", "d", "c"),
-                               col_names = TRUE,
-                               comment = "#")
-  if (nrow(sequences) == 0){
+importAmeSequences <- function(path) {
+  sequences <- readr::read_tsv(
+    path,
+    col_types = readr::cols("c", "c", "c", "d", "d", "c"),
+    col_names = TRUE,
+    comment = "#"
+  )
+  if (nrow(sequences) == 0) {
     message("Sequences output is empty")
     return(NULL)
   }
@@ -262,9 +306,12 @@ importAmeSequences <- function(path){
     # positions 4 & 5 encode which score was used to "label" (4) vs "classify" (5)
     # can be either PWM for Fasta score, and can't predict which one easily, so
     # just prefix these two.
-    dplyr::rename_at(4, function(x){paste0("label_", x)}) %>%
-    dplyr::rename_at(5, function(x){paste0("class_", x)})
-
+    dplyr::rename_at(4, function(x) {
+      paste0("label_", x)
+    }) %>%
+    dplyr::rename_at(5, function(x) {
+      paste0("class_", x)
+    })
 }
 
 #' Generate columntypes/names for ame results.
@@ -276,58 +323,69 @@ importAmeSequences <- function(path){
 #' @importFrom readr cols
 #'
 #' @noRd
-get_ame_coltypes <- function(method){
+get_ame_coltypes <- function(method) {
   # Strategey: build readr::cols() vector for each input type, the combine together using switch for import.
 
-  cols_common <- readr::cols("rank" = "i",
-                             "motif_db" = "c",
-                             "motif_id" = "c",
-                             "motif_alt_id" = "c",
-                             "consensus" = "c",
-                             "pvalue" = "d",
-                             "adj.pvalue" = "d",
-                             "evalue" = "d",
-                             "tests" = "i"
-                             )
+  cols_common <- readr::cols(
+    "rank" = "i",
+    "motif_db" = "c",
+    "motif_id" = "c",
+    "motif_alt_id" = "c",
+    "consensus" = "c",
+    "pvalue" = "d",
+    "adj.pvalue" = "d",
+    "evalue" = "d",
+    "tests" = "i"
+  )
 
-  cols_fisher_ranksum_dmhg <- readr::cols("fasta_max" = "d",
-                                          "pos" = "i",
-                                          "neg" = "i"
-                                          )
-  cols_fisher <- readr::cols("pwm_min" = "d",
-                             "tp" = "i",
-                             "tp_percent" = "d",
-                             "fp" = "i",
-                             "fp_percent" = "d"
-                             )
+  cols_fisher_ranksum_dmhg <- readr::cols(
+    "fasta_max" = "d",
+    "pos" = "i",
+    "neg" = "i"
+  )
+  cols_fisher <- readr::cols(
+    "pwm_min" = "d",
+    "tp" = "i",
+    "tp_percent" = "d",
+    "fp" = "i",
+    "fp_percent" = "d"
+  )
 
-  cols_ranksum <- readr::cols("u" = "d",
-                              "pleft" = "d",
-                              "pright" = "d",
-                              "pboth" = "d",
-                              "adj.pleft" = "d",
-                              "adj.pright" = "d",
-                              "adj.both" = "d"
-                              )
+  cols_ranksum <- readr::cols(
+    "u" = "d",
+    "pleft" = "d",
+    "pright" = "d",
+    "pboth" = "d",
+    "adj.pleft" = "d",
+    "adj.pright" = "d",
+    "adj.both" = "d"
+  )
 
-  cols_pearson <- readr::cols("pearson_cc" = "d",
-                              "mean_squared_error" = "d",
-                              "slope" = "d",
-                              "intercept" = "d"
-                              )
+  cols_pearson <- readr::cols(
+    "pearson_cc" = "d",
+    "mean_squared_error" = "d",
+    "slope" = "d",
+    "intercept" = "d"
+  )
 
   cols_spearman <- readr::cols("spearman_cc" = "d")
 
   method <- gsub("[3,4]dmhg", "dmhg", method)
-  cols <- switch(method,
-         fisher = combine_cols(cols_common, list(cols_fisher_ranksum_dmhg, cols_fisher)),
-         ranksum = combine_cols(cols_common, list(cols_fisher_ranksum_dmhg, cols_ranksum)),
-         dmhg = combine_cols(cols_common, list(cols_fisher_ranksum_dmhg)),
-         pearson = combine_cols(cols_common, list(cols_pearson)),
-         spearman = combine_cols(cols_common, list(cols_spearman)),
-         stop(paste0(method, " is not a valid method"))
-         )
+  cols <- switch(
+    method,
+    fisher = combine_cols(
+      cols_common,
+      list(cols_fisher_ranksum_dmhg, cols_fisher)
+    ),
+    ranksum = combine_cols(
+      cols_common,
+      list(cols_fisher_ranksum_dmhg, cols_ranksum)
+    ),
+    dmhg = combine_cols(cols_common, list(cols_fisher_ranksum_dmhg)),
+    pearson = combine_cols(cols_common, list(cols_pearson)),
+    spearman = combine_cols(cols_common, list(cols_spearman)),
+    stop(paste0(method, " is not a valid method"))
+  )
 
   return(cols)
-
 }

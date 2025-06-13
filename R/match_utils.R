@@ -27,22 +27,26 @@
 #' res2 <- force_best_match(res, c("example_motif" = "Eip93F_SANGER_10"))
 #' res2$best_match_name
 #' }
-force_best_match <- function(res, matches){
+force_best_match <- function(res, matches) {
   # WAIT: change example to use tomtom.xml import?
   if (!all(names(matches) %in% res$name)) {
     bad <- names(matches)[!names(matches) %in% res$name]
     stop(paste0("The following are invalid names: ", bad))
   }
 
-  purrr::iwalk(matches, ~{
+  purrr::iwalk(
+    matches,
+    ~ {
+      if (!(.x %in% res[res$name == .y, ]$tomtom[[1]]$match_name)) {
+        stop(paste0(.x, " is not found within the tomtom hits for ", .y))
+      }
 
-    if (!(.x %in% res[res$name == .y,]$tomtom[[1]]$match_name)) {
-      stop(paste0(.x, " is not found within the tomtom hits for ", .y))
+      res[res$name == .y, ]$tomtom[[1]] <<- res[res$name == .y, ]$tomtom[[
+        1
+      ]] %>%
+        rank_tomtom_by_name(.x)
     }
-
-    res[res$name == .y,]$tomtom[[1]] <<- res[res$name == .y,]$tomtom[[1]] %>%
-      rank_tomtom_by_name(.x)
-  })
+  )
 
   res %>%
     update_best_match
@@ -76,7 +80,7 @@ force_best_match <- function(res, matches){
 #' new_res <- update_best_match(example_dreme_tomtom)
 #' # best match is now altered:
 #' new_res$best_match_name[1]
-update_best_match <- function(res){
+update_best_match <- function(res) {
   # This initial drop step is required because S4 not allowed in parent
   # data.frame when nesting, and `best_match_motif` would propagate. (`motif`
   # already removed by nest_tomtom)
@@ -104,11 +108,12 @@ update_best_match <- function(res){
 #' data("example_dreme_tomtom")
 #' names(example_dreme_tomtom)
 #' names(drop_best_match(example_dreme_tomtom))
-drop_best_match <- function(res){
+drop_best_match <- function(res) {
   res %>%
-    dplyr::select(-dplyr::contains("best_match_"),
-                  -dplyr::any_of("best_db_name"))
-
+    dplyr::select(
+      -dplyr::contains("best_match_"),
+      -dplyr::any_of("best_db_name")
+    )
 }
 
 #' Nest TomTom results columns into a data.frame column named "tomtom"
@@ -137,7 +142,7 @@ drop_best_match <- function(res){
 #' data <- tidyr::unnest(res, "tomtom")
 #' identical(nest_tomtom(data), res)
 #' }
-nest_tomtom <- function(data){
+nest_tomtom <- function(data) {
   # Save motifs
   motif <- data$motif
   names(motif) <- data$name
@@ -147,13 +152,19 @@ nest_tomtom <- function(data){
 
   # tidyr::nest doesn't work with S4 because vctrs doesn't support it
   df <- data %>%
-    dplyr::select(-dplyr::any_of(c("motif", "match_motif", "best_match_motif"))) %>%
-    tidyr::nest(data = c("match_name",
-                "match_altname",
-                "match_pval",
-                "match_eval",
-                "match_qval",
-                "db_name")) %>%
+    dplyr::select(
+      -dplyr::any_of(c("motif", "match_motif", "best_match_motif"))
+    ) %>%
+    tidyr::nest(
+      data = c(
+        "match_name",
+        "match_altname",
+        "match_pval",
+        "match_eval",
+        "match_qval",
+        "db_name"
+      )
+    ) %>%
     dplyr::rename("tomtom" = "data")
 
   # add back motifs
@@ -183,9 +194,7 @@ nest_tomtom <- function(data){
 #' @importFrom dplyr desc
 #'
 #' @noRd
-rank_tomtom_by_name <- function(tomtom, match_name){
-
+rank_tomtom_by_name <- function(tomtom, match_name) {
   tomtom %>%
     dplyr::arrange(desc(match_name %in% !!match_name))
-
 }
