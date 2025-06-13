@@ -197,7 +197,7 @@ importAme <- function(path, method = c("fisher", "ranksum", "dmhg3", "dmhg4", "p
     }
 
     seq %<>%
-      dplyr::group_by(.data$motif_id, .data$motif_db) %>%
+      dplyr::group_by("motif_id", "motif_db") %>%
       tidyr::nest() %>%
       dplyr::rename("sequences" = "data") %>%
       data.frame

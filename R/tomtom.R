@@ -572,8 +572,8 @@ nest_tomtom_fun <- function(tomtom_results, fun){
 
 
   tomtom_results %>%
-    dplyr::select(-.data$motif) %>%
-    dplyr::group_by(.data$name, .data$altname) %>%
+    dplyr::select(-"motif") %>%
+    dplyr::group_by("name", "altname") %>%
     tidyr::nest(data = (dplyr::any_of(nest_cols))) %>%
     dplyr::mutate(best_match_info = purrr::map(.data$data, fun)) %>%
     tidyr::unnest("best_match_info") %>%
