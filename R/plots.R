@@ -149,27 +149,17 @@ nomatch_matrix <- function() {
   return(mat)
 }
 
-#' Returns "NO MATCH" ggseqlogo
+#' Returns "NO MATCH" logo
 #'
 #' @return
 
 #' @importFrom ggplot2 element_text
-#' @importFrom ggseqlogo make_col_scheme ggseqlogo
 #' @noRd
 nomatch_logo <- function() {
-  mat <- nomatch_matrix()
-  alph <- rownames(mat)
-  col <- ggseqlogo::make_col_scheme(
-    chars = alph,
-    cols = rep("#333333", length(alph))
-  )
-
-  ggseqlogo::ggseqlogo(
-    mat,
-    namespace = alph,
-    method = "bits",
-    col_scheme = col
-  ) +
+  m <- nomatch_matrix()
+  m[, 3] <- 0
+  
+  universalmotif::view_logo(m, fill = "#333333") +
     ggplot2::theme(
       axis.text = element_text(color = "white"),
       axis.text.x = element_text(color = "white"),

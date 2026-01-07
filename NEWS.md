@@ -1,3 +1,6 @@
+# memes 1.19.1
+* Removes `ggseqlogo` dependency as it is being archived from CRAN, standardizes on universalmotif::view_logo for any internals that did not already use it (thanks @bjmt for the implementation hint)
+* @karawoo fixed a CI bug
 # memes 1.17.1
 * Fixes an error when reading XML files with jagged `evalue` metadata entries
 # memes 1.13.1
